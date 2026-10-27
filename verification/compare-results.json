@@ -1,0 +1,162 @@
+[
+  {
+    "name": "app-vs-ref-start",
+    "reference": "reference/screenshots/frame-start.png",
+    "actual": "verification/app/cmp-start.png",
+    "masks": 2,
+    "width": 1440,
+    "height": 1100,
+    "offset": [
+      0,
+      0
+    ],
+    "compared": 1563522,
+    "differingPct": 0.702,
+    "strongPct": 0.319,
+    "meanDelta": 1.59
+  },
+  {
+    "name": "app-vs-ref-sender",
+    "reference": "reference/screenshots/frame-sender.png",
+    "actual": "verification/app/cmp-sender.png",
+    "masks": 4,
+    "width": 1440,
+    "height": 1129,
+    "offset": [
+      0,
+      0
+    ],
+    "compared": 1191388,
+    "differingPct": 1.035,
+    "strongPct": 0.528,
+    "meanDelta": 1.93
+  },
+  {
+    "name": "app-vs-ref-viewer",
+    "reference": "reference/screenshots/frame-viewer.png",
+    "actual": "verification/app/cmp-viewer.png",
+    "masks": 4,
+    "width": 1440,
+    "height": 1100,
+    "offset": [
+      0,
+      0
+    ],
+    "compared": 1208189,
+    "differingPct": 0.956,
+    "strongPct": 0.439,
+    "meanDelta": 1.86
+  },
+  {
+    "name": "app-vs-ref-components",
+    "reference": "reference/screenshots/frame-components.png",
+    "actual": "verification/app/cmp-sender.png",
+    "masks": 1,
+    "width": 324,
+    "height": 721,
+    "offset": [
+      1072,
+      161
+    ],
+    "compared": 223386,
+    "differingPct": 1.356,
+    "strongPct": 0.191,
+    "meanDelta": 2.3
+  },
+  {
+    "name": "app-vs-ref-fps-focus",
+    "reference": "reference/screenshots/frame-fps-focus.png",
+    "actual": "verification/app/cmp-fps-focus.png",
+    "masks": 1,
+    "width": 324,
+    "height": 721,
+    "offset": [
+      1072,
+      161
+    ],
+    "compared": 223386,
+    "differingPct": 1.407,
+    "strongPct": 0.195,
+    "meanDelta": 2.3
+  },
+  {
+    "name": "app-vs-ref-player-controls",
+    "reference": "reference/screenshots/frame-player-controls.png",
+    "actual": "verification/app/cmp-viewer.png",
+    "masks": 2,
+    "width": 823,
+    "height": 553,
+    "offset": [
+      249,
+      168
+    ],
+    "compared": 91239,
+    "differingPct": 4.783,
+    "strongPct": 3.579,
+    "meanDelta": 11.16
+  },
+  {
+    "name": "app-vs-render-start",
+    "reference": "verification/reference-render/start.png",
+    "actual": "verification/app/cmp-start.png",
+    "masks": 2,
+    "width": 1440,
+    "height": 1100,
+    "offset": [
+      0,
+      0
+    ],
+    "compared": 1563522,
+    "differingPct": 1.806,
+    "strongPct": 0.802,
+    "meanDelta": 2.58
+  },
+  {
+    "name": "app-vs-render-sender",
+    "reference": "verification/reference-render/sender.png",
+    "actual": "verification/app/cmp-sender.png",
+    "masks": 4,
+    "width": 1440,
+    "height": 1133,
+    "offset": [
+      0,
+      0
+    ],
+    "compared": 1197148,
+    "differingPct": 3.016,
+    "strongPct": 1.689,
+    "meanDelta": 4.53
+  },
+  {
+    "name": "app-vs-render-fps-focus",
+    "reference": "verification/reference-render/fps-focus.png",
+    "actual": "verification/app/cmp-fps-focus.png",
+    "masks": 4,
+    "width": 1440,
+    "height": 1133,
+    "offset": [
+      0,
+      0
+    ],
+    "compared": 1197148,
+    "differingPct": 3.017,
+    "strongPct": 1.667,
+    "meanDelta": 4.49
+  },
+  {
+    "name": "app-vs-render-viewer",
+    "reference": "verification/reference-render/viewer.png",
+    "actual": "verification/app/cmp-viewer.png",
+    "masks": 4,
+    "width": 1440,
+    "height": 1100,
+    "offset": [
+      0,
+      0
+    ],
+    "compared": 1208189,
+    "differingPct": 1.281,
+    "strongPct": 0.83,
+    "meanDelta": 2.23
+  }
+]

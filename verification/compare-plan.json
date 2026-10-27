@@ -1,0 +1,22 @@
+[
+  { "name": "app-vs-ref-start", "reference": "reference/screenshots/frame-start.png", "actual": "verification/app/cmp-start.png",
+    "masks": [[1117, 272, 262, 39], [1113, 767, 270, 38]] },
+  { "name": "app-vs-ref-sender", "reference": "reference/screenshots/frame-sender.png", "actual": "verification/app/cmp-sender.png",
+    "masks": [[249, 229, 821, 494], [292, 745, 320, 26], [1117, 272, 262, 39], [1113, 947, 270, 38]] },
+  { "name": "app-vs-ref-viewer", "reference": "reference/screenshots/frame-viewer.png", "actual": "verification/app/cmp-viewer.png",
+    "masks": [[249, 224, 821, 440], [985, 185, 75, 22], [1116, 272, 264, 39], [1285, 619, 105, 25]] },
+  { "name": "app-vs-ref-components", "reference": "reference/screenshots/frame-components.png", "actual": "verification/app/cmp-sender.png", "locate": true,
+    "masks": [[45, 111, 262, 39]] },
+  { "name": "app-vs-ref-fps-focus", "reference": "reference/screenshots/frame-fps-focus.png", "actual": "verification/app/cmp-fps-focus.png", "locate": true,
+    "masks": [[45, 111, 262, 39]] },
+  { "name": "app-vs-ref-player-controls", "reference": "reference/screenshots/frame-player-controls.png", "actual": "verification/app/cmp-viewer.png", "locate": true,
+    "masks": [[0, 56, 823, 440], [737, 18, 80, 22]] },
+  { "name": "app-vs-render-start", "reference": "verification/reference-render/start.png", "actual": "verification/app/cmp-start.png",
+    "masks": [[1117, 272, 262, 39], [1113, 767, 270, 38]] },
+  { "name": "app-vs-render-sender", "reference": "verification/reference-render/sender.png", "actual": "verification/app/cmp-sender.png",
+    "masks": [[249, 229, 821, 494], [292, 745, 320, 26], [1117, 272, 262, 39], [1113, 947, 270, 38]] },
+  { "name": "app-vs-render-fps-focus", "reference": "verification/reference-render/fps-focus.png", "actual": "verification/app/cmp-fps-focus.png",
+    "masks": [[249, 229, 821, 494], [292, 745, 320, 26], [1117, 272, 262, 39], [1113, 947, 270, 38]] },
+  { "name": "app-vs-render-viewer", "reference": "verification/reference-render/viewer.png", "actual": "verification/app/cmp-viewer.png",
+    "masks": [[249, 224, 821, 440], [985, 185, 75, 22], [1116, 272, 264, 39], [1285, 619, 105, 25]] }
+]

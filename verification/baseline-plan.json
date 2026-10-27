@@ -1,0 +1,8 @@
+[
+  { "name": "baseline-start", "reference": "reference/screenshots/frame-start.png", "actual": "verification/reference-render/start.png", "masks": [] },
+  { "name": "baseline-sender", "reference": "reference/screenshots/frame-sender.png", "actual": "verification/reference-render/sender.png", "masks": [[249, 229, 821, 494]] },
+  { "name": "baseline-viewer", "reference": "reference/screenshots/frame-viewer.png", "actual": "verification/reference-render/viewer.png", "masks": [[249, 224, 821, 494], [990, 185, 70, 20]] },
+  { "name": "baseline-components", "reference": "reference/screenshots/frame-components.png", "actual": "verification/reference-render/sender.png", "locate": true, "masks": [] },
+  { "name": "baseline-fps-focus", "reference": "reference/screenshots/frame-fps-focus.png", "actual": "verification/reference-render/fps-focus.png", "locate": true, "masks": [] },
+  { "name": "baseline-player-controls", "reference": "reference/screenshots/frame-player-controls.png", "actual": "verification/reference-render/viewer.png", "locate": true, "masks": [[0, 56, 823, 440], [740, 15, 80, 25]] }
+]

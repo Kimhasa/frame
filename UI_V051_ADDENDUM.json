@@ -1,0 +1,15 @@
+{
+  "version": "0.5.1",
+  "base": "UI_V05_LOCK.json (unchanged)",
+  "request": "CLAUDE_CAPTURE_PLAYER_ADDENDUM.txt",
+  "note": "Allowed UI exception for the player controls display policy only. The 0.5 lock and its hashes are not modified; tools/verify-ui-v051.mjs proves the page equals the locked 0.5 markup once this stylesheet is removed. Player and preview frames keep the 0.5 layout.",
+  "stylesheet": {
+    "path": "work/player-ui.css",
+    "sha256": "fd4e7214fd0cecb4e9fc97b2984e7b311e77ae41ee821b9dfba792d34ccd967b"
+  },
+  "allowedDifferences": [
+    "#viewer-preview .player-controls (with its gradient) fades out while playing and takes no pointer events while hidden (.controls-idle, set by script); the controls overlay the picture, so the player frame keeps its size",
+    "#viewer-preview cursor is hidden together with the controls"
+  ],
+  "markupSha256": "c00e547a24e4ca1ac1564b8e77a5e6dd8c7ef0413ea3643488e0f05c2f75144f"
+}

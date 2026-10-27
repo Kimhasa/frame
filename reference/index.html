@@ -1,0 +1,808 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>FRAME Console</title>
+  <link rel="preload" href="./assets/fonts/PretendardVariable.woff2" as="font" type="font/woff2" crossorigin>
+  <style>@font-face {
+  font-family: Pretendard;
+  src: url('./assets/fonts/PretendardVariable.woff2') format('woff2');
+  font-weight: 45 920;
+  font-style: normal;
+  font-display: swap;
+}
+:root {
+  color-scheme: light;
+  --bg: #f5f6f8;
+  --surface: #fff;
+  --text: #242a32;
+  --muted: #747c87;
+  --line: #e0e4e8;
+  --green: #00a760;
+  --green-hover: #008c50;
+  --green-wash: #effaf4;
+  --error: #d84747;
+  --font: Pretendard, 'Segoe UI', 'Malgun Gothic', sans-serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; color: var(--text); background: var(--bg); font: 14px/1.5 var(--font); letter-spacing: -.15px; }
+button, input, select, summary { font: inherit; }
+button { color: inherit; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 36px; padding: 7px 13px; border: 1px solid #cdd3da; border-radius: 3px; background: #fff; white-space: nowrap; }
+button:hover:not(:disabled) { background: #f5f7f8; border-color: #a5afb9; }
+button:disabled { cursor: not-allowed; opacity: .5; }
+button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible, a:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
+button.primary { color: #fff; background: var(--green); border-color: var(--green); font-weight: 600; }
+button.primary:hover:not(:disabled) { background: var(--green-hover); border-color: var(--green-hover); }
+button.danger { color: var(--error); border-color: #e4b5b5; background: #fff; }
+button.danger:hover:not(:disabled) { background: #fff5f5; border-color: #d66e6e; }
+.icon-button { min-height: 28px; min-width: 28px; padding: 4px; border-color: transparent; background: transparent; }
+.icon-button:hover:not(:disabled) { border-color: transparent; background: #eef1f4; }
+svg { width: 18px; height: 18px; display: block; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.muted { color: var(--muted); }
+.numeric { font-variant-numeric: tabular-nums; }
+.hidden, [hidden] { display: none !important; }
+.topbar { height: 58px; position: sticky; z-index: 4; top: 0; display: flex; align-items: center; padding: 0 25px; background: #292f37; color: #fff; border-bottom: 1px solid #1c2229; }
+.brand-icon { color: #22d581; margin-right: 11px; }
+.brand-icon svg { width: 25px; height: 25px; stroke-width: 2; }
+.brand { font-size: 21px; font-weight: 750; letter-spacing: 1px; }
+.brand-subtitle { margin-left: 12px; padding-left: 13px; border-left: 1px solid #51565d; color: #c0c7cf; font-size: 13px; }
+.environment { margin-left: auto; display: flex; align-items: center; gap: 9px; font-size: 12px; color: #d4dae0; }
+.environment svg { width: 15px; height: 15px; }
+.app-layout { min-height: calc(100vh - 58px); display: grid; grid-template-columns: 212px minmax(0, 1fr); }
+.sidebar { background: #fff; border-right: 1px solid #dce1e6; position: sticky; top: 58px; height: calc(100vh - 58px); display: flex; flex-direction: column; }
+.nav-title { color: #838c98; font-size: 12px; margin: 30px 25px 15px; }
+.nav-menu { display: flex; flex-direction: column; gap: 4px; }
+.nav-item { min-height: 46px; width: 100%; justify-content: flex-start; padding: 12px 25px; border: 0; border-radius: 0; position: relative; color: #5d6672; gap: 12px; font-weight: 500; }
+.nav-item svg { width: 17px; height: 17px; }
+.nav-item[aria-selected='true'] { background: var(--green-wash); color: #00894f; font-weight: 650; }
+.nav-item[aria-selected='true']::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--green); }
+.nav-item:hover:not(:disabled) { background: #f4f7f6; }
+.sidebar-bottom { margin-top: auto; color: #a3aab3; font-size: 11px; padding: 22px 25px; }
+.content { min-width: 0; padding: 33px 36px 36px; }
+.page { max-width: 1580px; margin: auto; }
+.page-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 24px; min-height: 36px; }
+h1 { font-size: 25px; font-weight: 650; line-height: 1.4; letter-spacing: -.8px; margin: 0; }
+.status { display: inline-flex; align-items: center; padding: 4px 10px; border: 1px solid #d9dfe5; color: #737c87; background: #fff; font-size: 12px; border-radius: 3px; font-weight: 500; }
+.status.active { color: #00884e; background: var(--green-wash); border-color: #bde7ce; }
+.workspace { display: grid; grid-template-columns: minmax(0, 1fr) 312px; gap: 22px; align-items: start; }
+.panel { border: 1px solid var(--line); background: var(--surface); border-radius: 4px; overflow: hidden; }
+.panel-header { min-height: 51px; padding: 13px 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--line); }
+.panel-header h2 { font-size: 14px; font-weight: 600; margin: 0; }
+.panel-tools { display: flex; align-items: center; gap: 13px; color: #7c8590; font-size: 12px; }
+.preview { position: relative; width: 100%; height: clamp(300px, 45vh, 520px); background: #17212c; overflow: hidden; }
+.preview canvas { display: block; width: 100%; height: 100%; object-fit: contain; }
+.preview:fullscreen { height: 100vh; width: 100vw; }
+.source-row { padding: 14px 18px; min-height: 66px; display: flex; align-items: center; gap: 11px; border-bottom: 1px solid var(--line); }
+.source-row > svg { color: #8994a1; width: 19px; height: 19px; }
+.source-name { font-size: 13px; font-weight: 500; }
+.source-row button { margin-left: auto; min-height: 30px; font-size: 12px; padding: 5px 11px; }
+.metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 18px 0; }
+.metric { padding: 0 20px; border-left: 1px solid #e7eaee; }
+.metric:first-child { border-left: 0; }
+.metric-label { display: block; color: #858d97; font-size: 12px; margin-bottom: 6px; }
+.metric-value { font-size: 18px; font-weight: 550; font-variant-numeric: tabular-nums; line-height: 1.5; }
+.metric-value small { font-size: 11px; font-weight: 400; color: #8b939e; margin-left: 4px; }
+.settings { padding: 20px; }
+.settings h2, .info-panel h2 { font-size: 15px; margin: 0 0 23px; font-weight: 600; }
+.field { display: flex; flex-direction: column; gap: 7px; margin-bottom: 19px; min-width: 0; }
+.field label { font-size: 12px; color: #626c78; font-weight: 500; }
+.field input, .field select { font-family: var(--font); color: #323b46; font-size: 13px; width: 100%; min-width: 0; height: 37px; border: 1px solid #d6dce2; border-radius: 3px; background: #fff; padding: 7px 10px; font-variant-numeric: tabular-nums; }
+.field input:hover, .field select:hover { border-color: #a8b1bc; }
+.field input:disabled, .field select:disabled { background: #f6f7f9; color: #8a929c; border-color: #e1e5ea; }
+.field [aria-invalid='true'] { border-color: var(--error); }
+.error { color: var(--error); margin: 0; font-size: 11px; line-height: 1.6; }
+.field-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.advanced { border-top: 1px solid #e6e9ed; padding-top: 15px; margin: 1px 0 19px; }
+summary { list-style: none; cursor: pointer; }
+summary::-webkit-details-marker { display: none; }
+.advanced summary { color: #737c88; display: flex; align-items: center; gap: 6px; font-size: 12px; }
+.advanced summary svg { width: 13px; height: 13px; transform: rotate(0deg); transition: transform .15s; }
+.advanced[open] summary svg { transform: rotate(90deg); }
+.advanced-body { padding-top: 17px; }
+.advanced-body .field { margin-bottom: 13px; }
+.detail-pair { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 12px; padding: 7px 0; }
+.detail-pair span:first-child { color: #8b939e; }
+.start-button { width: 100%; min-height: 41px; font-size: 13px; }
+.address-panel { padding: 17px 19px; margin-top: 16px; }
+.address-panel h2 { font-size: 13px; font-weight: 600; margin: 0 0 12px; }
+.address-row { display: flex; align-items: center; padding: 6px 7px 6px 10px; background: #f7f8fa; border: 1px solid #e2e6eb; border-radius: 3px; min-width: 0; }
+.address { font-size: 11px; color: #5d6774; line-height: 1.6; overflow-wrap: anywhere; min-width: 0; font-family: var(--font); font-variant-numeric: tabular-nums; }
+.address-row .icon-button { margin-left: auto; flex: none; color: #7b8693; }
+.address-row svg { width: 14px; height: 14px; }
+.open-viewer { margin-top: 12px; width: 100%; min-height: 32px; font-size: 12px; }
+.open-viewer svg { width: 13px; height: 13px; margin-left: auto; }
+.events { margin-top: 17px; }
+.events > summary { display: flex; align-items: center; min-height: 48px; gap: 8px; padding: 13px 18px; font-size: 12px; font-weight: 500; }
+.event-count { color: #979fa9; font-variant-numeric: tabular-nums; font-size: 11px; font-weight: 400; }
+.events > summary > svg { margin-left: auto; width: 14px; height: 14px; color: #8a949f; transition: transform .15s; }
+.events[open] > summary > svg { transform: rotate(90deg); }
+.event-content { padding: 0 18px 13px; }
+.table-wrap { overflow: auto; max-height: 195px; }
+.event-table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 12px; }
+.event-table th, .event-table td { padding: 10px 11px; text-align: left; border-bottom: 1px solid #ebedf0; font-weight: 400; }
+.event-table th { font-size: 11px; color: #9199a3; background: #f8f9fa; position: sticky; top: 0; }
+.event-table th:first-child { width: 85px; }
+.event-table th:nth-child(2) { width: 74px; }
+.event-table td:first-child { color: #8d97a2; font-variant-numeric: tabular-nums; font-size: 11px; }
+.event-table td:nth-child(2) { color: #718094; font-size: 11px; }
+.event-table td:last-child { color: #66707b; overflow-wrap: anywhere; }
+.event-actions { display: flex; justify-content: flex-end; padding-top: 11px; }
+.event-actions button { min-height: 29px; padding: 4px 10px; font-size: 11px; }
+.viewer-form { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) auto; align-items: end; gap: 12px; padding: 19px 20px; margin-bottom: 20px; }
+.viewer-form .field { margin: 0; }
+.viewer-form button { min-height: 37px; min-width: 95px; }
+.empty { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; padding: 25px; background: #f9fafb; text-align: center; }
+.empty > svg { width: 33px; height: 33px; color: #aeb8c4; margin-bottom: 19px; stroke-width: 1.25; }
+.empty h2 { font-size: 17px; font-weight: 550; margin: 0 0 8px; color: #535e6c; }
+.empty p { font-size: 13px; color: #969faa; margin: 0; }
+.info-panel { padding: 20px; }
+.info-panel h2 { margin-bottom: 15px; }
+.info-panel dl { margin: 0; }
+.info-panel dl > div { display: flex; justify-content: space-between; padding: 13px 0; border-bottom: 1px solid #edf0f3; font-size: 12px; gap: 12px; }
+.info-panel dl > div:last-child { border: 0; }
+.info-panel dt { color: #8b949f; }
+.info-panel dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
+dialog { border: 1px solid #d4dae1; border-radius: 5px; padding: 0; background: #fff; color: var(--text); width: min(540px, calc(100% - 32px)); box-shadow: 0 15px 70px #14233324; }
+dialog::backdrop { background: #18233266; }
+.dialog-head { display: flex; align-items: center; justify-content: space-between; padding: 20px 23px; border-bottom: 1px solid var(--line); }
+.dialog-head h2 { font-size: 18px; font-weight: 600; margin: 0; }
+.dialog-head .icon-button { color: #7f8b99; }
+.dialog-body { padding: 23px; }
+.dialog-body p { font-size: 14px; color: #76818f; margin: 0; }
+.dialog-footer { padding: 15px 23px; background: #fafbfc; border-top: 1px solid var(--line); display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
+.dialog-footer button { min-width: 75px; }
+.source-options { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.source-choice { border-color: #dbe0e6; padding: 0; display: block; text-align: left; overflow: hidden; }
+.source-choice[aria-pressed='true'] { border-color: var(--green); box-shadow: 0 0 0 1px var(--green); }
+.source-thumb { display: flex; align-items: center; justify-content: center; height: 112px; background: #eef2f5; color: #9cabbc; border-bottom: 1px solid #e0e6ed; }
+.source-thumb.pattern { background: #192a37; color: #5faf91; }
+.source-thumb svg { width: 33px; height: 33px; stroke-width: 1.4; }
+.source-choice .source-label { padding: 12px 14px; display: block; font-size: 13px; }
+.toast { position: fixed; z-index: 10; left: calc(50% + 106px); bottom: 25px; transform: translate(-50%, 8px); opacity: 0; pointer-events: none; padding: 11px 17px; background: #303944; color: #fff; border-radius: 4px; font-size: 12px; transition: opacity .15s, transform .15s; box-shadow: 0 4px 20px #17233020; max-width: calc(100vw - 32px); }
+.toast.visible { opacity: 1; transform: translate(-50%, 0); }
+@media (min-width: 1700px) { .content { padding: 40px 48px; } .workspace { grid-template-columns: minmax(0, 1fr) 330px; gap: 25px; } }
+@media (max-width: 1150px) { .app-layout { grid-template-columns: 176px minmax(0, 1fr); } .content { padding: 27px 24px; } .workspace { grid-template-columns: minmax(0, 1fr) 280px; gap: 17px; } .settings { padding: 18px; } .metric { padding: 0 13px; } .metric-label { font-size: 11px; } .metric-value { font-size: 16px; } .nav-item { padding-left: 22px; } .toast { left: calc(50% + 88px); } }
+@media (max-width: 880px) { .workspace { grid-template-columns: 1fr; } .settings { padding: 20px; } .preview { height: auto; aspect-ratio: 16/9; } .viewer-form { grid-template-columns: 1fr 1fr; } .viewer-form button { grid-column: 1/-1; } }
+@media (max-width: 800px) { .topbar { height: 54px; padding: 0 17px; } .brand { font-size: 19px; } .brand-subtitle { font-size: 12px; } .app-layout { display: block; min-height: calc(100vh - 54px); } .sidebar { position: sticky; z-index: 3; top: 54px; height: auto; border-right: 0; border-bottom: 1px solid var(--line); } .nav-title, .sidebar-bottom { display: none; } .nav-menu { flex-direction: row; gap: 0; padding: 0 13px; } .nav-item { width: 95px; min-height: 45px; padding: 11px 14px; justify-content: center; font-size: 13px; gap: 8px; background: #fff !important; } .nav-item[aria-selected='true']::before { top: auto; bottom: 0; left: 12px; right: 12px; height: 2px; width: auto; } .nav-item svg { width: 15px; height: 15px; } .content { padding: 24px 16px; } h1 { font-size: 23px; } .page-heading { margin-bottom: 19px; } .preview { min-height: 180px; } .metrics { padding: 15px 0; } .metric { padding: 0 11px; } .metric-label { font-size: 10px; } .metric-value { font-size: 15px; } .metric-value small { font-size: 10px; margin-left: 2px; } .toast { left: 50%; } .viewer-form { padding: 16px; gap: 11px; } .event-table th:first-child { width: 68px; } .event-table th:nth-child(2) { width: 52px; } .event-table th, .event-table td { padding: 8px 5px; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+:root { --text: #20252d; --muted: #505c6b; --green: #008750; --green-hover: #007244; }
+body { font-size: 15px; line-height: 1.6; }
+button { font-size: 14px; min-height: 40px; }
+button:disabled { opacity: .5; }
+button.danger { color: #b42534; border-color: #d4a1a8; font-weight: 550; }
+.brand-subtitle { font-size: 14px; color: #e2e6eb; }
+.environment { font-size: 13px; color: #eef1f4; }
+.nav-title { font-size: 13px; color: #536071; }
+.nav-item { font-size: 16px; color: #3d4755; min-height: 50px; }
+.sidebar-bottom { font-size: 12px; color: #596575; }
+.content { padding-top: 22px; }
+.page-heading { position: sticky; top: 58px; z-index: 3; background: var(--bg); padding: 14px 0 17px; margin-bottom: 12px; gap: 14px; }
+h1 { font-size: 27px; color: #18202a; font-weight: 680; }
+.heading-actions { display: flex; align-items: center; gap: 13px; }
+.heading-actions .start-button, .connect-button { width: auto; min-width: 138px; min-height: 44px; font-size: 15px; padding: 9px 17px; }
+.status { font-size: 14px; padding: 5px 10px; color: #445264; border-color: #c7d0d9; }
+.status.active { color: #006e3f; border-color: #abd4bb; background: #ecf8f0; }
+.panel-header { min-height: 56px; }
+.panel-header h2 { font-size: 16px; font-weight: 650; color: #252e3a; }
+.panel-tools { font-size: 13px; color: #4d5a6a; }
+.icon-button { min-width: 34px; min-height: 34px; color: #48566a; }
+.preview { height: clamp(320px, 45vh, 540px); }
+.source-row { min-height: 70px; }
+.source-row > svg { color: #4c5c70; }
+.source-name { font-size: 15px; color: #202c3b; font-weight: 550; }
+.source-row button { min-height: 36px; font-size: 14px; }
+.metric-label { font-size: 13px; color: #4e5b6c; margin-bottom: 5px; }
+.metric-value { font-size: 22px; font-weight: 600; color: #192635; }
+.metric-value small { font-size: 12px; color: #536174; }
+.settings { padding: 22px; }
+.settings h2, .info-panel h2 { font-size: 17px; font-weight: 650; color: #202b39; }
+.settings-lock { margin: -8px 0 20px; padding: 9px 10px; background: #f1f4f7; color: #435268; font-size: 13px; border-radius: 3px; }
+.field { gap: 8px; margin-bottom: 19px; }
+.field label { font-size: 14px; font-weight: 550; color: #354254; }
+.field input, .field select { height: 43px; font-size: 15px; color: #202b3a; padding: 8px 10px; border-color: #bac4cf; }
+.field input:disabled, .field select:disabled { color: #667183; background: #f2f4f6; }
+.error { font-size: 13px; color: #b62431; }
+.advanced { margin-bottom: 0; padding-top: 17px; }
+.advanced summary { font-size: 14px; color: #3c4b60; }
+.detail-pair { font-size: 14px; }
+.detail-pair span:first-child { color: #536174; }
+.address-panel { padding: 18px 20px; }
+.address-panel h2 { font-size: 15px; color: #243041; }
+.address-row { padding: 10px 11px; }
+.address { color: #28394d; font-size: 13px; }
+.share-hint { color: #4e5c6d; font-size: 13px; margin: 12px 0 0; }
+.share-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 14px; }
+.share-actions button { min-height: 40px; font-size: 14px; padding: 7px 9px; }
+.share-actions svg { width: 16px; height: 16px; }
+.share-actions button:last-child:not(:disabled) { color: #006f43; background: #f1faf5; border-color: #9fcab0; }
+.events > summary { font-size: 14px; color: #354456; }
+.event-count { color: #526174; font-size: 12px; }
+.events > summary > svg { color: #536174; }
+.event-table { font-size: 13px; }
+.event-table th, .event-table td { padding-top: 11px; padding-bottom: 11px; }
+.event-table th { font-size: 12px; color: #526174; }
+.event-table td:first-child, .event-table td:nth-child(2) { color: #4f5f74; font-size: 12px; }
+.event-table td:last-child { color: #273a50; }
+.event-table td.table-empty { text-align: center; color: #536174; padding: 26px 10px; }
+.event-actions button { min-height: 34px; font-size: 13px; }
+.empty { background: #f5f7fa; }
+.empty > svg { color: #667b93; width: 40px; height: 40px; }
+.empty h2 { font-size: 20px; color: #273b52; font-weight: 600; }
+.empty p { font-size: 14px; color: #4d6077; }
+.empty button { margin-top: 22px; min-height: 44px; min-width: 125px; font-size: 15px; }
+.source-empty { background: #1b2836; }
+.source-empty > svg { color: #b7c8d9; width: 46px; height: 46px; margin-bottom: 23px; }
+.source-empty h2 { color: #f5f8fc; font-size: 23px; margin: 0; font-weight: 550; }
+.source-empty button { margin-top: 26px; }
+.connection-details { margin-top: 17px; }
+.connection-details > summary { display: flex; align-items: center; justify-content: space-between; padding: 17px 20px; font-weight: 600; font-size: 15px; color: #27384d; }
+.connection-details > summary svg { width: 15px; height: 15px; color: #55667c; }
+.connection-details[open] > summary svg { transform: rotate(90deg); }
+.connection-details[open] > summary { border-bottom: 1px solid var(--line); }
+.connection-details .info-panel { padding: 0 20px; }
+.info-panel dl > div { font-size: 14px; padding: 14px 0; }
+.info-panel dt { color: #4c5d73; }
+.info-panel dd { color: #23384f; font-weight: 500; }
+.viewer-sidebar .settings .field:last-child { margin-bottom: 0; }
+.player { outline-offset: -3px; }
+.player-controls { position: absolute; bottom: 0; left: 0; right: 0; padding: 27px 14px 12px; display: flex; align-items: center; gap: 14px; background: linear-gradient(transparent, #111b2aee); color: #fff; }
+.player-button { color: #fff; background: transparent; border: 0; padding: 6px 8px; min-height: 38px; gap: 7px; font-size: 14px; }
+.player-button:hover:not(:disabled) { background: #ffffff20; border: 0; }
+.player-button svg { width: 21px; height: 21px; }
+.player-spacer { flex: 1; }
+.live-label { color: #fff; background: #ad2935; padding: 2px 6px; border-radius: 3px; font-size: 12px; font-weight: 650; letter-spacing: .3px; }
+.pause-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 17px 20px; display: flex; align-items: center; flex-direction: column; gap: 9px; color: #fff; background: #0c1524c9; border-radius: 6px; font-size: 15px; pointer-events: none; }
+.pause-overlay svg { width: 31px; height: 31px; }
+.is-wide .viewer-workspace { grid-template-columns: minmax(0, 1fr); }
+.is-wide .viewer-sidebar { display: none; }
+.is-wide .player { height: min(70vh, 800px); }
+.player:fullscreen, .is-wide .player:fullscreen { width: 100vw; height: 100vh; aspect-ratio: auto; }
+.dialog-head h2 { font-size: 20px; color: #202e3e; }
+.dialog-body p { color: #40546d; font-size: 15px; }
+.source-choice .source-label { font-size: 15px; padding: 13px 15px; color: #25364b; }
+.dialog-footer button { font-size: 14px; min-height: 40px; }
+.toast { font-size: 14px; }
+@media (min-width: 1700px) { .content { padding-top: 27px; } .workspace { grid-template-columns: minmax(0, 1fr) 340px; } }
+@media (max-width: 1150px) { .metric-label { font-size: 13px; } .metric-value { font-size: 20px; } .settings { padding: 19px; } }
+@media (max-width: 880px) { .preview { height: auto; aspect-ratio: 16/9; } .is-wide .player { height: auto; aspect-ratio: 16/9; } }
+@media (max-width: 800px) {
+  .content { padding-top: 7px; }
+  .page-heading { top: 99px; padding: 13px 0 16px; margin-bottom: 7px; }
+  h1 { font-size: 25px; }
+  .nav-item { font-size: 15px; min-height: 45px; }
+  .heading-actions { gap: 10px; }
+  .metric-label { font-size: 13px; }
+  .metric-value { font-size: 21px; }
+  .metric-value small { font-size: 12px; }
+  .brand-subtitle { font-size: 13px; }
+  .field input, .field select { font-size: 15px; height: 43px; }
+  .event-table th:first-child { width: 80px; }
+  .event-table th:nth-child(2) { width: 60px; }
+}
+@media (max-width: 480px) {
+  .page-heading { flex-wrap: wrap; }
+  .heading-actions { justify-content: space-between; width: 100%; }
+  .heading-actions .start-button, .connect-button { min-width: 142px; }
+  .metrics { grid-template-columns: 1fr 1fr; row-gap: 17px; padding: 17px 0; }
+  .metric:nth-child(3) { border-left: 0; }
+  .metric { padding-left: 18px; }
+  .source-empty h2 { font-size: 19px; }
+  .source-empty > svg { width: 33px; height: 33px; margin-bottom: 14px; }
+  .source-empty button { margin-top: 16px; min-height: 40px; }
+  .source-thumb { height: 95px; }
+  .player-controls { gap: 5px; padding: 22px 5px 7px; }
+  .player-button { padding: 5px; font-size: 13px; }
+  .live-label { font-size: 11px; padding: 2px 4px; }
+}
+
+.field input:not([type='range']):focus, .field input:not([type='range']):focus-visible {
+  outline: none;
+  outline-offset: 0;
+  border-color: var(--green);
+  box-shadow: inset 0 0 0 1px var(--green);
+  transition: background-color .12s;
+}
+.field input:not([type='range']), .select-trigger, .input-suffix { transition: border-color .12s, box-shadow .12s, background-color .12s; }
+.field input[type='hidden'] { display: none !important; }
+.field input[type='number'] { appearance: textfield; -moz-appearance: textfield; }
+.field input::-webkit-outer-spin-button, .field input::-webkit-inner-spin-button { appearance: none; -webkit-appearance: none; margin: 0; }
+button:focus-visible, summary:focus-visible, a:focus-visible { outline: 2px solid var(--green); outline-offset: -2px; }
+.field input { border-radius: 6px; }
+.field-pair { align-items: start; }
+.control-hint { word-break: keep-all; overflow-wrap: break-word; }
+.select-control { width: 100%; min-width: 0; }
+.select-trigger { width: 100%; height: 44px; min-height: 44px; justify-content: space-between; border: 1px solid #bac4cf; border-radius: 6px; padding: 8px 11px; background: #fff; color: #202b3a; font-size: 15px; font-weight: 450; }
+.select-trigger > span { overflow: hidden; text-overflow: ellipsis; }
+.select-trigger > svg { width: 15px; height: 15px; color: #637184; transition: transform .15s; }
+.select-trigger:hover:not(:disabled) { background: #fff; border-color: #7f91a3; }
+.select-trigger:focus, .select-trigger:focus-visible, .select-trigger[aria-expanded='true'] { outline: none; outline-offset: 0; border-color: var(--green); box-shadow: inset 0 0 0 1px var(--green); transition: background-color .12s; }
+.select-trigger[aria-expanded='true'] > svg { transform: rotate(180deg); }
+.select-trigger:disabled { opacity: 1; color: #667183; background: #f2f4f6; border-color: #e1e5ea; cursor: not-allowed; }
+.select-popup { position: fixed; z-index: 100; padding: 5px; background: #fff; border: 1px solid #d6dfe5; border-radius: 8px; box-shadow: 0 8px 25px #2336471c, 0 2px 5px #2336470a; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: #c6d2cc transparent; }
+.select-popup::-webkit-scrollbar { width: 5px; }
+.select-popup::-webkit-scrollbar-thumb { border-radius: 5px; background: #c6d2cc; }
+.select-option { padding: 9px 9px; min-height: 40px; display: flex; align-items: center; justify-content: space-between; gap: 6px; cursor: pointer; border-radius: 4px; color: #243346; }
+.select-option.is-active { background: #f0f5f2; }
+.select-option[aria-selected='true'] { color: #006e43; }
+.select-option-copy { display: flex; flex-direction: column; min-width: 0; }
+.select-option-label { font-size: 14px; line-height: 1.6; font-weight: 500; }
+.select-option-detail { font-size: 12px; line-height: 1.5; color: #637184; }
+.select-option-check { visibility: hidden; flex: none; }
+.select-option-check svg { width: 15px; height: 15px; }
+.select-option[aria-selected='true'] .select-option-check { visibility: visible; }
+.input-suffix { width: 100%; display: flex; align-items: center; border: 1px solid #bac4cf; background: #fff; border-radius: 6px; }
+.input-suffix:focus-within { border-color: var(--green); box-shadow: inset 0 0 0 1px var(--green); }
+.input-suffix input { border: none; box-shadow: none; background: transparent; min-width: 0; }
+.input-suffix input:focus, .input-suffix input:focus-visible { border: none !important; box-shadow: none !important; outline: none; }
+.input-suffix > span { padding-right: 12px; color: #5a687a; font-size: 13px; }
+.input-suffix:has(input:disabled) { background: #f2f4f6; border-color: #e1e5ea; }
+.input-suffix input:disabled { border: none; background: transparent; }
+.control-hint { font-size: 13px; line-height: 1.65; color: #4f6074; margin: -3px 0 19px; }
+.audio-section { border-top: 1px solid #e3e8ed; padding-top: 18px; margin-top: 2px; }
+.audio-channel { margin: -3px 0 18px; }
+.channel-heading { display: flex; align-items: center; justify-content: space-between; font-size: 13px; color: #3d4f65; margin-bottom: 7px; }
+.channel-heading output { font-size: 12px; font-variant-numeric: tabular-nums; color: #4b5d72; }
+.volume-control { display: flex; align-items: center; gap: 10px; }
+.volume-button { width: 30px; min-width: 30px; min-height: 30px; padding: 4px; color: #4a6077; border: 0; background: transparent; }
+.volume-button:hover:not(:disabled) { background: #eef3f1; border: 0; }
+.volume-button[aria-pressed='true'] { color: #96636c; }
+.volume-button svg { width: 19px; height: 19px; }
+input[type='range'] { --fill: 80%; appearance: none; -webkit-appearance: none; min-width: 0; width: 100%; height: 24px; padding: 0; margin: 0; cursor: pointer; background: transparent; border: none; outline: none; box-shadow: none; border-radius: 0; }
+input[type='range']::-webkit-slider-runnable-track { height: 4px; border-radius: 4px; background: linear-gradient(to right, var(--green) 0 var(--fill), #dce4e9 var(--fill) 100%); }
+input[type='range']::-webkit-slider-thumb { appearance: none; -webkit-appearance: none; width: 13px; height: 13px; background: var(--green); border: 2px solid #fff; border-radius: 50%; margin-top: -4.5px; box-shadow: 0 0 0 1px #00875040; }
+input[type='range']::-moz-range-track { height: 4px; border-radius: 4px; background: #dce4e9; }
+input[type='range']::-moz-range-progress { height: 4px; border-radius: 4px; background: var(--green); }
+input[type='range']::-moz-range-thumb { width: 10px; height: 10px; border: 2px solid #fff; border-radius: 50%; background: var(--green); }
+input[type='range']:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 3px #00875038; }
+input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #00875038; }
+.field-label-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.field label.switch-label { display: flex; gap: 7px; align-items: center; font-size: 12px; font-weight: 450; color: #506477; cursor: pointer; }
+.field input.switch { appearance: none; -webkit-appearance: none; height: 20px; width: 35px; padding: 0; margin: 0; background: #bcc8d2; border: none; border-radius: 12px; position: relative; cursor: pointer; }
+.field input.switch::after { content: ''; position: absolute; width: 14px; height: 14px; border-radius: 50%; background: #fff; left: 3px; top: 3px; transition: transform .15s; box-shadow: 0 1px 2px #0001; }
+.field input.switch:checked { background: var(--green); }
+.field input.switch:checked::after { transform: translateX(15px); }
+.field input.switch:focus-visible { box-shadow: 0 0 0 2px #00875038; }
+.field input.switch:disabled { opacity: .55; cursor: not-allowed; }
+.player-controls { gap: 9px; }
+.player-volume { display: flex; align-items: center; gap: 5px; }
+.player-volume input[type='range'] { width: 78px; --green: #fff; }
+.player-volume input[type='range']::-webkit-slider-runnable-track { background: linear-gradient(to right, #fff 0 var(--fill), #ffffff45 var(--fill) 100%); }
+.player-volume input[type='range']::-webkit-slider-thumb { width: 11px; height: 11px; margin-top: -3.5px; border: none; box-shadow: none; }
+.player-volume input[type='range']::-moz-range-thumb { width: 11px; height: 11px; border: none; }
+.player-volume input[type='range']::-moz-range-track { background: #ffffff45; }
+.player-volume input[type='range']::-moz-range-progress { background: #fff; }
+.player-volume input[type='range']:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 3px #ffffff45; }
+.player-quality-menu { position: absolute; right: 12px; bottom: 63px; width: 206px; padding: 7px; max-height: min(350px, calc(100% - 78px)); overflow-y: auto; background: #202a38f5; color: #fff; border: 1px solid #ffffff1a; border-radius: 7px; z-index: 2; box-shadow: 0 6px 24px #0003; scrollbar-width: thin; }
+.quality-menu-title { font-size: 13px; font-weight: 550; color: #c9d4e2; padding: 8px 10px 10px; border-bottom: 1px solid #ffffff1a; margin-bottom: 4px; }
+.quality-menu-option { width: 100%; min-height: 39px; padding: 8px 9px; justify-content: space-between; gap: 12px; background: transparent; border: 0; color: #f3f6fa; font-size: 14px; text-align: left; }
+.quality-menu-option:hover:not(:disabled), .quality-menu-option:focus-visible { background: #ffffff15; border: 0; outline-color: #9cd9b8; }
+.quality-menu-option > svg { width: 15px; height: 15px; opacity: 0; }
+.quality-menu-option[aria-checked='true'] > svg { opacity: 1; color: #9cd9b8; }
+.quality-option-copy { display: flex; flex-direction: column; }
+.quality-option-copy small { font-size: 11px; color: #b8c8d9; }
+@media (max-width: 650px) { .player-controls .control-label { display: none; } .player-volume input[type='range'] { width: 65px; } .player-button { padding: 6px; min-width: 32px; } }
+@media (max-width: 480px) { .player-controls { gap: 3px; padding-right: 7px; padding-left: 7px; } .player-volume { gap: 3px; } .player-volume input[type='range'] { width: 56px; } .player-controls .live-label { display: none; } .player-controls .player-button { min-width: 30px; width: 30px; padding: 4px; } .player-quality-menu { right: 7px; bottom: 52px; max-height: calc(100% - 60px); width: 188px; } }
+</style>
+</head>
+<body>
+<svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden"><defs>
+<symbol id="i-frame" viewBox="0 0 24 24"><path d="M8 3H3v5M16 3h5v5M21 16v5h-5M8 21H3v-5"/><path d="M8 8h8v8H8z"/></symbol>
+<symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+<symbol id="i-radio" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><path d="M7.8 7.8a6 6 0 0 0 0 8.4m8.4-8.4a6 6 0 0 1 0 8.4M4.9 4.9a10 10 0 0 0 0 14.2m14.2-14.2a10 10 0 0 1 0 14.2"/></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7z"/></symbol>
+<symbol id="i-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1"/></symbol>
+<symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V4H4v12h4"/></symbol>
+<symbol id="i-expand" viewBox="0 0 24 24"><path d="M8 3H3v5m13-5h5v5m0 8v5h-5M3 16v5h5"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+<symbol id="i-link" viewBox="0 0 24 24"><path d="m10 13 4-4m-6 6-1 1a4 4 0 0 1-6-6l5-5a4 4 0 0 1 6 0m0 4 1-1a4 4 0 1 1 6 6l-5 5a4 4 0 0 1-6 0" transform="translate(1 1) scale(.9)"/></symbol>
+<symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-5-5 5 5-5 5"/></symbol>
+<symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-9v.1"/></symbol>
+<symbol id="i-log" viewBox="0 0 24 24"><path d="M8 5h12M8 12h12M8 19h12M3 5h.1M3 12h.1M3 19h.1"/></symbol>
+<symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5m-3.5-4a7 7 0 0 1 11.8-2L20 9M4 15l2.7 3A7 7 0 0 0 18.5 16"/></symbol>
+<symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+<symbol id="i-settings" viewBox="0 0 24 24"><path d="M4 7h16M4 17h16"/><circle cx="8" cy="7" r="3" fill="currentColor" stroke="none"/><circle cx="16" cy="17" r="3" fill="currentColor" stroke="none"/></symbol>
+<symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a18 18 0 0 1 0 18 18 18 0 0 1 0-18"/></symbol>
+<symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14" stroke-width="3"/></symbol><symbol id="i-layout" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="1"/><path d="M16 5v14"/></symbol><symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol><symbol id="i-volume" viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4zM15 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></symbol><symbol id="i-volume-off" viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4zM16 9l6 6m0-6-6 6"/></symbol><symbol id="i-gear" viewBox="0 0 24 24"><path d="m9 3-1 3-3 1-2 3 2 2v3l3 1 1 3h6l1-3 3-1v-3l2-2-2-3-3-1-1-3z"/><circle cx="12" cy="11" r="3"/></symbol></defs></svg>
+<header class="topbar">
+  <span class="brand-icon"><svg aria-hidden="true"><use href="#i-frame"/></svg></span>
+  <span class="brand">FRAME</span><span class="brand-subtitle">Console</span>
+  <span class="environment"><svg aria-hidden="true"><use href="#i-globe"/></svg>내부망</span>
+</header>
+<div class="app-layout">
+  <aside class="sidebar">
+    <p class="nav-title">스트리밍</p>
+    <nav class="nav-menu" role="tablist" aria-label="메뉴" aria-orientation="vertical">
+      <button class="nav-item" id="tab-sender" role="tab" aria-selected="true" aria-controls="sender-view" tabindex="0"><svg aria-hidden="true"><use href="#i-radio"/></svg>송출</button>
+      <button class="nav-item" id="tab-viewer" role="tab" aria-selected="false" aria-controls="viewer-view" tabindex="-1"><svg aria-hidden="true"><use href="#i-monitor"/></svg>수신</button>
+    </nav>
+    <div class="sidebar-bottom">v0.4</div>
+  </aside>
+  <main class="content">
+    <section class="page" id="sender-view" role="tabpanel" aria-labelledby="tab-sender">
+      <div class="page-heading"><h1>화면 송출</h1><div class="heading-actions"><span class="status" id="sender-status" role="status">창 선택 필요</span><button class="primary start-button" id="start-button" type="submit" form="sender-form" disabled><svg aria-hidden="true"><use href="#i-play"/></svg><span>송출 시작</span></button></div></div>
+      <div class="workspace">
+        <div>
+          <article class="panel">
+            <div class="panel-header"><h2>미리보기</h2><div class="panel-tools"><span class="numeric" id="preview-resolution">1280 × 720</span><button class="icon-button" id="sender-fullscreen" aria-label="미리보기 전체 화면"><svg aria-hidden="true"><use href="#i-expand"/></svg></button></div></div>
+            <div class="preview" id="sender-preview"><canvas id="sender-canvas" width="1280" height="720" aria-label="선택한 창"></canvas><div class="empty source-empty" id="sender-empty"><svg aria-hidden="true"><use href="#i-monitor"/></svg><h2>공유할 창을 선택하세요</h2><button class="primary" id="source-empty-button">창 선택</button></div></div>
+            <div class="source-row" id="source-row" hidden><svg aria-hidden="true"><use href="#i-monitor"/></svg><span class="source-name" id="source-name"></span><button id="source-button">창 변경</button></div>
+            <div class="metrics">
+              <div class="metric"><span class="metric-label">경과 시간</span><span class="metric-value" id="metric-duration">00:00:00</span></div>
+              <div class="metric"><span class="metric-label">설정 프레임</span><span class="metric-value"><span id="metric-fps">—</span><small>fps</small></span></div>
+              <div class="metric"><span class="metric-label">비트레이트</span><span class="metric-value"><span id="metric-bitrate">—</span><small>Mbps</small></span></div>
+              <div class="metric"><span class="metric-label">연결 수</span><span class="metric-value" id="metric-viewers">0</span></div>
+            </div>
+          </article>
+          <details class="panel events" id="events-panel">
+            <summary>이벤트 기록<span class="event-count" id="log-count">0</span><svg aria-hidden="true"><use href="#i-arrow"/></svg></summary>
+            <div class="event-content"><div class="table-wrap"><table class="event-table"><thead><tr><th scope="col">시간</th><th scope="col">구분</th><th scope="col">내용</th></tr></thead><tbody id="log-list"><tr><td colspan="3" class="table-empty">아직 기록이 없습니다.</td></tr></tbody></table></div><div class="event-actions"><button id="export-log" disabled>저장</button></div></div>
+          </details>
+        </div>
+        <aside>
+          <form class="panel settings" id="sender-form" novalidate>
+            <h2>송출 설정</h2><p class="settings-lock" id="settings-lock" hidden>송출 중에는 음량만 변경할 수 있습니다.</p>
+            <div class="field"><label for="server-host">서버 주소</label><input id="server-host" value="192.168.10.20" spellcheck="false" autocomplete="off" aria-describedby="host-error"><p class="error" id="host-error" role="alert" hidden></p></div>
+            <div class="field"><label for="stream-path">스트림 이름</label><input id="stream-path" value="screen-01" spellcheck="false" autocomplete="off" aria-describedby="stream-error"><p class="error" id="stream-error" role="alert" hidden></p></div>
+            <div class="field-pair"><div class="field"><label id="resolution-label" for="resolution-trigger">화질</label><div class="select-control"><input id="resolution" type="hidden" value="1920x1080"><button id="resolution-trigger" class="select-trigger" type="button" role="combobox" aria-labelledby="resolution-label" aria-haspopup="listbox" aria-expanded="false" aria-controls="select-popup"><span id="resolution-value">1080p</span><svg aria-hidden="true"><use href="#i-chevron"/></svg></button></div></div><div class="field"><label id="fps-label" for="fps-trigger">프레임</label><div class="select-control"><input id="fps" type="hidden" value="60"><button id="fps-trigger" class="select-trigger" type="button" role="combobox" aria-labelledby="fps-label" aria-haspopup="listbox" aria-expanded="false" aria-controls="select-popup"><span id="fps-value">60 fps</span><svg aria-hidden="true"><use href="#i-chevron"/></svg></button></div></div></div>
+            <div class="field custom-fps" id="custom-fps-field" hidden><label for="custom-fps">프레임 값</label><div class="input-suffix"><input id="custom-fps" type="number" min="30" max="165" step="1" value="90" aria-describedby="fps-error"><span>fps</span></div><p class="error" id="fps-error" role="alert" hidden></p></div><p class="control-hint" id="fps-hint" hidden>원본 화면과 장비 성능에 따라 달라집니다.</p>
+            <div class="audio-section"><div class="field"><label id="audio-source-label" for="audio-source-trigger">오디오</label><div class="select-control"><input id="audio-source" type="hidden" value="none"><button id="audio-source-trigger" class="select-trigger" type="button" role="combobox" aria-labelledby="audio-source-label" aria-haspopup="listbox" aria-expanded="false" aria-controls="select-popup"><span id="audio-source-value">사용 안 함</span><svg aria-hidden="true"><use href="#i-chevron"/></svg></button></div></div><div class="audio-channel" id="system-channel" hidden><div class="channel-heading"><label for="system-volume">시스템 소리</label><output id="system-volume-value" for="system-volume">80%</output></div><div class="volume-control"><button type="button" class="volume-button" id="system-mute" aria-label="시스템 소리 음소거" aria-pressed="false"><svg aria-hidden="true"><use href="#i-volume"/></svg></button><input id="system-volume" type="range" min="0" max="100" value="80" aria-label="시스템 소리 음량"></div></div><div class="audio-channel" id="mic-channel" hidden><div class="channel-heading"><label for="mic-volume">마이크</label><output id="mic-volume-value" for="mic-volume">100%</output></div><div class="volume-control"><button type="button" class="volume-button" id="mic-mute" aria-label="마이크 음소거" aria-pressed="false"><svg aria-hidden="true"><use href="#i-volume"/></svg></button><input id="mic-volume" type="range" min="0" max="100" value="100" aria-label="마이크 음량"></div></div></div>
+            <details class="advanced" id="advanced-settings"><summary><svg aria-hidden="true"><use href="#i-arrow"/></svg>고급 설정</summary><div class="advanced-body"><div class="field bitrate-field"><div class="field-label-row"><label for="quality">비트레이트</label><label class="switch-label" for="bitrate-auto">자동<input id="bitrate-auto" class="switch" title="화질과 프레임을 기준으로 계산합니다." type="checkbox" role="switch" checked></label></div><div class="input-suffix"><input id="quality" type="number" min="0.5" max="200" step="0.5" value="8" aria-describedby="bitrate-error" disabled><span>Mbps</span></div><p class="error" id="bitrate-error" role="alert" hidden></p></div><div class="field-pair"><div class="field"><label for="publish-port">송출 포트</label><input id="publish-port" type="number" min="1" max="65535" value="8554" aria-describedby="port-error"></div><div class="field"><label for="viewer-port">시청 포트</label><input id="viewer-port" type="number" min="1" max="65535" value="8889" aria-describedby="port-error"></div></div><p class="error" id="port-error" role="alert" hidden></p><div class="detail-pair"><span>코덱</span><span>H.264</span></div></div></details>
+          </form>
+          <article class="panel address-panel"><h2>시청 주소</h2><div class="address-row"><code class="address" id="viewer-address">http://192.168.10.20:8889/screen-01</code></div><p class="share-hint" id="share-hint">송출을 시작하면 공유할 수 있습니다.</p><div class="share-actions"><button id="copy-address" disabled><svg aria-hidden="true"><use href="#i-copy"/></svg><span id="copy-label">주소 복사</span></button><button id="open-viewer" disabled>시청하기<svg aria-hidden="true"><use href="#i-arrow"/></svg></button></div></article>
+        </aside>
+      </div>
+    </section>
+    <section class="page" id="viewer-view" role="tabpanel" aria-labelledby="tab-viewer" hidden>
+      <div class="page-heading"><h1>스트림 수신</h1><div class="heading-actions"><span class="status" id="viewer-status" role="status">대기</span><button class="primary connect-button" id="connect-button" type="submit" form="viewer-form">연결</button></div></div>
+      <div class="workspace viewer-workspace">
+        <article class="panel"><div class="panel-header"><h2 id="viewer-title">수신 화면</h2><div class="panel-tools"><span class="numeric" id="viewer-clock">00:00:00</span></div></div><div class="preview player" id="viewer-preview" tabindex="0" aria-label="영상 플레이어"><canvas id="viewer-canvas" width="1280" height="720" aria-label="수신 영상"></canvas><div class="empty" id="no-signal"><svg aria-hidden="true"><use href="#i-monitor"/></svg><h2 id="empty-heading">연결된 스트림이 없습니다</h2><p id="empty-description">서버 주소를 확인한 뒤 연결하세요.</p><button class="primary" id="retry-button" type="submit" form="viewer-form" hidden>다시 연결</button></div><div class="pause-overlay" id="pause-overlay" hidden><svg aria-hidden="true"><use href="#i-pause"/></svg><span>일시정지</span></div><div class="player-controls" id="player-controls" hidden><button id="player-pause" class="player-button" aria-label="일시정지" title="일시정지 (Space)"><svg aria-hidden="true"><use href="#i-pause"/></svg><span class="control-label">일시정지</span></button><div class="player-volume"><button id="player-mute" class="player-button" aria-label="음소거" aria-pressed="false" title="음소거 (M)"><svg aria-hidden="true"><use href="#i-volume"/></svg></button><input id="player-volume" type="range" min="0" max="100" value="80" aria-label="재생 음량"></div><span class="live-label">LIVE</span><span class="player-spacer"></span><button id="player-settings" class="player-button" aria-label="재생 화질" aria-expanded="false" aria-controls="player-quality-menu" title="재생 화질"><svg aria-hidden="true"><use href="#i-gear"/></svg><span class="control-label" id="player-quality-label">1080p</span></button><button id="viewer-wide" class="player-button" aria-label="넓게 보기" aria-pressed="false" title="넓게 보기 (T)"><svg aria-hidden="true"><use href="#i-layout"/></svg><span class="control-label">넓게 보기</span></button><button id="viewer-fullscreen" class="player-button" aria-label="전체 화면" title="전체 화면 (F)"><svg aria-hidden="true"><use href="#i-expand"/></svg></button></div><div class="player-quality-menu" id="player-quality-menu" role="menu" aria-label="재생 화질" hidden><div class="quality-menu-title">화질</div><div id="player-quality-options"></div></div></div></article>
+        <aside class="viewer-sidebar"><form class="panel settings" id="viewer-form" novalidate><h2>연결 설정</h2><div class="field"><label for="viewer-host">서버 주소</label><input id="viewer-host" value="192.168.10.20" spellcheck="false" autocomplete="off" aria-describedby="viewer-host-error"><p class="error" id="viewer-host-error" role="alert" hidden></p></div><div class="field"><label for="viewer-stream">스트림 이름</label><input id="viewer-stream" value="screen-01" spellcheck="false" autocomplete="off" aria-describedby="viewer-stream-error"><p class="error" id="viewer-stream-error" role="alert" hidden></p></div></form><details class="panel connection-details" open><summary>영상 정보<svg aria-hidden="true"><use href="#i-arrow"/></svg></summary><div class="info-panel"><dl><div><dt>재생 화질</dt><dd id="info-resolution">—</dd></div><div><dt>설정 프레임</dt><dd id="info-fps">—</dd></div><div><dt>비트레이트</dt><dd id="info-bitrate">—</dd></div><div><dt>오디오</dt><dd id="info-audio">—</dd></div><div><dt>코덱</dt><dd>H.264</dd></div><div><dt>프로토콜</dt><dd>WebRTC</dd></div></dl></div></details></aside>
+      </div>
+    </section>
+  </main>
+</div>
+<dialog id="source-dialog" aria-labelledby="source-title"><div class="dialog-head"><h2 id="source-title">공유할 창</h2><button class="icon-button" data-close="source-dialog" aria-label="창 선택 닫기"><svg aria-hidden="true"><use href="#i-close"/></svg></button></div><div class="dialog-body"><div class="source-options"><button class="source-choice" data-source="pattern" aria-pressed="true"><span class="source-thumb pattern"><svg aria-hidden="true"><use href="#i-frame"/></svg></span><span class="source-label">화면 테스트</span></button><button class="source-choice" data-source="document" aria-pressed="false"><span class="source-thumb"><svg aria-hidden="true"><use href="#i-log"/></svg></span><span class="source-label">문서</span></button></div></div><div class="dialog-footer"><button data-close="source-dialog">취소</button><button class="primary" id="confirm-source">선택</button></div></dialog>
+<dialog id="stop-dialog" aria-labelledby="stop-title"><div class="dialog-head"><h2 id="stop-title">송출을 중지할까요?</h2><button class="icon-button" data-close="stop-dialog" aria-label="중지 안내 닫기"><svg aria-hidden="true"><use href="#i-close"/></svg></button></div><div class="dialog-body"><p>연결된 시청 화면이 종료됩니다.</p></div><div class="dialog-footer"><button data-close="stop-dialog">취소</button><button class="danger" id="confirm-stop">중지</button></div></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="select-popup" id="select-popup" role="listbox" hidden></div>
+<script>const FrameControls = (() => {
+  function mount(definitions) {
+    const popup = document.getElementById('select-popup');
+    const controls = Object.entries(definitions).map(([id, options]) => ({ id, options, input: document.getElementById(id), trigger: document.getElementById(id + '-trigger'), label: document.getElementById(id + '-value') }));
+    let current = null, active = 0, buffer = '', typedAt = 0;
+    function close(restoreFocus = false) {
+      if (!current) return;
+      const previous = current;
+      previous.trigger.setAttribute('aria-expanded', 'false');
+      previous.trigger.removeAttribute('aria-activedescendant');
+      popup.hidden = true; current = null; buffer = '';
+      if (restoreFocus && !previous.trigger.disabled) previous.trigger.focus({ preventScroll: true });
+    }
+    function sync() {
+      for (const control of controls) {
+        control.label.textContent = control.options.find(option => option.value === control.input.value)?.label || control.input.value;
+        control.trigger.disabled = control.input.disabled;
+        if (current === control && control.input.disabled) close();
+      }
+    }
+    function position() {
+      if (!current) return;
+      const rect = current.trigger.getBoundingClientRect();
+      const below = innerHeight - rect.bottom - 12;
+      const above = rect.top - 12;
+      const upward = below < Math.min(260, popup.scrollHeight) && above > below;
+      const room = Math.max(100, upward ? above : below);
+      popup.style.width = rect.width + 'px';
+      popup.style.maxHeight = Math.min(310, room) + 'px';
+      popup.style.left = Math.max(8, Math.min(rect.left, innerWidth - rect.width - 8)) + 'px';
+      popup.style.top = (upward ? Math.max(8, rect.top - Math.min(popup.scrollHeight, 310, room) - 6) : rect.bottom + 6) + 'px';
+      popup.dataset.direction = upward ? 'up' : 'down';
+    }
+    function highlight(scroll = false) {
+      if (!current) return;
+      const items = [...popup.children];
+      items.forEach((item, index) => item.classList.toggle('is-active', index === active));
+      current.trigger.setAttribute('aria-activedescendant', items[active].id);
+      if (scroll) items[active].scrollIntoView({ block: 'nearest' });
+    }
+    function commit() {
+      if (!current) return;
+      const control = current, value = control.options[active].value;
+      close(true);
+      if (control.input.value !== value) {
+        control.input.value = value;
+        control.input.dispatchEvent(new Event('input', { bubbles: true }));
+        control.input.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      sync();
+    }
+    function open(control) {
+      if (control.trigger.disabled) return;
+      if (current) close();
+      current = control;
+      active = Math.max(0, control.options.findIndex(option => option.value === control.input.value));
+      popup.replaceChildren();
+      popup.setAttribute('aria-labelledby', control.id + '-label');
+      control.options.forEach((option, index) => {
+        const item = document.createElement('div');
+        item.id = 'choice-' + control.id + '-' + index;
+        item.className = 'select-option';
+        item.setAttribute('role', 'option');
+        item.setAttribute('aria-selected', String(option.value === control.input.value));
+        const content = document.createElement('span'); content.className = 'select-option-copy';
+        const label = document.createElement('span'); label.className = 'select-option-label'; label.textContent = option.label; content.append(label);
+        if (option.detail) { const detail = document.createElement('span'); detail.className = 'select-option-detail'; detail.textContent = option.detail; content.append(detail); }
+        const check = document.createElement('span'); check.className = 'select-option-check'; check.innerHTML = '<svg aria-hidden="true"><use href="#i-check"/></svg>';
+        item.append(content, check);
+        item.addEventListener('pointerdown', event => event.preventDefault());
+        item.addEventListener('pointermove', () => { active = index; highlight(); });
+        item.addEventListener('click', () => { active = index; commit(); });
+        popup.append(item);
+      });
+      popup.hidden = false;
+      control.trigger.setAttribute('aria-expanded', 'true');
+      position(); highlight(true);
+    }
+    for (const control of controls) {
+      control.trigger.addEventListener('click', () => current === control ? close() : open(control));
+      control.trigger.addEventListener('keydown', event => {
+        const key = event.key;
+        if (key === 'Escape' && current === control) { event.preventDefault(); event.stopPropagation(); close(true); return; }
+        if (key === 'Tab') { if (current === control) commit(); return; }
+        if (['Enter', ' ', 'ArrowDown', 'ArrowUp', 'Home', 'End', 'PageDown', 'PageUp'].includes(key)) {
+          event.preventDefault();
+          const wasOpen = current === control;
+          if (!wasOpen) open(control);
+          else if (key === 'Enter' || key === ' ') { commit(); return; }
+          else if (key === 'ArrowDown') active = Math.min(control.options.length - 1, active + 1);
+          else if (key === 'ArrowUp') active = Math.max(0, active - 1);
+          else if (key === 'PageDown') active = Math.min(control.options.length - 1, active + 5);
+          else if (key === 'PageUp') active = Math.max(0, active - 5);
+          if (key === 'Home') active = 0;
+          if (key === 'End') active = control.options.length - 1;
+          highlight(true); return;
+        }
+        if (key.length === 1 && !event.ctrlKey && !event.altKey && !event.metaKey) {
+          event.preventDefault();
+          if (current !== control) open(control);
+          const now = Date.now(); buffer = now - typedAt < 700 ? buffer + key.toLowerCase() : key.toLowerCase(); typedAt = now;
+          let match = control.options.findIndex(option => option.label.toLowerCase().startsWith(buffer));
+          if (match < 0) { buffer = key.toLowerCase(); match = control.options.findIndex(option => option.label.toLowerCase().startsWith(buffer)); }
+          if (match >= 0) { active = match; highlight(true); }
+        }
+      });
+    }
+    document.addEventListener('pointerdown', event => { if (current && !popup.contains(event.target) && !current.trigger.contains(event.target)) close(); });
+    window.addEventListener('resize', () => close());
+    window.addEventListener('scroll', event => { if (current && !(event.target instanceof Node && popup.contains(event.target))) close(); }, true);
+    sync();
+    return { sync, close };
+  }
+  return { mount };
+})();
+
+(() => {
+  'use strict';
+  // Presentation state only. Capture, encoding and transport integrations are pending.
+  const $ = id => document.getElementById(id);
+  const state = { running: false, starting: false, connected: false, paused: false, source: null, selected: 'pattern', startedAt: 0, logs: [], lastFrame: 0, viewerEdited: false, playbackQuality: 'auto' };
+  const fields = ['server-host', 'stream-path', 'resolution', 'fps', 'custom-fps', 'quality', 'audio-source', 'bitrate-auto', 'publish-port', 'viewer-port'];
+  const resolutions = [
+    { value: '426x240', label: '240p', detail: '426 × 240', bitrate: 0.5 },
+    { value: '640x360', label: '360p', detail: '640 × 360', bitrate: 1 },
+    { value: '854x480', label: '480p', detail: '854 × 480', bitrate: 2 },
+    { value: '1280x720', label: '720p', detail: '1280 × 720', bitrate: 4 },
+    { value: '1920x1080', label: '1080p', detail: '1920 × 1080', bitrate: 8 },
+    { value: '2560x1440', label: '1440p', detail: '2560 × 1440', bitrate: 16 },
+    { value: '3840x2160', label: '2160p', detail: '3840 × 2160', bitrate: 35 }
+  ];
+  const audioSources = [
+    { value: 'none', label: '사용 안 함' }, { value: 'system', label: '시스템 소리' },
+    { value: 'mic', label: '마이크' }, { value: 'mix', label: '시스템 + 마이크' }
+  ];
+  const pickers = FrameControls.mount({ resolution: [...resolutions].reverse(), fps: [30, 60, 90, 120, 144, 165].map(value => ({ value: String(value), label: value + ' fps' })).concat({ value: 'custom', label: '직접 입력' }), 'audio-source': audioSources });
+  const names = { pattern: '화면 테스트', document: '문서' };
+  const timeText = () => new Date().toLocaleTimeString('en-GB', { hour12: false, timeZone: 'Asia/Seoul' });
+  const icon = name => '<svg aria-hidden="true"><use href="#i-' + name + '"/></svg>';
+  let toastTimer, copiedTimer;
+  function toast(message) { $('toast').textContent = message; $('toast').classList.add('visible'); clearTimeout(toastTimer); toastTimer = setTimeout(() => $('toast').classList.remove('visible'), 2400); }
+  function elapsed() {
+    const seconds = Math.max(0, Math.floor((Date.now() - state.startedAt) / 1000));
+    return [Math.floor(seconds / 3600), Math.floor(seconds / 60) % 60, seconds % 60].map(n => String(n).padStart(2, '0')).join(':');
+  }
+  function config() { return { host: $('server-host').value.trim(), path: $('stream-path').value.trim(), resolution: $('resolution').value, fps: Number($('fps').value === 'custom' ? $('custom-fps').value : $('fps').value), bitrate: Number($('quality').value), audio: $('audio-source').value, publishPort: Number($('publish-port').value), viewerPort: Number($('viewer-port').value) }; }
+  function syncEncodingOptions() {
+    const c = config(), locked = state.running || state.starting;
+    $('custom-fps-field').hidden = $('fps').value !== 'custom';
+    $('custom-fps').disabled = locked || $('fps').value !== 'custom';
+    $('fps-hint').hidden = !Number.isFinite(c.fps) || c.fps <= 60;
+    if ($('bitrate-auto').checked) {
+      const base = resolutions.find(item => item.value === c.resolution)?.bitrate || 8;
+      const fps = Number.isFinite(c.fps) && c.fps >= 30 ? c.fps : 60;
+      $('quality').value = Math.min(200, Math.max(0.5, Math.round(base * fps / 60 * 2) / 2));
+    }
+    $('quality').disabled = locked || $('bitrate-auto').checked;
+    $('system-channel').hidden = !['system', 'mix'].includes(c.audio);
+    $('mic-channel').hidden = !['mic', 'mix'].includes(c.audio);
+    pickers.sync();
+  }
+  function validHost(host) {
+    if (!host || host.length > 253) return false;
+    if (/^\d+\.\d+\.\d+\.\d+$/.test(host)) return host.split('.').every(part => Number(part) <= 255);
+    return /^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/.test(host);
+  }
+  const validPath = path => /^[a-zA-Z0-9][a-zA-Z0-9_-]{0,63}$/.test(path);
+  const validPort = port => Number.isInteger(port) && port >= 1 && port <= 65535;
+  function fieldError(field, id, message) { $(id).textContent = message; $(id).hidden = !message; $(field).setAttribute('aria-invalid', String(Boolean(message))); }
+  function validate(report = false) {
+    const c = config();
+    const errors = [
+      { field: 'server-host', id: 'host-error', message: validHost(c.host) ? '' : '올바른 IP 주소나 호스트 이름을 입력하세요.' },
+      { field: 'stream-path', id: 'stream-error', message: validPath(c.path) ? '' : '영문, 숫자, 하이픈, 밑줄로 1~64자 입력하세요.' },
+      { field: 'custom-fps', id: 'fps-error', message: Number.isInteger(c.fps) && c.fps >= 30 && c.fps <= 165 ? '' : '30~165 사이의 정수로 입력하세요.' },
+      { field: 'quality', id: 'bitrate-error', message: Number.isFinite(c.bitrate) && c.bitrate >= 0.5 && c.bitrate <= 200 ? '' : '0.5~200 Mbps 사이로 입력하세요.' },
+      { field: 'publish-port', id: 'port-error', message: validPort(c.publishPort) && validPort(c.viewerPort) ? '' : '포트는 1~65535 사이의 정수로 입력하세요.' }
+    ];
+    if (report) {
+      errors.forEach(error => fieldError(error.field, error.id, error.message));
+      $('viewer-port').setAttribute('aria-invalid', String(!validPort(c.viewerPort)));
+      if (errors.some(error => ['port-error', 'bitrate-error'].includes(error.id) && error.message)) $('advanced-settings').open = true;
+    }
+    return errors.find(error => error.message);
+  }
+  function badge(id, text, active = false) { $(id).textContent = text; $(id).classList.toggle('active', active); }
+  function senderUI() {
+    syncEncodingOptions();
+    const error = validate();
+    $('start-button').disabled = state.starting || (!state.running && (!state.source || Boolean(error)));
+    $('start-button').title = !state.source ? '공유할 창을 먼저 선택하세요.' : error ? error.message : '';
+    badge('sender-status', state.running ? '송출 중' : state.starting ? '준비 중' : !state.source ? '창 선택 필요' : error ? '설정 확인' : '준비됨', state.running);
+    $('copy-address').disabled = !state.running;
+    $('open-viewer').disabled = !state.running;
+    $('share-hint').hidden = state.running;
+    $('settings-lock').hidden = !state.running && !state.starting;
+    $('sender-fullscreen').disabled = !state.source;
+  }
+  function updateAddress() { const c = config(); $('viewer-address').textContent = 'http://' + c.host + ':' + c.viewerPort + '/' + c.path; $('preview-resolution').textContent = c.resolution.split('x')[1] + 'p / ' + (Number.isFinite(c.fps) ? c.fps : '—') + ' fps'; }
+  function log(kind, message) {
+    state.logs.unshift({ time: timeText(), kind, message }); state.logs = state.logs.slice(0, 20); $('log-list').replaceChildren();
+    for (const item of state.logs) { const row = document.createElement('tr'); for (const key of ['time', 'kind', 'message']) { const cell = document.createElement('td'); cell.textContent = item[key]; row.append(cell); } $('log-list').append(row); }
+    $('log-count').textContent = state.logs.length; $('export-log').disabled = false;
+  }
+  function view(name) {
+    for (const tab of ['sender', 'viewer']) { const active = tab === name; $('tab-' + tab).setAttribute('aria-selected', String(active)); $('tab-' + tab).tabIndex = active ? 0 : -1; $(tab + '-view').hidden = !active; }
+    if (name === 'viewer' && !state.connected && !state.viewerEdited) { $('viewer-host').value = config().host; $('viewer-stream').value = config().path; }
+    window.scrollTo({ top: 0, behavior: 'auto' });
+    try { const url = new URL(location.href); url.searchParams.set('view', name); history.replaceState(null, '', url); } catch {}
+  }
+  function receiver(connected, heading, description, retry = false) {
+    state.connected = connected; state.paused = false; state.playbackQuality = 'auto';
+    badge('viewer-status', connected ? '수신 중' : '대기', connected);
+    $('no-signal').hidden = connected; $('player-controls').hidden = !connected; $('pause-overlay').hidden = true;
+    $('connect-button').textContent = connected ? '연결 해제' : '연결'; $('connect-button').className = connected ? 'danger connect-button' : 'primary connect-button';
+    $('viewer-host').disabled = connected; $('viewer-stream').disabled = connected; $('metric-viewers').textContent = connected ? '1' : '0';
+    $('viewer-title').textContent = connected ? config().path : '수신 화면';
+    $('info-resolution').textContent = connected ? config().resolution.split('x')[1] + 'p (자동)' : '—'; $('info-fps').textContent = connected ? config().fps + ' fps' : '—'; $('info-bitrate').textContent = connected ? config().bitrate.toFixed(1) + ' Mbps' : '—'; $('info-audio').textContent = connected ? audioSources.find(item => item.value === config().audio)?.label || '사용 안 함' : '—';
+    closePlayerQuality();
+    if (connected) applyPlaybackQuality('auto');
+    $('retry-button').hidden = connected || !retry;
+    if (heading) $('empty-heading').textContent = heading;
+    if (description) $('empty-description').textContent = description;
+    $('player-pause').innerHTML = icon('pause') + '<span class="control-label">일시정지</span>'; $('player-pause').setAttribute('aria-label', '일시정지'); $('player-pause').title = '일시정지 (Space)';
+    if (!connected) { $('viewer-view').classList.remove('is-wide'); $('viewer-wide').setAttribute('aria-pressed', 'false'); $('viewer-wide').setAttribute('aria-label', '넓게 보기'); $('viewer-wide').innerHTML = icon('layout') + '<span class="control-label">넓게 보기</span>'; }
+  }
+  function connect() {
+    const host = $('viewer-host').value.trim(), path = $('viewer-stream').value.trim();
+    fieldError('viewer-host', 'viewer-host-error', validHost(host) ? '' : '서버 주소를 확인하세요.');
+    fieldError('viewer-stream', 'viewer-stream-error', validPath(path) ? '' : '스트림 이름을 확인하세요.');
+    if (!validHost(host) || !validPath(path)) { receiver(false, '입력한 주소를 확인하세요', '연결 설정을 수정하세요.'); badge('viewer-status', '주소 확인'); (!validHost(host) ? $('viewer-host') : $('viewer-stream')).focus(); return; }
+    if (!state.running || host.toLowerCase() !== config().host.toLowerCase() || path !== config().path) { receiver(false, '연결할 수 없습니다', '송출 상태와 주소를 확인한 뒤 다시 연결하세요.', true); badge('viewer-status', '연결 안 됨'); log('수신', '연결 실패'); return; }
+    receiver(true); log('수신', path + ' 연결');
+  }
+  function chooseSource() {
+    state.selected = state.source || 'pattern'; document.querySelectorAll('[data-source]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.source === state.selected))); $('source-dialog').showModal();
+  }
+  function begin() {
+    if (!state.source) { chooseSource(); return; }
+    const error = validate(true); if (error) { $(error.field).focus(); return; }
+    state.starting = true; fields.forEach(id => $(id).disabled = true); $('source-button').disabled = true; $('start-button').textContent = '준비 중'; senderUI();
+    setTimeout(() => { state.starting = false; state.running = true; state.startedAt = Date.now(); $('start-button').className = 'danger start-button'; $('start-button').innerHTML = icon('stop') + '<span>송출 중지</span>'; $('metric-fps').textContent = config().fps; $('metric-bitrate').textContent = config().bitrate.toFixed(1); senderUI(); log('송출', config().path + ' 시작'); }, 450);
+  }
+  function stop() {
+    state.running = false; fields.forEach(id => $(id).disabled = false); $('source-button').disabled = false; $('start-button').className = 'primary start-button'; $('start-button').innerHTML = icon('play') + '<span>송출 시작</span>'; $('metric-fps').textContent = '—'; $('metric-bitrate').textContent = '—';
+    if (state.connected) receiver(false, '송출이 종료되었습니다', '송출을 다시 시작한 뒤 연결하세요.', true);
+    senderUI(); log('송출', config().path + ' 종료');
+  }
+  function pause() {
+    if (!state.connected) return;
+    state.paused = !state.paused; $('pause-overlay').hidden = !state.paused;
+    const label = state.paused ? '재생' : '일시정지'; $('player-pause').innerHTML = icon(state.paused ? 'play' : 'pause') + '<span class="control-label">' + label + '</span>'; $('player-pause').setAttribute('aria-label', label); $('player-pause').title = label + ' (Space)'; badge('viewer-status', state.paused ? '일시정지' : '수신 중', !state.paused);
+  }
+  function wide() { if (!state.connected) return; const active = $('viewer-view').classList.toggle('is-wide'); const label = active ? '기본 보기' : '넓게 보기'; $('viewer-wide').setAttribute('aria-pressed', String(active)); $('viewer-wide').setAttribute('aria-label', label); $('viewer-wide').innerHTML = icon('layout') + '<span class="control-label">' + label + '</span>'; $('viewer-wide').title = label + ' (T)'; }
+  async function fullscreen(name) { try { if (document.fullscreenElement) await document.exitFullscreen(); else await $(name + '-preview').requestFullscreen(); } catch { toast('전체 화면을 열 수 없습니다.'); } }
+  fields.forEach(id => $(id).addEventListener('input', () => { syncEncodingOptions(); updateAddress(); validate(true); senderUI(); }));
+  $('sender-form').addEventListener('submit', event => { event.preventDefault(); if (state.starting) return; if (state.running) $('stop-dialog').showModal(); else begin(); });
+  $('confirm-stop').addEventListener('click', () => { $('stop-dialog').close(); stop(); });
+  document.querySelectorAll('[data-close]').forEach(button => button.addEventListener('click', () => $(button.dataset.close).close()));
+  $('tab-sender').addEventListener('click', () => view('sender')); $('tab-viewer').addEventListener('click', () => view('viewer'));
+  $('open-viewer').addEventListener('click', () => { if (!state.running) return; $('viewer-host').value = config().host; $('viewer-stream').value = config().path; state.viewerEdited = false; view('viewer'); if (!state.connected) connect(); });
+  document.querySelector('[role=tablist]').addEventListener('keydown', event => { if (event.ctrlKey || event.metaKey || event.altKey || !['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'].includes(event.key)) return; event.preventDefault(); const target = event.key === 'Home' ? 'sender' : event.key === 'End' ? 'viewer' : $('tab-sender').getAttribute('aria-selected') === 'true' ? 'viewer' : 'sender'; view(target); $('tab-' + target).focus(); });
+  $('source-empty-button').addEventListener('click', chooseSource); $('source-button').addEventListener('click', chooseSource);
+  document.querySelectorAll('[data-source]').forEach(button => button.addEventListener('click', () => { state.selected = button.dataset.source; document.querySelectorAll('[data-source]').forEach(item => item.setAttribute('aria-pressed', String(item === button))); }));
+  $('confirm-source').addEventListener('click', () => { state.source = state.selected; $('source-name').textContent = names[state.source]; $('source-dialog').close(); $('sender-empty').hidden = true; $('source-row').hidden = false; senderUI(); log('소스', names[state.source] + ' 선택'); });
+  $('viewer-form').addEventListener('submit', event => { event.preventDefault(); if (state.connected) { receiver(false, '연결을 해제했습니다', '다시 보려면 연결하세요.'); log('수신', '연결 해제'); } else connect(); });
+  for (const id of ['viewer-host', 'viewer-stream']) $(id).addEventListener('input', () => { state.viewerEdited = true; fieldError(id, id + '-error', ''); });
+  $('player-pause').addEventListener('click', pause); $('viewer-wide').addEventListener('click', wide);
+  $('viewer-preview').addEventListener('keydown', event => { if (event.target.closest('button,input,[role="menu"]') || event.ctrlKey || event.metaKey || event.altKey) return; const key = event.key.toLowerCase(); if (key === ' ' || key === 'k') { event.preventDefault(); pause(); } else if (key === 'f' && state.connected) { event.preventDefault(); fullscreen('viewer'); } else if (key === 't') { event.preventDefault(); wide(); } else if (key === 'm' && state.connected) { event.preventDefault(); toggleVolume('player'); } });
+  for (const name of ['sender', 'viewer']) $(name + '-fullscreen').addEventListener('click', () => fullscreen(name));
+  $('copy-address').addEventListener('click', async () => {
+    if (!state.running) return;
+    try { await navigator.clipboard.writeText($('viewer-address').textContent); $('copy-label').textContent = '복사 완료'; clearTimeout(copiedTimer); copiedTimer = setTimeout(() => $('copy-label').textContent = '주소 복사', 1800); }
+    catch { const selection = getSelection(), range = document.createRange(); range.selectNodeContents($('viewer-address')); selection.removeAllRanges(); selection.addRange(range); toast('Ctrl+C로 복사하세요.'); }
+  });
+  $('export-log').addEventListener('click', () => { const text = [...state.logs].reverse().map(item => item.time + '\t' + item.kind + '\t' + item.message).join('\n'); const url = URL.createObjectURL(new Blob(['\uFEFF' + text], { type: 'text/plain;charset=utf-8' })); const link = document.createElement('a'); link.href = url; link.download = 'frame-events.txt'; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); });
+  const lastVolumes = { system: 80, mic: 100, player: 80 };
+  function volumeUI(channel) {
+    const range = $(channel + '-volume'), amount = Number(range.value), muted = amount === 0;
+    if (amount > 0) lastVolumes[channel] = amount;
+    range.style.setProperty('--fill', amount + '%'); range.setAttribute('aria-valuetext', amount + '%');
+    const button = $(channel + '-mute'); button.innerHTML = icon(muted ? 'volume-off' : 'volume'); button.setAttribute('aria-pressed', String(muted));
+    if (channel === 'player') { button.setAttribute('aria-label', muted ? '음소거 해제' : '음소거'); button.title = (muted ? '음소거 해제' : '음소거') + ' (M)'; }
+    else { $(channel + '-volume-value').textContent = amount + '%'; button.setAttribute('aria-label', (channel === 'system' ? '시스템 소리' : '마이크') + (muted ? ' 음소거 해제' : ' 음소거')); }
+  }
+  function toggleVolume(channel) { const range = $(channel + '-volume'); range.value = Number(range.value) > 0 ? 0 : lastVolumes[channel] || 80; volumeUI(channel); }
+  for (const channel of ['system', 'mic', 'player']) { $(channel + '-volume').addEventListener('input', () => volumeUI(channel)); $(channel + '-mute').addEventListener('click', () => toggleVolume(channel)); volumeUI(channel); }
+  function closePlayerQuality(restore = false) { $('player-quality-menu').hidden = true; $('player-settings').setAttribute('aria-expanded', 'false'); if (restore) $('player-settings').focus({ preventScroll: true }); }
+  function renderPlayerQuality() {
+    const sourceHeight = Number(config().resolution.split('x')[1]);
+    const choices = [{ value: 'auto', label: '자동', detail: sourceHeight + 'p 원본' }].concat(resolutions.filter(item => Number(item.value.split('x')[1]) <= sourceHeight).reverse());
+    $('player-quality-options').replaceChildren();
+    for (const choice of choices) {
+      const button = document.createElement('button'); button.type = 'button'; button.className = 'quality-menu-option'; button.setAttribute('role', 'menuitemradio'); button.setAttribute('aria-checked', String(state.playbackQuality === choice.value));
+      const text = document.createElement('span'); text.className = 'quality-option-copy'; const label = document.createElement('span'); label.textContent = choice.label; text.append(label);
+      if (choice.value === 'auto') { const detail = document.createElement('small'); detail.textContent = choice.detail; text.append(detail); }
+      const check = document.createElement('span'); check.innerHTML = icon('check'); button.append(text, check.firstChild);
+      button.addEventListener('click', () => { applyPlaybackQuality(choice.value); closePlayerQuality(true); }); $('player-quality-options').append(button);
+    }
+  }
+  function applyPlaybackQuality(value) {
+    state.playbackQuality = value;
+    const resolution = value === 'auto' ? config().resolution : value, [width, height] = resolution.split('x').map(Number);
+    const target = $('viewer-canvas'), snapshot = document.createElement('canvas'); snapshot.width = target.width; snapshot.height = target.height; snapshot.getContext('2d').drawImage(target, 0, 0);
+    target.width = width; target.height = height;
+    target.getContext('2d').drawImage(state.paused ? snapshot : $('sender-canvas'), 0, 0, width, height);
+    $('player-quality-label').textContent = height + 'p'; $('player-settings').title = '재생 화질: ' + (value === 'auto' ? '자동 (' + height + 'p)' : height + 'p');
+    $('info-resolution').textContent = height + 'p' + (value === 'auto' ? ' (자동)' : ''); renderPlayerQuality();
+  }
+  $('player-settings').addEventListener('click', () => { const open = $('player-quality-menu').hidden; pickers.close(); renderPlayerQuality(); $('player-quality-menu').hidden = !open; $('player-settings').setAttribute('aria-expanded', String(open)); if (open) $('player-quality-options').querySelector('[aria-checked="true"]')?.focus(); });
+  $('player-quality-menu').addEventListener('keydown', event => {
+    const items = [...$('player-quality-options').querySelectorAll('button')], index = items.indexOf(document.activeElement);
+    if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); closePlayerQuality(true); }
+    else if (['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) { event.preventDefault(); const next = event.key === 'Home' ? 0 : event.key === 'End' ? items.length - 1 : (index + (event.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length; items[next].focus(); }
+    else if (event.key === 'Tab') closePlayerQuality(true);
+  });
+  document.addEventListener('pointerdown', event => { if (!$('player-quality-menu').hidden && !$('player-quality-menu').contains(event.target) && !$('player-settings').contains(event.target)) closePlayerQuality(); });
+  const canvas = $('sender-canvas'), ctx = canvas.getContext('2d'), viewer = $('viewer-canvas').getContext('2d'); const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  function text(value, x, y, size, color, weight = 400) { ctx.font = weight + ' ' + size + 'px Pretendard, sans-serif'; ctx.fillStyle = color; ctx.fillText(value, x, y); }
+  function draw(time) {
+    requestAnimationFrame(draw); const frameInterval = 1000 / Math.min(60, Math.max(30, config().fps || 60)); if (document.hidden || time - state.lastFrame < frameInterval || !state.source) return; state.lastFrame = time; ctx.fillStyle = '#192733'; ctx.fillRect(0, 0, 1280, 720);
+    if (state.source === 'pattern') {
+      ctx.strokeStyle = '#243441'; ctx.lineWidth = 1;
+      for (let x = 0; x <= 1280; x += 80) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 720); ctx.stroke(); }
+      for (let y = 0; y <= 720; y += 80) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(1280, y); ctx.stroke(); }
+      text('화면 테스트', 90, 210, 48, '#edf2f6', 550); const colors = ['#80bfa0', '#80a8b6', '#8d9fba', '#a3a0b7', '#baaaaa', '#beb89e']; colors.forEach((color, i) => { ctx.fillStyle = color; ctx.fillRect(90 + i * 184, 291, 169, 126); }); ctx.fillStyle = '#34444f'; ctx.fillRect(90, 456, 1089, 3); ctx.fillStyle = '#80bfa0'; ctx.fillRect(90 + (reducedMotion.matches ? 0 : time / 12 % 1049), 452, 40, 11); text(timeText(), 90, 566, 30, '#bac7d1', 450);
+    } else {
+      ctx.fillStyle = '#f8fafb'; ctx.fillRect(170, 90, 940, 540); ctx.fillStyle = '#e9edf2'; ctx.fillRect(170, 90, 940, 45); text('문서', 198, 120, 19, '#3d4c60', 500); text('화면 공유', 220, 213, 38, '#26374b', 600);
+      const rows = [['항목', '값'], ['해상도', config().resolution.replace('x', ' × ')], ['프레임', config().fps + ' fps'], ['비트레이트', config().bitrate.toFixed(1) + ' Mbps']]; rows.forEach((row, i) => { ctx.fillStyle = i === 0 ? '#e9eff3' : i % 2 ? '#f5f7f9' : '#edf1f4'; ctx.fillRect(220, 265 + i * 60, 840, 58); text(row[0], 241, 302 + i * 60, 22, '#374a61', i === 0 ? 550 : 400); text(row[1], 670, 302 + i * 60, 22, '#2e4057', i === 0 ? 550 : 400); }); text(timeText(), 220, 580, 20, '#4c6079');
+    }
+    if (state.connected && !state.paused) viewer.drawImage(canvas, 0, 0, $('viewer-canvas').width, $('viewer-canvas').height);
+    if (state.running) { $('metric-duration').textContent = elapsed(); if (state.connected && !state.paused) $('viewer-clock').textContent = elapsed(); }
+  }
+  updateAddress(); senderUI(); history.scrollRestoration = 'manual'; view(new URLSearchParams(location.search).get('view') === 'viewer' ? 'viewer' : 'sender'); document.fonts.ready.then(() => requestAnimationFrame(draw));
+})();
+</script>
+</body>
+</html>

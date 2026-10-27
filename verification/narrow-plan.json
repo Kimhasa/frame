@@ -1,0 +1,14 @@
+[
+  {
+    "name": "x-narrow-start",
+    "reference": "verification/reference-render/x-narrow-start.png",
+    "actual": "verification/app/x-narrow-start.png",
+    "masks": []
+  },
+  {
+    "name": "x-narrow-viewer",
+    "reference": "verification/reference-render/x-narrow-viewer.png",
+    "actual": "verification/app/x-narrow-viewer.png",
+    "masks": []
+  }
+]

@@ -1,0 +1,98 @@
+[
+  {
+    "name": "baseline-start",
+    "reference": "reference/screenshots/frame-start.png",
+    "actual": "verification/reference-render/start.png",
+    "masks": 0,
+    "width": 1440,
+    "height": 1100,
+    "offset": [
+      0,
+      0
+    ],
+    "compared": 1584000,
+    "differingPct": 1.729,
+    "strongPct": 0.716,
+    "meanDelta": 2.82
+  },
+  {
+    "name": "baseline-sender",
+    "reference": "reference/screenshots/frame-sender.png",
+    "actual": "verification/reference-render/sender.png",
+    "masks": 1,
+    "width": 1440,
+    "height": 1129,
+    "offset": [
+      0,
+      0
+    ],
+    "compared": 1220186,
+    "differingPct": 2.524,
+    "strongPct": 1.094,
+    "meanDelta": 3.7
+  },
+  {
+    "name": "baseline-viewer",
+    "reference": "reference/screenshots/frame-viewer.png",
+    "actual": "verification/reference-render/viewer.png",
+    "masks": 2,
+    "width": 1440,
+    "height": 1100,
+    "offset": [
+      0,
+      0
+    ],
+    "compared": 1177026,
+    "differingPct": 1.041,
+    "strongPct": 0.528,
+    "meanDelta": 1.81
+  },
+  {
+    "name": "baseline-components",
+    "reference": "reference/screenshots/frame-components.png",
+    "actual": "verification/reference-render/sender.png",
+    "masks": 0,
+    "width": 324,
+    "height": 721,
+    "offset": [
+      1072,
+      161
+    ],
+    "compared": 233604,
+    "differingPct": 4.69,
+    "strongPct": 2.245,
+    "meanDelta": 6.6
+  },
+  {
+    "name": "baseline-fps-focus",
+    "reference": "reference/screenshots/frame-fps-focus.png",
+    "actual": "verification/reference-render/fps-focus.png",
+    "masks": 0,
+    "width": 324,
+    "height": 721,
+    "offset": [
+      1072,
+      161
+    ],
+    "compared": 233604,
+    "differingPct": 4.398,
+    "strongPct": 1.898,
+    "meanDelta": 6.05
+  },
+  {
+    "name": "baseline-player-controls",
+    "reference": "reference/screenshots/frame-player-controls.png",
+    "actual": "verification/reference-render/viewer.png",
+    "masks": 2,
+    "width": 823,
+    "height": 553,
+    "offset": [
+      248,
+      167
+    ],
+    "compared": 90999,
+    "differingPct": 1.845,
+    "strongPct": 0.52,
+    "meanDelta": 4.22
+  }
+]

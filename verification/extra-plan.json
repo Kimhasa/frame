@@ -1,0 +1,8 @@
+[
+  { "name": "x-menu-open", "reference": "verification/reference-render/x-menu-open.png", "actual": "verification/app/x-menu-open.png",
+    "masks": [[249, 229, 821, 494], [292, 745, 320, 26], [1117, 272, 262, 39], [1113, 767, 270, 38], [0, 0, 1, 1]] },
+  { "name": "x-error", "reference": "verification/reference-render/x-error.png", "actual": "verification/app/x-error.png",
+    "masks": [[249, 229, 821, 494], [292, 745, 320, 26]] },
+  { "name": "x-running", "reference": "verification/reference-render/x-running.png", "actual": "verification/app/x-running.png",
+    "masks": [[249, 229, 821, 494], [292, 745, 320, 26], [250, 830, 820, 60], [250, 905, 820, 50]] }
+]

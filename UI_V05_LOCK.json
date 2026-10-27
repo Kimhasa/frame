@@ -1,0 +1,317 @@
+{
+  "version": 1,
+  "uiVersion": "FRAME Console 0.5",
+  "policy": "User-authorized UI changes; preserve 0.4 references and this 0.5 checkpoint.",
+  "referenceFiles": [
+    {
+      "path": "reference/assets/fonts/OFL.txt",
+      "sha256": "d31ddd9f2bed32fd7e302a205cf2380ba0de6529152d239ef99cfb6f261bfc04"
+    },
+    {
+      "path": "reference/assets/fonts/PretendardVariable.woff2",
+      "sha256": "9599f12fd42fc0bce1cd50b47a0c022e108d7aa64dd0d1bb0ed44f3282d900b4"
+    },
+    {
+      "path": "reference/assets/fonts/SOURCE.txt",
+      "sha256": "17f4500724f41b5146f9a7c9775b1f68f5f3b1ff26e14493ca5dc3a843906aa2"
+    },
+    {
+      "path": "reference/index.html",
+      "sha256": "8dd8f275893f291ab4ad91b81695080a1d82c79c2ea11fd243fc49d648dab377"
+    },
+    {
+      "path": "reference/README.txt",
+      "sha256": "15358daa20ce66d4b962d13e0e70e46066dd423a7b9d2b3a480d53ff745df301"
+    },
+    {
+      "path": "reference/screenshots/frame-components.png",
+      "sha256": "2e266e73aa5e0de723baa6df9e10cb37defdc8eaeec7cd82d8e3f8c3398998e4"
+    },
+    {
+      "path": "reference/screenshots/frame-fps-focus.png",
+      "sha256": "72b063ace7840602b22def69e1726e5d8eb106e4a2f77a19ca0a1398a74f2daa"
+    },
+    {
+      "path": "reference/screenshots/frame-player-controls.png",
+      "sha256": "5ad0971142caa7ef9676633319033c7dba3cd48608ecec6a9bdb44e077417d8a"
+    },
+    {
+      "path": "reference/screenshots/frame-sender.png",
+      "sha256": "3184b0773aa77339caccd50b4cd72fdf222c50ce4944507fa986358b679f9b0f"
+    },
+    {
+      "path": "reference/screenshots/frame-start.png",
+      "sha256": "1a43b2410bf435d3a38ca1a8425b86f194152a06d94e72ca475a847d66f8bc6f"
+    },
+    {
+      "path": "reference/screenshots/frame-viewer.png",
+      "sha256": "d471028d4e923c7d968b2d7e7be10abb3a4b4b866d8df4aabe31e27003a21d7a"
+    },
+    {
+      "path": "reference-v05/assets/fonts/OFL.txt",
+      "sha256": "d31ddd9f2bed32fd7e302a205cf2380ba0de6529152d239ef99cfb6f261bfc04"
+    },
+    {
+      "path": "reference-v05/assets/fonts/PretendardVariable.woff2",
+      "sha256": "9599f12fd42fc0bce1cd50b47a0c022e108d7aa64dd0d1bb0ed44f3282d900b4"
+    },
+    {
+      "path": "reference-v05/assets/fonts/SOURCE.txt",
+      "sha256": "17f4500724f41b5146f9a7c9775b1f68f5f3b1ff26e14493ca5dc3a843906aa2"
+    },
+    {
+      "path": "reference-v05/index.html",
+      "sha256": "e5daa5fd50dcfdd39e5abf7e67f7d0a0c98d2dbf82812bf7cd5fa8b7214d8b4d"
+    },
+    {
+      "path": "reference-v05/screenshots/ui-catalog-v05.png",
+      "sha256": "e7b7e63573ee2afb143442d1fa698775c6ba387edd9f190b94c24a2b8cab49dc"
+    },
+    {
+      "path": "reference-v05/screenshots/ui-chat-name-v05.png",
+      "sha256": "b13100950e8209dfafdf191974ebb5379fa7908ff6094b464aee389a887c1a76"
+    },
+    {
+      "path": "reference-v05/screenshots/ui-manual-v05.png",
+      "sha256": "b11e6c617b31c47a5d230443d9c40910c125d3a2403031ed7dfdcb4d4c470ae1"
+    },
+    {
+      "path": "reference-v05/screenshots/ui-monitors-v05.png",
+      "sha256": "415aaed59385ad403ad24df83bd8ca14fc2986745ffe777f3b47068f24ef9fc8"
+    },
+    {
+      "path": "reference-v05/screenshots/ui-player-v05.png",
+      "sha256": "9082eadcbf9306c185038a9516213dfe207848bd0e9ee661933c588ac011810f"
+    },
+    {
+      "path": "reference-v05/screenshots/ui-sender-chat-v05.png",
+      "sha256": "31e4b42662a7d3bf44673893d246cbd2fd6da5bd5e9ebb4893c2554375ff6cfd"
+    },
+    {
+      "path": "reference-v05/screenshots/ui-sender-settings-v05.png",
+      "sha256": "8e94df3189ebbc34ef873db19dfecea02e4e7fa17aa126e4f1315c6411a2034f"
+    },
+    {
+      "path": "reference-v05/screenshots/ui-viewer-chat-v05.png",
+      "sha256": "54e559e544a93f8e4b69059e808c45dcc386813a964eb564e272b32e195fa02f"
+    },
+    {
+      "path": "reference-v05/screenshots/ui-viewer-info-v05.png",
+      "sha256": "c1d98272c0e81cd93d953d710ba08490e2f4defa174d093f1705e0cec0ee5024"
+    }
+  ],
+  "lockedSources": [
+    {
+      "path": "work/console-template.html",
+      "sha256": "774be094c1037c286c7b29c14459ca9b92c995f852f85f52c8eb28e36863255b"
+    },
+    {
+      "path": "work/console.css",
+      "sha256": "69e0040248a0e78b383139a6594abdc268e9b287c06c03baee6e6b808f2172b1"
+    },
+    {
+      "path": "work/ux.css",
+      "sha256": "43f39d06e5f4e8648b50cb99dc3526ac08bf70568e500807e60ee6baf98a00ff"
+    },
+    {
+      "path": "work/components.css",
+      "sha256": "0e8426438eb314f068be39d55b006ef632f4b121ff863b7db554ef0c2eac3949"
+    },
+    {
+      "path": "work/components.js",
+      "sha256": "9bea280da25b4dd3cf18c67be02aeb186972690feb4a6e3c68e4e607d8e720e3"
+    },
+    {
+      "path": "work/console-ui.css",
+      "sha256": "2fb66685531f6536786bfd24fa2ae7dcbb4c2bb1f7f9375f8dcde2bc133fa76a"
+    }
+  ],
+  "markupSha256": "8d56b6d26574fa458af8098da23e0bc53af07e908eef6d0b5cafb4d98edd3424",
+  "styleSha256": "88bb239e1d91e906c46c7e2abc13bb10443f1f78efb73faff265995382a2129e",
+  "controlIds": [
+    "i-frame",
+    "i-monitor",
+    "i-radio",
+    "i-play",
+    "i-stop",
+    "i-copy",
+    "i-expand",
+    "i-check",
+    "i-link",
+    "i-arrow",
+    "i-info",
+    "i-log",
+    "i-refresh",
+    "i-close",
+    "i-settings",
+    "i-globe",
+    "i-pause",
+    "i-layout",
+    "i-chevron",
+    "i-volume",
+    "i-volume-off",
+    "i-gear",
+    "i-search",
+    "i-back",
+    "i-pip",
+    "i-chat",
+    "tab-sender",
+    "tab-viewer",
+    "sender-view",
+    "sender-network-button",
+    "sender-settings-button",
+    "start-button",
+    "preview-resolution",
+    "sender-fullscreen",
+    "sender-preview",
+    "sender-canvas",
+    "sender-empty",
+    "source-empty-button",
+    "source-row",
+    "source-name",
+    "source-button",
+    "metric-duration",
+    "metric-fps",
+    "metric-bitrate",
+    "metric-viewers",
+    "events-panel",
+    "log-count",
+    "log-list",
+    "export-log",
+    "sender-chat-slot",
+    "viewer-view",
+    "catalog-toolbar",
+    "broadcast-count",
+    "broadcast-search",
+    "refresh-broadcasts",
+    "manual-connect",
+    "broadcast-list",
+    "broadcast-grid",
+    "catalog-empty",
+    "catalog-empty-title",
+    "catalog-empty-description",
+    "catalog-retry",
+    "viewer-stage",
+    "viewer-info-button",
+    "chat-toggle",
+    "viewer-preview",
+    "viewer-canvas",
+    "no-signal",
+    "empty-heading",
+    "empty-description",
+    "retry-button",
+    "pause-overlay",
+    "player-controls",
+    "player-timeline",
+    "player-seek",
+    "player-position",
+    "player-duration",
+    "player-pause",
+    "player-mute",
+    "player-volume",
+    "player-live",
+    "player-settings",
+    "player-quality-label",
+    "player-pip",
+    "viewer-wide",
+    "viewer-fullscreen",
+    "player-quality-menu",
+    "player-quality-options",
+    "viewer-chat-slot",
+    "chat-panel",
+    "chat-name-button",
+    "chat-close",
+    "chat-messages",
+    "chat-empty",
+    "chat-form",
+    "chat-message",
+    "chat-send",
+    "chat-error",
+    "sender-settings-dialog",
+    "sender-settings-title",
+    "sender-form",
+    "settings-lock",
+    "resolution-label",
+    "resolution",
+    "resolution-trigger",
+    "resolution-value",
+    "fps-label",
+    "fps",
+    "fps-trigger",
+    "fps-value",
+    "custom-fps-field",
+    "custom-fps",
+    "fps-error",
+    "fps-hint",
+    "audio-source-label",
+    "audio-source",
+    "audio-source-trigger",
+    "audio-source-value",
+    "system-channel",
+    "system-volume-value",
+    "system-mute",
+    "system-volume",
+    "mic-channel",
+    "mic-volume-value",
+    "mic-mute",
+    "mic-volume",
+    "advanced-settings",
+    "bitrate-auto",
+    "quality",
+    "bitrate-error",
+    "viewer-address",
+    "share-hint",
+    "copy-address",
+    "copy-label",
+    "open-viewer",
+    "sender-settings-done",
+    "chat-name-dialog",
+    "chat-name-title",
+    "chat-name-form",
+    "chat-display-name",
+    "chat-name-error",
+    "viewer-info-dialog",
+    "viewer-info-title",
+    "viewer-title",
+    "viewer-clock",
+    "info-resolution",
+    "info-fps",
+    "info-bitrate",
+    "info-audio",
+    "sender-network-dialog",
+    "sender-network-title",
+    "server-host",
+    "host-error",
+    "stream-path",
+    "stream-error",
+    "publish-port",
+    "viewer-port",
+    "port-error",
+    "apply-sender-network",
+    "viewer-connect-dialog",
+    "viewer-connect-title",
+    "viewer-form",
+    "viewer-host",
+    "viewer-host-error",
+    "viewer-stream",
+    "viewer-stream-error",
+    "viewer-receive-port",
+    "viewer-receive-port-error",
+    "viewer-connect-error",
+    "connect-button",
+    "source-dialog",
+    "source-title",
+    "source-tab-window",
+    "source-tab-monitor",
+    "source-window-panel",
+    "source-monitor-panel",
+    "monitor-options",
+    "monitor-message",
+    "confirm-source",
+    "stop-dialog",
+    "stop-title",
+    "confirm-stop",
+    "toast",
+    "select-popup"
+  ]
+}

@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>FRAME Console</title>
+  <link rel="preload" href="./assets/fonts/PretendardVariable.woff2" as="font" type="font/woff2" crossorigin>
+  <style>__STYLES__</style>
+</head>
+<body>
+__ICONS__
+<header class="topbar">
+  <span class="brand-icon"><svg aria-hidden="true"><use href="#i-frame"/></svg></span>
+  <span class="brand">FRAME</span><span class="brand-subtitle">Console</span>
+  <span class="environment"><svg aria-hidden="true"><use href="#i-globe"/></svg>내부망</span>
+</header>
+<div class="app-layout">
+  <aside class="sidebar">
+    <p class="nav-title">스트리밍</p>
+    <nav class="nav-menu" role="tablist" aria-label="메뉴" aria-orientation="vertical">
+      <button class="nav-item" id="tab-sender" role="tab" aria-selected="true" aria-controls="sender-view" tabindex="0"><svg aria-hidden="true"><use href="#i-radio"/></svg>송출</button>
+      <button class="nav-item" id="tab-viewer" role="tab" aria-selected="false" aria-controls="viewer-view" tabindex="-1"><svg aria-hidden="true"><use href="#i-monitor"/></svg>수신</button>
+    </nav>
+    <div class="sidebar-bottom">v0.4</div>
+  </aside>
+  <main class="content">
+    <section class="page" id="sender-view" role="tabpanel" aria-labelledby="tab-sender">
+      <div class="page-heading"><h1>화면 송출</h1><div class="heading-actions"><span class="status" id="sender-status" role="status">창 선택 필요</span><button class="primary start-button" id="start-button" type="submit" form="sender-form" disabled><svg aria-hidden="true"><use href="#i-play"/></svg><span>송출 시작</span></button></div></div>
+      <div class="workspace">
+        <div>
+          <article class="panel">
+            <div class="panel-header"><h2>미리보기</h2><div class="panel-tools"><span class="numeric" id="preview-resolution">1280 × 720</span><button class="icon-button" id="sender-fullscreen" aria-label="미리보기 전체 화면"><svg aria-hidden="true"><use href="#i-expand"/></svg></button></div></div>
+            <div class="preview" id="sender-preview"><canvas id="sender-canvas" width="1280" height="720" aria-label="선택한 창"></canvas><div class="empty source-empty" id="sender-empty"><svg aria-hidden="true"><use href="#i-monitor"/></svg><h2>공유할 창을 선택하세요</h2><button class="primary" id="source-empty-button">창 선택</button></div></div>
+            <div class="source-row" id="source-row" hidden><svg aria-hidden="true"><use href="#i-monitor"/></svg><span class="source-name" id="source-name"></span><button id="source-button">창 변경</button></div>
+            <div class="metrics">
+              <div class="metric"><span class="metric-label">경과 시간</span><span class="metric-value" id="metric-duration">00:00:00</span></div>
+              <div class="metric"><span class="metric-label">설정 프레임</span><span class="metric-value"><span id="metric-fps">—</span><small>fps</small></span></div>
+              <div class="metric"><span class="metric-label">비트레이트</span><span class="metric-value"><span id="metric-bitrate">—</span><small>Mbps</small></span></div>
+              <div class="metric"><span class="metric-label">연결 수</span><span class="metric-value" id="metric-viewers">0</span></div>
+            </div>
+          </article>
+          <details class="panel events" id="events-panel">
+            <summary>이벤트 기록<span class="event-count" id="log-count">0</span><svg aria-hidden="true"><use href="#i-arrow"/></svg></summary>
+            <div class="event-content"><div class="table-wrap"><table class="event-table"><thead><tr><th scope="col">시간</th><th scope="col">구분</th><th scope="col">내용</th></tr></thead><tbody id="log-list"><tr><td colspan="3" class="table-empty">아직 기록이 없습니다.</td></tr></tbody></table></div><div class="event-actions"><button id="export-log" disabled>저장</button></div></div>
+          </details>
+        </div>
+        <aside>
+          <form class="panel settings" id="sender-form" novalidate>
+            <h2>송출 설정</h2><p class="settings-lock" id="settings-lock" hidden>송출 중에는 음량만 변경할 수 있습니다.</p>
+            <div class="field"><label for="server-host">서버 주소</label><input id="server-host" value="192.168.10.20" spellcheck="false" autocomplete="off" aria-describedby="host-error"><p class="error" id="host-error" role="alert" hidden></p></div>
+            <div class="field"><label for="stream-path">스트림 이름</label><input id="stream-path" value="screen-01" spellcheck="false" autocomplete="off" aria-describedby="stream-error"><p class="error" id="stream-error" role="alert" hidden></p></div>
+            <div class="field-pair"><div class="field"><label id="resolution-label" for="resolution-trigger">화질</label><div class="select-control"><input id="resolution" type="hidden" value="1920x1080"><button id="resolution-trigger" class="select-trigger" type="button" role="combobox" aria-labelledby="resolution-label" aria-haspopup="listbox" aria-expanded="false" aria-controls="select-popup"><span id="resolution-value">1080p</span><svg aria-hidden="true"><use href="#i-chevron"/></svg></button></div></div><div class="field"><label id="fps-label" for="fps-trigger">프레임</label><div class="select-control"><input id="fps" type="hidden" value="60"><button id="fps-trigger" class="select-trigger" type="button" role="combobox" aria-labelledby="fps-label" aria-haspopup="listbox" aria-expanded="false" aria-controls="select-popup"><span id="fps-value">60 fps</span><svg aria-hidden="true"><use href="#i-chevron"/></svg></button></div></div></div>
+            <div class="field custom-fps" id="custom-fps-field" hidden><label for="custom-fps">프레임 값</label><div class="input-suffix"><input id="custom-fps" type="number" min="30" max="165" step="1" value="90" aria-describedby="fps-error"><span>fps</span></div><p class="error" id="fps-error" role="alert" hidden></p></div><p class="control-hint" id="fps-hint" hidden>원본 화면과 장비 성능에 따라 달라집니다.</p>
+            <div class="audio-section"><div class="field"><label id="audio-source-label" for="audio-source-trigger">오디오</label><div class="select-control"><input id="audio-source" type="hidden" value="none"><button id="audio-source-trigger" class="select-trigger" type="button" role="combobox" aria-labelledby="audio-source-label" aria-haspopup="listbox" aria-expanded="false" aria-controls="select-popup"><span id="audio-source-value">사용 안 함</span><svg aria-hidden="true"><use href="#i-chevron"/></svg></button></div></div><div class="audio-channel" id="system-channel" hidden><div class="channel-heading"><label for="system-volume">시스템 소리</label><output id="system-volume-value" for="system-volume">80%</output></div><div class="volume-control"><button type="button" class="volume-button" id="system-mute" aria-label="시스템 소리 음소거" aria-pressed="false"><svg aria-hidden="true"><use href="#i-volume"/></svg></button><input id="system-volume" type="range" min="0" max="100" value="80" aria-label="시스템 소리 음량"></div></div><div class="audio-channel" id="mic-channel" hidden><div class="channel-heading"><label for="mic-volume">마이크</label><output id="mic-volume-value" for="mic-volume">100%</output></div><div class="volume-control"><button type="button" class="volume-button" id="mic-mute" aria-label="마이크 음소거" aria-pressed="false"><svg aria-hidden="true"><use href="#i-volume"/></svg></button><input id="mic-volume" type="range" min="0" max="100" value="100" aria-label="마이크 음량"></div></div></div>
+            <details class="advanced" id="advanced-settings"><summary><svg aria-hidden="true"><use href="#i-arrow"/></svg>고급 설정</summary><div class="advanced-body"><div class="field bitrate-field"><div class="field-label-row"><label for="quality">비트레이트</label><label class="switch-label" for="bitrate-auto">자동<input id="bitrate-auto" class="switch" title="화질과 프레임을 기준으로 계산합니다." type="checkbox" role="switch" checked></label></div><div class="input-suffix"><input id="quality" type="number" min="0.5" max="200" step="0.5" value="8" aria-describedby="bitrate-error" disabled><span>Mbps</span></div><p class="error" id="bitrate-error" role="alert" hidden></p></div><div class="field-pair"><div class="field"><label for="publish-port">송출 포트</label><input id="publish-port" type="number" min="1" max="65535" value="8554" aria-describedby="port-error"></div><div class="field"><label for="viewer-port">시청 포트</label><input id="viewer-port" type="number" min="1" max="65535" value="8889" aria-describedby="port-error"></div></div><p class="error" id="port-error" role="alert" hidden></p><div class="detail-pair"><span>코덱</span><span>H.264</span></div></div></details>
+          </form>
+          <article class="panel address-panel"><h2>시청 주소</h2><div class="address-row"><code class="address" id="viewer-address">http://192.168.10.20:8889/screen-01</code></div><p class="share-hint" id="share-hint">송출을 시작하면 공유할 수 있습니다.</p><div class="share-actions"><button id="copy-address" disabled><svg aria-hidden="true"><use href="#i-copy"/></svg><span id="copy-label">주소 복사</span></button><button id="open-viewer" disabled>시청하기<svg aria-hidden="true"><use href="#i-arrow"/></svg></button></div></article>
+        </aside>
+      </div>
+    </section>
+    <section class="page" id="viewer-view" role="tabpanel" aria-labelledby="tab-viewer" hidden>
+      <div class="page-heading"><h1>스트림 수신</h1><div class="heading-actions"><span class="status" id="viewer-status" role="status">대기</span><button class="primary connect-button" id="connect-button" type="submit" form="viewer-form">연결</button></div></div>
+      <div class="workspace viewer-workspace">
+        <article class="panel"><div class="panel-header"><h2 id="viewer-title">수신 화면</h2><div class="panel-tools"><span class="numeric" id="viewer-clock">00:00:00</span></div></div><div class="preview player" id="viewer-preview" tabindex="0" aria-label="영상 플레이어"><canvas id="viewer-canvas" width="1280" height="720" aria-label="수신 영상"></canvas><div class="empty" id="no-signal"><svg aria-hidden="true"><use href="#i-monitor"/></svg><h2 id="empty-heading">연결된 스트림이 없습니다</h2><p id="empty-description">서버 주소를 확인한 뒤 연결하세요.</p><button class="primary" id="retry-button" type="submit" form="viewer-form" hidden>다시 연결</button></div><div class="pause-overlay" id="pause-overlay" hidden><svg aria-hidden="true"><use href="#i-pause"/></svg><span>일시정지</span></div><div class="player-controls" id="player-controls" hidden><button id="player-pause" class="player-button" aria-label="일시정지" title="일시정지 (Space)"><svg aria-hidden="true"><use href="#i-pause"/></svg><span class="control-label">일시정지</span></button><div class="player-volume"><button id="player-mute" class="player-button" aria-label="음소거" aria-pressed="false" title="음소거 (M)"><svg aria-hidden="true"><use href="#i-volume"/></svg></button><input id="player-volume" type="range" min="0" max="100" value="80" aria-label="재생 음량"></div><span class="live-label">LIVE</span><span class="player-spacer"></span><button id="player-settings" class="player-button" aria-label="재생 화질" aria-expanded="false" aria-controls="player-quality-menu" title="재생 화질"><svg aria-hidden="true"><use href="#i-gear"/></svg><span class="control-label" id="player-quality-label">1080p</span></button><button id="viewer-wide" class="player-button" aria-label="넓게 보기" aria-pressed="false" title="넓게 보기 (T)"><svg aria-hidden="true"><use href="#i-layout"/></svg><span class="control-label">넓게 보기</span></button><button id="viewer-fullscreen" class="player-button" aria-label="전체 화면" title="전체 화면 (F)"><svg aria-hidden="true"><use href="#i-expand"/></svg></button></div><div class="player-quality-menu" id="player-quality-menu" role="menu" aria-label="재생 화질" hidden><div class="quality-menu-title">화질</div><div id="player-quality-options"></div></div></div></article>
+        <aside class="viewer-sidebar"><form class="panel settings" id="viewer-form" novalidate><h2>연결 설정</h2><div class="field"><label for="viewer-host">서버 주소</label><input id="viewer-host" value="192.168.10.20" spellcheck="false" autocomplete="off" aria-describedby="viewer-host-error"><p class="error" id="viewer-host-error" role="alert" hidden></p></div><div class="field"><label for="viewer-stream">스트림 이름</label><input id="viewer-stream" value="screen-01" spellcheck="false" autocomplete="off" aria-describedby="viewer-stream-error"><p class="error" id="viewer-stream-error" role="alert" hidden></p></div></form><details class="panel connection-details" open><summary>영상 정보<svg aria-hidden="true"><use href="#i-arrow"/></svg></summary><div class="info-panel"><dl><div><dt>재생 화질</dt><dd id="info-resolution">—</dd></div><div><dt>설정 프레임</dt><dd id="info-fps">—</dd></div><div><dt>비트레이트</dt><dd id="info-bitrate">—</dd></div><div><dt>오디오</dt><dd id="info-audio">—</dd></div><div><dt>코덱</dt><dd>H.264</dd></div><div><dt>프로토콜</dt><dd>WebRTC</dd></div></dl></div></details></aside>
+      </div>
+    </section>
+  </main>
+</div>
+<dialog id="source-dialog" aria-labelledby="source-title"><div class="dialog-head"><h2 id="source-title">공유할 창</h2><button class="icon-button" data-close="source-dialog" aria-label="창 선택 닫기"><svg aria-hidden="true"><use href="#i-close"/></svg></button></div><div class="dialog-body"><div class="source-options"><button class="source-choice" data-source="pattern" aria-pressed="true"><span class="source-thumb pattern"><svg aria-hidden="true"><use href="#i-frame"/></svg></span><span class="source-label">화면 테스트</span></button><button class="source-choice" data-source="document" aria-pressed="false"><span class="source-thumb"><svg aria-hidden="true"><use href="#i-log"/></svg></span><span class="source-label">문서</span></button></div></div><div class="dialog-footer"><button data-close="source-dialog">취소</button><button class="primary" id="confirm-source">선택</button></div></dialog>
+<dialog id="stop-dialog" aria-labelledby="stop-title"><div class="dialog-head"><h2 id="stop-title">송출을 중지할까요?</h2><button class="icon-button" data-close="stop-dialog" aria-label="중지 안내 닫기"><svg aria-hidden="true"><use href="#i-close"/></svg></button></div><div class="dialog-body"><p>연결된 시청 화면이 종료됩니다.</p></div><div class="dialog-footer"><button data-close="stop-dialog">취소</button><button class="danger" id="confirm-stop">중지</button></div></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="select-popup" id="select-popup" role="listbox" hidden></div>
+<script>__SCRIPT__</script>
+</body>
+</html>

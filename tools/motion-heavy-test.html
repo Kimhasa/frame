@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>FRAME 고움직임 테스트</title>
+<style>html, body { margin: 0; height: 100%; overflow: hidden; background: #000; } canvas { display: block; width: 100vw; height: 100vh; }</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script>
+  // Storage measurement source: a hard-to-compress moving picture (every pixel changes every frame): moving gradients,
+  // hundreds of moving shapes, a block of fresh noise and scrolling text. It approximates video or fast-changing 3D content.
+  const c = document.getElementById('c'), x = c.getContext('2d');
+  const fit = () => { c.width = innerWidth * devicePixelRatio; c.height = innerHeight * devicePixelRatio; };
+  addEventListener('resize', fit); fit();
+  const shapes = Array.from({ length: 420 }, (_, i) => ({ x: Math.random(), y: Math.random(), r: 4 + Math.random() * 40, vx: (Math.random() - 0.5) * 0.01, vy: (Math.random() - 0.5) * 0.01, h: i * 7 % 360 }));
+  const noise = document.createElement('canvas'); noise.width = 320; noise.height = 180; const nx = noise.getContext('2d'), img = nx.createImageData(320, 180);
+  function frame(t) {
+    const W = c.width, H = c.height;
+    const g = x.createLinearGradient(0, 0, W, H); g.addColorStop(0, `hsl(${t / 20 % 360},70%,40%)`); g.addColorStop(1, `hsl(${(t / 20 + 180) % 360},70%,30%)`);
+    x.fillStyle = g; x.fillRect(0, 0, W, H);
+    for (const s of shapes) { s.x = (s.x + s.vx + 1) % 1; s.y = (s.y + s.vy + 1) % 1; x.fillStyle = `hsla(${(s.h + t / 10) % 360},80%,60%,.75)`; x.beginPath(); x.arc(s.x * W, s.y * H, s.r * devicePixelRatio, 0, 7); x.fill(); }
+    for (let i = 0; i < img.data.length; i += 4) { const v = Math.random() * 255; img.data[i] = v; img.data[i + 1] = Math.random() * 255; img.data[i + 2] = v; img.data[i + 3] = 255; }
+    nx.putImageData(img, 0, 0); x.drawImage(noise, W * 0.55, H * 0.55, W * 0.4, H * 0.4);
+    x.fillStyle = '#fff'; x.font = `${22 * devicePixelRatio}px sans-serif`;
+    for (let i = 0; i < 12; i++) x.fillText('FRAME 고움직임 측정 ' + (Math.floor(t) + i * 37), (W - (t * 0.6 * devicePixelRatio + i * 300) % (W + 600)), (i + 1) * H / 13);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+</script>
+</body>
+</html>

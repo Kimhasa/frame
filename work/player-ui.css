@@ -1,0 +1,7 @@
+/* FRAME 0.5.1 addendum (allowed UI exception, recorded in UI_V051_ADDENDUM.json): the player's bottom controls and their
+   gradient fade out while playing and take no pointer events while hidden; they overlay the picture, so the player frame
+   never changes size. Shown again by pointer movement, a tap, keyboard focus or an open menu (script: .controls-idle). */
+#viewer-preview .player-controls { transition: opacity .18s ease; }
+#viewer-preview.controls-idle .player-controls { opacity: 0; pointer-events: none; transition: opacity .4s ease; }
+#viewer-preview.controls-idle { cursor: none; }
+/* end FRAME 0.5.1 addendum */

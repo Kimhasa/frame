@@ -1,0 +1,11 @@
+작업 폴더는 C:\Users\wlsdu\OneDrive\Desktop\frame 이야.
+
+최신 추가 요청인 CLAUDE_CAPTURE_PLAYER_ADDENDUM.txt도 먼저 읽어줘. 하단 컨트롤 자동 숨김, 프로그램 창의 제목 표시줄을 실제 캡처에서 제외하는 처리, 플레이어 바깥 틀과 선택한 출력 규격을 유지하는 영상 배치·여백 정리가 추가됐어. 이 범위만 기존 UI 고정 원칙의 예외로 구현하고 나머지 화면은 유지해.
+
+UI_HANDOFF.txt와 CLAUDE_FUNCTIONAL_TASKS.txt를 먼저 읽고 기존 구현을 이어서 진행해줘. 현재 UI 0.5는 사용자 요청에 따라 Codex가 수정한 기준이야. 기존 CLAUDE_INSTRUCTIONS.txt의 UI 0.4 고정 내용보다 새 문서가 우선해.
+
+UI를 다시 디자인하지 말고 현재 HTML/CSS와 컴포넌트를 그대로 사용해. 남은 실제 기능은 내부망 영상 목록과 자동 등록, 수동 연결, 모니터 캡처, 화질·비트레이트 최적화, 방송 전체 되감기와 실시간 복귀, 저장 최적화, 실제 채팅 송수신이야. 이미 구현된 기능은 확인해서 보존해.
+
+node work/build-console.mjs와 node tools/verify-ui-v05.mjs를 실행하고 실제 앱 화면도 기준과 비교해줘. reference/와 UI_LOCK.json은 0.4 원본으로 남겨둬. 현재 기준은 reference-v05/와 UI_V05_LOCK.json이야.
+
+계획에서 끝내지 말고 구현·빌드·실행 검증까지 진행해줘. 실제 다른 PC 수신, 장시간 DVR, 높은 FPS와 채팅 검증을 구분해서 보고해. 최종 실행 진입점은 dist/FrameConsole/FrameConsole.exe로 정리해줘. 미완료·미검증 항목은 명확히 밝혀줘.

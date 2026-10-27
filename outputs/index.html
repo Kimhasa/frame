@@ -1,0 +1,1972 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>FRAME Console</title>
+  <link rel="preload" href="./assets/fonts/PretendardVariable.woff2" as="font" type="font/woff2" crossorigin>
+  <style>@font-face {
+  font-family: Pretendard;
+  src: url('./assets/fonts/PretendardVariable.woff2') format('woff2');
+  font-weight: 45 920;
+  font-style: normal;
+  font-display: swap;
+}
+:root {
+  color-scheme: light;
+  --bg: #f5f6f8;
+  --surface: #fff;
+  --text: #242a32;
+  --muted: #747c87;
+  --line: #e0e4e8;
+  --green: #00a760;
+  --green-hover: #008c50;
+  --green-wash: #effaf4;
+  --error: #d84747;
+  --font: Pretendard, 'Segoe UI', 'Malgun Gothic', sans-serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; color: var(--text); background: var(--bg); font: 14px/1.5 var(--font); letter-spacing: -.15px; }
+button, input, select, summary { font: inherit; }
+button { color: inherit; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 36px; padding: 7px 13px; border: 1px solid #cdd3da; border-radius: 3px; background: #fff; white-space: nowrap; }
+button:hover:not(:disabled) { background: #f5f7f8; border-color: #a5afb9; }
+button:disabled { cursor: not-allowed; opacity: .5; }
+button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible, a:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
+button.primary { color: #fff; background: var(--green); border-color: var(--green); font-weight: 600; }
+button.primary:hover:not(:disabled) { background: var(--green-hover); border-color: var(--green-hover); }
+button.danger { color: var(--error); border-color: #e4b5b5; background: #fff; }
+button.danger:hover:not(:disabled) { background: #fff5f5; border-color: #d66e6e; }
+.icon-button { min-height: 28px; min-width: 28px; padding: 4px; border-color: transparent; background: transparent; }
+.icon-button:hover:not(:disabled) { border-color: transparent; background: #eef1f4; }
+svg { width: 18px; height: 18px; display: block; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.muted { color: var(--muted); }
+.numeric { font-variant-numeric: tabular-nums; }
+.hidden, [hidden] { display: none !important; }
+.topbar { height: 58px; position: sticky; z-index: 4; top: 0; display: flex; align-items: center; padding: 0 25px; background: #292f37; color: #fff; border-bottom: 1px solid #1c2229; }
+.brand-icon { color: #22d581; margin-right: 11px; }
+.brand-icon svg { width: 25px; height: 25px; stroke-width: 2; }
+.brand { font-size: 21px; font-weight: 750; letter-spacing: 1px; }
+.brand-subtitle { margin-left: 12px; padding-left: 13px; border-left: 1px solid #51565d; color: #c0c7cf; font-size: 13px; }
+.environment { margin-left: auto; display: flex; align-items: center; gap: 9px; font-size: 12px; color: #d4dae0; }
+.environment svg { width: 15px; height: 15px; }
+.app-layout { min-height: calc(100vh - 58px); display: grid; grid-template-columns: 212px minmax(0, 1fr); }
+.sidebar { background: #fff; border-right: 1px solid #dce1e6; position: sticky; top: 58px; height: calc(100vh - 58px); display: flex; flex-direction: column; }
+.nav-title { color: #838c98; font-size: 12px; margin: 30px 25px 15px; }
+.nav-menu { display: flex; flex-direction: column; gap: 4px; }
+.nav-item { min-height: 46px; width: 100%; justify-content: flex-start; padding: 12px 25px; border: 0; border-radius: 0; position: relative; color: #5d6672; gap: 12px; font-weight: 500; }
+.nav-item svg { width: 17px; height: 17px; }
+.nav-item[aria-selected='true'] { background: var(--green-wash); color: #00894f; font-weight: 650; }
+.nav-item[aria-selected='true']::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--green); }
+.nav-item:hover:not(:disabled) { background: #f4f7f6; }
+.sidebar-bottom { margin-top: auto; color: #a3aab3; font-size: 11px; padding: 22px 25px; }
+.content { min-width: 0; padding: 33px 36px 36px; }
+.page { max-width: 1580px; margin: auto; }
+.page-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 24px; min-height: 36px; }
+h1 { font-size: 25px; font-weight: 650; line-height: 1.4; letter-spacing: -.8px; margin: 0; }
+.status { display: inline-flex; align-items: center; padding: 4px 10px; border: 1px solid #d9dfe5; color: #737c87; background: #fff; font-size: 12px; border-radius: 3px; font-weight: 500; }
+.status.active { color: #00884e; background: var(--green-wash); border-color: #bde7ce; }
+.workspace { display: grid; grid-template-columns: minmax(0, 1fr) 312px; gap: 22px; align-items: start; }
+.panel { border: 1px solid var(--line); background: var(--surface); border-radius: 4px; overflow: hidden; }
+.panel-header { min-height: 51px; padding: 13px 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--line); }
+.panel-header h2 { font-size: 14px; font-weight: 600; margin: 0; }
+.panel-tools { display: flex; align-items: center; gap: 13px; color: #7c8590; font-size: 12px; }
+.preview { position: relative; width: 100%; height: clamp(300px, 45vh, 520px); background: #17212c; overflow: hidden; }
+.preview canvas { display: block; width: 100%; height: 100%; object-fit: contain; }
+.preview:fullscreen { height: 100vh; width: 100vw; }
+.source-row { padding: 14px 18px; min-height: 66px; display: flex; align-items: center; gap: 11px; border-bottom: 1px solid var(--line); }
+.source-row > svg { color: #8994a1; width: 19px; height: 19px; }
+.source-name { font-size: 13px; font-weight: 500; }
+.source-row button { margin-left: auto; min-height: 30px; font-size: 12px; padding: 5px 11px; }
+.metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 18px 0; }
+.metric { padding: 0 20px; border-left: 1px solid #e7eaee; }
+.metric:first-child { border-left: 0; }
+.metric-label { display: block; color: #858d97; font-size: 12px; margin-bottom: 6px; }
+.metric-value { font-size: 18px; font-weight: 550; font-variant-numeric: tabular-nums; line-height: 1.5; }
+.metric-value small { font-size: 11px; font-weight: 400; color: #8b939e; margin-left: 4px; }
+.settings { padding: 20px; }
+.settings h2, .info-panel h2 { font-size: 15px; margin: 0 0 23px; font-weight: 600; }
+.field { display: flex; flex-direction: column; gap: 7px; margin-bottom: 19px; min-width: 0; }
+.field label { font-size: 12px; color: #626c78; font-weight: 500; }
+.field input, .field select { font-family: var(--font); color: #323b46; font-size: 13px; width: 100%; min-width: 0; height: 37px; border: 1px solid #d6dce2; border-radius: 3px; background: #fff; padding: 7px 10px; font-variant-numeric: tabular-nums; }
+.field input:hover, .field select:hover { border-color: #a8b1bc; }
+.field input:disabled, .field select:disabled { background: #f6f7f9; color: #8a929c; border-color: #e1e5ea; }
+.field [aria-invalid='true'] { border-color: var(--error); }
+.error { color: var(--error); margin: 0; font-size: 11px; line-height: 1.6; }
+.field-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.advanced { border-top: 1px solid #e6e9ed; padding-top: 15px; margin: 1px 0 19px; }
+summary { list-style: none; cursor: pointer; }
+summary::-webkit-details-marker { display: none; }
+.advanced summary { color: #737c88; display: flex; align-items: center; gap: 6px; font-size: 12px; }
+.advanced summary svg { width: 13px; height: 13px; transform: rotate(0deg); transition: transform .15s; }
+.advanced[open] summary svg { transform: rotate(90deg); }
+.advanced-body { padding-top: 17px; }
+.advanced-body .field { margin-bottom: 13px; }
+.detail-pair { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 12px; padding: 7px 0; }
+.detail-pair span:first-child { color: #8b939e; }
+.start-button { width: 100%; min-height: 41px; font-size: 13px; }
+.address-panel { padding: 17px 19px; margin-top: 16px; }
+.address-panel h2 { font-size: 13px; font-weight: 600; margin: 0 0 12px; }
+.address-row { display: flex; align-items: center; padding: 6px 7px 6px 10px; background: #f7f8fa; border: 1px solid #e2e6eb; border-radius: 3px; min-width: 0; }
+.address { font-size: 11px; color: #5d6774; line-height: 1.6; overflow-wrap: anywhere; min-width: 0; font-family: var(--font); font-variant-numeric: tabular-nums; }
+.address-row .icon-button { margin-left: auto; flex: none; color: #7b8693; }
+.address-row svg { width: 14px; height: 14px; }
+.open-viewer { margin-top: 12px; width: 100%; min-height: 32px; font-size: 12px; }
+.open-viewer svg { width: 13px; height: 13px; margin-left: auto; }
+.events { margin-top: 17px; }
+.events > summary { display: flex; align-items: center; min-height: 48px; gap: 8px; padding: 13px 18px; font-size: 12px; font-weight: 500; }
+.event-count { color: #979fa9; font-variant-numeric: tabular-nums; font-size: 11px; font-weight: 400; }
+.events > summary > svg { margin-left: auto; width: 14px; height: 14px; color: #8a949f; transition: transform .15s; }
+.events[open] > summary > svg { transform: rotate(90deg); }
+.event-content { padding: 0 18px 13px; }
+.table-wrap { overflow: auto; max-height: 195px; }
+.event-table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 12px; }
+.event-table th, .event-table td { padding: 10px 11px; text-align: left; border-bottom: 1px solid #ebedf0; font-weight: 400; }
+.event-table th { font-size: 11px; color: #9199a3; background: #f8f9fa; position: sticky; top: 0; }
+.event-table th:first-child { width: 85px; }
+.event-table th:nth-child(2) { width: 74px; }
+.event-table td:first-child { color: #8d97a2; font-variant-numeric: tabular-nums; font-size: 11px; }
+.event-table td:nth-child(2) { color: #718094; font-size: 11px; }
+.event-table td:last-child { color: #66707b; overflow-wrap: anywhere; }
+.event-actions { display: flex; justify-content: flex-end; padding-top: 11px; }
+.event-actions button { min-height: 29px; padding: 4px 10px; font-size: 11px; }
+.viewer-form { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) auto; align-items: end; gap: 12px; padding: 19px 20px; margin-bottom: 20px; }
+.viewer-form .field { margin: 0; }
+.viewer-form button { min-height: 37px; min-width: 95px; }
+.empty { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; padding: 25px; background: #f9fafb; text-align: center; }
+.empty > svg { width: 33px; height: 33px; color: #aeb8c4; margin-bottom: 19px; stroke-width: 1.25; }
+.empty h2 { font-size: 17px; font-weight: 550; margin: 0 0 8px; color: #535e6c; }
+.empty p { font-size: 13px; color: #969faa; margin: 0; }
+.info-panel { padding: 20px; }
+.info-panel h2 { margin-bottom: 15px; }
+.info-panel dl { margin: 0; }
+.info-panel dl > div { display: flex; justify-content: space-between; padding: 13px 0; border-bottom: 1px solid #edf0f3; font-size: 12px; gap: 12px; }
+.info-panel dl > div:last-child { border: 0; }
+.info-panel dt { color: #8b949f; }
+.info-panel dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
+dialog { border: 1px solid #d4dae1; border-radius: 5px; padding: 0; background: #fff; color: var(--text); width: min(540px, calc(100% - 32px)); box-shadow: 0 15px 70px #14233324; }
+dialog::backdrop { background: #18233266; }
+.dialog-head { display: flex; align-items: center; justify-content: space-between; padding: 20px 23px; border-bottom: 1px solid var(--line); }
+.dialog-head h2 { font-size: 18px; font-weight: 600; margin: 0; }
+.dialog-head .icon-button { color: #7f8b99; }
+.dialog-body { padding: 23px; }
+.dialog-body p { font-size: 14px; color: #76818f; margin: 0; }
+.dialog-footer { padding: 15px 23px; background: #fafbfc; border-top: 1px solid var(--line); display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
+.dialog-footer button { min-width: 75px; }
+.source-options { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.source-choice { border-color: #dbe0e6; padding: 0; display: block; text-align: left; overflow: hidden; }
+.source-choice[aria-pressed='true'] { border-color: var(--green); box-shadow: 0 0 0 1px var(--green); }
+.source-thumb { display: flex; align-items: center; justify-content: center; height: 112px; background: #eef2f5; color: #9cabbc; border-bottom: 1px solid #e0e6ed; }
+.source-thumb.pattern { background: #192a37; color: #5faf91; }
+.source-thumb svg { width: 33px; height: 33px; stroke-width: 1.4; }
+.source-choice .source-label { padding: 12px 14px; display: block; font-size: 13px; }
+.toast { position: fixed; z-index: 10; left: calc(50% + 106px); bottom: 25px; transform: translate(-50%, 8px); opacity: 0; pointer-events: none; padding: 11px 17px; background: #303944; color: #fff; border-radius: 4px; font-size: 12px; transition: opacity .15s, transform .15s; box-shadow: 0 4px 20px #17233020; max-width: calc(100vw - 32px); }
+.toast.visible { opacity: 1; transform: translate(-50%, 0); }
+@media (min-width: 1700px) { .content { padding: 40px 48px; } .workspace { grid-template-columns: minmax(0, 1fr) 330px; gap: 25px; } }
+@media (max-width: 1150px) { .app-layout { grid-template-columns: 176px minmax(0, 1fr); } .content { padding: 27px 24px; } .workspace { grid-template-columns: minmax(0, 1fr) 280px; gap: 17px; } .settings { padding: 18px; } .metric { padding: 0 13px; } .metric-label { font-size: 11px; } .metric-value { font-size: 16px; } .nav-item { padding-left: 22px; } .toast { left: calc(50% + 88px); } }
+@media (max-width: 880px) { .workspace { grid-template-columns: 1fr; } .settings { padding: 20px; } .preview { height: auto; aspect-ratio: 16/9; } .viewer-form { grid-template-columns: 1fr 1fr; } .viewer-form button { grid-column: 1/-1; } }
+@media (max-width: 800px) { .topbar { height: 54px; padding: 0 17px; } .brand { font-size: 19px; } .brand-subtitle { font-size: 12px; } .app-layout { display: block; min-height: calc(100vh - 54px); } .sidebar { position: sticky; z-index: 3; top: 54px; height: auto; border-right: 0; border-bottom: 1px solid var(--line); } .nav-title, .sidebar-bottom { display: none; } .nav-menu { flex-direction: row; gap: 0; padding: 0 13px; } .nav-item { width: 95px; min-height: 45px; padding: 11px 14px; justify-content: center; font-size: 13px; gap: 8px; background: #fff !important; } .nav-item[aria-selected='true']::before { top: auto; bottom: 0; left: 12px; right: 12px; height: 2px; width: auto; } .nav-item svg { width: 15px; height: 15px; } .content { padding: 24px 16px; } h1 { font-size: 23px; } .page-heading { margin-bottom: 19px; } .preview { min-height: 180px; } .metrics { padding: 15px 0; } .metric { padding: 0 11px; } .metric-label { font-size: 10px; } .metric-value { font-size: 15px; } .metric-value small { font-size: 10px; margin-left: 2px; } .toast { left: 50%; } .viewer-form { padding: 16px; gap: 11px; } .event-table th:first-child { width: 68px; } .event-table th:nth-child(2) { width: 52px; } .event-table th, .event-table td { padding: 8px 5px; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+:root { --text: #20252d; --muted: #505c6b; --green: #008750; --green-hover: #007244; }
+body { font-size: 15px; line-height: 1.6; }
+button { font-size: 14px; min-height: 40px; }
+button:disabled { opacity: .5; }
+button.danger { color: #b42534; border-color: #d4a1a8; font-weight: 550; }
+.brand-subtitle { font-size: 14px; color: #e2e6eb; }
+.environment { font-size: 13px; color: #eef1f4; }
+.nav-title { font-size: 13px; color: #536071; }
+.nav-item { font-size: 16px; color: #3d4755; min-height: 50px; }
+.sidebar-bottom { font-size: 12px; color: #596575; }
+.content { padding-top: 22px; }
+.page-heading { position: sticky; top: 58px; z-index: 3; background: var(--bg); padding: 14px 0 17px; margin-bottom: 12px; gap: 14px; }
+h1 { font-size: 27px; color: #18202a; font-weight: 680; }
+.heading-actions { display: flex; align-items: center; gap: 13px; }
+.heading-actions .start-button, .connect-button { width: auto; min-width: 138px; min-height: 44px; font-size: 15px; padding: 9px 17px; }
+.status { font-size: 14px; padding: 5px 10px; color: #445264; border-color: #c7d0d9; }
+.status.active { color: #006e3f; border-color: #abd4bb; background: #ecf8f0; }
+.panel-header { min-height: 56px; }
+.panel-header h2 { font-size: 16px; font-weight: 650; color: #252e3a; }
+.panel-tools { font-size: 13px; color: #4d5a6a; }
+.icon-button { min-width: 34px; min-height: 34px; color: #48566a; }
+.preview { height: clamp(320px, 45vh, 540px); }
+.source-row { min-height: 70px; }
+.source-row > svg { color: #4c5c70; }
+.source-name { font-size: 15px; color: #202c3b; font-weight: 550; }
+.source-row button { min-height: 36px; font-size: 14px; }
+.metric-label { font-size: 13px; color: #4e5b6c; margin-bottom: 5px; }
+.metric-value { font-size: 22px; font-weight: 600; color: #192635; }
+.metric-value small { font-size: 12px; color: #536174; }
+.settings { padding: 22px; }
+.settings h2, .info-panel h2 { font-size: 17px; font-weight: 650; color: #202b39; }
+.settings-lock { margin: -8px 0 20px; padding: 9px 10px; background: #f1f4f7; color: #435268; font-size: 13px; border-radius: 3px; }
+.field { gap: 8px; margin-bottom: 19px; }
+.field label { font-size: 14px; font-weight: 550; color: #354254; }
+.field input, .field select { height: 43px; font-size: 15px; color: #202b3a; padding: 8px 10px; border-color: #bac4cf; }
+.field input:disabled, .field select:disabled { color: #667183; background: #f2f4f6; }
+.error { font-size: 13px; color: #b62431; }
+.advanced { margin-bottom: 0; padding-top: 17px; }
+.advanced summary { font-size: 14px; color: #3c4b60; }
+.detail-pair { font-size: 14px; }
+.detail-pair span:first-child { color: #536174; }
+.address-panel { padding: 18px 20px; }
+.address-panel h2 { font-size: 15px; color: #243041; }
+.address-row { padding: 10px 11px; }
+.address { color: #28394d; font-size: 13px; }
+.share-hint { color: #4e5c6d; font-size: 13px; margin: 12px 0 0; }
+.share-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 14px; }
+.share-actions button { min-height: 40px; font-size: 14px; padding: 7px 9px; }
+.share-actions svg { width: 16px; height: 16px; }
+.share-actions button:last-child:not(:disabled) { color: #006f43; background: #f1faf5; border-color: #9fcab0; }
+.events > summary { font-size: 14px; color: #354456; }
+.event-count { color: #526174; font-size: 12px; }
+.events > summary > svg { color: #536174; }
+.event-table { font-size: 13px; }
+.event-table th, .event-table td { padding-top: 11px; padding-bottom: 11px; }
+.event-table th { font-size: 12px; color: #526174; }
+.event-table td:first-child, .event-table td:nth-child(2) { color: #4f5f74; font-size: 12px; }
+.event-table td:last-child { color: #273a50; }
+.event-table td.table-empty { text-align: center; color: #536174; padding: 26px 10px; }
+.event-actions button { min-height: 34px; font-size: 13px; }
+.empty { background: #f5f7fa; }
+.empty > svg { color: #667b93; width: 40px; height: 40px; }
+.empty h2 { font-size: 20px; color: #273b52; font-weight: 600; }
+.empty p { font-size: 14px; color: #4d6077; }
+.empty button { margin-top: 22px; min-height: 44px; min-width: 125px; font-size: 15px; }
+.source-empty { background: #1b2836; }
+.source-empty > svg { color: #b7c8d9; width: 46px; height: 46px; margin-bottom: 23px; }
+.source-empty h2 { color: #f5f8fc; font-size: 23px; margin: 0; font-weight: 550; }
+.source-empty button { margin-top: 26px; }
+.connection-details { margin-top: 17px; }
+.connection-details > summary { display: flex; align-items: center; justify-content: space-between; padding: 17px 20px; font-weight: 600; font-size: 15px; color: #27384d; }
+.connection-details > summary svg { width: 15px; height: 15px; color: #55667c; }
+.connection-details[open] > summary svg { transform: rotate(90deg); }
+.connection-details[open] > summary { border-bottom: 1px solid var(--line); }
+.connection-details .info-panel { padding: 0 20px; }
+.info-panel dl > div { font-size: 14px; padding: 14px 0; }
+.info-panel dt { color: #4c5d73; }
+.info-panel dd { color: #23384f; font-weight: 500; }
+.viewer-sidebar .settings .field:last-child { margin-bottom: 0; }
+.player { outline-offset: -3px; }
+.player-controls { position: absolute; bottom: 0; left: 0; right: 0; padding: 27px 14px 12px; display: flex; align-items: center; gap: 14px; background: linear-gradient(transparent, #111b2aee); color: #fff; }
+.player-button { color: #fff; background: transparent; border: 0; padding: 6px 8px; min-height: 38px; gap: 7px; font-size: 14px; }
+.player-button:hover:not(:disabled) { background: #ffffff20; border: 0; }
+.player-button svg { width: 21px; height: 21px; }
+.player-spacer { flex: 1; }
+.live-label { color: #fff; background: #ad2935; padding: 2px 6px; border-radius: 3px; font-size: 12px; font-weight: 650; letter-spacing: .3px; }
+.pause-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 17px 20px; display: flex; align-items: center; flex-direction: column; gap: 9px; color: #fff; background: #0c1524c9; border-radius: 6px; font-size: 15px; pointer-events: none; }
+.pause-overlay svg { width: 31px; height: 31px; }
+.is-wide .viewer-workspace { grid-template-columns: minmax(0, 1fr); }
+.is-wide .viewer-sidebar { display: none; }
+.is-wide .player { height: min(70vh, 800px); }
+.player:fullscreen, .is-wide .player:fullscreen { width: 100vw; height: 100vh; aspect-ratio: auto; }
+.dialog-head h2 { font-size: 20px; color: #202e3e; }
+.dialog-body p { color: #40546d; font-size: 15px; }
+.source-choice .source-label { font-size: 15px; padding: 13px 15px; color: #25364b; }
+.dialog-footer button { font-size: 14px; min-height: 40px; }
+.toast { font-size: 14px; }
+@media (min-width: 1700px) { .content { padding-top: 27px; } .workspace { grid-template-columns: minmax(0, 1fr) 340px; } }
+@media (max-width: 1150px) { .metric-label { font-size: 13px; } .metric-value { font-size: 20px; } .settings { padding: 19px; } }
+@media (max-width: 880px) { .preview { height: auto; aspect-ratio: 16/9; } .is-wide .player { height: auto; aspect-ratio: 16/9; } }
+@media (max-width: 800px) {
+  .content { padding-top: 7px; }
+  .page-heading { top: 99px; padding: 13px 0 16px; margin-bottom: 7px; }
+  h1 { font-size: 25px; }
+  .nav-item { font-size: 15px; min-height: 45px; }
+  .heading-actions { gap: 10px; }
+  .metric-label { font-size: 13px; }
+  .metric-value { font-size: 21px; }
+  .metric-value small { font-size: 12px; }
+  .brand-subtitle { font-size: 13px; }
+  .field input, .field select { font-size: 15px; height: 43px; }
+  .event-table th:first-child { width: 80px; }
+  .event-table th:nth-child(2) { width: 60px; }
+}
+@media (max-width: 480px) {
+  .page-heading { flex-wrap: wrap; }
+  .heading-actions { justify-content: space-between; width: 100%; }
+  .heading-actions .start-button, .connect-button { min-width: 142px; }
+  .metrics { grid-template-columns: 1fr 1fr; row-gap: 17px; padding: 17px 0; }
+  .metric:nth-child(3) { border-left: 0; }
+  .metric { padding-left: 18px; }
+  .source-empty h2 { font-size: 19px; }
+  .source-empty > svg { width: 33px; height: 33px; margin-bottom: 14px; }
+  .source-empty button { margin-top: 16px; min-height: 40px; }
+  .source-thumb { height: 95px; }
+  .player-controls { gap: 5px; padding: 22px 5px 7px; }
+  .player-button { padding: 5px; font-size: 13px; }
+  .live-label { font-size: 11px; padding: 2px 4px; }
+}
+
+.field input:not([type='range']):focus, .field input:not([type='range']):focus-visible {
+  outline: none;
+  outline-offset: 0;
+  border-color: var(--green);
+  box-shadow: inset 0 0 0 1px var(--green);
+  transition: background-color .12s;
+}
+.field input:not([type='range']), .select-trigger, .input-suffix { transition: border-color .12s, box-shadow .12s, background-color .12s; }
+.field input[type='hidden'] { display: none !important; }
+.field input[type='number'] { appearance: textfield; -moz-appearance: textfield; }
+.field input::-webkit-outer-spin-button, .field input::-webkit-inner-spin-button { appearance: none; -webkit-appearance: none; margin: 0; }
+button:focus-visible, summary:focus-visible, a:focus-visible { outline: 2px solid var(--green); outline-offset: -2px; }
+.field input { border-radius: 6px; }
+.field-pair { align-items: start; }
+.control-hint { word-break: keep-all; overflow-wrap: break-word; }
+.select-control { width: 100%; min-width: 0; }
+.select-trigger { width: 100%; height: 44px; min-height: 44px; justify-content: space-between; border: 1px solid #bac4cf; border-radius: 6px; padding: 8px 11px; background: #fff; color: #202b3a; font-size: 15px; font-weight: 450; }
+.select-trigger > span { overflow: hidden; text-overflow: ellipsis; }
+.select-trigger > svg { width: 15px; height: 15px; color: #637184; transition: transform .15s; }
+.select-trigger:hover:not(:disabled) { background: #fff; border-color: #7f91a3; }
+.select-trigger:focus, .select-trigger:focus-visible, .select-trigger[aria-expanded='true'] { outline: none; outline-offset: 0; border-color: var(--green); box-shadow: inset 0 0 0 1px var(--green); transition: background-color .12s; }
+.select-trigger[aria-expanded='true'] > svg { transform: rotate(180deg); }
+.select-trigger:disabled { opacity: 1; color: #667183; background: #f2f4f6; border-color: #e1e5ea; cursor: not-allowed; }
+.select-popup { position: fixed; z-index: 100; padding: 5px; background: #fff; border: 1px solid #d6dfe5; border-radius: 8px; box-shadow: 0 8px 25px #2336471c, 0 2px 5px #2336470a; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: #c6d2cc transparent; }
+.select-popup::-webkit-scrollbar { width: 5px; }
+.select-popup::-webkit-scrollbar-thumb { border-radius: 5px; background: #c6d2cc; }
+.select-option { padding: 9px 9px; min-height: 40px; display: flex; align-items: center; justify-content: space-between; gap: 6px; cursor: pointer; border-radius: 4px; color: #243346; }
+.select-option.is-active { background: #f0f5f2; }
+.select-option[aria-selected='true'] { color: #006e43; }
+.select-option-copy { display: flex; flex-direction: column; min-width: 0; }
+.select-option-label { font-size: 14px; line-height: 1.6; font-weight: 500; }
+.select-option-detail { font-size: 12px; line-height: 1.5; color: #637184; }
+.select-option-check { visibility: hidden; flex: none; }
+.select-option-check svg { width: 15px; height: 15px; }
+.select-option[aria-selected='true'] .select-option-check { visibility: visible; }
+.input-suffix { width: 100%; display: flex; align-items: center; border: 1px solid #bac4cf; background: #fff; border-radius: 6px; }
+.input-suffix:focus-within { border-color: var(--green); box-shadow: inset 0 0 0 1px var(--green); }
+.input-suffix input { border: none; box-shadow: none; background: transparent; min-width: 0; }
+.input-suffix input:focus, .input-suffix input:focus-visible { border: none !important; box-shadow: none !important; outline: none; }
+.input-suffix > span { padding-right: 12px; color: #5a687a; font-size: 13px; }
+.input-suffix:has(input:disabled) { background: #f2f4f6; border-color: #e1e5ea; }
+.input-suffix input:disabled { border: none; background: transparent; }
+.control-hint { font-size: 13px; line-height: 1.65; color: #4f6074; margin: -3px 0 19px; }
+.audio-section { border-top: 1px solid #e3e8ed; padding-top: 18px; margin-top: 2px; }
+.audio-channel { margin: -3px 0 18px; }
+.channel-heading { display: flex; align-items: center; justify-content: space-between; font-size: 13px; color: #3d4f65; margin-bottom: 7px; }
+.channel-heading output { font-size: 12px; font-variant-numeric: tabular-nums; color: #4b5d72; }
+.volume-control { display: flex; align-items: center; gap: 10px; }
+.volume-button { width: 30px; min-width: 30px; min-height: 30px; padding: 4px; color: #4a6077; border: 0; background: transparent; }
+.volume-button:hover:not(:disabled) { background: #eef3f1; border: 0; }
+.volume-button[aria-pressed='true'] { color: #96636c; }
+.volume-button svg { width: 19px; height: 19px; }
+input[type='range'] { --fill: 80%; appearance: none; -webkit-appearance: none; min-width: 0; width: 100%; height: 24px; padding: 0; margin: 0; cursor: pointer; background: transparent; border: none; outline: none; box-shadow: none; border-radius: 0; }
+input[type='range']::-webkit-slider-runnable-track { height: 4px; border-radius: 4px; background: linear-gradient(to right, var(--green) 0 var(--fill), #dce4e9 var(--fill) 100%); }
+input[type='range']::-webkit-slider-thumb { appearance: none; -webkit-appearance: none; width: 13px; height: 13px; background: var(--green); border: 2px solid #fff; border-radius: 50%; margin-top: -4.5px; box-shadow: 0 0 0 1px #00875040; }
+input[type='range']::-moz-range-track { height: 4px; border-radius: 4px; background: #dce4e9; }
+input[type='range']::-moz-range-progress { height: 4px; border-radius: 4px; background: var(--green); }
+input[type='range']::-moz-range-thumb { width: 10px; height: 10px; border: 2px solid #fff; border-radius: 50%; background: var(--green); }
+input[type='range']:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 3px #00875038; }
+input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #00875038; }
+.field-label-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.field label.switch-label { display: flex; gap: 7px; align-items: center; font-size: 12px; font-weight: 450; color: #506477; cursor: pointer; }
+.field input.switch { appearance: none; -webkit-appearance: none; height: 20px; width: 35px; padding: 0; margin: 0; background: #bcc8d2; border: none; border-radius: 12px; position: relative; cursor: pointer; }
+.field input.switch::after { content: ''; position: absolute; width: 14px; height: 14px; border-radius: 50%; background: #fff; left: 3px; top: 3px; transition: transform .15s; box-shadow: 0 1px 2px #0001; }
+.field input.switch:checked { background: var(--green); }
+.field input.switch:checked::after { transform: translateX(15px); }
+.field input.switch:focus-visible { box-shadow: 0 0 0 2px #00875038; }
+.field input.switch:disabled { opacity: .55; cursor: not-allowed; }
+.player-controls { gap: 9px; }
+.player-volume { display: flex; align-items: center; gap: 5px; }
+.player-volume input[type='range'] { width: 78px; --green: #fff; }
+.player-volume input[type='range']::-webkit-slider-runnable-track { background: linear-gradient(to right, #fff 0 var(--fill), #ffffff45 var(--fill) 100%); }
+.player-volume input[type='range']::-webkit-slider-thumb { width: 11px; height: 11px; margin-top: -3.5px; border: none; box-shadow: none; }
+.player-volume input[type='range']::-moz-range-thumb { width: 11px; height: 11px; border: none; }
+.player-volume input[type='range']::-moz-range-track { background: #ffffff45; }
+.player-volume input[type='range']::-moz-range-progress { background: #fff; }
+.player-volume input[type='range']:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 3px #ffffff45; }
+.player-quality-menu { position: absolute; right: 12px; bottom: 63px; width: 206px; padding: 7px; max-height: min(350px, calc(100% - 78px)); overflow-y: auto; background: #202a38f5; color: #fff; border: 1px solid #ffffff1a; border-radius: 7px; z-index: 2; box-shadow: 0 6px 24px #0003; scrollbar-width: thin; }
+.quality-menu-title { font-size: 13px; font-weight: 550; color: #c9d4e2; padding: 8px 10px 10px; border-bottom: 1px solid #ffffff1a; margin-bottom: 4px; }
+.quality-menu-option { width: 100%; min-height: 39px; padding: 8px 9px; justify-content: space-between; gap: 12px; background: transparent; border: 0; color: #f3f6fa; font-size: 14px; text-align: left; }
+.quality-menu-option:hover:not(:disabled), .quality-menu-option:focus-visible { background: #ffffff15; border: 0; outline-color: #9cd9b8; }
+.quality-menu-option > svg { width: 15px; height: 15px; opacity: 0; }
+.quality-menu-option[aria-checked='true'] > svg { opacity: 1; color: #9cd9b8; }
+.quality-option-copy { display: flex; flex-direction: column; }
+.quality-option-copy small { font-size: 11px; color: #b8c8d9; }
+@media (max-width: 650px) { .player-controls .control-label { display: none; } .player-volume input[type='range'] { width: 65px; } .player-button { padding: 6px; min-width: 32px; } }
+@media (max-width: 480px) { .player-controls { gap: 3px; padding-right: 7px; padding-left: 7px; } .player-volume { gap: 3px; } .player-volume input[type='range'] { width: 56px; } .player-controls .live-label { display: none; } .player-controls .player-button { min-width: 30px; width: 30px; padding: 4px; } .player-quality-menu { right: 7px; bottom: 52px; max-height: calc(100% - 60px); width: 188px; } }
+
+/* FRAME 0.5: user-authorized presentation changes; the 0.4 base components are retained. */
+.compact-toolbar { display:flex; align-items:center; justify-content:space-between; gap:16px; min-height:44px; margin:0 0 22px; padding:0; background:var(--bg); }
+.page-heading.compact-toolbar { top:78px; padding:0 0 12px; margin-bottom:10px; }
+.compact-toolbar button { min-height:42px; border-radius:6px; font-size:14px; }
+.heading-actions { margin-left:auto; }
+.connection-button { color:#354658; }
+.connection-button svg { width:17px; height:17px; }
+.catalog-toolbar { flex-wrap:wrap; padding:2px 0 12px; margin-bottom:8px; border-bottom:0; }
+.catalog-tabs { display:flex; align-self:stretch; align-items:center; }
+.catalog-current { display:inline-flex; align-items:center; gap:9px; color:#182c23; font-size:17px; font-weight:650; }
+.catalog-current > span { display:inline-flex; align-items:center; justify-content:center; min-width:25px; height:24px; padding:0 7px; background:#e5f2eb; border-radius:6px; color:#006e43; font-size:13px; font-weight:600; }
+.catalog-actions { display:flex; align-items:center; gap:10px; }
+.catalog-search { display:flex; align-items:center; gap:9px; width:240px; height:42px; padding:0 12px; background:#fff; border:1px solid #c7d0d8; border-radius:6px; }
+.catalog-search svg { color:#657589; width:17px; height:17px; }
+.catalog-search input { border:0; background:none; min-width:0; width:100%; padding:0; outline:none; font-size:14px; color:#243346; }
+.catalog-search input::placeholder { color:#677487; }
+.catalog-search:focus-within { border-color:var(--green); box-shadow:inset 0 0 0 1px var(--green); }
+.catalog-search input:focus-visible { outline:none; }
+.refresh-button { width:42px; background:#fff; border:1px solid #c7d0d8; }
+.broadcast-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:30px 22px; padding:15px 0; }
+.broadcast-card { display:block; width:100%; padding:0; min-width:0; text-align:left; border:1px solid #dce3e9; background:#fff; white-space:normal; border-radius:9px; overflow:hidden; transition:border-color .15s,box-shadow .15s; }
+.broadcast-card:hover:not(:disabled) { background:#fff; border:1px solid #9ebcaa; box-shadow:0 3px 12px #172f2310; }
+.broadcast-thumb { display:block; position:relative; width:100%; aspect-ratio:16/9; border-radius:0; overflow:hidden; background:#1c2b38; border:0; }
+.broadcast-thumb img { display:block; width:100%; height:100%; object-fit:cover; }
+.broadcast-thumb > svg { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:39px; height:39px; color:#8196a8; }
+.broadcast-card:hover .broadcast-thumb { box-shadow:none; }
+.broadcast-card:focus-visible { outline:2px solid var(--green); outline-offset:5px; }
+.broadcast-live { position:absolute; top:10px; left:10px; background:#bd2639; color:#fff; padding:2px 7px; border-radius:3px; font-size:11px; font-weight:650; line-height:1.7; }
+.broadcast-format { position:absolute; right:9px; bottom:9px; background:#101b29d9; color:#fff; border-radius:3px; padding:2px 6px; font-size:11px; }
+.broadcast-copy { display:flex; gap:11px; padding:15px 15px 17px; }
+.broadcast-avatar { width:34px; height:34px; flex:none; display:flex; align-items:center; justify-content:center; background:#e2eee7; border:1px solid #d2e4d9; color:#206445; border-radius:8px; font-size:13px; font-weight:650; }
+.broadcast-text { display:block; min-width:0; }
+.broadcast-title { display:block; color:#1e2b3b; font-size:16px; font-weight:600; line-height:1.5; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.broadcast-owner { display:block; color:#536174; font-size:13px; font-weight:450; line-height:1.6; margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.catalog-empty { min-height:340px; display:flex; align-items:center; justify-content:center; flex-direction:column; padding:55px 20px; text-align:center; }
+.empty-symbol { width:58px; height:58px; border:1px solid #dce4e9; border-radius:16px; display:flex; align-items:center; justify-content:center; background:#fff; color:#657b8e; margin-bottom:19px; }
+.empty-symbol svg { width:26px; height:26px; }
+.catalog-empty h2 { font-size:19px; color:#26384a; font-weight:600; margin:0 0 9px; }
+.catalog-empty p { color:#526277; margin:0; font-size:14px; max-width:390px; word-break:keep-all; }
+.catalog-empty button { margin-top:20px; border-radius:6px; }
+.viewing-toolbar { margin-bottom:15px; }
+.back-button { border-color:transparent; background:transparent; padding-left:0; color:#35485c; }
+.back-button:hover:not(:disabled) { border-color:transparent; background:transparent; color:var(--green); }
+.back-button svg { width:17px; height:17px; }
+.viewing-actions { display:flex; gap:9px; }
+#viewer-stage .viewer-workspace { grid-template-columns:minmax(0,1fr) 260px; gap:20px; }
+#viewer-stage .connection-details { margin-top:0; }
+#viewer-stage .player { height:auto; aspect-ratio:16/9; min-height:280px; background:#101b28; }
+#viewer-stage .empty { background:#152330; }
+#viewer-stage .empty h2 { color:#f4f7fa; font-size:19px; }
+#viewer-stage .empty p { color:#c0ceda; }
+#viewer-stage .empty > svg { color:#a7bbca; }
+#viewer-stage .panel-header { min-height:52px; }
+#viewer-stage .player-controls { display:flex; flex-direction:column; gap:2px; padding:28px 14px 10px; }
+.player-toolbar { display:flex; align-items:center; gap:8px; width:100%; }
+.timeline { width:100%; padding:0 4px 3px; }
+.timeline input[type=range] { --green:#fff; height:18px; }
+.timeline input[type=range]::-webkit-slider-runnable-track { background:linear-gradient(to right,#fff 0 var(--fill),#ffffff55 var(--fill) 100%); height:3px; }
+.timeline input[type=range]::-webkit-slider-thumb { width:11px; height:11px; border:0; margin-top:-4px; background:#fff; box-shadow:none; }
+.timeline-times { display:flex; justify-content:space-between; color:#e0e8f0; font-size:11px; font-variant-numeric:tabular-nums; }
+.live-button { min-height:30px; padding:4px 6px; color:#fff; background:none; border:0; font-size:12px; font-weight:550; }
+.live-button:disabled { opacity:1; color:#fff; cursor:default; }
+.live-button:hover:not(:disabled) { background:#ffffff20; border:0; }
+.live-dot { width:7px; height:7px; border-radius:50%; background:#ed4c63; }
+.live-button.is-history .live-dot { background:#b4c2d1; }
+#viewer-stage .player:fullscreen { width:100vw; height:100vh; aspect-ratio:auto; }
+#viewer-stage .is-wide, .is-wide #viewer-stage .viewer-workspace { grid-template-columns:minmax(0,1fr); }
+.is-wide #viewer-stage .player { min-height:0; height:min(75vh,850px); aspect-ratio:auto; }
+.is-wide #viewer-stage .viewer-sidebar { display:none; }
+.network-dialog { width:min(480px,calc(100vw - 30px)); }
+.network-dialog .dialog-body { padding:22px 25px 7px; }
+.network-dialog .dialog-head { padding:19px 25px; }
+.network-dialog .dialog-head h2 { font-size:19px; }
+.network-dialog .dialog-footer { padding:15px 25px; }
+.connection-form .field { margin-bottom:18px; }
+.connection-form { margin:0; }
+.source-tabs { display:flex; gap:7px; margin:0 24px; padding-top:18px; border-bottom:1px solid #e1e7ec; }
+.source-tabs button { flex:1; border:0; border-bottom:2px solid transparent; border-radius:0; background:none; padding:11px; color:#4a5b6e; font-size:15px; }
+.source-tabs button[aria-selected=true] { color:#007445; border-bottom-color:var(--green); font-weight:650; }
+.source-tabs button:hover:not(:disabled) { border-width:0 0 2px; background:#f3f7f5; }
+.source-dialog-body { min-height:270px; }
+.source-options, .monitor-options { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+.source-choice { min-width:0; overflow:hidden; border-radius:6px; }
+.source-choice[aria-pressed=true] { border-color:var(--green); box-shadow:0 0 0 1px var(--green); }
+.monitor-choice { display:flex; flex-direction:column; align-items:stretch; padding:0; text-align:left; border:1px solid #cbd5dd; background:#fff; border-radius:6px; overflow:hidden; }
+.monitor-thumb { display:flex; align-items:center; justify-content:center; aspect-ratio:16/9; background:#eaf0f4; padding:12px; }
+.monitor-thumb img { width:100%; height:100%; object-fit:contain; }
+.monitor-number { border:2px solid #a5b8c8; background:#f7fafc; color:#4e6b82; border-radius:5px; min-width:82px; min-height:54px; display:flex; align-items:center; justify-content:center; font-size:26px; }
+.monitor-choice[aria-pressed=true] { border-color:var(--green); box-shadow:0 0 0 1px var(--green); }
+.monitor-choice[aria-pressed=true] .monitor-number { color:#007445; border-color:#6cae8a; background:#f1faf5; }
+.monitor-copy { padding:12px 14px; display:flex; flex-direction:column; gap:3px; }
+.monitor-copy strong { font-size:15px; font-weight:600; color:#25364b; }
+.monitor-copy small { font-size:12px; color:#526579; }
+.primary-monitor { display:inline-block; border-radius:3px; padding:1px 5px; background:#eaf4ee; color:#216448; font-size:10px; margin-left:6px; font-weight:500; }
+.source-message { text-align:center; padding:55px 5px; color:#53677c; font-size:14px; }
+.advanced { border-top:0; padding-top:10px; margin-top:0; }
+.advanced summary { gap:9px; }
+.advanced summary > svg { width:17px; height:17px; transform:none; stroke-width:1.7; }
+.advanced[open] summary > svg { transform:none; }
+.player-button svg { stroke-width:1.7; }
+#player-settings > svg { width:21px; height:21px; }
+@media(min-width:1750px) { .broadcast-grid { grid-template-columns:repeat(4,minmax(0,1fr)); } }
+@media(max-width:1250px) { .broadcast-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } #viewer-stage .viewer-workspace { grid-template-columns:minmax(0,1fr); } #viewer-stage .viewer-sidebar { max-width:none; } .info-panel dl { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); column-gap:20px; } }
+@media(max-width:800px) { .page-heading.compact-toolbar { top:110px; } .catalog-toolbar { gap:15px; } .catalog-actions { margin-left:auto; } .catalog-search { width:200px; } .broadcast-grid { gap:25px 16px; } #viewer-stage .player { min-height:240px; } }
+@media(max-width:620px) { .catalog-actions { width:100%; margin:0; gap:8px; } .catalog-search { width:auto; flex:1; } .catalog-actions > button { padding:7px 10px; } .broadcast-grid { grid-template-columns:minmax(0,1fr); gap:26px; } .broadcast-title { font-size:17px; } .compact-toolbar button { font-size:13px; } .catalog-empty { min-height:320px; padding:40px 10px; } .source-tabs { margin:0 18px; } .info-panel dl { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media(max-width:420px) { .content { padding:18px 15px 28px; } .catalog-current { font-size:16px; } .catalog-search input { font-size:13px; } .refresh-button { min-width:36px; width:36px; } .source-options, .monitor-options { gap:10px; } .monitor-copy { padding:9px; } .monitor-copy strong { font-size:13px; } .monitor-copy small { font-size:11px; } .primary-monitor { display:block; margin:3px 0 0; width:fit-content; } .player-toolbar { gap:2px; } #viewer-stage .player-controls { padding:25px 6px 7px; } .player-toolbar .control-label { display:none; } .player-volume input[type=range] { width:45px; } .network-dialog .dialog-body { padding:18px 20px 5px; } }
+/* Use the available window for viewing. Information is a modal, and chat is collapsible. */
+.app-layout { grid-template-columns:180px minmax(0,1fr); }
+.content { padding:20px 22px 28px; }
+.page { max-width:none; }
+.broadcast-grid { grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:24px 18px; }
+.app-layout.is-viewing { grid-template-columns:72px minmax(0,1fr); }
+.is-viewing .content { padding:12px; }
+.is-viewing .sidebar .nav-title,.is-viewing .sidebar .sidebar-bottom,.is-viewing .nav-label { display:none; }
+.is-viewing .nav-menu { padding:17px 7px; gap:7px; }
+.is-viewing .nav-item { justify-content:center; padding:12px; min-height:48px; border-radius:5px; }
+.is-viewing .nav-item[aria-selected=true]::before { display:none; }
+.watch-heading { display:flex; align-items:center; gap:16px; min-width:0; flex:1; }
+.watch-title { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:15px; font-weight:600; color:#25364b; }
+.watch-clock { flex:none; font-size:12px; color:#546579; }
+.viewing-toolbar { gap:14px; margin:0 0 12px; min-height:44px; }
+.viewing-actions { flex:none; gap:8px; }
+.viewing-actions button { min-height:40px; padding:7px 11px; }
+.viewing-actions button svg { width:17px; height:17px; }
+#viewer-stage .viewer-workspace { grid-template-columns:minmax(0,1fr); gap:12px; align-items:stretch; }
+.viewer-player-panel { border:0; border-radius:6px; background:#101b28; min-width:0; }
+#viewer-stage .player { height:calc(100dvh - 138px); min-height:320px; aspect-ratio:auto; }
+.is-wide #viewer-stage .player { height:calc(100dvh - 138px); }
+.app-layout.is-expanded { grid-template-columns:minmax(0,1fr); }
+.is-expanded .sidebar { display:none; }
+#viewer-stage.is-chat-open .viewer-workspace { grid-template-columns:minmax(0,1fr) 300px; }
+.video-info-dialog .info-panel { padding:0; }
+.video-info-dialog .info-panel dl { display:block; margin:0; }
+.video-info-dialog .dialog-body { padding-top:0; padding-bottom:6px; }
+.video-info-dialog .info-panel dl > div:last-child { border:0; }
+.chat-panel { display:flex; flex-direction:column; height:calc(100dvh - 138px); min-height:320px; border:1px solid #dce3e9; border-radius:6px; background:#fff; position:relative; overflow:hidden; }
+.chat-head { display:flex; align-items:center; justify-content:space-between; padding:12px 13px 12px 17px; min-height:54px; border-bottom:1px solid #edf0f3; }
+.chat-head strong { color:#29394b; font-size:14px; font-weight:600; }
+.chat-messages { flex:1; min-height:0; padding:14px 16px; overflow:auto; overflow-anchor:auto; scrollbar-width:thin; }
+.chat-message { font-size:13px; line-height:1.8; padding:4px 0; word-break:break-word; overflow-wrap:anywhere; }
+.chat-author { color:#24704e; font-weight:650; margin-right:7px; }
+.chat-body { color:#29394b; white-space:pre-wrap; }
+.chat-empty { position:absolute; top:44%; left:18px; right:18px; text-align:center; color:#56697e; font-size:13px; pointer-events:none; }
+.chat-composer { padding:12px; background:#fff; border-top:1px solid #edf0f3; }
+.chat-composer textarea { resize:none; width:100%; min-height:66px; border:1px solid #c7d0d8; border-radius:6px; padding:10px 11px; font:13px/1.6 var(--font); color:#25364b; background:#fff; outline:none; }
+.chat-composer textarea:focus { border-color:var(--green); box-shadow:inset 0 0 0 1px var(--green); }
+.chat-composer textarea:disabled { background:#f5f7f9; color:#657588; }
+.chat-compose-actions { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:8px; }
+.chat-compose-actions > span { color:#657588; font-size:11px; }
+.chat-compose-actions button { min-height:32px; padding:5px 12px; border-radius:5px; font-size:12px; background:#edf6f0; border-color:#bcd5c6; color:#206444; }
+.chat-composer .error { margin-top:8px; font-size:12px; }
+.sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+#chat-toggle[aria-expanded=true] { color:#007445; border-color:#8fbaa2; background:#eff8f2; }
+@media(max-width:1100px) { .watch-clock { display:none; } }
+@media(max-width:900px) { .watch-title { display:none; } .viewing-actions button > span { display:none; } .viewing-actions #viewer-info-button,.viewing-actions #chat-toggle { width:37px; padding:7px; } #viewer-stage.is-chat-open .viewer-workspace { grid-template-columns:minmax(0,1fr); } .chat-panel { position:fixed; top:126px; bottom:12px; right:12px; height:auto; width:min(320px,calc(100vw - 24px)); z-index:5; box-shadow:0 8px 30px #172b3c25; } }
+@media(max-width:800px) { .content { padding:16px; } .is-viewing .content { padding:9px; } .is-viewing .nav-menu { padding:0; gap:0; } .is-viewing .nav-item { min-height:41px; border-radius:0; padding:8px 18px; } #viewer-stage .player { height:auto; min-height:240px; aspect-ratio:16/9; } .is-wide #viewer-stage .player { height:calc(100dvh - 170px); aspect-ratio:auto; } .chat-panel { top:158px; } }
+@media(max-width:620px) { .broadcast-grid { grid-template-columns:minmax(0,1fr); } .watch-heading { gap:0; } .viewing-toolbar { gap:7px; } .viewing-actions { gap:5px; } .viewing-actions button { font-size:12px; padding:7px 9px; } .back-button { font-size:12px!important; padding-right:4px; } }
+/* Sidebar width stays stable; only the explicit expand action compacts it. */
+.app-layout,.app-layout.is-viewing { grid-template-columns:220px minmax(0,1fr); }
+.nav-menu { padding-top:18px; }
+.is-viewing:not(.is-expanded) .nav-label { display:inline; }
+.is-viewing:not(.is-expanded) .sidebar .sidebar-bottom { display:block; }
+.is-viewing:not(.is-expanded) .nav-menu { padding:18px 0 0; gap:4px; }
+.is-viewing:not(.is-expanded) .nav-item { justify-content:flex-start; padding:12px 25px; border-radius:0; }
+.is-viewing:not(.is-expanded) .nav-item[aria-selected=true]::before { display:block; }
+.app-layout.is-viewing.is-expanded { grid-template-columns:72px minmax(0,1fr); }
+.is-expanded .sidebar { display:flex; }
+.is-expanded .nav-label,.is-expanded .sidebar-bottom { display:none; }
+.is-viewing.is-expanded .nav-menu { padding:18px 7px; }
+.is-viewing.is-expanded .nav-item { justify-content:center; padding:12px; }
+.viewing-toolbar { justify-content:flex-end; }
+.viewing-actions { margin-left:auto; }
+.chat-head-actions { display:flex; align-items:center; gap:4px; }
+.chat-name-button { border:0; background:none; color:#526579; min-height:30px; padding:4px 7px; font-size:12px; }
+.chat-name-button:hover:not(:disabled) { border:0; background:#f1f5f3; color:#007445; }
+.chat-compose-actions { justify-content:flex-end; }
+@media(max-width:800px) { .nav-menu,.is-viewing:not(.is-expanded) .nav-menu { padding:0; gap:0; } .is-viewing:not(.is-expanded) .nav-item { padding:10px 18px; } .is-viewing.is-expanded .nav-menu { padding:0; } }
+/* Sender chat shares the same component, while room state remains separate. */
+.chat-slot { display:contents; }
+.sender-workspace { grid-template-columns:minmax(0,1fr) 300px; gap:18px; align-items:stretch; }
+.chat-panel.is-sender-chat { position:relative; inset:auto; width:auto; height:calc(100dvh - 180px); min-height:440px; box-shadow:none; }
+.sender-settings-dialog { width:min(760px,calc(100vw - 32px)); max-height:calc(100dvh - 40px); overflow:visible; }
+.sender-settings-grid { display:grid; grid-template-columns:minmax(0,1fr) 260px; align-items:start; gap:25px; padding:24px; max-height:calc(100dvh - 185px); overflow-y:auto; }
+.sender-settings-dialog #sender-form { padding:0; border:0; border-radius:0; overflow:visible; }
+.sender-settings-dialog #sender-form h2 { margin-bottom:20px; }
+.sender-settings-dialog .address-panel { margin:0; min-width:0; padding:17px; background:#f8faf9; border-color:#e1e8e4; }
+.sender-settings-dialog .address-row { padding:10px; background:#fff; }
+.sender-settings-dialog .address { overflow-wrap:anywhere; white-space:normal; }
+.sender-settings-dialog .share-actions { grid-template-columns:minmax(0,1fr); }
+.sender-settings-dialog .dialog-head h2 { font-size:19px; }
+.sender-settings-dialog .dialog-body .error { color:#b62431; }
+#sender-settings-button { min-height:44px; border-radius:6px; font-size:14px; }
+@media(max-width:1050px) { .sender-workspace { grid-template-columns:minmax(0,1fr); } .chat-panel.is-sender-chat { height:420px; min-height:360px; } }
+@media(max-width:620px) { .sender-settings-grid { grid-template-columns:minmax(0,1fr); gap:22px; padding:20px; } .heading-actions { gap:8px; } .heading-actions .start-button { min-width:115px; } #sender-settings-button { padding:8px 11px; font-size:13px; } }
+
+/* FRAME 0.5.1 addendum (allowed UI exception, recorded in UI_V051_ADDENDUM.json): the player's bottom controls and their
+   gradient fade out while playing and take no pointer events while hidden; they overlay the picture, so the player frame
+   never changes size. Shown again by pointer movement, a tap, keyboard focus or an open menu (script: .controls-idle). */
+#viewer-preview .player-controls { transition: opacity .18s ease; }
+#viewer-preview.controls-idle .player-controls { opacity: 0; pointer-events: none; transition: opacity .4s ease; }
+#viewer-preview.controls-idle { cursor: none; }
+/* end FRAME 0.5.1 addendum */</style>
+</head>
+<body>
+<svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden"><defs>
+<symbol id="i-frame" viewBox="0 0 24 24"><path d="M8 3H3v5M16 3h5v5M21 16v5h-5M8 21H3v-5"/><path d="M8 8h8v8H8z"/></symbol>
+<symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+<symbol id="i-radio" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><path d="M7.8 7.8a6 6 0 0 0 0 8.4m8.4-8.4a6 6 0 0 1 0 8.4M4.9 4.9a10 10 0 0 0 0 14.2m14.2-14.2a10 10 0 0 1 0 14.2"/></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7z"/></symbol>
+<symbol id="i-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1"/></symbol>
+<symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V4H4v12h4"/></symbol>
+<symbol id="i-expand" viewBox="0 0 24 24"><path d="M8 3H3v5m13-5h5v5m0 8v5h-5M3 16v5h5"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+<symbol id="i-link" viewBox="0 0 24 24"><path d="m10 13 4-4M8.2 15.8l-1.1 1.1a3.5 3.5 0 0 1-5-5l4-4a3.5 3.5 0 0 1 5 0m1.7.3 1.1-1.1a3.5 3.5 0 0 1 5 5l-4 4a3.5 3.5 0 0 1-5 0" transform="translate(1 0)"/></symbol>
+<symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-5-5 5 5-5 5"/></symbol>
+<symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v.01"/></symbol>
+<symbol id="i-log" viewBox="0 0 24 24"><path d="M8 5h12M8 12h12M8 19h12M3 5h.1M3 12h.1M3 19h.1"/></symbol>
+<symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M6.1 6.1A8.2 8.2 0 0 1 20 12M4 12a8.2 8.2 0 0 0 13.9 5.9"/></symbol>
+<symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+<symbol id="i-settings" viewBox="0 0 24 24"><path d="M4 7h16M4 17h16"/><circle cx="8" cy="7" r="3" fill="currentColor" stroke="none"/><circle cx="16" cy="17" r="3" fill="currentColor" stroke="none"/></symbol>
+<symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a18 18 0 0 1 0 18 18 18 0 0 1 0-18"/></symbol>
+<symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14" stroke-width="3"/></symbol><symbol id="i-layout" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="1"/><path d="M16 5v14"/></symbol><symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol><symbol id="i-volume" viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4zM15 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></symbol><symbol id="i-volume-off" viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4zM16 9l6 6m0-6-6 6"/></symbol><symbol id="i-gear" viewBox="0 0 24 24"><path d="M9.19 5.05L9.70 2.78L14.30 2.78L14.81 5.05L16.62 6.09L18.83 5.40L21.13 9.38L19.43 10.96L19.43 13.04L21.13 14.62L18.83 18.60L16.62 17.91L14.81 18.95L14.30 21.22L9.70 21.22L9.19 18.95L7.38 17.91L5.17 18.60L2.87 14.62L4.57 13.04L4.57 10.96L2.87 9.38L5.17 5.40L7.38 6.09Z"/><circle cx="12" cy="12" r="3"/></symbol><symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></symbol><symbol id="i-back" viewBox="0 0 24 24"><path d="m10 5-7 7 7 7M3 12h18"/></symbol><symbol id="i-pip" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><rect x="12" y="11" width="7" height="6" rx="1"/></symbol><symbol id="i-chat" viewBox="0 0 24 24"><path d="M20 11.5a8 8 0 0 1-8 8H5l-3 2v-10a9 9 0 0 1 18 0Z"/><path d="M7 10h8m-8 4h5"/></symbol></defs></svg>
+<header class="topbar">
+  <span class="brand-icon"><svg aria-hidden="true"><use href="#i-frame"/></svg></span>
+  <span class="brand">FRAME</span><span class="brand-subtitle">Console</span>
+  <span class="environment"><svg aria-hidden="true"><use href="#i-globe"/></svg>내부망</span>
+</header>
+<div class="app-layout">
+  <aside class="sidebar">
+    <nav class="nav-menu" role="tablist" aria-label="메뉴" aria-orientation="vertical">
+      <button class="nav-item" id="tab-sender" aria-label="송출 하기" title="송출 하기" role="tab" aria-selected="true" aria-controls="sender-view" tabindex="0"><svg aria-hidden="true"><use href="#i-radio"/></svg><span class="nav-label">송출 하기</span></button>
+      <button class="nav-item" id="tab-viewer" aria-label="전체 수신 목록" title="전체 수신 목록" role="tab" aria-selected="false" aria-controls="viewer-view" tabindex="-1"><svg aria-hidden="true"><use href="#i-monitor"/></svg><span class="nav-label">전체 수신 목록</span></button>
+    </nav>
+    <div class="sidebar-bottom">v0.5</div>
+  </aside>
+  <main class="content">
+    <section class="page" id="sender-view" role="tabpanel" aria-labelledby="tab-sender">
+      <div class="page-heading compact-toolbar"><button class="connection-button" id="sender-network-button" type="button" aria-haspopup="dialog"><svg aria-hidden="true"><use href="#i-gear"/></svg>연결 설정</button><div class="heading-actions"><button id="sender-settings-button" type="button" aria-haspopup="dialog"><svg aria-hidden="true"><use href="#i-gear"/></svg>송출 설정</button><button class="primary start-button" id="start-button" type="submit" form="sender-form" disabled><svg aria-hidden="true"><use href="#i-play"/></svg><span>송출 시작</span></button></div></div>
+      <div class="workspace sender-workspace">
+        <div>
+          <article class="panel">
+            <div class="panel-header"><h2>미리보기</h2><div class="panel-tools"><span class="numeric" id="preview-resolution">1280 × 720</span><button class="icon-button" id="sender-fullscreen" aria-label="미리보기 전체 화면"><svg aria-hidden="true"><use href="#i-expand"/></svg></button></div></div>
+            <div class="preview" id="sender-preview"><canvas id="sender-canvas" width="1280" height="720" aria-label="선택한 창"></canvas><div class="empty source-empty" id="sender-empty"><svg aria-hidden="true"><use href="#i-monitor"/></svg><h2>송출 대상을 선택하십시오</h2><button class="primary" id="source-empty-button">대상 선택</button></div></div>
+            <div class="source-row" id="source-row" hidden><svg aria-hidden="true"><use href="#i-monitor"/></svg><span class="source-name" id="source-name"></span><button id="source-button">대상 변경</button></div>
+            <div class="metrics">
+              <div class="metric"><span class="metric-label">경과 시간</span><span class="metric-value" id="metric-duration">00:00:00</span></div>
+              <div class="metric"><span class="metric-label">목표 FPS</span><span class="metric-value"><span id="metric-fps">—</span><small>fps</small></span></div>
+              <div class="metric"><span class="metric-label">비트레이트</span><span class="metric-value"><span id="metric-bitrate">—</span><small>Mbps</small></span></div>
+              <div class="metric"><span class="metric-label">수신 연결 수</span><span class="metric-value" id="metric-viewers">0</span></div>
+            </div>
+          </article>
+          <details class="panel events" id="events-panel">
+            <summary>동작 기록<span class="event-count" id="log-count">0</span><svg aria-hidden="true"><use href="#i-arrow"/></svg></summary>
+            <div class="event-content"><div class="table-wrap"><table class="event-table"><thead><tr><th scope="col">시간</th><th scope="col">구분</th><th scope="col">내용</th></tr></thead><tbody id="log-list"><tr><td colspan="3" class="table-empty">아직 기록이 없습니다.</td></tr></tbody></table></div><div class="event-actions"><button id="export-log" disabled>저장</button></div></div>
+          </details>
+        </div>
+<div id="sender-chat-slot" class="chat-slot"></div>
+      </div>
+    </section>
+    <section class="page" id="viewer-view" role="tabpanel" aria-labelledby="tab-viewer" hidden>
+      <div class="compact-toolbar catalog-toolbar" id="catalog-toolbar"><div class="catalog-tabs"><span class="catalog-current">실시간 영상<span id="broadcast-count">0</span></span></div><div class="catalog-actions"><label class="catalog-search"><svg aria-hidden="true"><use href="#i-search"/></svg><input id="broadcast-search" type="search" placeholder="송출명 또는 PC 검색" aria-label="영상 검색" autocomplete="off"></label><button class="icon-button refresh-button" id="refresh-broadcasts" type="button" title="목록 새로고침" aria-label="목록 새로고침"><svg aria-hidden="true"><use href="#i-refresh"/></svg></button><button id="manual-connect" type="button" aria-haspopup="dialog"><svg aria-hidden="true"><use href="#i-link"/></svg>수동 연결</button></div></div>
+      <div id="broadcast-list"><div class="broadcast-grid" id="broadcast-grid"></div><div class="catalog-empty" id="catalog-empty" role="status"><span class="empty-symbol"><svg aria-hidden="true"><use href="#i-radio"/></svg></span><h2 id="catalog-empty-title">목록을 불러오는 중입니다</h2><p id="catalog-empty-description">잠시만 기다려 주십시오.</p><button id="catalog-retry" type="button" hidden>다시 시도</button></div></div>
+      <div id="viewer-stage" hidden><div class="compact-toolbar viewing-toolbar"><div class="viewing-actions"><button id="viewer-info-button" aria-label="영상 정보" title="영상 정보" type="button" aria-haspopup="dialog"><svg aria-hidden="true"><use href="#i-info"/></svg><span>영상 정보</span></button><button id="chat-toggle" aria-label="채팅" title="채팅" type="button" aria-expanded="false" aria-controls="chat-panel"><svg aria-hidden="true"><use href="#i-chat"/></svg><span>채팅</span></button></div></div>
+      <div class="workspace viewer-workspace">
+        <article class="panel viewer-player-panel"><div class="preview player" id="viewer-preview" tabindex="0" aria-label="영상 플레이어"><canvas id="viewer-canvas" width="1280" height="720" aria-label="수신 영상"></canvas><div class="empty" id="no-signal"><svg aria-hidden="true"><use href="#i-monitor"/></svg><h2 id="empty-heading">수신할 영상을 선택하십시오</h2><p id="empty-description">목록에서 영상을 선택하거나 수동으로 연결하십시오.</p><button class="primary" id="retry-button" type="submit" form="viewer-form" hidden>다시 연결</button></div><div class="pause-overlay" id="pause-overlay" hidden><svg aria-hidden="true"><use href="#i-pause"/></svg><span>일시정지</span></div><div class="player-controls" id="player-controls" hidden><div class="timeline" id="player-timeline" hidden><input id="player-seek" type="range" min="0" max="1" value="0" step="1" aria-label="영상 재생 위치"><div class="timeline-times"><span id="player-position">00:00</span><span id="player-duration">00:00</span></div></div><div class="player-toolbar"><button id="player-pause" class="player-button" aria-label="일시정지" title="일시정지 (Space)"><svg aria-hidden="true"><use href="#i-pause"/></svg><span class="control-label">일시정지</span></button><div class="player-volume"><button id="player-mute" class="player-button" aria-label="음소거" aria-pressed="false" title="음소거 (M)"><svg aria-hidden="true"><use href="#i-volume"/></svg></button><input id="player-volume" type="range" min="0" max="100" value="80" aria-label="재생 음량"></div><button class="live-button" id="player-live" type="button" title="실시간으로 이동" disabled><span class="live-dot"></span>실시간</button><span class="player-spacer"></span><button id="player-settings" class="player-button" aria-label="재생 화질" aria-expanded="false" aria-controls="player-quality-menu" title="재생 화질"><svg aria-hidden="true"><use href="#i-gear"/></svg><span class="control-label" id="player-quality-label">1080p</span></button><button id="player-pip" class="player-button" type="button" title="화면 속 화면(PiP)" aria-label="화면 속 화면(PiP)" disabled><svg aria-hidden="true"><use href="#i-pip"/></svg></button><button id="viewer-wide" class="player-button" aria-label="확대 보기" aria-pressed="false" title="확대 보기 (T)"><svg aria-hidden="true"><use href="#i-layout"/></svg><span class="control-label">확대 보기</span></button><button id="viewer-fullscreen" class="player-button" aria-label="전체 화면" title="전체 화면 (F)"><svg aria-hidden="true"><use href="#i-expand"/></svg></button></div></div><div class="player-quality-menu" id="player-quality-menu" role="menu" aria-label="재생 화질" hidden><div class="quality-menu-title">화질</div><div id="player-quality-options"></div></div></div></article><div id="viewer-chat-slot" class="chat-slot"><aside id="chat-panel" class="chat-panel" aria-label="실시간 채팅" hidden><div class="chat-head"><strong>실시간 채팅</strong><div class="chat-head-actions"><button class="chat-name-button" id="chat-name-button" type="button" aria-haspopup="dialog">이름 설정</button><button class="icon-button" id="chat-close" type="button" aria-label="채팅 닫기"><svg aria-hidden="true"><use href="#i-close"/></svg></button></div></div><div class="chat-messages" id="chat-messages" role="log" aria-live="polite" aria-relevant="additions"></div><div class="chat-empty" id="chat-empty">채팅을 사용할 수 없습니다.</div><form id="chat-form" class="chat-composer"><label class="sr-only" for="chat-message">메시지</label><textarea id="chat-message" rows="2" maxlength="1000" placeholder="메시지 입력" disabled></textarea><div class="chat-compose-actions"><button id="chat-send" type="submit" disabled>전송</button></div><p class="error" id="chat-error" role="alert" hidden></p></form></aside></div>
+        
+      </div>
+      </div>
+    </section>
+  </main>
+</div>
+<dialog class="sender-settings-dialog" id="sender-settings-dialog" aria-labelledby="sender-settings-title"><div class="dialog-head"><h2 id="sender-settings-title">송출 설정</h2><button class="icon-button" data-close="sender-settings-dialog" aria-label="송출 설정 닫기"><svg aria-hidden="true"><use href="#i-close"/></svg></button></div><div class="dialog-body sender-settings-grid">
+          <form class="panel settings" id="sender-form" novalidate>
+            <h2>영상 및 오디오</h2><p class="settings-lock" id="settings-lock" hidden>송출 중에는 음량만 변경할 수 있습니다.</p>
+            <div class="field-pair"><div class="field"><label id="resolution-label" for="resolution-trigger">화질</label><div class="select-control"><input id="resolution" type="hidden" value="1920x1080"><button id="resolution-trigger" class="select-trigger" type="button" role="combobox" aria-labelledby="resolution-label" aria-haspopup="listbox" aria-expanded="false" aria-controls="select-popup"><span id="resolution-value">1080p</span><svg aria-hidden="true"><use href="#i-chevron"/></svg></button></div></div><div class="field"><label id="fps-label" for="fps-trigger">프레임 속도</label><div class="select-control"><input id="fps" type="hidden" value="60"><button id="fps-trigger" class="select-trigger" type="button" role="combobox" aria-labelledby="fps-label" aria-haspopup="listbox" aria-expanded="false" aria-controls="select-popup"><span id="fps-value">60 fps</span><svg aria-hidden="true"><use href="#i-chevron"/></svg></button></div></div></div>
+            <div class="field custom-fps" id="custom-fps-field" hidden><label for="custom-fps">직접 입력</label><div class="input-suffix"><input id="custom-fps" type="number" min="30" max="165" step="1" value="90" aria-describedby="fps-error"><span>fps</span></div><p class="error" id="fps-error" role="alert" hidden></p></div><p class="control-hint" id="fps-hint" hidden>원본 화면과 장비 성능에 따라 달라집니다.</p>
+            <div class="audio-section"><div class="field"><label id="audio-source-label" for="audio-source-trigger">오디오</label><div class="select-control"><input id="audio-source" type="hidden" value="none"><button id="audio-source-trigger" class="select-trigger" type="button" role="combobox" aria-labelledby="audio-source-label" aria-haspopup="listbox" aria-expanded="false" aria-controls="select-popup"><span id="audio-source-value">사용 안 함</span><svg aria-hidden="true"><use href="#i-chevron"/></svg></button></div></div><div class="audio-channel" id="system-channel" hidden><div class="channel-heading"><label for="system-volume">시스템 오디오</label><output id="system-volume-value" for="system-volume">80%</output></div><div class="volume-control"><button type="button" class="volume-button" id="system-mute" aria-label="시스템 오디오 음소거" aria-pressed="false"><svg aria-hidden="true"><use href="#i-volume"/></svg></button><input id="system-volume" type="range" min="0" max="100" value="80" aria-label="시스템 오디오 음량"></div></div><div class="audio-channel" id="mic-channel" hidden><div class="channel-heading"><label for="mic-volume">마이크</label><output id="mic-volume-value" for="mic-volume">100%</output></div><div class="volume-control"><button type="button" class="volume-button" id="mic-mute" aria-label="마이크 음소거" aria-pressed="false"><svg aria-hidden="true"><use href="#i-volume"/></svg></button><input id="mic-volume" type="range" min="0" max="100" value="100" aria-label="마이크 음량"></div></div></div>
+            <details class="advanced" id="advanced-settings"><summary><svg aria-hidden="true"><use href="#i-gear"/></svg>고급 설정</summary><div class="advanced-body"><div class="field bitrate-field"><div class="field-label-row"><label for="quality">비트레이트</label><label class="switch-label" for="bitrate-auto">자동<input id="bitrate-auto" class="switch" title="화질과 프레임을 기준으로 계산합니다." type="checkbox" role="switch" checked></label></div><div class="input-suffix"><input id="quality" type="number" min="0.5" max="200" step="0.5" value="8" aria-describedby="bitrate-error" disabled><span>Mbps</span></div><p class="error" id="bitrate-error" role="alert" hidden></p></div><div class="detail-pair"><span>코덱</span><span>H.264</span></div></div></details>
+          </form>
+          <article class="panel address-panel"><h2>시청 주소</h2><div class="address-row"><code class="address" id="viewer-address">http://192.168.10.20:8889/screen-01</code></div><p class="share-hint" id="share-hint">송출을 시작하면 공유할 수 있습니다.</p><div class="share-actions"><button id="copy-address" disabled><svg aria-hidden="true"><use href="#i-copy"/></svg><span id="copy-label">주소 복사</span></button><button id="open-viewer" disabled>시청하기<svg aria-hidden="true"><use href="#i-arrow"/></svg></button></div></article>
+</div><div class="dialog-footer"><button id="sender-settings-done" type="button">닫기</button></div></dialog>
+<dialog class="network-dialog" id="chat-name-dialog" aria-labelledby="chat-name-title"><div class="dialog-head"><h2 id="chat-name-title">채팅 이름 설정</h2><button class="icon-button" data-close="chat-name-dialog" aria-label="이름 설정 닫기"><svg aria-hidden="true"><use href="#i-close"/></svg></button></div><div class="dialog-body"><form id="chat-name-form"><div class="field"><label for="chat-display-name">표시 이름</label><input id="chat-display-name" type="text" maxlength="20" autocomplete="nickname" aria-describedby="chat-name-error"><p class="error" id="chat-name-error" role="alert" hidden></p></div></form></div><div class="dialog-footer"><button data-close="chat-name-dialog">취소</button><button class="primary" type="submit" form="chat-name-form">적용</button></div></dialog>
+<dialog class="network-dialog video-info-dialog" id="viewer-info-dialog" aria-labelledby="viewer-info-title"><div class="dialog-head"><h2 id="viewer-info-title">영상 정보</h2><button class="icon-button" data-close="viewer-info-dialog" aria-label="영상 정보 닫기"><svg aria-hidden="true"><use href="#i-close"/></svg></button></div><div class="dialog-body"><div class="info-panel"><dl><div><dt>송출명</dt><dd id="viewer-title">—</dd></div><div><dt>송출 경과 시간</dt><dd id="viewer-clock">00:00:00</dd></div><div><dt>재생 화질</dt><dd id="info-resolution">—</dd></div><div><dt>목표 FPS</dt><dd id="info-fps">—</dd></div><div><dt>비트레이트</dt><dd id="info-bitrate">—</dd></div><div><dt>오디오</dt><dd id="info-audio">—</dd></div><div><dt>코덱</dt><dd>H.264</dd></div><div><dt>프로토콜</dt><dd>WebRTC</dd></div></dl></div></div></dialog>
+<dialog class="network-dialog" id="sender-network-dialog" aria-labelledby="sender-network-title"><div class="dialog-head"><h2 id="sender-network-title">연결 설정</h2><button class="icon-button" data-close="sender-network-dialog" aria-label="연결 설정 닫기"><svg aria-hidden="true"><use href="#i-close"/></svg></button></div><div class="dialog-body">            <div class="field"><label for="server-host">서버 IP 또는 호스트 이름</label><input form="sender-form" id="server-host" value="192.168.10.20" spellcheck="false" autocomplete="off" aria-describedby="host-error"><p class="error" id="host-error" role="alert" hidden></p></div>
+            <div class="field"><label for="stream-path">스트림 ID</label><input form="sender-form" id="stream-path" value="screen-01" spellcheck="false" autocomplete="off" aria-describedby="stream-error"><p class="error" id="stream-error" role="alert" hidden></p></div>
+<div class="field-pair"><div class="field"><label for="publish-port">송출 포트</label><input form="sender-form" id="publish-port" type="number" min="1" max="65535" value="8554" aria-describedby="port-error"></div><div class="field"><label for="viewer-port">시청 포트</label><input form="sender-form" id="viewer-port" type="number" min="1" max="65535" value="8889" aria-describedby="port-error"></div></div><p class="error" id="port-error" role="alert" hidden></p></div><div class="dialog-footer"><button data-close="sender-network-dialog">취소</button><button class="primary" id="apply-sender-network" type="button">적용</button></div></dialog>
+<dialog class="network-dialog" id="viewer-connect-dialog" aria-labelledby="viewer-connect-title"><div class="dialog-head"><h2 id="viewer-connect-title">수동 연결</h2><button class="icon-button" data-close="viewer-connect-dialog" aria-label="수동 연결 닫기"><svg aria-hidden="true"><use href="#i-close"/></svg></button></div><div class="dialog-body"><form class="connection-form" id="viewer-form" novalidate><div class="field"><label for="viewer-host">서버 IP 또는 호스트 이름</label><input id="viewer-host" value="192.168.10.20" spellcheck="false" autocomplete="off" aria-describedby="viewer-host-error"><p class="error" id="viewer-host-error" role="alert" hidden></p></div><div class="field"><label for="viewer-stream">스트림 ID</label><input id="viewer-stream" value="screen-01" spellcheck="false" autocomplete="off" aria-describedby="viewer-stream-error"><p class="error" id="viewer-stream-error" role="alert" hidden></p></div><div class="field"><label for="viewer-receive-port">시청 포트</label><input id="viewer-receive-port" type="number" min="1" max="65535" value="8889" aria-describedby="viewer-receive-port-error"><p class="error" id="viewer-receive-port-error" role="alert" hidden></p></div><p class="error" id="viewer-connect-error" role="alert" hidden></p></form></div><div class="dialog-footer"><button data-close="viewer-connect-dialog">취소</button><button class="primary connect-button" id="connect-button" type="submit" form="viewer-form">수신 시작</button></div></dialog>
+<dialog id="source-dialog" aria-labelledby="source-title"><div class="dialog-head"><h2 id="source-title">송출 대상 선택</h2><button class="icon-button" data-close="source-dialog" aria-label="창 선택 닫기"><svg aria-hidden="true"><use href="#i-close"/></svg></button></div><div class="source-tabs" role="tablist" aria-label="송출 대상 종류"><button id="source-tab-window" role="tab" aria-selected="true" aria-controls="source-window-panel">프로그램 창</button><button id="source-tab-monitor" role="tab" aria-selected="false" aria-controls="source-monitor-panel" tabindex="-1">전체 화면</button></div><div class="dialog-body source-dialog-body"><div id="source-window-panel" role="tabpanel" aria-labelledby="source-tab-window"><div class="source-options"><button class="source-choice" data-source="pattern" aria-pressed="true"><span class="source-thumb pattern"><svg aria-hidden="true"><use href="#i-frame"/></svg></span><span class="source-label">화면 테스트</span></button><button class="source-choice" data-source="document" aria-pressed="false"><span class="source-thumb"><svg aria-hidden="true"><use href="#i-log"/></svg></span><span class="source-label">문서</span></button></div></div><div id="source-monitor-panel" role="tabpanel" aria-labelledby="source-tab-monitor" hidden><div class="monitor-options" id="monitor-options"></div><p class="source-message" id="monitor-message">모니터 목록을 불러올 수 없습니다.</p></div></div><div class="dialog-footer"><button data-close="source-dialog">취소</button><button class="primary" id="confirm-source">선택</button></div></dialog>
+<dialog id="stop-dialog" aria-labelledby="stop-title"><div class="dialog-head"><h2 id="stop-title">송출을 중지할까요?</h2><button class="icon-button" data-close="stop-dialog" aria-label="중지 안내 닫기"><svg aria-hidden="true"><use href="#i-close"/></svg></button></div><div class="dialog-body"><p>연결된 시청 화면이 종료됩니다.</p></div><div class="dialog-footer"><button data-close="stop-dialog">취소</button><button class="danger" id="confirm-stop">중지</button></div></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="select-popup" id="select-popup" role="listbox" hidden></div>
+<script>const FrameControls = (() => {
+  function mount(definitions) {
+    const popup = document.getElementById('select-popup');
+    const controls = Object.entries(definitions).map(([id, options]) => ({ id, options, input: document.getElementById(id), trigger: document.getElementById(id + '-trigger'), label: document.getElementById(id + '-value') }));
+    let current = null, active = 0, buffer = '', typedAt = 0;
+    function close(restoreFocus = false) {
+      if (!current) return;
+      const previous = current;
+      previous.trigger.setAttribute('aria-expanded', 'false');
+      previous.trigger.removeAttribute('aria-activedescendant');
+      popup.hidden = true; current = null; buffer = '';
+      if (restoreFocus && !previous.trigger.disabled) previous.trigger.focus({ preventScroll: true });
+    }
+    function sync() {
+      for (const control of controls) {
+        control.label.textContent = control.options.find(option => option.value === control.input.value)?.label || control.input.value;
+        control.trigger.disabled = control.input.disabled;
+        if (current === control && control.input.disabled) close();
+      }
+    }
+    function position() {
+      if (!current) return;
+      const rect = current.trigger.getBoundingClientRect();
+      const below = innerHeight - rect.bottom - 12;
+      const above = rect.top - 12;
+      const upward = below < Math.min(260, popup.scrollHeight) && above > below;
+      const room = Math.max(100, upward ? above : below);
+      popup.style.width = rect.width + 'px';
+      popup.style.maxHeight = Math.min(310, room) + 'px';
+      popup.style.left = Math.max(8, Math.min(rect.left, innerWidth - rect.width - 8)) + 'px';
+      popup.style.top = (upward ? Math.max(8, rect.top - Math.min(popup.scrollHeight, 310, room) - 6) : rect.bottom + 6) + 'px';
+      popup.dataset.direction = upward ? 'up' : 'down';
+    }
+    function highlight(scroll = false) {
+      if (!current) return;
+      const items = [...popup.children];
+      items.forEach((item, index) => item.classList.toggle('is-active', index === active));
+      current.trigger.setAttribute('aria-activedescendant', items[active].id);
+      if (scroll) items[active].scrollIntoView({ block: 'nearest' });
+    }
+    function commit() {
+      if (!current) return;
+      const control = current, value = control.options[active].value;
+      close(true);
+      if (control.input.value !== value) {
+        control.input.value = value;
+        control.input.dispatchEvent(new Event('input', { bubbles: true }));
+        control.input.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      sync();
+    }
+    function open(control) {
+      const host = control.trigger.closest('dialog[open]') || document.body;
+      if (popup.parentElement !== host) host.append(popup);
+      if (control.trigger.disabled) return;
+      if (current) close();
+      current = control;
+      active = Math.max(0, control.options.findIndex(option => option.value === control.input.value));
+      popup.replaceChildren();
+      popup.setAttribute('aria-labelledby', control.id + '-label');
+      control.options.forEach((option, index) => {
+        const item = document.createElement('div');
+        item.id = 'choice-' + control.id + '-' + index;
+        item.className = 'select-option';
+        item.setAttribute('role', 'option');
+        item.setAttribute('aria-selected', String(option.value === control.input.value));
+        const content = document.createElement('span'); content.className = 'select-option-copy';
+        const label = document.createElement('span'); label.className = 'select-option-label'; label.textContent = option.label; content.append(label);
+        if (option.detail) { const detail = document.createElement('span'); detail.className = 'select-option-detail'; detail.textContent = option.detail; content.append(detail); }
+        const check = document.createElement('span'); check.className = 'select-option-check'; check.innerHTML = '<svg aria-hidden="true"><use href="#i-check"/></svg>';
+        item.append(content, check);
+        item.addEventListener('pointerdown', event => event.preventDefault());
+        item.addEventListener('pointermove', () => { active = index; highlight(); });
+        item.addEventListener('click', () => { active = index; commit(); });
+        popup.append(item);
+      });
+      popup.hidden = false;
+      control.trigger.setAttribute('aria-expanded', 'true');
+      position(); highlight(true);
+    }
+    for (const control of controls) {
+      control.trigger.addEventListener('click', () => current === control ? close() : open(control));
+      control.trigger.addEventListener('keydown', event => {
+        const key = event.key;
+        if (key === 'Escape' && current === control) { event.preventDefault(); event.stopPropagation(); close(true); return; }
+        if (key === 'Tab') { if (current === control) commit(); return; }
+        if (['Enter', ' ', 'ArrowDown', 'ArrowUp', 'Home', 'End', 'PageDown', 'PageUp'].includes(key)) {
+          event.preventDefault();
+          const wasOpen = current === control;
+          if (!wasOpen) open(control);
+          else if (key === 'Enter' || key === ' ') { commit(); return; }
+          else if (key === 'ArrowDown') active = Math.min(control.options.length - 1, active + 1);
+          else if (key === 'ArrowUp') active = Math.max(0, active - 1);
+          else if (key === 'PageDown') active = Math.min(control.options.length - 1, active + 5);
+          else if (key === 'PageUp') active = Math.max(0, active - 5);
+          if (key === 'Home') active = 0;
+          if (key === 'End') active = control.options.length - 1;
+          highlight(true); return;
+        }
+        if (key.length === 1 && !event.ctrlKey && !event.altKey && !event.metaKey) {
+          event.preventDefault();
+          if (current !== control) open(control);
+          const now = Date.now(); buffer = now - typedAt < 700 ? buffer + key.toLowerCase() : key.toLowerCase(); typedAt = now;
+          let match = control.options.findIndex(option => option.label.toLowerCase().startsWith(buffer));
+          if (match < 0) { buffer = key.toLowerCase(); match = control.options.findIndex(option => option.label.toLowerCase().startsWith(buffer)); }
+          if (match >= 0) { active = match; highlight(true); }
+        }
+      });
+    }
+    document.addEventListener('pointerdown', event => { if (current && !popup.contains(event.target) && !current.trigger.contains(event.target)) close(); });
+    window.addEventListener('resize', () => close());
+    window.addEventListener('scroll', event => { if (current && !(event.target instanceof Node && popup.contains(event.target))) close(); }, true);
+    sync();
+    return { sync, close };
+  }
+  return { mount };
+})();
+
+(() => {
+  'use strict';
+  // Inside FrameConsole.exe the WebView2 bridge drives capture, encoding and serving. Opened from another PC's browser,
+  // the same page runs as a viewer only and talks to the server's read-only info and WHEP endpoints.
+  const $ = id => document.getElementById(id);
+  const bridge = window.chrome && window.chrome.webview ? window.chrome.webview : null;
+  const remote = !bridge;
+  const native = message => { if (bridge) bridge.postMessage(JSON.stringify(message)); };
+  const state = { running: false, starting: false, stopping: false, connected: false, connecting: false, paused: false, source: null, sourceTitle: '', selected: null, windows: [], startedAt: 0, logs: [], viewerEdited: false, playbackQuality: 'auto', stream: null, session: null, video: null, attempt: 0, infoAt: 0, statsTimer: 0, lastBytes: 0, lastBytesAt: 0, failed: '' };
+  const fields = ['server-host', 'stream-path', 'resolution', 'fps', 'custom-fps', 'quality', 'audio-source', 'bitrate-auto', 'publish-port', 'viewer-port'];
+  const resolutions = [
+    { value: '426x240', label: '240p', detail: '426 × 240', bitrate: 0.5 },
+    { value: '640x360', label: '360p', detail: '640 × 360', bitrate: 1 },
+    { value: '854x480', label: '480p', detail: '854 × 480', bitrate: 2 },
+    { value: '1280x720', label: '720p', detail: '1280 × 720', bitrate: 4 },
+    { value: '1920x1080', label: '1080p', detail: '1920 × 1080', bitrate: 8 },
+    { value: '2560x1440', label: '1440p', detail: '2560 × 1440', bitrate: 16 },
+    { value: '3840x2160', label: '2160p', detail: '3840 × 2160', bitrate: 35 }
+  ];
+  const audioSources = [
+    { value: 'none', label: '사용 안 함' }, { value: 'system', label: '시스템 오디오' },
+    { value: 'mic', label: '마이크' }, { value: 'mix', label: '시스템 + 마이크' }
+  ];
+  const fpsPresets = [30, 60, 90, 120, 144, 165];
+  const pickers = FrameControls.mount({ resolution: [...resolutions].reverse(), fps: fpsPresets.map(value => ({ value: String(value), label: value + ' fps' })).concat({ value: 'custom', label: '직접 입력' }), 'audio-source': audioSources });
+  const timeText = () => new Date().toLocaleTimeString('en-GB', { hour12: false });
+  const icon = name => '<svg aria-hidden="true"><use href="#i-' + name + '"/></svg>';
+  const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+  let toastTimer, copiedTimer;
+  function toast(message) { $('toast').textContent = message; $('toast').classList.add('visible'); clearTimeout(toastTimer); toastTimer = setTimeout(() => $('toast').classList.remove('visible'), 2400); }
+  function clock(ms) {
+    const seconds = Math.max(0, Math.floor(ms / 1000));
+    return [Math.floor(seconds / 3600), Math.floor(seconds / 60) % 60, seconds % 60].map(n => String(n).padStart(2, '0')).join(':');
+  }
+  function config() { return { host: $('server-host').value.trim(), path: $('stream-path').value.trim(), resolution: $('resolution').value, fps: Number($('fps').value === 'custom' ? $('custom-fps').value : $('fps').value), bitrate: Number($('quality').value), audio: $('audio-source').value, publishPort: Number($('publish-port').value), viewerPort: Number($('viewer-port').value) }; }
+  // Same rules as the native encoder setup: the output keeps the source's aspect ratio inside the selected size and is never
+  // upscaled; the automatic bitrate (the cap in VBR mode) follows the real output size, frame rate and encoder.
+  function autoBitrate(width, height, fps) {
+    const f = Number.isFinite(fps) && fps >= 30 ? fps : 60, factor = state.encoder === 'libx264' ? 0.85 : 1;
+    return Math.min(200, Math.max(0.5, Math.round(0.07 * width * height * 60 * Math.pow(f / 60, 0.75) * factor / 1e6 * 2) / 2));
+  }
+  function syncEncodingOptions() {
+    const c = config(), locked = state.running || state.starting;
+    $('custom-fps-field').hidden = $('fps').value !== 'custom';
+    $('custom-fps').disabled = locked || $('fps').value !== 'custom';
+    $('fps-hint').hidden = !Number.isFinite(c.fps) || c.fps <= 60;
+    if ($('bitrate-auto').checked && !locked) {
+      const [boxW, boxH] = c.resolution.split('x').map(Number);
+      $('quality').value = autoBitrate(boxW, boxH, c.fps);
+    }
+    $('quality').disabled = locked || $('bitrate-auto').checked;
+    $('system-channel').hidden = !['system', 'mix'].includes(c.audio);
+    $('mic-channel').hidden = !['mic', 'mix'].includes(c.audio);
+    pickers.sync();
+  }
+  function validHost(host) {
+    if (!host || host.length > 253) return false;
+    if (/^\d+\.\d+\.\d+\.\d+$/.test(host)) return host.split('.').every(part => Number(part) <= 255);
+    return /^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/.test(host);
+  }
+  const validPath = path => /^[a-zA-Z0-9][a-zA-Z0-9_-]{0,63}$/.test(path);
+  const validPort = port => Number.isInteger(port) && port >= 1 && port <= 65535;
+  function fieldError(field, id, message) { $(id).textContent = message; $(id).hidden = !message; $(field).setAttribute('aria-invalid', String(Boolean(message))); }
+  function validate(report = false) {
+    const c = config();
+    const errors = [
+      { field: 'server-host', id: 'host-error', message: validHost(c.host) ? '' : '올바른 IP 주소나 호스트 이름을 입력하세요.' },
+      { field: 'stream-path', id: 'stream-error', message: validPath(c.path) ? '' : '영문, 숫자, 하이픈, 밑줄로 1~64자 입력하세요.' },
+      { field: 'custom-fps', id: 'fps-error', message: Number.isInteger(c.fps) && c.fps >= 30 && c.fps <= 165 ? '' : '30~165 사이의 정수로 입력하세요.' },
+      { field: 'quality', id: 'bitrate-error', message: Number.isFinite(c.bitrate) && c.bitrate >= 0.5 && c.bitrate <= 200 ? '' : '0.5~200 Mbps 사이로 입력하세요.' },
+      { field: 'publish-port', id: 'port-error', message: validPort(c.publishPort) && validPort(c.viewerPort) ? (c.publishPort === c.viewerPort ? '송출 포트와 시청 포트는 서로 달라야 합니다.' : '') : '포트는 1~65535 사이의 정수로 입력하세요.' }
+    ];
+    if (report) {
+      errors.forEach(error => fieldError(error.field, error.id, error.message));
+      $('viewer-port').setAttribute('aria-invalid', String(!validPort(c.viewerPort) || c.publishPort === c.viewerPort));
+      if (errors.some(error => ['port-error', 'bitrate-error'].includes(error.id) && error.message)) $('advanced-settings').open = true;
+    }
+    return errors.find(error => error.message);
+  }
+  function badge(id, text, active = false) { const element = $(id); if (element) { element.textContent = text; element.classList.toggle('active', active); } }
+  function senderUI() {
+    syncEncodingOptions();
+    const error = validate();
+    $('start-button').disabled = state.starting || state.stopping || (!state.running && (!state.source || Boolean(error)));
+    $('start-button').title = !state.source ? '공유할 창을 먼저 선택하세요.' : error ? error.message : '';
+    badge('sender-status', state.running ? '송출 중' : state.starting ? '준비 중' : state.stopping ? '종료 중' : !state.source ? '창 선택 필요' : error ? '설정 확인' : state.failed ? '송출 실패' : '준비됨', state.running);
+    $('copy-address').disabled = !state.running;
+    $('open-viewer').disabled = !state.running;
+    $('share-hint').hidden = state.running;
+    $('settings-lock').hidden = !state.running && !state.starting;
+    $('sender-fullscreen').disabled = !state.source;
+  }
+  function updateAddress() { const c = config(); $('viewer-address').textContent = 'http://' + c.host + ':' + c.viewerPort + '/' + c.path; $('preview-resolution').textContent = c.resolution.split('x')[1] + 'p / ' + (Number.isFinite(c.fps) ? c.fps : '—') + ' fps'; }
+  function renderLog() {
+    $('log-list').replaceChildren();
+    for (const item of state.logs) { const row = document.createElement('tr'); for (const key of ['time', 'kind', 'message']) { const cell = document.createElement('td'); cell.textContent = item[key]; row.append(cell); } $('log-list').append(row); }
+    $('log-count').textContent = state.logs.length; $('export-log').disabled = !state.logs.length;
+  }
+  // A keyed entry (the periodic performance line) is updated in place instead of pushing other events out.
+  function log(kind, message, key) {
+    const existing = key && state.logs.find(item => item.key === key);
+    if (existing) { existing.time = timeText(); existing.message = message; } else { state.logs.unshift({ time: timeText(), kind, message, key }); state.logs = state.logs.slice(0, 20); }
+    renderLog();
+  }
+  function view(name) {
+    for (const tab of ['sender', 'viewer']) { const active = tab === name; $('tab-' + tab).setAttribute('aria-selected', String(active)); $('tab-' + tab).tabIndex = active ? 0 : -1; $(tab + '-view').hidden = !active; }
+    if (name === 'viewer' && !remote && !state.connected && !state.connecting && !state.viewerEdited) { $('viewer-host').value = config().host; $('viewer-stream').value = config().path; }
+    window.scrollTo({ top: 0, behavior: 'auto' });
+    native({ cmd: 'previewVisible', visible: name === 'sender' && !document.hidden });
+    document.dispatchEvent(new CustomEvent('frame:view', {detail:{name}}));
+    if (!remote) try { const url = new URL(location.href); url.searchParams.set('view', name); history.replaceState(null, '', url); } catch {}
+  }
+
+  // ---- Sender: window selection and live preview -------------------------------------------------------------
+  const previewCanvas = $('sender-canvas'), previewContext = previewCanvas.getContext('2d');
+  const previewImage = new Image();
+  previewImage.decoding = 'async';
+  function showSource(title) {
+    $('source-name').textContent = title; $('sender-empty').hidden = !!title; $('source-row').hidden = !title;
+    if (!title) previewContext.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+  }
+  // Canvas in the shape of the encoder output (the selected resolution), at most 1280x720.
+  function previewFrame() {
+    const [w, h] = config().resolution.split('x').map(Number), scale = Math.min(1280 / w, 720 / h, 1);
+    return [Math.round(w * scale), Math.round(h * scale)];
+  }
+  async function drawPreview(event) {
+    if (event.sourceWidth && (!state.sourceSize || state.sourceSize[0] !== event.sourceWidth || state.sourceSize[1] !== event.sourceHeight)) {
+      state.sourceSize = [event.sourceWidth, event.sourceHeight];
+      if (!state.running && !state.starting) syncEncodingOptions();
+    }
+    try {
+      previewImage.src = 'data:image/jpeg;base64,' + event.jpeg;
+      await previewImage.decode();
+      if (!state.source) return;
+      const [fw, fh] = previewFrame(), scale = Math.min(fw / event.width, fh / event.height);
+      const w = Math.round(event.width * scale), h = Math.round(event.height * scale);
+      if (previewCanvas.width !== fw || previewCanvas.height !== fh) { previewCanvas.width = fw; previewCanvas.height = fh; }
+      previewContext.fillStyle = '#000'; previewContext.fillRect(0, 0, fw, fh);
+      previewContext.drawImage(previewImage, Math.round((fw - w) / 2), Math.round((fh - h) / 2), w, h);
+    } catch {} finally { native({ cmd: 'previewAck' }); }
+  }
+  const measure = document.createElement('canvas').getContext('2d');
+  function fitLabel(text, width) {
+    measure.font = '15px Pretendard, sans-serif';
+    if (measure.measureText(text).width <= width) return text;
+    let low = 0, high = text.length;
+    while (low < high) { const mid = Math.ceil((low + high) / 2); if (measure.measureText(text.slice(0, mid) + '…').width <= width) low = mid; else high = mid - 1; }
+    return text.slice(0, low) + '…';
+  }
+  function markSelected() { document.querySelectorAll('[data-source]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.source === state.selected))); $('confirm-source').disabled = !state.selected; }
+  function renderWindows(items) {
+    state.windows = items;
+    const box = document.querySelector('.source-options'), counts = {};
+    items.forEach(item => counts[item.title] = (counts[item.title] || 0) + 1);
+    box.replaceChildren();
+    const width = Math.max(120, (box.clientWidth - 14) / 2 - 32);
+    for (const item of items) {
+      const button = document.createElement('button'); button.type = 'button'; button.className = 'source-choice'; button.dataset.source = item.id;
+      const name = counts[item.title] > 1 && item.exe ? item.title + ' (' + item.exe + ')' : item.title;
+      button.title = name + (item.minimized ? ' (최소화됨)' : '');
+      const thumb = document.createElement('span'); thumb.className = 'source-thumb'; thumb.innerHTML = icon('monitor');
+      const label = document.createElement('span'); label.className = 'source-label'; label.textContent = fitLabel(name, width);
+      button.append(thumb, label);
+      button.addEventListener('click', () => { state.selected = item.id; markSelected(); });
+      button.addEventListener('dblclick', () => { state.selected = item.id; confirmSource(); });
+      box.append(button);
+    }
+    if (!items.length) { const empty = document.createElement('p'); empty.textContent = '공유할 수 있는 창이 없습니다.'; box.append(empty); }
+    if (!items.some(item => item.id === state.selected)) state.selected = null;
+    markSelected();
+  }
+  function showThumb(event) {
+    const thumb = document.querySelector('[data-source="' + CSS.escape(event.id) + '"] .source-thumb');
+    if (!thumb) return;
+    const image = document.createElement('img'); image.alt = ''; image.src = 'data:image/jpeg;base64,' + event.jpeg;
+    image.style.cssText = 'display:block;width:100%;height:100%;object-fit:contain';
+    thumb.replaceChildren(image);
+  }
+  function chooseSource() {
+    if (remote) return;
+    state.selected = state.source; renderWindows([]); document.querySelector('.source-options').replaceChildren();
+    $('confirm-source').disabled = true; $('source-dialog').showModal(); native({ cmd: 'listWindows' });
+  }
+  function confirmSource() { if (!state.selected) return; native({ cmd: 'selectWindow', id: state.selected }); $('source-dialog').close(); }
+  function onSource(event) {
+    if (event.ok) {
+      if (state.source !== event.id) state.sourceSize = null;
+      state.source = event.id; state.sourceTitle = event.title; state.failed = ''; showSource(event.title);
+      if (event.kind === 'monitor' && $('source-dialog').open) $('source-dialog').close();
+      if (event.minimized) toast('최소화된 창은 다시 표시해야 화면이 갱신됩니다.');
+    }
+    else {
+      if (event.closed || !state.source) { state.source = null; state.sourceTitle = ''; state.sourceSize = null; showSource(''); }
+      if (event.kind === 'monitor' && $('source-dialog').open) { $('monitor-message').textContent = event.message || '모니터를 선택할 수 없습니다.'; $('monitor-message').hidden = false; }
+      if (event.message) toast(event.message);
+    }
+    senderUI();
+  }
+  // Full-screen tab: real monitors from the native side; the selection goes through its own validated command.
+  document.addEventListener('frame:request-monitors', () => { if (!bridge) return; $('monitor-message').textContent = '모니터 목록을 불러오는 중입니다.'; $('monitor-message').hidden = false; native({ cmd: 'listMonitors' }); });
+  document.addEventListener('frame:select-monitor', ({ detail }) => { if (bridge && detail && typeof detail.id === 'string') native({ cmd: 'selectMonitor', id: detail.id }); });
+  function onMonitors(items) {
+    window.FrameUI?.setMonitors(items);
+    if (!items.length) { $('monitor-message').textContent = '사용할 수 있는 모니터가 없습니다.'; $('monitor-message').hidden = false; }
+  }
+
+  // ---- Sender: start, running state and measurements -----------------------------------------------------------
+  function lockSettings(locked) { fields.forEach(id => $(id).disabled = locked); $('source-button').disabled = locked; if (!locked) syncEncodingOptions(); }
+  function begin() {
+    if (!state.source) { chooseSource(); return; }
+    const error = validate(true); if (error) { $(error.field).focus(); return; }
+    const c = config();
+    state.starting = true; state.failed = ''; lockSettings(true); $('start-button').textContent = '준비 중'; senderUI();
+    native({ cmd: 'start', settings: { host: c.host, path: c.path, resolution: c.resolution, fps: c.fps, bitrate: c.bitrate, bitrateAuto: $('bitrate-auto').checked, audio: c.audio, systemVolume: Number($('system-volume').value), micVolume: Number($('mic-volume').value), publishPort: c.publishPort, viewerPort: c.viewerPort } });
+  }
+  function runningUI(status) {
+    state.starting = false; state.stopping = false; state.running = true; state.startedAt = Date.now() - (status?.elapsedMs || 0);
+    document.dispatchEvent(new CustomEvent('frame:sender-state',{detail:{running:true,status:status||null}}));
+    lockSettings(true);
+    $('start-button').className = 'danger start-button'; $('start-button').innerHTML = icon('stop') + '<span>송출 종료</span>';
+    // The encoder's applied value (the automatic one depends on the real output size and encoder).
+    if (status && Number.isFinite(status.bitrate)) $('quality').value = status.bitrate;
+    if (status?.encoder) state.encoder = status.encoder;
+    $('metric-fps').textContent = status?.fps || config().fps; $('metric-bitrate').textContent = '—'; senderUI();
+    if (status?.broadcastId && state.viewerServerPort) chatOpen('sender', 'http://127.0.0.1:' + state.viewerServerPort, status.path || config().path, status.broadcastId);
+  }
+  function stoppedUI() {
+    state.running = false; state.starting = false; state.stopping = false; lockSettings(false);
+    chatClose('sender');
+    document.dispatchEvent(new CustomEvent('frame:sender-state',{detail:{running:false}}));
+    $('start-button').className = 'primary start-button'; $('start-button').innerHTML = icon('play') + '<span>송출 시작</span>';
+    $('metric-fps').textContent = '—'; $('metric-bitrate').textContent = '—'; $('metric-viewers').textContent = '0'; senderUI();
+  }
+  const fieldErrors = { 'server-host': 'host-error', 'stream-path': 'stream-error', 'custom-fps': 'fps-error', quality: 'bitrate-error', 'publish-port': 'port-error', 'viewer-port': 'port-error' };
+  function onState(event) {
+    if (event.state === 'starting') { state.starting = true; senderUI(); return; }
+    if (event.state === 'running') { runningUI(event.status); return; }
+    const wasRunning = state.running;
+    state.failed = event.state === 'failed' ? event.message || '송출 실패' : '';
+    stoppedUI();
+    if (event.state === 'failed') {
+      if (fieldErrors[event.field]) { fieldError(event.field === 'viewer-port' ? 'publish-port' : event.field, fieldErrors[event.field], event.message); if (fieldErrors[event.field] === 'port-error') $('advanced-settings').open = true; }
+      toast(event.message || '송출을 시작할 수 없습니다.');
+    }
+    if (wasRunning && state.connected && isLocalStream()) endPlayback('송출이 종료되었습니다', '송출을 다시 시작한 뒤 연결하세요.');
+    senderUI();
+  }
+  function onStats(event) {
+    if (!state.running) return;
+    $('metric-bitrate').textContent = event.bitrateMbps > 0 ? event.bitrateMbps.toFixed(1) : '—';
+    $('metric-viewers').textContent = String(event.viewers || 0);
+  }
+  function applySettings(s) {
+    $('server-host').value = s.serverHost; $('stream-path').value = s.streamPath; $('resolution').value = s.resolution;
+    if (fpsPresets.includes(s.fps)) $('fps').value = String(s.fps); else { $('fps').value = 'custom'; $('custom-fps').value = s.fps; }
+    $('bitrate-auto').checked = s.bitrateAuto; $('quality').value = s.bitrateMbps; $('audio-source').value = s.audio;
+    $('system-volume').value = s.systemVolume; $('mic-volume').value = s.micVolume; $('publish-port').value = s.publishPort; $('viewer-port').value = s.viewerPort;
+    for (const channel of ['system', 'mic']) volumeUI(channel);
+    syncEncodingOptions(); updateAddress(); validate(true); senderUI();
+  }
+  function onInit(event) {
+    state.viewerServerPort = event.viewerServer || 0; state.encoderSetting = event.settings.encoder;
+    if (event.viewerServerError) log('오류', event.viewerServerError);
+    applySettings(event.settings);
+    if (!state.viewerEdited) $('viewer-receive-port').value = event.settings.viewerPort;
+    if (event.source) { state.source = event.source.id; state.sourceTitle = event.source.title; showSource(event.source.title); }
+    if (event.status?.running) { const s = event.status; $('resolution').value = s.resolution; runningUI(s); }
+    senderUI();
+  }
+  function stop() { state.stopping = true; senderUI(); native({ cmd: 'stop' }); }
+
+  // ---- Viewer: WHEP playback in the approved player -----------------------------------------------------------
+  const viewerCanvas = $('viewer-canvas');
+  viewerCanvas.style.display = 'none';
+  function makeVideo() {
+    const video = document.createElement('video');
+    video.playsInline = true; video.autoplay = true; video.setAttribute('aria-label', '수신 영상');
+    video.style.cssText = 'display:block;width:100%;height:100%;object-fit:contain';
+    return video;
+  }
+  const isLocalStream = () => !remote && state.stream && state.stream.host.toLowerCase() === config().host.toLowerCase() && state.stream.path === config().path;
+  async function fetchInfo(base, path) {
+    const response = await fetch(base + '/' + encodeURIComponent(path) + '/info', { cache: 'no-store', signal: AbortSignal.timeout(5000) });
+    if (!response.ok) throw new Error('info ' + response.status);
+    return response.json();
+  }
+  function gathered(pc, timeout) {
+    if (pc.iceGatheringState === 'complete') return Promise.resolve();
+    return new Promise(resolve => { const done = () => { if (pc.iceGatheringState === 'complete') { pc.removeEventListener('icegatheringstatechange', done); resolve(); } }; pc.addEventListener('icegatheringstatechange', done); setTimeout(resolve, timeout); });
+  }
+  async function openSession(base, path, iceServers) {
+    const pc = new RTCPeerConnection({ iceServers: Array.isArray(iceServers) ? iceServers : [], bundlePolicy: 'max-bundle' });
+    pc.addTransceiver('video', { direction: 'recvonly' }); pc.addTransceiver('audio', { direction: 'recvonly' });
+    const media = new MediaStream();
+    pc.addEventListener('track', event => media.addTrack(event.track));
+    try {
+      await pc.setLocalDescription(await pc.createOffer());
+      await gathered(pc, 2000);
+      const response = await fetch(base + '/' + path + '/whep', { method: 'POST', headers: { 'Content-Type': 'application/sdp' }, body: pc.localDescription.sdp });
+      if (response.status !== 201) throw new Error(response.status === 404 ? 'not-running' : 'whep ' + response.status);
+      const resource = response.headers.get('Location');
+      await pc.setRemoteDescription({ type: 'answer', sdp: await response.text() });
+      return { pc, media, resource: resource ? new URL(resource, base + '/').href : '' };
+    } catch (error) { pc.close(); throw error; }
+  }
+  function closeSession(session) {
+    if (!session) return;
+    session.closed = true;
+    try { session.pc.close(); } catch {}
+    if (session.resource) fetch(session.resource, { method: 'DELETE', keepalive: true }).catch(() => {});
+  }
+  // A hidden page (minimised browser) does not decode video, so there the stream metadata is enough to proceed.
+  function waitFrames(video, timeout) {
+    return new Promise((resolve, reject) => {
+      const ready = () => video.readyState >= 2 || (document.hidden && video.readyState >= 1);
+      if (ready()) { resolve(); return; }
+      const timer = setTimeout(() => reject(new Error('timeout')), timeout);
+      const check = () => { if (!ready()) return; clearTimeout(timer); for (const name of ['loadedmetadata', 'loadeddata']) video.removeEventListener(name, check); document.removeEventListener('visibilitychange', check); resolve(); };
+      for (const name of ['loadedmetadata', 'loadeddata']) video.addEventListener(name, check);
+      document.addEventListener('visibilitychange', check);
+    });
+  }
+  function applyPlayerVolume(video) { const amount = Number($('player-volume').value); video.volume = amount / 100; video.muted = amount === 0; }
+  const renditionPath = (path, quality) => quality === 'auto' || quality === sourceQuality() ? path : path + '/' + resolutions.find(item => item.value === quality).label;
+  const sourceQuality = () => state.stream ? state.stream.info.width + 'x' + state.stream.info.height : config().resolution;
+  // Starts a WHEP session and swaps it into the player once its first frame is decoded; the old session keeps playing until then.
+  async function attach(quality) {
+    const stream = state.stream, session = await openSession(stream.base, renditionPath(stream.path, quality), stream.info.iceServers);
+    // Muted until it replaces the current picture, so a quality switch never plays two soundtracks.
+    const video = makeVideo(); video.srcObject = session.media; video.muted = true;
+    try { await video.play().catch(() => {}); await waitFrames(video, 15000); }
+    catch (error) { closeSession(session); throw error; }
+    if (state.stream !== stream) { closeSession(session); return false; }
+    const previous = state.session, oldVideo = state.video, oldHistory = state.history;
+    state.session = session; state.video = video; state.history = null; state.playbackQuality = quality; state.lastBytes = 0;
+    if (oldVideo && document.pictureInPictureElement === oldVideo) document.exitPictureInPicture().catch(() => {});
+    if (oldVideo) oldVideo.replaceWith(video); else viewerCanvas.after(video);
+    closeSession(previous); closeHistory(oldHistory);
+    applyPlayerVolume(video);
+    if (!video.muted) await video.play().catch(error => { if (error.name !== 'NotAllowedError') return; video.muted = true; $('player-volume').value = 0; volumeUI('player'); video.play().catch(() => {}); toast('브라우저 설정으로 음소거 상태로 재생합니다.'); });
+    if (state.paused) video.pause();
+    document.dispatchEvent(new CustomEvent('frame:media')); 
+    session.pc.addEventListener('connectionstatechange', () => { if (state.session === session && ['failed', 'closed'].includes(session.pc.connectionState)) lost(); else if (state.session === session && session.pc.connectionState === 'disconnected') setTimeout(() => { if (state.session === session && session.pc.connectionState === 'disconnected') lost(); }, 3000); });
+    return true;
+  }
+  function infoText() {
+    const info = state.stream?.info;
+    if (!info) return;
+    $('info-fps').textContent = info.fps + ' fps'; $('info-audio').textContent = audioSources.find(item => item.value === info.audio)?.label || '사용 안 함';
+    if (!$('info-bitrate').dataset.measured) $('info-bitrate').textContent = Number(info.bitrate).toFixed(1) + ' Mbps';
+  }
+  function qualityLabel() {
+    const height = state.video?.videoHeight || Number((state.playbackQuality === 'auto' ? sourceQuality() : state.playbackQuality).split('x')[1]);
+    $('player-quality-label').textContent = height + 'p'; $('player-settings').title = '재생 화질: ' + (state.playbackQuality === 'auto' ? '자동 (' + height + 'p)' : height + 'p');
+    $('info-resolution').textContent = height + 'p' + (state.playbackQuality === 'auto' ? ' (자동)' : '');
+  }
+  // ---- Player controls: hidden while playing, back on pointer movement, tap, keyboard or menu -------------------------
+  // Hidden controls are transparent and take no pointer events, so a click on the picture still pauses and resumes; the
+  // overlay never changes the layout. Kept visible while paused, while the pointer is on them, while a slider is dragged,
+  // while the quality menu is open and while a control has keyboard focus.
+  const playerBox = $('viewer-preview'), playerControls = $('player-controls');
+  const idle = { timer: 0, over: false, dragging: false, tapShown: false };
+  function controlsPinned() {
+    const focused = document.activeElement;
+    return !state.connected || state.paused || idle.over || idle.dragging || !$('player-quality-menu').hidden ||
+      !!(focused && (playerControls.contains(focused) || $('player-quality-menu').contains(focused)) && focused.matches(':focus-visible'));
+  }
+  function hideControls() { clearTimeout(idle.timer); if (!controlsPinned()) playerBox.classList.add('controls-idle'); }
+  // Shows the controls and starts the idle countdown (about 2.5 s); a pinned state simply outlasts the countdown.
+  function controlsActive() { clearTimeout(idle.timer); playerBox.classList.remove('controls-idle'); if (state.connected) idle.timer = setTimeout(hideControls, 2500); }
+  playerBox.addEventListener('pointermove', event => { if (event.pointerType !== 'touch') controlsActive(); });
+  playerBox.addEventListener('pointerleave', event => { if (event.pointerType !== 'touch') { idle.over = false; hideControls(); } });
+  playerControls.addEventListener('pointerenter', event => { if (event.pointerType !== 'touch') idle.over = true; });
+  playerControls.addEventListener('pointerleave', () => { idle.over = false; controlsActive(); });
+  playerBox.addEventListener('pointerdown', event => {
+    idle.tapShown = false;
+    // A tap on hidden controls only reveals them; it must not also pause or resume.
+    if (event.pointerType === 'touch' && playerBox.classList.contains('controls-idle')) { idle.tapShown = true; controlsActive(); return; }
+    if (event.target.matches('input[type=range]')) idle.dragging = true;
+    controlsActive();
+  });
+  document.addEventListener('pointerup', () => { if (idle.dragging) { idle.dragging = false; controlsActive(); } });
+  document.addEventListener('pointercancel', () => { if (idle.dragging) { idle.dragging = false; controlsActive(); } });
+  // The tap that only revealed the controls ends here, whatever is under the finger once they are visible.
+  playerBox.addEventListener('click', event => { if (!idle.tapShown) return; idle.tapShown = false; event.preventDefault(); event.stopPropagation(); }, true);
+  playerBox.addEventListener('focusin', event => { if (event.target.matches(':focus-visible')) controlsActive(); });
+  playerBox.addEventListener('focusout', () => setTimeout(() => { if (playerBox.contains(document.activeElement)) controlsActive(); else hideControls(); }, 0));
+  playerBox.addEventListener('keydown', () => controlsActive());
+  function receiver(connected, heading, description, retry = false) {
+    state.connected = connected; state.paused = false;
+    badge('viewer-status', connected ? '수신 중' : '대기', connected);
+    $('no-signal').hidden = connected; $('player-controls').hidden = !connected; $('pause-overlay').hidden = true;
+    $('connect-button').textContent = '수신 시작'; $('connect-button').className = 'primary connect-button';
+    $('viewer-host').disabled = connected; $('viewer-stream').disabled = connected;
+    $('viewer-title').textContent = connected ? state.stream.info.title || state.stream.path : '수신 화면';
+    if (!connected) { for (const id of ['info-resolution', 'info-fps', 'info-bitrate', 'info-audio']) $(id).textContent = '—'; delete $('info-bitrate').dataset.measured; }
+    closePlayerQuality();
+    $('retry-button').hidden = connected || !retry;
+    if (heading) $('empty-heading').textContent = heading;
+    if (description) $('empty-description').textContent = description;
+    $('player-pause').innerHTML = icon('pause') + '<span class="control-label">일시정지</span>'; $('player-pause').setAttribute('aria-label', '일시정지'); $('player-pause').title = '일시정지 (Space)';
+    if (!connected) { $('viewer-view').classList.remove('is-wide'); $('viewer-wide').setAttribute('aria-pressed', 'false'); $('viewer-wide').setAttribute('aria-label', '확대 보기'); $('viewer-wide').innerHTML = icon('layout') + '<span class="control-label">확대 보기</span>'; }
+    else { infoText(); qualityLabel(); }
+    controlsActive();
+    document.dispatchEvent(new CustomEvent('frame:receiver', { detail: { connected, heading, description, connecting: state.connecting } }));
+  }
+  function endPlayback(heading, description, retry = true) {
+    state.connectionVersion = (state.connectionVersion || 0) + 1;
+    const stream = state.stream;
+    chatClose('viewer');
+    if (document.pictureInPictureElement) document.exitPictureInPicture().catch(() => {});
+    state.stream = null; state.connecting = false; clearInterval(state.statsTimer);
+    closeSession(state.session); state.session = null;
+    closeHistory(state.history); state.history = null; state.pausedLive = null; dvrStop();
+    if (state.video) { state.video.srcObject = null; state.video.remove(); state.video = null; }
+    controlsActive();
+    if (heading) receiver(false, heading, description, retry);
+    return stream;
+  }
+  // target: { base, host, port, path } from a list card, "시청하기" or a retry; without it the manual form's fields are used.
+  async function connect(target) {
+    const manual = !target || typeof target !== 'object';
+    const host = manual ? $('viewer-host').value.trim() : String(target.host || ''), path = manual ? $('viewer-stream').value.trim() : String(target.path || '');
+    const port = manual ? Number($('viewer-receive-port').value) : Number(target.port);
+    if (manual) {
+      fieldError('viewer-host', 'viewer-host-error', validHost(host) ? '' : '서버 주소를 확인하세요.');
+      fieldError('viewer-stream', 'viewer-stream-error', validPath(path) ? '' : '스트림 ID을 확인하세요.');
+      fieldError('viewer-receive-port', 'viewer-receive-port-error', validPort(port) ? '' : '1~65535 사이의 포트를 입력하십시오.');
+      if (!validPort(port)) { $('viewer-receive-port').focus(); return; }
+    }
+    if (!validHost(host) || !validPath(path) || !validPort(port)) { if (!state.connected) receiver(false, '입력한 주소를 확인하세요', '연결 설정을 수정하세요.'); if (manual) (!validHost(host) ? $('viewer-host') : $('viewer-stream')).focus(); return; }
+    if (state.connecting) return;
+    endPlayback();
+    const connectionVersion = state.connectionVersion;
+    state.connecting = true; $('viewer-host').disabled = true; $('viewer-stream').disabled = true; badge('viewer-status', '연결 중'); $('retry-button').hidden = true;
+    document.dispatchEvent(new CustomEvent('frame:connecting'));
+    const base = manual ? (remote ? location.protocol : 'http:') + '//' + host + ':' + port : target.base;
+    state.lastTarget = { base, host, port, path };
+    try {
+      const info = await fetchInfo(base, path);
+      if (connectionVersion !== state.connectionVersion) return;
+      if (!info.running) throw new Error('not-running');
+      state.stream = { base, host, path, info, infoAt: Date.now() }; state.playbackQuality = 'auto';
+      await attach('auto');
+      if (connectionVersion !== state.connectionVersion) return;
+      state.connecting = false; state.attempt = 0;
+      receiver(true); log('수신', path + ' 연결'); dvrStart();
+      if (manual) rememberManual({ host, port, path });
+      if (info.broadcastId) chatOpen('viewer', base, path, info.broadcastId);
+      state.statsTimer = setInterval(viewerStats, 1000);
+    } catch (error) {
+      if (connectionVersion !== state.connectionVersion) return;
+      state.connecting = false; endPlayback();
+      const ended = error.message === 'not-running';
+      receiver(false, ended ? '연결할 수 없습니다' : '연결할 수 없습니다', ended ? '송출 상태와 주소를 확인한 뒤 다시 연결하세요.' : '서버 주소와 방화벽 설정을 확인한 뒤 다시 연결하세요.', true);
+      badge('viewer-status', '연결 안 됨'); log('수신', '연결 실패: ' + host + ' ' + path);
+    }
+  }
+  const manualKey = 'frame.manualTarget';
+  function rememberManual(value) { state.manualApplied = value; try { localStorage.setItem(manualKey, JSON.stringify(value)); } catch {} }
+  function appliedManual() {
+    if (state.manualApplied) return state.manualApplied;
+    try { const v = JSON.parse(localStorage.getItem(manualKey) || 'null'); if (v && validHost(v.host) && validPath(v.path) && validPort(Number(v.port))) return (state.manualApplied = v); } catch {}
+    return null;
+  }
+  // Opening the manual dialog shows the last manual connection that worked (or the defaults), never an earlier failed or
+  // cancelled edit; a failed attempt keeps the typed values only while the dialog stays open, to be corrected.
+  function prepareManual() {
+    const v = appliedManual();
+    if (v) { $('viewer-host').value = v.host; $('viewer-receive-port').value = v.port; $('viewer-stream').value = v.path; }
+    else if (remote) { $('viewer-host').value = location.hostname; $('viewer-receive-port').value = location.port || (location.protocol === 'https:' ? '443' : '80'); }
+    else { $('viewer-host').value = config().host; $('viewer-receive-port').value = config().viewerPort; $('viewer-stream').value = config().path; }
+    for (const id of ['viewer-host', 'viewer-stream', 'viewer-receive-port']) fieldError(id, id + '-error', '');
+  }
+  async function lost() {
+    if (!state.stream || state.connecting) return;
+    const stream = state.stream;
+    state.connecting = true; badge('viewer-status', '재연결 중');
+    dvr.token++; closeHistory(dvr.pending); dvr.pending = null;
+    for (let attempt = 1; attempt <= 3 && state.stream === stream; attempt++) {
+      try {
+        const info = await fetchInfo(stream.base, stream.path);
+        if (!info.running) break;
+        const previousId = stream.info.broadcastId;
+        stream.info = info; stream.infoAt = Date.now();
+        if (!(await attach(state.playbackQuality)) || state.stream !== stream) return;
+        state.connecting = false; badge('viewer-status', state.paused ? '일시정지' : '수신 중', !state.paused); log('수신', stream.path + ' 다시 연결');
+        if (info.broadcastId !== previousId) { if (info.broadcastId) chatOpen('viewer', stream.base, stream.path, info.broadcastId); dvrStart(); }
+        return;
+      } catch { await sleep(2000 * attempt); }
+    }
+    if (state.stream !== stream) return;
+    let running = false;
+    try { running = (await fetchInfo(stream.base, stream.path)).running; } catch {}
+    endPlayback(running ? '연결이 끊어졌습니다' : '송출이 종료되었습니다', running ? '네트워크 상태를 확인한 뒤 다시 연결하세요.' : '송출을 다시 시작한 뒤 연결하세요.');
+    log('수신', stream.path + (running ? ' 연결 끊김' : ' 송출 종료'));
+  }
+  async function viewerStats() {
+    const session = state.session, stream = state.stream, history = state.history;
+    if (!stream || (!session && !history)) return;
+    $('viewer-clock').textContent = clock((stream.info.elapsedMs || 0) + Date.now() - stream.infoAt);
+    if (Date.now() - stream.infoAt > 5000 && !state.connecting) {
+      try { const info = await fetchInfo(stream.base, stream.path); state.infoFailures = 0; if (!info.running) { lost(); return; } if (info.elapsedMs < stream.info.elapsedMs) { lost(); return; } stream.info = info; stream.infoAt = Date.now(); infoText(); }
+      catch { if (history && ++state.infoFailures >= 3) { state.infoFailures = 0; lost(); return; } }
+    }
+    if (!session) {
+      // Recorded playback: the average bitrate of the recording actually loaded, not a WebRTC measurement.
+      if (history && history.mediaMs > 1000) { $('info-bitrate').textContent = (history.bytes * 8 / (history.mediaMs / 1000) / 1e6).toFixed(1) + ' Mbps'; $('info-bitrate').dataset.measured = '1'; }
+      qualityLabel(); return;
+    }
+    try {
+      const report = await session.pc.getStats(), sample = {};
+      report.forEach(item => {
+        if (item.type === 'inbound-rtp' && item.kind === 'video') Object.assign(sample, { fps: item.framesPerSecond || 0, width: item.frameWidth || 0, height: item.frameHeight || 0, framesDecoded: item.framesDecoded || 0, framesDropped: item.framesDropped || 0, packetsLost: item.packetsLost || 0, bytes: item.bytesReceived || 0, jitterBufferMs: item.jitterBufferEmittedCount ? item.jitterBufferDelay / item.jitterBufferEmittedCount * 1000 : 0 });
+        if (item.type === 'candidate-pair' && item.nominated && item.state === 'succeeded') sample.rttMs = (item.currentRoundTripTime || 0) * 1000;
+      });
+      const now = performance.now();
+      if (state.lastBytes && sample.bytes >= state.lastBytes) { const mbps = (sample.bytes - state.lastBytes) * 8 / ((now - state.lastBytesAt) / 1000) / 1e6; $('info-bitrate').textContent = mbps.toFixed(1) + ' Mbps'; $('info-bitrate').dataset.measured = '1'; sample.mbps = mbps; }
+      state.lastBytes = sample.bytes; state.lastBytesAt = now;
+      qualityLabel();
+      native({ cmd: 'viewerStats', stats: sample });
+    } catch {}
+  }
+  function pause() {
+    if (!state.connected) return;
+    state.paused = !state.paused; $('pause-overlay').hidden = !state.paused;
+    const resumeAt = !state.paused && !state.history && state.pausedLive && performance.now() - state.pausedLive.at > 3000 ? state.pausedLive.positionMs : null;
+    state.pausedLive = state.paused && !state.history && dvr.index && dvrSupported(state.stream.info) ? { at: performance.now(), positionMs: liveEdge() + Math.min(2500, performance.now() - dvr.at) } : null;
+    if (state.video) {
+      const playLive = () => { if (!state.paused && state.video) state.video.play().catch(() => {}); };
+      if (state.paused) state.video.pause();
+      else if (resumeAt !== null) seekTo(resumeAt).then(ok => { if (!ok) playLive(); }, playLive);
+      else state.video.play().catch(() => {});
+    }
+    showTimeline();
+    controlsActive();
+    const label = state.paused ? '재생' : '일시정지'; $('player-pause').innerHTML = icon(state.paused ? 'play' : 'pause') + '<span class="control-label">' + label + '</span>'; $('player-pause').setAttribute('aria-label', label); $('player-pause').title = label + ' (Space)'; badge('viewer-status', state.paused ? '일시정지' : '수신 중', !state.paused);
+  }
+  function wide() { if (!state.connected) return; const active = $('viewer-view').classList.toggle('is-wide'); const label = active ? '기본 보기' : '확대 보기'; $('viewer-wide').setAttribute('aria-pressed', String(active)); $('viewer-wide').setAttribute('aria-label', label); $('viewer-wide').innerHTML = icon('layout') + '<span class="control-label">' + label + '</span>'; $('viewer-wide').title = label + ' (T)'; }
+  async function fullscreen(name) { try { if (document.fullscreenElement) await document.exitFullscreen(); else await $(name + '-preview').requestFullscreen(); } catch { toast('전체 화면을 열 수 없습니다.'); } }
+
+  // ---- DVR: the whole broadcast from the server's recording, and the return to live -------------------------------
+  // Each viewer plays its own position: recorded fMP4 chunks of a few seconds (aligned to the keyframe grid of the
+  // segment files) are appended to a MediaSource, and only a window around the playback position stays in memory.
+  // Positions are the broadcasting PC's epoch milliseconds, the axis of the server's index; the live WebRTC session is
+  // closed while history plays so there is only one soundtrack.
+  const dvr = { index: null, at: 0, timer: 0, loading: false, dragging: false, token: 0, pending: null };
+  const KEY_EPS = 2;  // request just after a keyframe so the server starts the chunk on it, not one GOP earlier
+  const dvrUrl = (stream, suffix) => stream.base + '/' + encodeURIComponent(stream.path) + '/dvr' + suffix;
+  const liveEdge = () => { const ranges = dvr.index?.ranges; return ranges && ranges.length ? ranges[ranges.length - 1].endMs : 0; };
+  const historyPosition = h => h.base + h.video.currentTime * 1000;
+  const mseType = info => 'video/mp4; codecs="avc1.640028' + (info.audio && info.audio !== 'none' ? ',opus' : '') + '"';
+  // Recorded playback needs Media Source Extensions; browsers without it (e.g. iPhone Safari) keep live playback only.
+  const dvrSupported = info => typeof MediaSource === 'function' && MediaSource.isTypeSupported(mseType(info));
+  async function dvrRefresh() {
+    const stream = state.stream;
+    if (!stream || !stream.info.dvr || dvr.loading || !dvrSupported(stream.info)) return;
+    dvr.loading = true;
+    try {
+      const response = await fetch(dvrUrl(stream, ''), { cache: 'no-store', signal: AbortSignal.timeout(5000) });
+      const index = response.ok ? await response.json() : null;
+      if (state.stream !== stream) return;
+      dvr.index = index && index.running && index.dvr && index.id === stream.info.broadcastId && Array.isArray(index.ranges) ? index : null;
+      dvr.at = performance.now();
+    } catch {} finally { dvr.loading = false; }
+    showTimeline();
+  }
+  function dvrStart() { dvrStop(); if (state.stream?.info.dvr && dvrSupported(state.stream.info)) { dvrRefresh(); dvr.timer = setInterval(dvrRefresh, 2000); } showTimeline(); }
+  function dvrStop() { clearInterval(dvr.timer); dvr.timer = 0; dvr.index = null; dvr.token++; dvr.dragging = false; closeHistory(dvr.pending); dvr.pending = null; }
+  // The recorded range runs from the first recorded moment to the newest part on disk (about a second behind live).
+  function showTimeline() {
+    if (dvr.dragging || !window.FrameUI) return;
+    const ranges = dvr.index?.ranges;
+    if (!state.connected || !ranges || !ranges.length || liveEdge() - ranges[0].startMs < 2000) { window.FrameUI.setTimeline(null); return; }
+    const h = state.history, pausedLive = !h && state.paused && state.pausedLive;
+    window.FrameUI.setTimeline({ startMs: ranges[0].startMs, endMs: liveEdge(), positionMs: h ? historyPosition(h) : pausedLive ? state.pausedLive.positionMs : liveEdge(), mode: h || pausedLive ? 'history' : 'live' });
+  }
+  function keyAnchor(t) { let anchor = null; for (const start of dvr.index?.segments || []) { if (start <= t + 5) anchor = start; else break; } return anchor; }
+  function alignDown(t) { const a = keyAnchor(t), gop = dvr.index?.gopMs || 1000; return a === null ? t : a + Math.max(0, Math.floor((t - a - KEY_EPS) / gop + 1e-6)) * gop + KEY_EPS; }
+  function alignUp(t) { const a = keyAnchor(t), gop = dvr.index?.gopMs || 1000; return a === null ? t : a + Math.max(0, Math.ceil((t - a - KEY_EPS) / gop - 1e-6)) * gop + KEY_EPS; }
+  const nextRangeStart = t => { const range = (dvr.index?.ranges || []).find(r => r.startMs > t + 1); return range ? range.startMs : null; };
+  function createHistory(stream, positionMs) {
+    const video = makeVideo(), source = new MediaSource(), mbps = Math.max(1, Number(stream.info.bitrate) || 8);
+    // About 16 MB per request and 60 MB ahead / 30 MB behind at the stream's bitrate cap.
+    const h = { stream, video, source, buffer: null, url: URL.createObjectURL(source), base: positionMs, next: positionMs, exact: true, started: false, closed: false, abort: null, waitUntil: 0, bytes: 0,
+      chunkMs: Math.min(10000, Math.max(1000, Math.round(128 / mbps) * 1000)), aheadMs: Math.min(30000, Math.max(2000, 480 / mbps * 1000)), behindMs: Math.min(30000, Math.max(1000, 240 / mbps * 1000)) };
+    video.muted = true; video.src = h.url;
+    video.addEventListener('timeupdate', () => { if (state.history === h) showTimeline(); });
+    video.addEventListener('waiting', () => gapJump(h));
+    return h;
+  }
+  function closeHistory(h) {
+    if (!h || h.closed) return;
+    h.closed = true;
+    if (!h.started && h.fail) h.fail(new Error('closed'));  // a seek still waiting for its first chunk ends now
+    try { h.abort?.abort(); } catch {}
+    try { h.video.pause(); h.video.removeAttribute('src'); h.video.load(); } catch {}
+    URL.revokeObjectURL(h.url);
+  }
+  function bufferOp(h, run) {
+    return new Promise((resolve, reject) => {
+      const b = h.buffer, done = () => { b.removeEventListener('updateend', done); b.removeEventListener('error', fail); resolve(); }, fail = () => { b.removeEventListener('updateend', done); b.removeEventListener('error', fail); reject(new Error('append')); };
+      b.addEventListener('updateend', done); b.addEventListener('error', fail);
+      try { run(b); } catch (error) { b.removeEventListener('updateend', done); b.removeEventListener('error', fail); reject(error); }
+    });
+  }
+  async function trimBehind(h, keepMs = h.behindMs) {
+    const b = h.buffer, until = h.video.currentTime - keepMs / 1000;
+    if (b && !b.updating && b.buffered.length && until > b.buffered.start(0) + 0.5) await bufferOp(h, buffer => buffer.remove(0, until)).catch(() => {});
+  }
+  function bufferedEndFrom(h, offset) { const b = h.buffer.buffered; let end = offset; for (let i = 0; i < b.length; i++) if (b.start(i) <= offset + 0.25 && b.end(i) > end) end = b.end(i); return end; }
+  // Playback stalls at a hole in the buffer where recording was paused: continue with the next recorded part.
+  function gapJump(h) {
+    if (h.closed || !h.buffer) return;
+    const b = h.buffer.buffered, t = h.video.currentTime;
+    for (let i = 1; i < b.length; i++) if (t >= b.end(i - 1) - 0.3 && t < b.start(i)) { h.video.currentTime = b.start(i) + 0.01; return; }
+  }
+  async function fetchChunk(h, start, duration) {
+    h.abort = new AbortController();
+    const signal = AbortSignal.any ? AbortSignal.any([h.abort.signal, AbortSignal.timeout(20000)]) : h.abort.signal;
+    const response = await fetch(dvrUrl(h.stream, '/media') + '?id=' + h.stream.info.broadcastId + '&start=' + start.toFixed(3) + '&duration=' + Math.round(duration), { cache: 'no-store', signal });
+    return { status: response.status, data: response.status === 200 ? await response.arrayBuffer() : null };
+  }
+  async function historyLoop(h) {
+    let failures = 0;
+    while (!h.closed) {
+      if (h !== state.history && h.token !== dvr.token) return;
+      if (h.started) {
+        if (h.video.readyState < 3) gapJump(h);
+        if (h.next - historyPosition(h) > h.aheadMs || performance.now() < h.waitUntil) { await trimBehind(h); await sleep(250); continue; }
+      }
+      const start = h.exact ? h.next : alignDown(h.next), duration = Math.max(500, alignUp(start + h.chunkMs) - start);
+      let result;
+      try { result = await fetchChunk(h, start, duration); }
+      catch (error) { if (h.closed) return; if (++failures > 5) throw error; await sleep(1000); continue; }
+      if (h.closed) return;
+      if (result.status === 409) throw new Error('changed');
+      if (result.status === 404) {
+        // Nothing recorded at that time: a pause in recording (skip to the next part) or the newest part is not on disk yet.
+        await dvrRefresh();
+        const after = nextRangeStart(start);
+        if (after !== null) { h.next = after; h.exact = true; continue; }
+        if (!h.started) throw new Error('no-data');
+        h.waitUntil = performance.now() + 1000; continue;
+      }
+      if (result.status !== 200) { if (++failures > 5) throw new Error('chunk ' + result.status); await sleep(1000); continue; }
+      failures = 0;
+      const offset = (start - h.base) / 1000;
+      try { await bufferOp(h, b => { b.timestampOffset = offset; b.appendBuffer(result.data); }); }
+      catch (error) {
+        if (h.closed) return;
+        if (error.name !== 'QuotaExceededError') throw error;
+        // Buffer full: drop what was played and fetch this part again once playback has used some of the buffer.
+        await trimBehind(h, 1000); h.waitUntil = performance.now() + 1000; continue;
+      }
+      h.bytes += result.data.byteLength;
+      const end = h.base + bufferedEndFrom(h, offset) * 1000;
+      h.exact = false;
+      if (end < start + duration - 200) {
+        // Short chunk: recording paused there (continue at the next part) or this is the newest part (wait for more).
+        const after = nextRangeStart(end);
+        if (after !== null && after > end + 500) { h.next = after; h.exact = true; } else { h.next = end; h.waitUntil = performance.now() + 1000; }
+      } else h.next = start + duration;
+      h.mediaMs = (h.mediaMs || 0) + Math.max(0, end - start);
+      if (!h.started) { h.started = true; h.ready(); }
+    }
+  }
+  async function startHistory(h) {
+    await new Promise((resolve, reject) => { if (h.source.readyState === 'open') resolve(); else { h.source.addEventListener('sourceopen', resolve, { once: true }); setTimeout(() => reject(new Error('mse')), 5000); } });
+    h.buffer = h.source.addSourceBuffer(mseType(h.stream.info));
+    const ready = new Promise((resolve, reject) => { h.ready = resolve; h.fail = reject; });
+    historyLoop(h).catch(error => { h.error = error; if (!h.started) h.fail(error); else if (!h.closed && state.history === h) historyFailed(error); });
+    await Promise.race([ready, sleep(15000).then(() => { throw new Error('timeout'); })]);
+    const b = h.buffer.buffered;
+    if (b.length) h.video.currentTime = Math.max(0, b.start(0));
+    await h.video.play().catch(() => {});
+    await waitFrames(h.video, 10000);
+  }
+  function historyFailed(error) {
+    if (error.message === 'changed') { lost(); return; }
+    toast('지난 구간을 더 불러올 수 없어 실시간으로 돌아갑니다.'); goLive(true);
+  }
+  // Starts playback at positionMs from the recording; the current picture keeps playing until the first chunk is decoded.
+  async function seekTo(positionMs) {
+    const stream = state.stream, ranges = dvr.index?.ranges;
+    if (!stream || !state.connected || !ranges || !ranges.length || state.switching || !dvrSupported(stream.info)) { showTimeline(); return false; }
+    const token = ++dvr.token;
+    closeHistory(dvr.pending); dvr.pending = null;
+    let target = Math.max(ranges[0].startMs, positionMs);
+    if (!ranges.some(r => target >= r.startMs && target < r.endMs)) { const after = nextRangeStart(target); if (after === null) { if (state.history) goLive(); else showTimeline(); return false; } target = after; }
+    if (liveEdge() - target < 1500) { if (state.history) goLive(); else showTimeline(); return false; }
+    const current = state.history;
+    if (current && current.started) {
+      const t = (target - current.base) / 1000, b = current.buffer.buffered;
+      for (let i = 0; i < b.length; i++) if (t >= b.start(i) && t < b.end(i) - 0.5) { current.video.currentTime = t; showTimeline(); return true; }
+    }
+    let h = null;
+    try {
+      h = createHistory(stream, target); h.token = token; dvr.pending = h;
+      await startHistory(h);
+      if (h.error) throw h.error;
+      if (token !== dvr.token || state.stream !== stream || !state.connected || state.switching) { closeHistory(h); return false; }
+    } catch (error) {
+      closeHistory(h);
+      if (dvr.pending === h) dvr.pending = null;
+      if (token === dvr.token) { if (error.message === 'changed') lost(); else toast('선택한 시점을 재생할 수 없습니다.'); showTimeline(); }
+      return false;
+    }
+    dvr.pending = null;
+    const oldVideo = state.video, oldHistory = state.history, oldSession = state.session;
+    state.history = h; state.video = h.video; state.session = null; state.pausedLive = null;
+    if (oldVideo && document.pictureInPictureElement === oldVideo) document.exitPictureInPicture().catch(() => {});
+    if (oldVideo) oldVideo.replaceWith(h.video); else viewerCanvas.after(h.video);
+    closeSession(oldSession); closeHistory(oldHistory);
+    applyPlayerVolume(h.video);
+    if (state.paused) h.video.pause();
+    else if (!h.video.muted) await h.video.play().catch(error => { if (error.name !== 'NotAllowedError') return; h.video.muted = true; $('player-volume').value = 0; volumeUI('player'); h.video.play().catch(() => {}); toast('브라우저 설정으로 음소거 상태로 재생합니다.'); });
+    document.dispatchEvent(new CustomEvent('frame:media'));
+    qualityLabel(); showTimeline(); log('수신', '지난 구간 재생 ' + clock(target - ranges[0].startMs));
+    return true;
+  }
+  async function goLive(afterFailure = false) {
+    if (!state.stream || state.switching) return;
+    if (!state.history) {
+      // Paused on live: forget the paused moment and continue with the live picture.
+      if (state.pausedLive) { state.pausedLive = null; if (state.paused) pause(); else showTimeline(); }
+      return;
+    }
+    dvr.token++; closeHistory(dvr.pending); dvr.pending = null; state.switching = true;
+    const resume = state.paused;
+    let failed = false;
+    try { await attach(state.playbackQuality); state.pausedLive = null; if (resume && state.paused) pause(); log('수신', '실시간으로 복귀'); }
+    catch { failed = true; if (!afterFailure) toast('실시간 영상으로 돌아갈 수 없습니다.'); }
+    finally { state.switching = false; qualityLabel(); showTimeline(); }
+    if (failed && afterFailure) lost();
+  }
+  $('player-seek').addEventListener('pointerdown', () => { dvr.dragging = true; });
+  document.addEventListener('pointerup', () => { if (dvr.dragging) setTimeout(() => { dvr.dragging = false; }, 0); });
+  document.addEventListener('frame:seek', ({ detail }) => { dvr.dragging = false; if (detail && Number.isFinite(detail.positionMs)) seekTo(detail.positionMs); });
+  document.addEventListener('frame:live', () => goLive());
+
+  // ---- Chat: one WebSocket per panel (sender, viewer) to the broadcast's own server ------------------------------
+  // The server confirms every message and name; nothing is shown as sent before its acknowledgement arrives.
+  const chats = { sender: null, viewer: null };
+  const chatUi = (method, data, context) => window.FrameUI && window.FrameUI[method](data, context);
+  const savedChatName = () => { try { return localStorage.getItem('frame.chatName') || ''; } catch { return ''; } };
+  function chatOpen(context, base, path, broadcastId) {
+    if (chats[context] && chats[context].broadcastId === broadcastId && chats[context].base === base) return;
+    chatClose(context);
+    const entry = { context, base, path, broadcastId, ws: null, retry: 0, closed: false, timer: 0, serverName: '', pending: new Map() };
+    chats[context] = entry;
+    chatUi('setChatState', { connected: false, canSend: false, broadcastId, error: '' }, context);
+    chatConnect(entry);
+  }
+  function chatClose(context) {
+    const entry = chats[context];
+    if (!entry) return;
+    entry.closed = true; clearTimeout(entry.timer); chats[context] = null;
+    for (const clientId of entry.pending.keys()) chatUi('ackMessage', { clientId, ok: false, error: '채팅 연결이 종료되었습니다.' }, context);
+    try { entry.ws?.close(); } catch {}
+    chatUi('setChatState', { connected: false, canSend: false }, context);
+  }
+  function chatConnect(entry) {
+    if (entry.closed) return;
+    let ws;
+    try { ws = new WebSocket(entry.base.replace(/^http/, 'ws') + '/' + encodeURIComponent(entry.path) + '/chat'); }
+    catch { chatRetry(entry); return; }
+    entry.ws = ws;
+    ws.addEventListener('open', () => ws.send(JSON.stringify({ type: 'join', broadcastId: entry.broadcastId, name: savedChatName() })));
+    ws.addEventListener('message', ({ data }) => { if (entry.ws === ws) chatEvent(entry, data); });
+    ws.addEventListener('close', () => {
+      if (entry.ws !== ws) return;
+      entry.ws = null;
+      for (const clientId of entry.pending.keys()) chatUi('ackMessage', { clientId, ok: false, error: '채팅 서버와 연결이 끊어져 전송하지 못했습니다.' }, entry.context);
+      entry.pending.clear();
+      if (entry.closed) return;
+      chatUi('setChatState', { connected: false, canSend: false, error: '채팅 서버와 연결이 끊어졌습니다. 다시 연결하는 중입니다.' }, entry.context);
+      chatRetry(entry);
+    });
+  }
+  function chatRetry(entry) {
+    if (entry.closed) return;
+    const delay = Math.min(10000, 1000 * Math.pow(2, entry.retry++));
+    entry.timer = setTimeout(() => chatConnect(entry), delay);
+  }
+  function chatEvent(entry, data) {
+    let event; try { event = JSON.parse(data); } catch { return; }
+    const context = entry.context, message = item => ({ id: item.id, broadcastId: item.broadcastId, author: item.author, text: item.text });
+    if (event.type === 'state') {
+      entry.retry = 0;
+      if (event.connected) entry.serverName = event.displayName || '';
+      const update = { connected: !!event.connected, canSend: !!event.canSend, broadcastId: event.broadcastId || entry.broadcastId, error: event.error || '' };
+      if (event.connected) update.displayName = event.displayName || '';
+      chatUi('setChatState', update, context);
+      if (!event.connected) { entry.closed = true; }
+    } else if (event.type === 'history') chatUi('setMessages', (event.messages || []).map(message), context);
+    else if (event.type === 'message') chatUi('appendMessage', message(event), context);
+    else if (event.type === 'ack') { entry.pending.delete(event.clientId); chatUi('ackMessage', { clientId: event.clientId, ok: !!event.ok, error: event.error || '' }, context); }
+    else if (event.type === 'name') {
+      entry.serverName = event.displayName || '';
+      chatUi('setChatState', { displayName: entry.serverName, error: event.ok ? '' : event.error || '이름을 바꿀 수 없습니다.' }, context);
+      if (event.ok) try { localStorage.setItem('frame.chatName', entry.serverName); } catch {}
+    } else if (event.type === 'closed') { entry.closed = true; chatUi('setChatState', { connected: false, canSend: false, error: event.reason || '방송이 종료되었습니다.' }, context); }
+  }
+  document.addEventListener('frame:send-message', ({ detail }) => {
+    const entry = detail && chats[detail.context === 'sender' ? 'sender' : 'viewer'];
+    if (!entry || !entry.ws || entry.ws.readyState !== WebSocket.OPEN || detail.broadcastId !== entry.broadcastId) {
+      chatUi('ackMessage', { clientId: detail?.clientId, ok: false, error: '채팅 서버에 연결되어 있지 않습니다.' }, detail?.context === 'sender' ? 'sender' : 'viewer');
+      return;
+    }
+    // The server keeps the name per connection; bring it in line with the name chosen in this browser before sending.
+    if (detail.displayName && detail.displayName !== entry.serverName) entry.ws.send(JSON.stringify({ type: 'name', name: detail.displayName }));
+    entry.pending.set(detail.clientId, true);
+    entry.ws.send(JSON.stringify({ type: 'send', clientId: detail.clientId, text: detail.text }));
+  });
+  document.addEventListener('frame:set-chat-name', ({ detail }) => {
+    const entry = detail && chats[detail.context === 'sender' ? 'sender' : 'viewer'];
+    if (entry && entry.ws && entry.ws.readyState === WebSocket.OPEN) entry.ws.send(JSON.stringify({ type: 'name', name: detail.name }));
+  });
+
+  // ---- Event wiring --------------------------------------------------------------------------------------------
+  fields.forEach(id => $(id).addEventListener('input', () => { syncEncodingOptions(); updateAddress(); validate(true); senderUI(); }));
+  $('sender-form').addEventListener('submit', event => { event.preventDefault(); if ($('sender-settings-dialog').open || state.starting || state.stopping || remote) return; if (state.running) $('stop-dialog').showModal(); else begin(); });
+  $('confirm-stop').addEventListener('click', () => { $('stop-dialog').close(); stop(); });
+  document.querySelectorAll('[data-close]').forEach(button => button.addEventListener('click', () => $(button.dataset.close).close()));
+  // The sender tab only works inside FrameConsole.exe on the broadcasting PC.
+  const openSender = () => { if (remote) { toast('송출은 송출 PC의 FRAME Console에서 시작합니다.'); return false; } view('sender'); return true; };
+  $('tab-sender').addEventListener('click', openSender); $('tab-viewer').addEventListener('click', () => view('viewer'));
+  $('open-viewer').addEventListener('click', () => { if (!state.running) return; view('viewer'); if (!state.connected) connect({ base: 'http://' + config().host + ':' + config().viewerPort, host: config().host, port: config().viewerPort, path: config().path }); });
+  document.querySelector('[role=tablist]').addEventListener('keydown', event => { if (event.ctrlKey || event.metaKey || event.altKey || !['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'].includes(event.key)) return; event.preventDefault(); const target = event.key === 'Home' ? 'sender' : event.key === 'End' ? 'viewer' : $('tab-sender').getAttribute('aria-selected') === 'true' ? 'viewer' : 'sender'; if (target === 'sender' ? openSender() : (view('viewer'), true)) $('tab-' + target).focus(); });
+  $('source-empty-button').addEventListener('click', chooseSource); $('source-button').addEventListener('click', chooseSource);
+  $('confirm-source').addEventListener('click', confirmSource);
+  // "다시 연결" repeats the last attempt (a list card or a manual entry); the dialog's submit uses the typed fields.
+  $('viewer-form').addEventListener('submit', event => { event.preventDefault(); connect(event.submitter && event.submitter.id === 'retry-button' && state.lastTarget ? state.lastTarget : undefined); });
+  for (const id of ['viewer-host', 'viewer-stream']) $(id).addEventListener('input', () => { state.viewerEdited = true; fieldError(id, id + '-error', ''); });
+  $('player-pause').addEventListener('click', pause); $('viewer-wide').addEventListener('click', wide);
+  // Buttons replace their icon while handling a click, so the clicked icon may already be detached when the click reaches
+  // the player: decide by the path the click took, not by where its target is now.
+  const fromControl = event => event.composedPath().some(node => node instanceof Element && node.matches('button,input,[role="menu"],.player-controls,.player-quality-menu'));
+  $('viewer-preview').addEventListener('click', event => { if (fromControl(event)) return; pause(); });
+  $('viewer-preview').addEventListener('keydown', event => { if (event.target.closest('button,input,[role="menu"]') || event.ctrlKey || event.metaKey || event.altKey) return; const key = event.key.toLowerCase(); if (key === ' ' || key === 'k') { event.preventDefault(); pause(); } else if (key === 'f' && state.connected) { event.preventDefault(); fullscreen('viewer'); } else if (key === 't') { event.preventDefault(); wide(); } else if (key === 'm' && state.connected) { event.preventDefault(); toggleVolume('player'); } });
+  for (const name of ['sender', 'viewer']) $(name + '-fullscreen').addEventListener('click', () => fullscreen(name));
+  $('copy-address').addEventListener('click', async () => {
+    if (!state.running) return;
+    if (bridge) { native({ cmd: 'copyText', text: $('viewer-address').textContent }); return; }
+    try { await navigator.clipboard.writeText($('viewer-address').textContent); copied(); }
+    catch { const selection = getSelection(), range = document.createRange(); range.selectNodeContents($('viewer-address')); selection.removeAllRanges(); selection.addRange(range); toast('Ctrl+C로 복사하세요.'); }
+  });
+  function copied() { $('copy-label').textContent = '복사 완료'; clearTimeout(copiedTimer); copiedTimer = setTimeout(() => $('copy-label').textContent = '주소 복사', 1800); }
+  $('export-log').addEventListener('click', () => { const text = [...state.logs].reverse().map(item => item.time + '\t' + item.kind + '\t' + item.message).join('\n'); const url = URL.createObjectURL(new Blob(['﻿' + text], { type: 'text/plain;charset=utf-8' })); const link = document.createElement('a'); link.href = url; link.download = 'frame-events.txt'; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); });
+  const lastVolumes = { system: 80, mic: 100, player: 80 };
+  // Sender volumes change the broadcast mix live; the player volume only affects this viewer's local playback.
+  function volumeUI(channel, notify = false) {
+    const range = $(channel + '-volume'), amount = Number(range.value), muted = amount === 0;
+    if (amount > 0) lastVolumes[channel] = amount;
+    range.style.setProperty('--fill', amount + '%'); range.setAttribute('aria-valuetext', amount + '%');
+    const button = $(channel + '-mute'); button.innerHTML = icon(muted ? 'volume-off' : 'volume'); button.setAttribute('aria-pressed', String(muted));
+    if (channel === 'player') { button.setAttribute('aria-label', muted ? '음소거 해제' : '음소거'); button.title = (muted ? '음소거 해제' : '음소거') + ' (M)'; if (state.video) applyPlayerVolume(state.video); }
+    else { $(channel + '-volume-value').textContent = amount + '%'; button.setAttribute('aria-label', (channel === 'system' ? '시스템 오디오' : '마이크') + (muted ? ' 음소거 해제' : ' 음소거')); if (notify) native({ cmd: 'setVolume', channel, value: amount }); }
+  }
+  function toggleVolume(channel) { const range = $(channel + '-volume'); range.value = Number(range.value) > 0 ? 0 : lastVolumes[channel] || 80; volumeUI(channel, true); }
+  for (const channel of ['system', 'mic', 'player']) { $(channel + '-volume').addEventListener('input', () => volumeUI(channel, true)); $(channel + '-mute').addEventListener('click', () => toggleVolume(channel)); volumeUI(channel); }
+  function closePlayerQuality(restore = false) { $('player-quality-menu').hidden = true; $('player-settings').setAttribute('aria-expanded', 'false'); controlsActive(); if (restore) $('player-settings').focus({ preventScroll: true }); }
+  // Only qualities the server actually encodes are listed: the original stream and its on-demand lower renditions.
+  function renderPlayerQuality() {
+    const source = sourceQuality(), sourceHeight = Number(source.split('x')[1]), names = (state.stream?.info.renditions || []).map(item => item.name);
+    // The recording keeps the original stream only, so past parts play in the original quality.
+    const choices = [{ value: 'auto', label: '자동', detail: sourceHeight + 'p 원본' }].concat(resolutions.filter(item => item.value === source || (!state.history && names.includes(item.label))).reverse());
+    $('player-quality-options').replaceChildren();
+    for (const choice of choices) {
+      const button = document.createElement('button'); button.type = 'button'; button.className = 'quality-menu-option'; button.setAttribute('role', 'menuitemradio'); button.setAttribute('aria-checked', String(state.playbackQuality === choice.value));
+      const text = document.createElement('span'); text.className = 'quality-option-copy'; const label = document.createElement('span'); label.textContent = choice.label; text.append(label);
+      if (choice.value === 'auto') { const detail = document.createElement('small'); detail.textContent = choice.detail; text.append(detail); }
+      const check = document.createElement('span'); check.innerHTML = icon('check'); button.append(text, check.firstChild);
+      button.addEventListener('click', () => { applyPlaybackQuality(choice.value); closePlayerQuality(true); }); $('player-quality-options').append(button);
+    }
+  }
+  async function applyPlaybackQuality(value) {
+    if (!state.connected || value === state.playbackQuality || state.switching) return;
+    if (state.history) { state.playbackQuality = value; qualityLabel(); return; }
+    dvr.token++; closeHistory(dvr.pending); dvr.pending = null;
+    state.switching = true;
+    try { await attach(value); qualityLabel(); renderPlayerQuality(); log('수신', '재생 화질 ' + (value === 'auto' ? '자동' : resolutions.find(item => item.value === value).label)); }
+    catch { toast('선택한 화질로 바꿀 수 없습니다.'); }
+    finally { state.switching = false; }
+  }
+  $('player-settings').addEventListener('click', () => { const open = $('player-quality-menu').hidden; pickers.close(); renderPlayerQuality(); $('player-quality-menu').hidden = !open; $('player-settings').setAttribute('aria-expanded', String(open)); if (open) $('player-quality-options').querySelector('[aria-checked="true"]')?.focus(); });
+  $('player-quality-menu').addEventListener('keydown', event => {
+    const items = [...$('player-quality-options').querySelectorAll('button')], index = items.indexOf(document.activeElement);
+    if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); closePlayerQuality(true); }
+    else if (['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) { event.preventDefault(); const next = event.key === 'Home' ? 0 : event.key === 'End' ? items.length - 1 : (index + (event.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length; items[next].focus(); }
+    else if (event.key === 'Tab') closePlayerQuality(true);
+  });
+  document.addEventListener('pointerdown', event => { if (!$('player-quality-menu').hidden && !$('player-quality-menu').contains(event.target) && !$('player-settings').contains(event.target)) closePlayerQuality(); });
+  document.addEventListener('visibilitychange', () => native({ cmd: 'previewVisible', visible: !document.hidden && !$('sender-view').hidden }));
+  setInterval(() => { if (state.running) $('metric-duration').textContent = clock(Date.now() - state.startedAt); else if (!state.starting) $('metric-duration').textContent = '00:00:00'; }, 250);
+  window.addEventListener('pagehide', () => closeSession(state.session));
+
+  if (bridge) {
+    bridge.addEventListener('message', ({ data: event }) => {
+      if (!event || typeof event !== 'object') return;
+      if (event.type === 'preview') drawPreview(event);
+      else if (event.type === 'stats') onStats(event);
+      else if (event.type === 'perf') log('성능', event.message, 'perf');
+      else if (event.type === 'log') log(event.kind, event.message);
+      else if (event.type === 'state') onState(event);
+      else if (event.type === 'source') onSource(event);
+      else if (event.type === 'windows') renderWindows(event.items || []);
+      else if (event.type === 'thumb') showThumb(event);
+      else if (event.type === 'copied') copied();
+      else if (event.type === 'monitors') onMonitors(event.items || []);
+      else if (event.type === 'encoders') { state.encoder = state.encoderSetting && state.encoderSetting !== 'auto' ? state.encoderSetting : (event.available || [])[0]; if (!state.running && !state.starting) syncEncodingOptions(); }
+      else if (event.type === 'init') onInit(event);
+    });
+  } else {
+    // Viewer page served by the broadcasting PC: the address bar already names the server and the stream.
+    const path = decodeURIComponent(location.pathname.split('/').filter(Boolean)[0] || '');
+    $('server-host').value = location.hostname; $('viewer-host').value = location.hostname; if (validPath(path)) { $('stream-path').value = path; $('viewer-stream').value = path; }
+    state.viewerEdited = true;
+  }
+  $('viewer-receive-port').value = remote ? (location.port || (location.protocol === 'https:' ? '443' : '80')) : config().viewerPort;
+  window.FrameRuntime = {
+    connect, validate, view, chooseSource, notify: toast,
+    disconnect() { endPlayback('수신을 종료했습니다', '목록에서 영상을 선택하십시오.', false); },
+    get connected() { return state.connected; }, get connecting() { return state.connecting; },
+    get remote() { return remote; }, get running() { return state.running; },
+    get video() { return state.video; }, get stream() { return state.stream; },
+    // Playback position source for measurements: the recording's time axis while history plays.
+    get playback() { return { mode: state.history ? 'history' : 'live', base: state.history ? state.history.base : null, ranges: dvr.index ? dvr.index.ranges : null }; },
+    prepareManual,
+    get catalogBase() { return remote ? '' : state.viewerServerPort ? 'http://127.0.0.1:' + state.viewerServerPort : null; }
+  };
+  updateAddress(); senderUI(); history.scrollRestoration = 'manual';
+  view(remote || new URLSearchParams(location.search).get('view') === 'viewer' ? 'viewer' : 'sender');
+  native({ cmd: 'hello' });
+})();
+
+(() => {
+  'use strict';
+  // Presentation adapters only. Catalog, monitors and DVR are supplied by the backend contracts in UI_HANDOFF.txt.
+  const $ = id => document.getElementById(id), runtime = window.FrameRuntime;
+  const icon = name => '<svg aria-hidden="true"><use href="#i-' + name + '"/></svg>';
+  const model = { items: [], catalog: 'loading', sourceMode: 'window', monitors: [], selectedMonitor: null, timeline: null, loadId: 0, openedBy: null };
+  let networkSnapshot;
+  let savedName='';try{savedName=localStorage.getItem('frame.chatName')||'';}catch{}
+  const makeChat = () => ({connected:false,canSend:false,broadcastId:null,messages:[],pending:null,pendingText:null,displayName:savedName,draft:'',error:'',scrollTop:0,pinToBottom:true});
+  const chatRooms = {sender:makeChat(),viewer:makeChat()};
+  let chatContext='viewer',chat=chatRooms.viewer;
+  const roomFor=context=>context==='sender'?chatRooms.sender:context==='viewer'?chatRooms.viewer:null;
+  function updateLayout() { const viewing=!$('viewer-view').hidden&&!$('viewer-stage').hidden; document.querySelector('.app-layout').classList.toggle('is-viewing',viewing); document.querySelector('.app-layout').classList.toggle('is-expanded',viewing&&$('viewer-view').classList.contains('is-wide')); if(viewing){$('tab-sender').setAttribute('aria-selected','false');$('tab-viewer').setAttribute('aria-selected','false');$('tab-viewer').tabIndex=0;}else if(!$('viewer-view').hidden){$('tab-viewer').setAttribute('aria-selected','true');$('tab-sender').setAttribute('aria-selected','false');} activateChat($('sender-view').hidden?'viewer':'sender'); }
+  function showStage(show = true) {
+    const entering=show&&$('viewer-stage').hidden;
+    $('viewer-view').setAttribute('role',show?'region':'tabpanel');
+    if(show){$('viewer-view').removeAttribute('aria-labelledby');$('viewer-view').setAttribute('aria-label','수신 영상');}else{$('viewer-view').removeAttribute('aria-label');$('viewer-view').setAttribute('aria-labelledby','tab-viewer');}
+    $('broadcast-list').hidden = show; $('catalog-toolbar').hidden = show; $('viewer-stage').hidden = !show;
+    if (!show) $('viewer-view').classList.remove('is-wide');
+    updateLayout();
+    if(entering)toggleChat(true);
+  }
+  function openManual(opener) {
+    model.openedBy = opener;
+    model.manualFromList = !$('broadcast-list').hidden;
+    if (runtime.prepareManual) runtime.prepareManual();
+    $('viewer-host').disabled = false; $('viewer-stream').disabled = false; $('viewer-receive-port').disabled = false;
+    $('viewer-connect-error').hidden = true; $('viewer-connect-dialog').showModal();
+  }
+  function catalogMessage(title, description, retry = false) {
+    $('catalog-empty').hidden = false; $('catalog-empty-title').textContent = title;
+    $('catalog-empty-description').textContent = description; $('catalog-retry').hidden = !retry;
+  }
+  function safeHttp(value) {
+    if (!value) return null;
+    try { const url = new URL(value, location.href); return ['http:','https:'].includes(url.protocol) ? url : null; } catch { return null; }
+  }
+  function renderCatalog() {
+    const query = $('broadcast-search').value.trim().toLocaleLowerCase();
+    const items = model.items.filter(item => (item.title + ' ' + (item.publisher || '')).toLocaleLowerCase().includes(query));
+    $('broadcast-count').textContent = String(model.items.length); $('broadcast-grid').replaceChildren();
+    for (const item of items) {
+      const button = document.createElement('button'); button.type = 'button'; button.className = 'broadcast-card';
+      button.setAttribute('aria-label', item.title + ' 수신');
+      const thumb = document.createElement('span'); thumb.className = 'broadcast-thumb';
+      const thumbnail = safeHttp(item.thumbnailUrl);
+      if (thumbnail) { const image = document.createElement('img'); image.alt = ''; image.src = thumbnail.href; image.loading = 'lazy'; image.addEventListener('error', () => { image.remove(); thumb.insertAdjacentHTML('afterbegin', icon('monitor')); }, {once:true}); thumb.append(image); }
+      else thumb.innerHTML = icon('monitor');
+      const live = document.createElement('span'); live.className = 'broadcast-live'; live.textContent = '실시간'; thumb.append(live);
+      if (item.height) { const format = document.createElement('span'); format.className = 'broadcast-format'; format.textContent = item.height + 'p' + (item.fps ? ' / ' + item.fps + 'fps' : ''); thumb.append(format); }
+      const copy = document.createElement('span'); copy.className = 'broadcast-copy';
+      const avatar = document.createElement('span'); avatar.className = 'broadcast-avatar'; avatar.setAttribute('aria-hidden','true'); avatar.innerHTML = icon('monitor');
+      const text = document.createElement('span'); text.className = 'broadcast-text';
+      const title = document.createElement('span'); title.className = 'broadcast-title'; title.textContent = item.title;
+      const owner = document.createElement('span'); owner.className = 'broadcast-owner'; owner.textContent = item.publisher || '';
+      text.append(title,owner); copy.append(avatar,text); button.append(thumb,copy);
+      button.addEventListener('click', () => openBroadcast(item)); $('broadcast-grid').append(button);
+    }
+    $('catalog-empty').hidden = items.length > 0;
+    if (!items.length && model.catalog === 'ready') catalogMessage(query ? '검색 결과가 없습니다' : '송출 중인 영상이 없습니다', query ? '다른 송출명 또는 PC 이름으로 검색하십시오.' : '송출이 시작되면 이곳에 표시됩니다.');
+  }
+  // The page's own server lists broadcasts; inside the app that is the app's viewer server (the page itself is a local file host).
+  async function refreshCatalog(quiet = false) {
+    const base = runtime.catalogBase;
+    if (base === null) { if (!model.items.length) catalogMessage('목록을 불러오는 중입니다', '잠시만 기다려 주십시오.'); setTimeout(() => refreshCatalog(quiet), 500); return; }
+    const load = ++model.loadId; if (!quiet) $('refresh-broadcasts').disabled = true;
+    if (!model.items.length && !quiet) catalogMessage('목록을 불러오는 중입니다', '잠시만 기다려 주십시오.');
+    try {
+      const response = await fetch(base + '/api/broadcasts', {cache:'no-store', signal:AbortSignal.timeout(7000)});
+      if (!response.ok) throw new Error('catalog ' + response.status);
+      const data = await response.json();
+      if (load !== model.loadId) return;
+      setBroadcasts(Array.isArray(data) ? data : data.items || []);
+    } catch {
+      if (load !== model.loadId) return;
+      model.catalog = 'error'; model.items = []; renderCatalog();
+      catalogMessage('영상 목록을 불러올 수 없습니다', '목록을 다시 불러오거나 수신 주소로 수동 연결하십시오.', true);
+    } finally { if(load === model.loadId) $('refresh-broadcasts').disabled = false; }
+  }
+  function setBroadcasts(items) {
+    ++model.loadId; model.items = items.filter(item => item && item.id && item.title && item.path && safeHttp(item.baseUrl) && item.running !== false);
+    model.catalog = 'ready'; $('refresh-broadcasts').disabled = false; renderCatalog();
+  }
+  async function openBroadcast(item) {
+    const target = safeHttp(item.baseUrl); if (!target) return;
+    $('viewer-title').textContent = item.title; showStage();
+    await runtime.connect({ base: target.origin, host: target.hostname, port: target.port || (target.protocol === 'https:' ? 443 : 80), path: item.path });
+    if(runtime.connected) $('viewer-title').textContent = item.title;
+  }
+  $('broadcast-search').addEventListener('input',renderCatalog);
+  $('refresh-broadcasts').addEventListener('click',refreshCatalog); $('catalog-retry').addEventListener('click',refreshCatalog);
+  $('manual-connect').addEventListener('click', () => openManual($('manual-connect')));
+  document.addEventListener('frame:connecting', () => { showStage(); $('connect-button').disabled = true; chatRooms.viewer.messages=[];chatRooms.viewer.pending=null;setChatState({connected:false,canSend:false},'viewer'); });
+  $('viewer-connect-dialog').addEventListener('close', () => { if (!runtime.connected) { if (runtime.connecting) runtime.disconnect(); if (model.manualFromList) showStage(false); } });
+  document.addEventListener('frame:receiver', ({detail}) => {
+    $('connect-button').disabled = false;
+    if(detail.connected) { showStage(); if ($('viewer-connect-dialog').open) $('viewer-connect-dialog').close(); }
+    else if($('viewer-connect-dialog').open && detail.heading) { $('viewer-connect-error').hidden=false; $('viewer-connect-error').textContent=[detail.heading,detail.description].filter(Boolean).join(' '); }
+    if(!detail.connected) setTimeline(null);
+    $('chat-toggle').disabled = !detail.connected;
+    if(!detail.connected) { chatRooms.viewer.messages=[];setChatState({connected:false,canSend:false},'viewer'); }
+    updatePip();
+  });
+  $('sender-network-button').addEventListener('click', () => {
+    networkSnapshot = Object.fromEntries(['server-host','stream-path','publish-port','viewer-port'].map(id => [id,$(id).value]));
+    $('sender-network-dialog').showModal();
+  });
+  $('apply-sender-network').addEventListener('click', () => { const error = runtime.validate(true); if(error && ['server-host','stream-path','publish-port'].includes(error.field)) { $(error.field).focus(); return; } networkSnapshot=null; $('sender-network-dialog').close(); });
+  $('sender-network-dialog').addEventListener('close', () => { if(networkSnapshot) { for(const [id,value] of Object.entries(networkSnapshot)) { $(id).value=value; $(id).dispatchEvent(new Event('input',{bubbles:true})); } networkSnapshot=null; } });
+  function sourceMode(mode) {
+    model.sourceMode=mode;
+    for(const name of ['window','monitor']) { const active = mode===name; $('source-tab-'+name).setAttribute('aria-selected',String(active)); $('source-tab-'+name).tabIndex=active?0:-1; $('source-'+name+'-panel').hidden=!active; }
+    if(mode==='monitor') { $('confirm-source').disabled=!model.selectedMonitor; document.dispatchEvent(new CustomEvent('frame:request-monitors')); }
+    else $('confirm-source').disabled=!document.querySelector('.source-choice[aria-pressed="true"]');
+  }
+  function setMonitors(items) {
+    model.monitors=items; model.selectedMonitor=null; $('monitor-options').replaceChildren(); $('monitor-message').hidden=items.length>0;
+    for(const item of items) {
+      const button=document.createElement('button'); button.type='button'; button.className='monitor-choice'; button.setAttribute('aria-pressed','false');
+      const thumb=document.createElement('span'); thumb.className='monitor-thumb';
+      const thumbnail=/^data:image\/jpeg;base64,[A-Za-z0-9+\/=]+$/.test(item.thumbnailUrl||'')?{href:item.thumbnailUrl}:safeHttp(item.thumbnailUrl);
+      if(thumbnail){const image=document.createElement('img');image.alt='';image.src=thumbnail.href;thumb.append(image);}
+      else {const number=document.createElement('span'); number.className='monitor-number'; number.textContent=String(item.number); thumb.append(number);}
+      const copy=document.createElement('span'); copy.className='monitor-copy'; const name=document.createElement('strong'); name.textContent='모니터 '+item.number;
+      if(item.primary) { const badge=document.createElement('span'); badge.className='primary-monitor'; badge.textContent='주 모니터'; name.append(badge); }
+      const details=document.createElement('small'); details.textContent=item.width+' × '+item.height+(item.scale?' / '+item.scale+'%':''); copy.append(name,details); button.append(thumb,copy);
+      button.addEventListener('click',()=>{model.selectedMonitor=item.id; $('monitor-options').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b===button))); $('confirm-source').disabled=false;});
+      $('monitor-options').append(button);
+    }
+    if(model.sourceMode==='monitor')$('confirm-source').disabled=true;
+  }
+  for(const mode of ['window','monitor']) $('source-tab-'+mode).addEventListener('click',()=>sourceMode(mode));
+  document.querySelector('.source-tabs').addEventListener('keydown',event=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return; event.preventDefault(); const mode=event.key==='Home'?'window':event.key==='End'?'monitor':model.sourceMode==='window'?'monitor':'window'; sourceMode(mode); $('source-tab-'+mode).focus();});
+  $('confirm-source').addEventListener('click',event=>{if(model.sourceMode!=='monitor')return; event.preventDefault(); event.stopImmediatePropagation(); if(model.selectedMonitor) document.dispatchEvent(new CustomEvent('frame:select-monitor',{detail:{id:model.selectedMonitor}}));},true);
+  $('source-dialog').addEventListener('close',()=>{sourceMode('window');});
+  function time(ms) { const seconds=Math.max(0,Math.floor(ms/1000)); return (seconds>=3600?String(Math.floor(seconds/3600)).padStart(2,'0')+':':'')+String(Math.floor(seconds/60)%60).padStart(2,'0')+':'+String(seconds%60).padStart(2,'0'); }
+  function setTimeline(data) {
+    const valid=data&&Number.isFinite(data.startMs)&&Number.isFinite(data.endMs)&&data.endMs>data.startMs;
+    model.timeline=valid?data:null; $('player-timeline').hidden=!valid;
+    $('player-live').disabled=!valid||data.mode!=='history'; $('player-live').classList.toggle('is-history',valid&&data.mode==='history');
+    if(!valid)return;
+    const position=Math.max(data.startMs,Math.min(data.endMs,data.positionMs));
+    $('player-seek').min=data.startMs; $('player-seek').max=data.endMs; $('player-seek').value=position;
+    $('player-seek').style.setProperty('--fill',(position-data.startMs)/(data.endMs-data.startMs)*100+'%');
+    $('player-position').textContent=time(position-data.startMs); $('player-duration').textContent=time(data.endMs-data.startMs);
+    $('player-seek').setAttribute('aria-valuetext',time(position-data.startMs)+' / '+time(data.endMs-data.startMs));
+  }
+  $('player-seek').addEventListener('input',()=>{if(!model.timeline)return; const position=Number($('player-seek').value); $('player-position').textContent=time(position-model.timeline.startMs); $('player-seek').style.setProperty('--fill',(position-model.timeline.startMs)/(model.timeline.endMs-model.timeline.startMs)*100+'%');});
+  $('player-seek').addEventListener('change',()=>{if(model.timeline)document.dispatchEvent(new CustomEvent('frame:seek',{detail:{positionMs:Number($('player-seek').value)}}));});
+  $('player-live').addEventListener('click',()=>document.dispatchEvent(new CustomEvent('frame:live')));
+  function updatePip(){const video=runtime.video; $('player-pip').disabled=!(video&&document.pictureInPictureEnabled&&video.requestPictureInPicture);}
+  document.addEventListener('frame:media',updatePip);
+  $('player-pip').addEventListener('click',async()=>{try{if(document.pictureInPictureElement)await document.exitPictureInPicture();else if(runtime.video)await runtime.video.requestPictureInPicture();}catch{runtime.notify('이 환경에서는 화면 속 화면을 사용할 수 없습니다.');}});
+  $('viewer-info-button').addEventListener('click',()=>$('viewer-info-dialog').showModal());
+  function renderChatState() {
+    const enabled=chat.connected&&chat.canSend;
+    $('chat-message').disabled=!enabled;
+    $('chat-send').disabled=!enabled||!$('chat-message').value.trim()||!!chat.pending;
+    $('chat-empty').textContent=chat.connected?'아직 메시지가 없습니다.':chatContext==='sender'&&!runtime.running?'송출을 시작하면 채팅을 사용할 수 있습니다.':'채팅을 사용할 수 없습니다.';
+    $('chat-empty').hidden=chat.messages.length>0;
+    $('chat-error').textContent=chat.error||'';$('chat-error').hidden=!chat.error;
+  }
+  function activateChat(context) {
+    const slot=$(context==='sender'?'sender-chat-slot':'viewer-chat-slot');
+    if(chatContext===context&&$('chat-panel').parentElement===slot)return;
+    chat.draft=$('chat-message').value;chat.scrollTop=$('chat-messages').scrollTop;chat.pinToBottom=$('chat-messages').scrollHeight-chat.scrollTop-$('chat-messages').clientHeight<55;
+    chatContext=context;chat=chatRooms[context];slot.append($('chat-panel'));
+    $('chat-panel').classList.toggle('is-sender-chat',context==='sender');
+    $('chat-panel').hidden=context==='sender'?false:!model.viewerChatOpen;
+    $('chat-close').hidden=context==='sender';$('chat-message').value=chat.draft;
+    renderMessages();renderChatState();$('chat-messages').scrollTop=chat.pinToBottom?$('chat-messages').scrollHeight:chat.scrollTop;
+    document.dispatchEvent(new CustomEvent('frame:chat-context',{detail:{context,broadcastId:chat.broadcastId}}));
+  }
+  function toggleChat(open) {
+    model.viewerChatOpen=open;
+    if(chatContext==='viewer')$('chat-panel').hidden=!open;
+    $('chat-toggle').setAttribute('aria-expanded',String(open));$('viewer-stage').classList.toggle('is-chat-open',open);
+    if(open&&chatContext==='viewer'&&chat.canSend)$('chat-message').focus();
+  }
+  $('chat-toggle').addEventListener('click',()=>toggleChat(!model.viewerChatOpen));
+  $('chat-close').addEventListener('click',()=>{toggleChat(false);$('chat-toggle').focus();});
+  function setChatState(data,context='viewer') {
+    const room=roomFor(context);if(!room)return;
+    const changed=data.broadcastId&&data.broadcastId!==room.broadcastId;
+    if(changed){room.messages=[];room.pending=null;room.pendingText=null;room.draft='';room.error='';}
+    Object.assign(room,data);if(data.error)room.pending=null;
+    if(room===chat){if(changed)$('chat-message').value='';renderMessages();renderChatState();}
+  }
+  function renderMessages() {
+    const box=$('chat-messages'),atEnd=box.scrollHeight-box.scrollTop-box.clientHeight<55,scrollBefore=box.scrollTop;
+    const keep=new Set(chat.messages.map(item=>String(item.id)));
+    for(const row of [...box.children])if(!keep.has(row.dataset.messageId))row.remove();
+    const rows=new Map([...box.children].map(row=>[row.dataset.messageId,row]));
+    for(const [index,item] of chat.messages.entries()) {
+      let row=rows.get(String(item.id));
+      if(!row){row=document.createElement('div');row.className='chat-message';row.dataset.messageId=String(item.id);const author=document.createElement('span');author.className='chat-author';const body=document.createElement('span');body.className='chat-body';row.append(author,body);}
+      if(row.children[0].textContent!==item.author)row.children[0].textContent=item.author;
+      if(row.children[1].textContent!==item.text)row.children[1].textContent=item.text;
+      if(box.children[index]!==row)box.insertBefore(row,box.children[index]||null);
+    }
+    $('chat-empty').hidden=chat.messages.length>0;box.scrollTop=atEnd?box.scrollHeight:scrollBefore;
+  }
+  function setMessages(items,context='viewer') {const room=roomFor(context);if(!room)return;room.messages=items.filter(item=>!item.broadcastId||item.broadcastId===room.broadcastId).slice(-200);if(room===chat)renderMessages();}
+  function appendMessage(item,context='viewer') {const room=roomFor(context);if(!room||!item||!item.id||(item.broadcastId&&item.broadcastId!==room.broadcastId)||room.messages.some(message=>message.id===item.id))return;room.messages.push(item);if(room.messages.length>200)room.messages.shift();if(room===chat)renderMessages();}
+  function ackMessage(data,context='viewer') {
+    const room=roomFor(context);if(!room||!data||data.clientId!==room.pending)return;
+    room.pending=null;
+    if(data.ok){if(room.draft.trim()===room.pendingText){room.draft='';if(room===chat)$('chat-message').value='';}room.error='';}
+    else room.error=data.error||'메시지를 전송할 수 없습니다.';
+    room.pendingText=null;if(room===chat)renderChatState();
+  }
+  $('chat-message').addEventListener('input',()=>{chat.draft=$('chat-message').value;renderChatState();});
+  $('chat-message').addEventListener('keydown',event=>{if(event.key==='Enter'&&!event.shiftKey&&!event.isComposing){event.preventDefault();$('chat-form').requestSubmit();}});
+  function openName(){ $('chat-display-name').value=chat.displayName;$('chat-name-error').hidden=true;$('chat-name-dialog').showModal();$('chat-display-name').focus(); }
+  $('chat-name-button').addEventListener('click',openName);
+  $('chat-name-form').addEventListener('submit',event=>{event.preventDefault();const name=$('chat-display-name').value.trim();if(!name||Array.from(name).length>20){$('chat-name-error').textContent='1~20자의 이름을 입력하십시오.';$('chat-name-error').hidden=false;$('chat-display-name').focus();return;}for(const room of Object.values(chatRooms))room.displayName=name;try{localStorage.setItem('frame.chatName',name);}catch{}document.dispatchEvent(new CustomEvent('frame:set-chat-name',{detail:{context:chatContext,broadcastId:chat.broadcastId,name}}));$('chat-name-dialog').close();if(!$('chat-message').disabled)$('chat-message').focus();});
+  $('chat-form').addEventListener('submit',event=>{event.preventDefault();const text=$('chat-message').value.trim();if(!chat.connected||!chat.canSend||chat.pending||!text)return;if(!chat.displayName){openName();return;}chat.draft=$('chat-message').value;chat.pending=Array.from(crypto.getRandomValues(new Uint32Array(4)),part=>part.toString(16).padStart(8,'0')).join('');chat.pendingText=text;renderChatState();document.dispatchEvent(new CustomEvent('frame:send-message',{detail:{context:chatContext,broadcastId:chat.broadcastId,displayName:chat.displayName,text,clientId:chat.pending}}));});
+  $('sender-settings-button').addEventListener('click',()=>$('sender-settings-dialog').showModal());
+  $('sender-settings-done').addEventListener('click',()=>{const error=runtime.validate(true);if(error&&['custom-fps','quality'].includes(error.field)){$(error.field).focus();return;}$('sender-settings-dialog').close();});
+  document.addEventListener('frame:sender-state',({detail})=>{if(!detail.running)setChatState({connected:false,canSend:false},'sender');});
+
+  document.addEventListener('frame:view',({detail})=>{if(detail.name==='viewer'){if(runtime.connected||runtime.connecting)runtime.disconnect();showStage(false);refreshCatalog();}else updateLayout();});
+  new MutationObserver(updateLayout).observe($('viewer-view'),{attributes:true,attributeFilter:['class','hidden']});
+  window.FrameUI={setBroadcasts,setMonitors,setTimeline,refreshCatalog,showStage,sourceMode,setChatState,setMessages,appendMessage,ackMessage,
+    setSenderChatState:data=>setChatState(data,'sender'),setSenderMessages:items=>setMessages(items,'sender'),
+    appendSenderMessage:item=>appendMessage(item,'sender'),ackSenderMessage:data=>ackMessage(data,'sender')};
+  showStage(false); updatePip();
+  $('open-viewer').addEventListener('click',()=>{if($('sender-settings-dialog').open)$('sender-settings-dialog').close();showStage();});
+  refreshCatalog();
+  // Keep the list current while it is on screen (new broadcasts, ended ones, fresh thumbnails).
+  setInterval(() => { if (!document.hidden && !$('viewer-view').hidden && !$('broadcast-list').hidden && model.catalog !== 'loading') refreshCatalog(true); }, 5000);
+  const linkedPath=decodeURIComponent(location.pathname.split('/').filter(Boolean)[0]||'');
+  if(runtime.remote&&/^[a-zA-Z0-9][a-zA-Z0-9_-]{0,63}$/.test(linkedPath)){showStage();runtime.connect();}
+})();
+</script>
+</body>
+</html>

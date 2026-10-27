@@ -1,0 +1,8 @@
+# UI baselines are verified with SHA-256; preserve the exact bytes on checkout.
+* -text
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.ico binary
+*.woff2 binary

@@ -1,0 +1,50 @@
+[
+  {
+    "name": "x-menu-open",
+    "reference": "verification/reference-render/x-menu-open.png",
+    "actual": "verification/app/x-menu-open.png",
+    "masks": 5,
+    "width": 1440,
+    "height": 1100,
+    "offset": [
+      0,
+      0
+    ],
+    "compared": 1149627,
+    "differingPct": 2.352,
+    "strongPct": 1.068,
+    "meanDelta": 2.97
+  },
+  {
+    "name": "x-error",
+    "reference": "verification/reference-render/x-error.png",
+    "actual": "verification/app/x-error.png",
+    "masks": 2,
+    "width": 1440,
+    "height": 1100,
+    "offset": [
+      0,
+      0
+    ],
+    "compared": 1170106,
+    "differingPct": 2.018,
+    "strongPct": 1.174,
+    "meanDelta": 3.02
+  },
+  {
+    "name": "x-running",
+    "reference": "verification/reference-render/x-running.png",
+    "actual": "verification/app/x-running.png",
+    "masks": 4,
+    "width": 1440,
+    "height": 1100,
+    "offset": [
+      0,
+      0
+    ],
+    "compared": 1079906,
+    "differingPct": 1.751,
+    "strongPct": 1.016,
+    "meanDelta": 2.6
+  }
+]

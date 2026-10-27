@@ -1,0 +1,238 @@
+[
+  {
+    "name": "v05-catalog",
+    "reference": "reference-v05/screenshots/ui-catalog-v05.png",
+    "actual": "verification/app/v05-cmp-catalog.png",
+    "masks": [
+      [
+        242,
+        157,
+        1180,
+        240
+      ],
+      [
+        326,
+        88,
+        30,
+        26
+      ]
+    ]
+  },
+  {
+    "name": "v05-manual",
+    "reference": "reference-v05/screenshots/ui-manual-v05.png",
+    "actual": "verification/app/v05-cmp-manual.png",
+    "masks": [
+      [
+        242,
+        157,
+        1180,
+        240
+      ],
+      [
+        326,
+        88,
+        30,
+        26
+      ]
+    ]
+  },
+  {
+    "name": "v05-player",
+    "reference": "reference-v05/screenshots/ui-player-v05.png",
+    "actual": "verification/app/v05-cmp-player.png",
+    "masks": [
+      [
+        232,
+        126,
+        1197,
+        764
+      ],
+      [
+        240,
+        890,
+        1180,
+        46
+      ],
+      [
+        350,
+        940,
+        190,
+        36
+      ]
+    ]
+  },
+  {
+    "name": "v05-viewer-chat",
+    "reference": "reference-v05/screenshots/ui-viewer-chat-v05.png",
+    "actual": "verification/app/v05-cmp-viewer-chat.png",
+    "masks": [
+      [
+        232,
+        126,
+        885,
+        764
+      ],
+      [
+        240,
+        890,
+        870,
+        46
+      ],
+      [
+        350,
+        940,
+        190,
+        36
+      ],
+      [
+        1130,
+        190,
+        298,
+        650
+      ]
+    ]
+  },
+  {
+    "name": "v05-chat-name",
+    "reference": "reference-v05/screenshots/ui-chat-name-v05.png",
+    "actual": "verification/app/v05-cmp-chat-name.png",
+    "masks": [
+      [
+        232,
+        126,
+        885,
+        764
+      ],
+      [
+        240,
+        890,
+        870,
+        46
+      ],
+      [
+        350,
+        940,
+        190,
+        36
+      ],
+      [
+        1130,
+        190,
+        298,
+        650
+      ]
+    ]
+  },
+  {
+    "name": "v05-viewer-info",
+    "reference": "reference-v05/screenshots/ui-viewer-info-v05.png",
+    "actual": "verification/app/v05-cmp-viewer-info.png",
+    "masks": [
+      [
+        232,
+        126,
+        885,
+        764
+      ],
+      [
+        240,
+        890,
+        870,
+        46
+      ],
+      [
+        350,
+        940,
+        190,
+        36
+      ],
+      [
+        1130,
+        190,
+        298,
+        650
+      ]
+    ]
+  },
+  {
+    "name": "v05-sender-chat",
+    "reference": "reference-v05/screenshots/ui-sender-chat-v05.png",
+    "actual": "verification/app/v05-cmp-sender-chat.png",
+    "masks": [
+      [
+        243,
+        205,
+        857,
+        451
+      ],
+      [
+        243,
+        656,
+        857,
+        165
+      ],
+      [
+        243,
+        840,
+        857,
+        46
+      ],
+      [
+        1118,
+        200,
+        300,
+        630
+      ],
+      [
+        1162,
+        78,
+        256,
+        44
+      ]
+    ]
+  },
+  {
+    "name": "v05-sender-settings",
+    "reference": "reference-v05/screenshots/ui-sender-settings-v05.png",
+    "actual": "verification/app/v05-cmp-sender-settings.png",
+    "masks": []
+  },
+  {
+    "name": "v05-monitors",
+    "reference": "reference-v05/screenshots/ui-monitors-v05.png",
+    "actual": "verification/app/v05-cmp-monitors.png",
+    "masks": []
+  },
+  {
+    "name": "v05-sender-settings-idle",
+    "reference": "reference-v05/screenshots/ui-sender-settings-v05.png",
+    "actual": "verification/app/v05-cmp-sender-settings-idle.png",
+    "masks": [
+      [
+        243,
+        205,
+        97,
+        451
+      ],
+      [
+        1100,
+        205,
+        18,
+        451
+      ],
+      [
+        243,
+        656,
+        97,
+        165
+      ],
+      [
+        1118,
+        200,
+        300,
+        630
+      ]
+    ]
+  }
+]

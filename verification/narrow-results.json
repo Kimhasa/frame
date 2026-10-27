@@ -1,0 +1,34 @@
+[
+  {
+    "name": "x-narrow-start",
+    "reference": "verification/reference-render/x-narrow-start.png",
+    "actual": "verification/app/x-narrow-start.png",
+    "masks": 0,
+    "width": 420,
+    "height": 1534,
+    "offset": [
+      0,
+      0
+    ],
+    "compared": 644280,
+    "differingPct": 5.158,
+    "strongPct": 2.636,
+    "meanDelta": 7.63
+  },
+  {
+    "name": "x-narrow-viewer",
+    "reference": "verification/reference-render/x-narrow-viewer.png",
+    "actual": "verification/app/x-narrow-viewer.png",
+    "masks": 0,
+    "width": 420,
+    "height": 1194,
+    "offset": [
+      0,
+      0
+    ],
+    "compared": 501480,
+    "differingPct": 3.854,
+    "strongPct": 2.491,
+    "meanDelta": 6.39
+  }
+]

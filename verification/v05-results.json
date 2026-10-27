@@ -1,0 +1,162 @@
+[
+  {
+    "name": "v05-catalog",
+    "reference": "reference-v05/screenshots/ui-catalog-v05.png",
+    "actual": "verification/app/v05-cmp-catalog.png",
+    "masks": 2,
+    "width": 1440,
+    "height": 1000,
+    "offset": [
+      0,
+      0
+    ],
+    "compared": 1156020,
+    "differingPct": 0.401,
+    "strongPct": 0.108,
+    "meanDelta": 0.68
+  },
+  {
+    "name": "v05-manual",
+    "reference": "reference-v05/screenshots/ui-manual-v05.png",
+    "actual": "verification/app/v05-cmp-manual.png",
+    "masks": 2,
+    "width": 1440,
+    "height": 1000,
+    "offset": [
+      0,
+      0
+    ],
+    "compared": 1156020,
+    "differingPct": 0.579,
+    "strongPct": 0.121,
+    "meanDelta": 1.69
+  },
+  {
+    "name": "v05-player",
+    "reference": "reference-v05/screenshots/ui-player-v05.png",
+    "actual": "verification/app/v05-cmp-player.png",
+    "masks": 3,
+    "width": 1440,
+    "height": 1000,
+    "offset": [
+      0,
+      0
+    ],
+    "compared": 464372,
+    "differingPct": 1.979,
+    "strongPct": 0.815,
+    "meanDelta": 3.2
+  },
+  {
+    "name": "v05-viewer-chat",
+    "reference": "reference-v05/screenshots/ui-viewer-chat-v05.png",
+    "actual": "verification/app/v05-cmp-viewer-chat.png",
+    "masks": 4,
+    "width": 1440,
+    "height": 1000,
+    "offset": [
+      0,
+      0
+    ],
+    "compared": 523300,
+    "differingPct": 1.877,
+    "strongPct": 0.78,
+    "meanDelta": 3.13
+  },
+  {
+    "name": "v05-chat-name",
+    "reference": "reference-v05/screenshots/ui-chat-name-v05.png",
+    "actual": "verification/app/v05-cmp-chat-name.png",
+    "masks": 4,
+    "width": 1440,
+    "height": 1000,
+    "offset": [
+      0,
+      0
+    ],
+    "compared": 523300,
+    "differingPct": 1.282,
+    "strongPct": 0.416,
+    "meanDelta": 2.59
+  },
+  {
+    "name": "v05-viewer-info",
+    "reference": "reference-v05/screenshots/ui-viewer-info-v05.png",
+    "actual": "verification/app/v05-cmp-viewer-info.png",
+    "masks": 4,
+    "width": 1440,
+    "height": 1000,
+    "offset": [
+      0,
+      0
+    ],
+    "compared": 523300,
+    "differingPct": 1.284,
+    "strongPct": 0.408,
+    "meanDelta": 2.56
+  },
+  {
+    "name": "v05-sender-chat",
+    "reference": "reference-v05/screenshots/ui-sender-chat-v05.png",
+    "actual": "verification/app/v05-cmp-sender-chat.png",
+    "masks": 5,
+    "width": 1440,
+    "height": 1000,
+    "offset": [
+      0,
+      0
+    ],
+    "compared": 672402,
+    "differingPct": 0.902,
+    "strongPct": 0.335,
+    "meanDelta": 1.67
+  },
+  {
+    "name": "v05-sender-settings",
+    "reference": "reference-v05/screenshots/ui-sender-settings-v05.png",
+    "actual": "verification/app/v05-cmp-sender-settings.png",
+    "masks": 0,
+    "width": 1440,
+    "height": 1000,
+    "offset": [
+      0,
+      0
+    ],
+    "compared": 1440000,
+    "differingPct": 7.89,
+    "strongPct": 4.278,
+    "meanDelta": 12.84
+  },
+  {
+    "name": "v05-monitors",
+    "reference": "reference-v05/screenshots/ui-monitors-v05.png",
+    "actual": "verification/app/v05-cmp-monitors.png",
+    "masks": 0,
+    "width": 1440,
+    "height": 1000,
+    "offset": [
+      0,
+      0
+    ],
+    "compared": 1440000,
+    "differingPct": 2.766,
+    "strongPct": 1.581,
+    "meanDelta": 5.93
+  },
+  {
+    "name": "v05-sender-settings-idle",
+    "reference": "reference-v05/screenshots/ui-sender-settings-v05.png",
+    "actual": "verification/app/v05-cmp-sender-settings-idle.png",
+    "masks": 4,
+    "width": 1440,
+    "height": 1000,
+    "offset": [
+      0,
+      0
+    ],
+    "compared": 1183130,
+    "differingPct": 1.466,
+    "strongPct": 0.415,
+    "meanDelta": 2.67
+  }
+]

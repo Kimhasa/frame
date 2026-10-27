@@ -1,0 +1,43 @@
+# Generated build files; keep the existing build entry point.
+/build/*
+!/build/vsbuild.cmd
+/dist/
+
+# Downloaded third-party archives and installers (pinned in deps/manifest.json).
+/deps/archives/
+/deps/toolchain/
+
+# Local runtime configuration, recordings and browser data.
+/config/frame-console.json
+/data/
+/recordings/
+/runtime/
+node_modules/
+.vs/
+.vscode/
+*.user
+*.suo
+*.log
+*.tmp
+
+# Generated verification captures and raw runtime logs.
+/verification/app/
+/verification/crop/
+/verification/diff/
+/verification/reference-render/
+/verification/storage/
+/verification/logs/
+/verification/results/
+
+# Local credentials.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.pfx
+*.p12
+
+# Windows metadata.
+Thumbs.db
+Desktop.ini

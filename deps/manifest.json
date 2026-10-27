@@ -1,0 +1,56 @@
+{
+  "note": "Pinned third-party packages. Archives are kept in deps/archives so the build works offline; tools/fetch-deps.mjs re-downloads only missing files and always checks SHA-256.",
+  "packages": [
+    {
+      "name": "FFmpeg (gyan.dev release essentials, static, GPL v3)",
+      "version": "9.0.2",
+      "file": "ffmpeg-9.0.2-essentials_build.zip",
+      "url": "https://github.com/GyanD/codexffmpeg/releases/download/9.0.2/ffmpeg-9.0.2-essentials_build.zip",
+      "sha256": "60f467265b1e312373dbcd92200c2618a74850f98d3d078e94296bb3fa2047ba",
+      "extract": "ffmpeg-9.0.2-essentials_build",
+      "license": "GPL-3.0 (libx264 and other GPL libraries are enabled in this build)"
+    },
+    {
+      "name": "MediaMTX",
+      "version": "1.21.3",
+      "file": "mediamtx_v1.21.3_windows_amd64.zip",
+      "url": "https://github.com/bluenviron/mediamtx/releases/download/v1.21.3/mediamtx_v1.21.3_windows_amd64.zip",
+      "sha256": "b2f5246b07cb72961df03b8d5e8cad43dc657bcf3f49a87bb031bdf22721af74",
+      "extract": "mediamtx",
+      "license": "MIT"
+    },
+    {
+      "name": "Microsoft.Web.WebView2 SDK (NuGet)",
+      "version": "1.0.4314.35",
+      "file": "microsoft.web.webview2.1.0.4314.35.nupkg",
+      "url": "https://api.nuget.org/v3-flatcontainer/microsoft.web.webview2/1.0.4314.35/microsoft.web.webview2.1.0.4314.35.nupkg",
+      "sha256": "90778deb1b77e36292828b4b5833c9255c27533f40e0ddd55891ae718944edc4",
+      "extract": "webview2",
+      "license": "Microsoft WebView2 SDK license (BSD-style), see LICENSE.txt in the package"
+    },
+    {
+      "name": "nlohmann/json (single header)",
+      "version": "3.12.0",
+      "file": "nlohmann-json-3.12.0.hpp",
+      "url": "https://github.com/nlohmann/json/releases/download/v3.12.0/json.hpp",
+      "sha256": "aaf127c04cb31c406e5b04a63f1ae89369fccde6d8fa7cdda1ed4f32dfc5de63",
+      "copyTo": "native/third_party/nlohmann/json.hpp",
+      "license": "MIT"
+    },
+    {
+      "name": "Microsoft Edge WebView2 Runtime, Evergreen Standalone Installer x64 (offline installer)",
+      "version": "as published at download time (fwlink 2124701)",
+      "file": "MicrosoftEdgeWebView2RuntimeInstallerX64.exe",
+      "url": "https://go.microsoft.com/fwlink/?linkid=2124701",
+      "sha256": "1c401b327fbc7bb9731b4e350a2194f083cbc3ede46508d52e1cae6610a39bea",
+      "license": "Microsoft Edge WebView2 Runtime distribution terms"
+    }
+  ],
+  "toolchain": {
+    "name": "Visual Studio 2022 Build Tools",
+    "version": "17.14.37806.7 (MSVC 14.44.35207, Windows SDK 10.0.26100.0, bundled CMake and Ninja)",
+    "bootstrapper": "deps/toolchain/vs_BuildTools.exe",
+    "sha256": "68978bb28916156802e60e04c5ee50b94348d802fe151a3ca24433f27984187b",
+    "components": "Microsoft.VisualStudio.Workload.VCTools, Microsoft.VisualStudio.Component.VC.Tools.x86.x64, Microsoft.VisualStudio.Component.Windows11SDK.26100, Microsoft.VisualStudio.Component.VC.CMake.Project"
+  }
+}
