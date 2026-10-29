@@ -1,0 +1,531 @@
+{
+  "date": "2026-10-29",
+  "scope": "Local design prototypes only. No payment, cast, moderation or media API. Actual app/backend/player/quality unchanged.",
+  "files": [
+    "dist/design-v33-engagement.js",
+    "dist/design-v33-engagement.css"
+  ],
+  "syntax": "node --check passed",
+  "codeHarness": {
+    "definedStates": 31,
+    "checks": 64,
+    "failed": [],
+    "results": [
+      {
+        "name": "render donate / 금액 선택",
+        "passed": true
+      },
+      {
+        "name": "render donate / 처리 중",
+        "passed": true
+      },
+      {
+        "name": "render donate / 완료",
+        "passed": true
+      },
+      {
+        "name": "render donate / 결제 실패",
+        "passed": true
+      },
+      {
+        "name": "render membership / 기본",
+        "passed": true
+      },
+      {
+        "name": "render membership / 가입 완료",
+        "passed": true
+      },
+      {
+        "name": "render membership / 결제 실패",
+        "passed": true
+      },
+      {
+        "name": "render mission / 기본",
+        "passed": true
+      },
+      {
+        "name": "render mission / 진행 중",
+        "passed": true
+      },
+      {
+        "name": "render mission / 완료",
+        "passed": true
+      },
+      {
+        "name": "render mission / 실패",
+        "passed": true
+      },
+      {
+        "name": "render poll / 기본",
+        "passed": true
+      },
+      {
+        "name": "render poll / 투표 완료",
+        "passed": true
+      },
+      {
+        "name": "render poll / 마감",
+        "passed": true
+      },
+      {
+        "name": "render rewards / 기본",
+        "passed": true
+      },
+      {
+        "name": "render rewards / 포인트 부족",
+        "passed": true
+      },
+      {
+        "name": "render rewards / 교환 완료",
+        "passed": true
+      },
+      {
+        "name": "render report-content / 기본",
+        "passed": true
+      },
+      {
+        "name": "render report-content / 접수 완료",
+        "passed": true
+      },
+      {
+        "name": "render clip-create / 기본",
+        "passed": true
+      },
+      {
+        "name": "render clip-create / 처리 중",
+        "passed": true
+      },
+      {
+        "name": "render clip-create / 생성 완료",
+        "passed": true
+      },
+      {
+        "name": "render devices / 기본",
+        "passed": true
+      },
+      {
+        "name": "render devices / 기기 없음",
+        "passed": true
+      },
+      {
+        "name": "render devices / 연결 실패",
+        "passed": true
+      },
+      {
+        "name": "render raid / 방송 선택",
+        "passed": true
+      },
+      {
+        "name": "render raid / 이동 확인",
+        "passed": true
+      },
+      {
+        "name": "render raid / 완료",
+        "passed": true
+      },
+      {
+        "name": "render drop-rewards / 기본",
+        "passed": true
+      },
+      {
+        "name": "render drop-rewards / 수령 가능",
+        "passed": true
+      },
+      {
+        "name": "render drop-rewards / 수령 완료",
+        "passed": true
+      },
+      {
+        "name": "donation validates payment and consent",
+        "passed": true
+      },
+      {
+        "name": "donation minimum amount",
+        "passed": true
+      },
+      {
+        "name": "donation processing blocks second submission",
+        "passed": true
+      },
+      {
+        "name": "donation completes locally",
+        "passed": true
+      },
+      {
+        "name": "gift requires recipient payment consent",
+        "passed": true
+      },
+      {
+        "name": "gift success retains recipient",
+        "passed": true
+      },
+      {
+        "name": "mission required title condition",
+        "passed": true
+      },
+      {
+        "name": "paid mission payment consent required",
+        "passed": true
+      },
+      {
+        "name": "mission waits for broadcaster acceptance",
+        "passed": true
+      },
+      {
+        "name": "vote result preserves selection",
+        "passed": true
+      },
+      {
+        "name": "vote cannot change after submission",
+        "passed": true
+      },
+      {
+        "name": "question requires content",
+        "passed": true
+      },
+      {
+        "name": "question receipt retains content",
+        "passed": true
+      },
+      {
+        "name": "insufficient reward blocks confirmation",
+        "passed": true
+      },
+      {
+        "name": "reward separate confirmation",
+        "passed": true
+      },
+      {
+        "name": "reward debit and ledger",
+        "passed": true
+      },
+      {
+        "name": "reward confirmation idempotent",
+        "passed": true
+      },
+      {
+        "name": "report reason required",
+        "passed": true
+      },
+      {
+        "name": "other report needs detail",
+        "passed": true
+      },
+      {
+        "name": "report busy state",
+        "passed": true
+      },
+      {
+        "name": "report reception success",
+        "passed": true
+      },
+      {
+        "name": "clip interval title validation",
+        "passed": true
+      },
+      {
+        "name": "clip processing removes form",
+        "passed": true
+      },
+      {
+        "name": "clip receipt retains title",
+        "passed": true
+      },
+      {
+        "name": "device retry searching state",
+        "passed": true
+      },
+      {
+        "name": "device retry list restored",
+        "passed": true
+      },
+      {
+        "name": "device connection retains target",
+        "passed": true
+      },
+      {
+        "name": "device disconnect",
+        "passed": true
+      },
+      {
+        "name": "raid requires selection",
+        "passed": true
+      },
+      {
+        "name": "raid explicit confirmation",
+        "passed": true
+      },
+      {
+        "name": "raid back preserves selection",
+        "passed": true
+      },
+      {
+        "name": "raid completes",
+        "passed": true
+      },
+      {
+        "name": "drop claimed button disabled",
+        "passed": true
+      }
+    ]
+  },
+  "screens": [
+    {
+      "screenId": "donate",
+      "statesReviewed": [
+        "금액 선택",
+        "처리 중",
+        "완료",
+        "결제 실패"
+      ],
+      "issues": [
+        "금액 외 결제수단 검증 없음",
+        "처리 중 확인 버튼으로 성공 전환",
+        "음성/영상 탭 초안과 검증 없음"
+      ],
+      "changes": [
+        "방식별 입력보존 및 금액·결제수단·동의·영상URL/시간·음성메시지 검증",
+        "유효 제출만 처리중 진입, 중복 제출 차단"
+      ],
+      "meaningfulFlowSteps": [
+        "[data-action=\"v33-engage-donate-submit\"] 빈 제출 → 오류 포커스",
+        "[data-action=\"v33-engage-choice\"][data-engage-key=\"payment\"] + #v33-engage-donate-consent → 처리중 → 완료",
+        "role=tab ArrowRight/End → 입력보존"
+      ],
+      "remainingLimitations": [
+        "실제 결제 승인·환불·음성 생성·외부 영상 검증 미연결"
+      ]
+    },
+    {
+      "screenId": "membership",
+      "statesReviewed": [
+        "기본",
+        "가입 완료",
+        "결제 실패"
+      ],
+      "issues": [
+        "동의/결제수단 없이 가입",
+        "선물 범용 확인 토스트"
+      ],
+      "changes": [
+        "월 정기결제 금액·동의",
+        "선물 대상/수량/총액/복귀와 검증",
+        "결과에 입력정보 보존"
+      ],
+      "meaningfulFlowSteps": [
+        "[data-action=\"v33-engage-membership-mode\"] 선물 전환 → 빈 제출 오류",
+        "대상·결제·동의 입력 → 가입완료",
+        "가입으로 돌아가기 → 기존 선택 유지"
+      ],
+      "remainingLimitations": [
+        "실제 정기결제·혜택부여·선물발송 미연결"
+      ]
+    },
+    {
+      "screenId": "mission",
+      "statesReviewed": [
+        "기본",
+        "진행 중",
+        "완료",
+        "실패"
+      ],
+      "issues": [
+        "빈 입력으로 진행 중 처리",
+        "제안 즉시 수락 오인"
+      ],
+      "changes": [
+        "필수 제목/조건 검증, 유료 입력 조건 검증",
+        "제안 후 수락 대기",
+        "진행/완료/실패 상태 분리"
+      ],
+      "meaningfulFlowSteps": [
+        "[data-action=\"v33-engage-mission-submit\"] 빈 제출 → 오류",
+        "미션 후원 선택 → 금액·결제·동의 영역",
+        "유효 제안 → 수락 대기"
+      ],
+      "remainingLimitations": [
+        "실제 방송자 수락·결과 판정·결제 대기/환불 미연결"
+      ]
+    },
+    {
+      "screenId": "poll",
+      "statesReviewed": [
+        "기본",
+        "투표 완료",
+        "마감"
+      ],
+      "issues": [
+        "선택 미보존",
+        "질문 탭 분리 없음",
+        "마감 선택지 활성"
+      ],
+      "changes": [
+        "선택과 제출 분리·라디오 키보드 조작",
+        "투표/질문 독립 패널",
+        "마감/투표후 읽기전용 결과와 내 선택",
+        "질문 검증 및 내용 보존"
+      ],
+      "meaningfulFlowSteps": [
+        "[data-action=\"v33-engage-poll-option\"] 선택 → [data-action=\"v33-engage-poll-submit\"] 결과",
+        "마감 상태 옵션 disabled",
+        "질문 탭 → 빈 제출 오류 → 작성 제출"
+      ],
+      "remainingLimitations": [
+        "실제 시간·집계·중복투표 방지·질문 전달 미연결"
+      ]
+    },
+    {
+      "screenId": "rewards",
+      "statesReviewed": [
+        "기본",
+        "포인트 부족",
+        "교환 완료"
+      ],
+      "issues": [
+        "확인 없는 즉시 성공",
+        "차감/내역 없음",
+        "부족 포인트도 선택 가능"
+      ],
+      "changes": [
+        "부족액과 disabled",
+        "교환 전 후 잔액 확인",
+        "1회 차감/로컬 내역/취소복귀"
+      ],
+      "meaningfulFlowSteps": [
+        "[data-action=\"v33-engage-reward-select\"][data-reward=\"suggest\"] → 확인 → 취소",
+        "재신청 → 1000 P 차감 → 포인트 기록",
+        "포인트 부족 상태 3개 보상 disabled"
+      ],
+      "remainingLimitations": [
+        "실제 포인트 원장·보상 승인/취소 API 미연결"
+      ]
+    },
+    {
+      "screenId": "report-content",
+      "statesReviewed": [
+        "기본",
+        "접수 완료"
+      ],
+      "issues": [
+        "사유 없이 접수",
+        "상세 필수 여부 불명확"
+      ],
+      "changes": [
+        "사유 필수/기타 상세 필수",
+        "다른 사유 상세 선택 표시",
+        "접수중과 완료"
+      ],
+      "meaningfulFlowSteps": [
+        "[data-action=\"v33-engage-report-submit\"] 빈 제출 → 오류",
+        "기타+상세 비움 → 상세 오류",
+        "유효 입력 → 접수중 → 완료"
+      ],
+      "remainingLimitations": [
+        "실제 접수·증거보관·운영조치 미연결"
+      ]
+    },
+    {
+      "screenId": "clip-create",
+      "statesReviewed": [
+        "기본",
+        "처리 중",
+        "생성 완료"
+      ],
+      "issues": [
+        "시간/제목 무검증",
+        "처리 중 폼 활성",
+        "시간과 슬라이더 불일치"
+      ],
+      "changes": [
+        "시작/종료·최대60초·제목 검증",
+        "길이 슬라이더와 시간 양방향 반영",
+        "처리중 폼/재제출 제거·제목 보존"
+      ],
+      "meaningfulFlowSteps": [
+        "종료가 시작보다 빠름/제목 비움 → 오류",
+        "[data-engage-key=\"duration\"] 변경 → 종료 시각",
+        "유효 입력 → 처리중 → 생성 완료"
+      ],
+      "remainingLimitations": [
+        "실제 인코딩/파일/URL 생성 미연결",
+        "클립 보기 링크는 기존 재생 시안으로 이동"
+      ]
+    },
+    {
+      "screenId": "devices",
+      "statesReviewed": [
+        "기본",
+        "기기 없음",
+        "연결 실패"
+      ],
+      "issues": [
+        "연결 항상 실패",
+        "retry 상태 초기화만"
+      ],
+      "changes": [
+        "찾는중/연결중/연결됨/해제",
+        "선택기기 보존",
+        "실패에서 다시 연결"
+      ],
+      "meaningfulFlowSteps": [
+        "기기 없음 → [data-action=\"v33-engage-device-search\"] → 목록",
+        "[data-action=\"v33-engage-device-connect\"][data-device-id=\"meeting\"] → 연결됨",
+        "연결 해제 → 목록"
+      ],
+      "remainingLimitations": [
+        "실제 탐색·캐스트·네트워크 연결 미연결"
+      ]
+    },
+    {
+      "screenId": "raid",
+      "statesReviewed": [
+        "방송 선택",
+        "이동 확인",
+        "완료"
+      ],
+      "issues": [
+        "카드 클릭 시 시청 화면 이탈",
+        "선택 없이 다음",
+        "검색 무동작"
+      ],
+      "changes": [
+        "선택전용 카드와 선택 강제",
+        "검색/빈 결과",
+        "확인/다시선택/완료"
+      ],
+      "meaningfulFlowSteps": [
+        "미선택 다음 disabled",
+        "없는 검색어 → 빈 결과/다음 disabled",
+        "[data-action=\"v33-engage-raid-select\"] → 확인 → 다시 선택 → 안내"
+      ],
+      "remainingLimitations": [
+        "실제 대상 방송 상태·채팅 발송·이동 이벤트 미연결"
+      ]
+    },
+    {
+      "screenId": "drop-rewards",
+      "statesReviewed": [
+        "기본",
+        "수령 가능",
+        "수령 완료"
+      ],
+      "issues": [
+        "남은 조건 불명확",
+        "수령 단순 상태전환"
+      ],
+      "changes": [
+        "30분 조건/남은12분",
+        "aria progressbar",
+        "수령 전/가능/완료·재수령 차단"
+      ],
+      "meaningfulFlowSteps": [
+        "기본 보상 받기 disabled",
+        "수령 가능 → [data-action=\"v33-engage-drop-claim\"] → 완료/disabled"
+      ],
+      "remainingLimitations": [
+        "실제 시청시간 검증·외부 계정연동·서버 중복수령 방지 미연결"
+      ]
+    }
+  ],
+  "browserValidation": "Parent agent owns browser click/keyboard/mobile/focus QA. These are code and VM harness results."
+}

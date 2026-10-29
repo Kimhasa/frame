@@ -1,0 +1,44 @@
+/* Read-only visual adapter of the existing player. Original source files are preserved separately; no encoder or media code is imported. */
+.locked-player-controls { position: absolute; bottom: 0; left: 0; right: 0; padding: 27px 14px 12px; display: flex; align-items: center; gap: 14px; background: linear-gradient(transparent, #111b2aee); color: #fff; }
+.locked-player-button { color: #fff; background: transparent; border: 0; padding: 6px 8px; min-height: 38px; gap: 7px; font-size: 14px; }
+.locked-player-button:hover:not(:disabled) { background: #ffffff20; border: 0; }
+.locked-player-button svg { width: 21px; height: 21px; }
+.locked-player-spacer { flex: 1; }
+.locked-pause-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 17px 20px; display: flex; align-items: center; flex-direction: column; gap: 9px; color: #fff; background: #0c1524c9; border-radius: 6px; font-size: 15px; pointer-events: none; }
+.locked-pause-overlay svg { width: 31px; height: 31px; }
+  .locked-player-controls { gap: 5px; padding: 22px 5px 7px; }
+  .locked-player-button { padding: 5px; font-size: 13px; }
+.locked-player-controls { gap: 9px; }
+.locked-player-volume { display: flex; align-items: center; gap: 5px; }
+.locked-player-volume input[type='range'] { width: 78px; --green: #fff; }
+.locked-player-volume input[type='range']::-webkit-slider-runnable-track { background: linear-gradient(to right, #fff 0 var(--fill), #ffffff45 var(--fill) 100%); }
+.locked-player-volume input[type='range']::-webkit-slider-thumb { width: 11px; height: 11px; margin-top: -3.5px; border: none; box-shadow: none; }
+.locked-player-volume input[type='range']::-moz-range-thumb { width: 11px; height: 11px; border: none; }
+.locked-player-volume input[type='range']::-moz-range-track { background: #ffffff45; }
+.locked-player-volume input[type='range']::-moz-range-progress { background: #fff; }
+.locked-player-volume input[type='range']:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 3px #ffffff45; }
+.locked-player-quality-menu { position: absolute; right: 12px; bottom: 63px; width: 206px; padding: 7px; max-height: min(350px, calc(100% - 78px)); overflow-y: auto; background: #202a38f5; color: #fff; border: 1px solid #ffffff1a; border-radius: 7px; z-index: 2; box-shadow: 0 6px 24px #0003; scrollbar-width: thin; }
+.locked-quality-menu-title { font-size: 13px; font-weight: 550; color: #c9d4e2; padding: 8px 10px 10px; border-bottom: 1px solid #ffffff1a; margin-bottom: 4px; }
+.locked-quality-menu-option { width: 100%; min-height: 39px; padding: 8px 9px; justify-content: space-between; gap: 12px; background: transparent; border: 0; color: #f3f6fa; font-size: 14px; text-align: left; }
+.locked-quality-menu-option:hover:not(:disabled), .locked-quality-menu-option:focus-visible { background: #ffffff15; border: 0; outline-color: #9cd9b8; }
+.locked-quality-menu-option > svg { width: 15px; height: 15px; opacity: 0; }
+.locked-quality-menu-option[aria-checked='true'] > svg { opacity: 1; color: #9cd9b8; }
+.locked-quality-option-copy { display: flex; flex-direction: column; }
+.locked-quality-option-copy small { font-size: 11px; color: #b8c8d9; }
+@container (max-width: 650px) { .locked-player-controls .locked-control-label { display: none; } .locked-player-volume input[type='range'] { width: 65px; } .locked-player-button { padding: 6px; min-width: 32px; } }
+@container (max-width: 480px) { .locked-player-controls { gap: 3px; padding-right: 7px; padding-left: 7px; } .locked-player-volume { gap: 3px; } .locked-player-volume input[type='range'] { width: 56px; } .locked-player-controls .live-label { display: none; } .locked-player-controls .locked-player-button { min-width: 30px; width: 30px; padding: 4px; } .locked-player-quality-menu { right: 7px; bottom: 52px; max-height: calc(100% - 60px); width: 188px; } }
+.preserved-player .locked-player-controls { display:flex; flex-direction:column; gap:2px; padding:28px 14px 10px; }
+.locked-player-toolbar { display:flex; align-items:center; gap:8px; width:100%; }
+.locked-timeline { width:100%; padding:0 4px 3px; }
+.locked-timeline input[type=range] { --green:#fff; height:18px; }
+.locked-timeline input[type=range]::-webkit-slider-runnable-track { background:linear-gradient(to right,#fff 0 var(--fill),#ffffff55 var(--fill) 100%); height:3px; }
+.locked-timeline input[type=range]::-webkit-slider-thumb { width:11px; height:11px; border:0; margin-top:-4px; background:#fff; box-shadow:none; }
+.locked-timeline-times { display:flex; justify-content:space-between; color:#e0e8f0; font-size:11px; font-variant-numeric:tabular-nums; }
+.locked-live-button { min-height:30px; padding:4px 6px; color:#fff; background:none; border:0; font-size:12px; font-weight:550; }
+.locked-live-button:disabled { opacity:1; color:#fff; cursor:default; }
+.locked-live-button:hover:not(:disabled) { background:#ffffff20; border:0; }
+.locked-live-dot { width:7px; height:7px; border-radius:50%; background:#ed4c63; }
+.locked-live-button.is-history .locked-live-dot { background:#b4c2d1; }
+.locked-player-button svg { stroke-width:1.7; }
+.preserved-player .locked-player-controls{opacity:0;pointer-events:none;transition:opacity .18s ease}.preserved-player.show-controls .locked-player-controls,.preserved-player:focus-within .locked-player-controls,.preserved-player.is-paused .locked-player-controls,.preserved-player.menu-open .locked-player-controls{opacity:1;pointer-events:auto}.preserved-player .locked-player-quality-menu{z-index:8}.preserved-player .locked-player-quality-menu[hidden]{display:none}.preserved-player .locked-player-controls input[type=range]{min-height:18px}.preserved-player .locked-player-volume input[type=range]{width:78px}.preserved-player .locked-player-toolbar{flex-wrap:nowrap}.preserved-player .locked-player-button{white-space:nowrap}@container(max-width:600px){.preserved-player .locked-player-toolbar{gap:2px}.preserved-player .locked-player-volume input[type=range]{width:45px}.preserved-player .locked-player-controls{padding:25px 6px 7px}.preserved-player .locked-control-label{display:none}}
+.preserved-player .locked-player-controls svg,.preserved-player .locked-player-quality-menu svg,.preserved-player .locked-pause-overlay svg{display:block;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none}

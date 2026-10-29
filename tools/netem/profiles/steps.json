@@ -1,0 +1,17 @@
+{
+  "name": "steps",
+  "description": "하향 대역폭 계단 15→8→3→1→0.5→8→15 Mbps(각 25초). 자동 화질의 빠른 하향과 보수적 상향, 회복 후 원래 화질 복귀를 시험한다.",
+  "defaults": {
+    "down": { "rateMbps": 15, "maxQueueMs": 250, "delayMs": 20, "jitterMs": 2 },
+    "up": { "rateMbps": 5, "maxQueueMs": 250, "delayMs": 20 }
+  },
+  "steps": [
+    { "label": "15M", "duration": 25, "down": { "rateMbps": 15 } },
+    { "label": "8M", "duration": 25, "down": { "rateMbps": 8 } },
+    { "label": "3M", "duration": 25, "down": { "rateMbps": 3 } },
+    { "label": "1M", "duration": 25, "down": { "rateMbps": 1 } },
+    { "label": "0.5M", "duration": 25, "down": { "rateMbps": 0.5 } },
+    { "label": "8M-again", "duration": 25, "down": { "rateMbps": 8 } },
+    { "label": "15M-again", "duration": 25, "down": { "rateMbps": 15 } }
+  ]
+}

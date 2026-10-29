@@ -1,0 +1,1993 @@
+{
+  "schema": "frame-load/2",
+  "runId": "20261028-181417-real-app",
+  "final": true,
+  "startedAt": "2026-10-28T09:14:20.234Z",
+  "endedAt": "2026-10-28T09:19:18.578Z",
+  "command": "C:\\Users\\wlsdu\\AppData\\Local\\Programs\\nodejs\\node.exe C:\\Users\\wlsdu\\OneDrive\\Desktop\\frame\\tools\\load\\run-load.mjs --plan tools/load/plans/real-app.json --host 127.0.0.1",
+  "cwd": "C:\\Users\\wlsdu\\OneDrive\\Desktop\\frame",
+  "outDir": "C:\\Users\\wlsdu\\OneDrive\\Desktop\\frame\\verification\\load\\20261028-181417-real-app",
+  "plan": {
+    "name": "real-app",
+    "generatorId": "ddd0",
+    "target": {
+      "whep": "http://127.0.0.1:8889/{stream}/whep",
+      "base": "http://127.0.0.1:8889",
+      "path": "screen-01",
+      "stateFile": null,
+      "api": null,
+      "useApi": false,
+      "appStats": "http://127.0.0.1:8889/api/stats",
+      "requireAppStats": true,
+      "pids": [],
+      "tree": [
+        "FrameConsole"
+      ],
+      "names": [],
+      "pathLike": [],
+      "criticalNames": [
+        "FrameConsole",
+        "mediamtx"
+      ],
+      "host": "127.0.0.1"
+    },
+    "stages": [
+      1,
+      10,
+      25,
+      50,
+      75,
+      100
+    ],
+    "rampPerSec": 10,
+    "burst": false,
+    "burstConcurrency": 32,
+    "holdSec": 45,
+    "settleSec": 10,
+    "keepBetweenStages": true,
+    "emptyWaitSec": 30,
+    "firstMediaTimeoutMs": 10000,
+    "sampleMs": 2000,
+    "resourceMs": 3000,
+    "stallKbps": 0,
+    "sustainedMinFraction": 0.95,
+    "fullRateFraction": 0.9,
+    "referenceKbps": null,
+    "rateWindowSec": 10,
+    "minSegmentSec": 4,
+    "lowRateKbps": 300,
+    "churn": {
+      "perSec": 0,
+      "rejoinDelayMs": 0,
+      "minAgeSec": 10
+    },
+    "qualities": {
+      "source": 1
+    },
+    "qualitySwitch": {
+      "fraction": 0,
+      "atSec": 20,
+      "to": {
+        "source": "720p",
+        "720p": "480p",
+        "480p": "source"
+      }
+    },
+    "chat": {
+      "fraction": 1,
+      "senderFraction": 0.05,
+      "messagesPerMinute": 6,
+      "reconnectMs": 0,
+      "connectTimeoutMs": 10000
+    },
+    "dvr": {
+      "fraction": 0,
+      "chunkMs": 4000,
+      "intervalMs": 4000,
+      "liveMarginMs": 5000
+    },
+    "generator": {
+      "instances": 1,
+      "apiPortBase": 21900,
+      "udpReadBufferSize": 4194304
+    },
+    "whepTap": {
+      "enabled": true,
+      "port": 21950
+    },
+    "limits": {
+      "generatorCpuPct": 90,
+      "hostCpuPct": 95,
+      "targetCpuPct": 90,
+      "sustainSec": 30,
+      "minSuccess": 0.9,
+      "successGraceSec": 20,
+      "minFullRate": 0.9,
+      "abortOnDegraded": true,
+      "maxTrafficGB": 40,
+      "projectTraffic": true,
+      "minFreeMemMB": 300,
+      "memSustainSec": 10,
+      "eventLoopLagMs": 1000,
+      "nicUtil": 0.8,
+      "max503Share": 0.1,
+      "min503Requests": 20,
+      "window503Sec": 30,
+      "sustain503Sec": 10,
+      "externalCpuPct": 25
+    },
+    "browser": {
+      "count": 2,
+      "url": "http://127.0.0.1:8889/screen-01",
+      "seconds": 20,
+      "stages": [
+        1,
+        10
+      ],
+      "devtoolsPort": 21222,
+      "headless": true,
+      "startDelaySec": 5,
+      "mode": "separate",
+      "profiles": [
+        "desktop",
+        "mobile"
+      ]
+    },
+    "media": true,
+    "calibrate": false,
+    "calibrateStages": [
+      10,
+      25,
+      50,
+      75,
+      100,
+      150,
+      200,
+      300,
+      400,
+      500,
+      700,
+      1000
+    ],
+    "cleanupWaitSec": 30,
+    "_comment": "FrameConsole (run with --host <sender IP>, 127.0.0.1 when the generator runs on the sender PC). One broadcast, source quality only; every viewer also holds the chat socket and 5% send 6 messages/min. Hold 45 s per stage for fast iteration (not a capacity soak; use soak.json for that). Target statistics come only from the app's read-only GET /api/stats (contract v 1): session count, send rate, the source ingest rate as the full-rate reference, and the stop rules (degraded-below-min, success-below-min, whep-503-share, generator-cpu / host-cpu / host-memory). The stages past this PC's loopback limit (~50-75 viewers of 8 Mbit/s) stay in the file on purpose: the stop rules end the run there. Traffic cap 40 GB covers all planned stages (~16 GB at 8.6 Mbit/s, ~23 GB at 12 Mbit/s), so it never cuts a planned stage. Browser pages (1 desktop + 1 mobile-like, 20 s) run only in a separate phase after the holds of stages 1 and 10, never inside a hold."
+  },
+  "versions": {
+    "node": "v24.22.1",
+    "generatorMediamtx": "v1.21.3",
+    "target": null
+  },
+  "host": {
+    "hostname": "KJY",
+    "cores": 8,
+    "os": "Microsoft Windows 11 Pro 10.0.26200",
+    "logical": 16,
+    "nics": [
+      {
+        "description": "Intel(R) Wi-Fi 6 AX201 160MHz",
+        "name": "Wi-Fi",
+        "linkSpeed": "866.7 Mbps"
+      },
+      {
+        "description": "Tailscale Tunnel",
+        "name": "Tailscale",
+        "linkSpeed": "100 Gbps"
+      }
+    ],
+    "gpus": [
+      "NVIDIA GeForce RTX 3060 Laptop GPU",
+      "Intel(R) UHD Graphics"
+    ],
+    "cpu": "11th Gen Intel(R) Core(TM) i7-11800H @ 2.30GHz",
+    "logicalCpus": 16,
+    "ramGB": 15.8,
+    "osRelease": "10.0.26200",
+    "node": "v24.22.1"
+  },
+  "hostBaseline": {
+    "hostCpuPct": 32.2,
+    "unattributedCpuPct": 22.7,
+    "freeMemMB": 3175,
+    "targetCpuPct": 9.5,
+    "targetRssMB": 1332,
+    "targetProcs": [
+      {
+        "id": 8684,
+        "name": "msedgewebview2",
+        "cores": 0,
+        "rssMB": 19.9,
+        "threads": 9,
+        "handles": 177
+      },
+      {
+        "id": 23956,
+        "name": "msedgewebview2",
+        "cores": 0.08,
+        "rssMB": 706.2,
+        "threads": 26,
+        "handles": 461
+      },
+      {
+        "id": 23200,
+        "name": "msedgewebview2",
+        "cores": 0,
+        "rssMB": 19,
+        "threads": 15,
+        "handles": 211
+      },
+      {
+        "id": 19748,
+        "name": "FrameConsole",
+        "cores": 0.38,
+        "rssMB": 83.7,
+        "threads": 40,
+        "handles": 731
+      },
+      {
+        "id": 5348,
+        "name": "msedgewebview2",
+        "cores": 0.03,
+        "rssMB": 88.4,
+        "threads": 44,
+        "handles": 574
+      },
+      {
+        "id": 26716,
+        "name": "mediamtx",
+        "cores": 0.02,
+        "rssMB": 42.4,
+        "threads": 21,
+        "handles": 269
+      },
+      {
+        "id": 38364,
+        "name": "ffmpeg",
+        "cores": 1,
+        "rssMB": 199,
+        "threads": 52,
+        "handles": 599
+      },
+      {
+        "id": 18280,
+        "name": "msedgewebview2",
+        "cores": 0,
+        "rssMB": 36.5,
+        "threads": 24,
+        "handles": 347
+      },
+      {
+        "id": 34904,
+        "name": "conhost",
+        "cores": 0,
+        "rssMB": 7.5,
+        "threads": 2,
+        "handles": 99
+      },
+      {
+        "id": 24260,
+        "name": "msedgewebview2",
+        "cores": 0.01,
+        "rssMB": 122,
+        "threads": 55,
+        "handles": 1375
+      },
+      {
+        "id": 35368,
+        "name": "conhost",
+        "cores": 0,
+        "rssMB": 7.5,
+        "threads": 2,
+        "handles": 99
+      }
+    ],
+    "gpu": {
+      "enc": 27,
+      "dec": 3,
+      "memMB": 3583,
+      "util": 32
+    }
+  },
+  "generatorId": "ddd0",
+  "chatNameExample": "부하-ddd0-v00000",
+  "target": {
+    "whep": "http://127.0.0.1:8889/{stream}/whep",
+    "base": "http://127.0.0.1:8889",
+    "path": "screen-01",
+    "api": null,
+    "appStats": "http://127.0.0.1:8889/api/stats",
+    "appStatsCheck": {
+      "ok": true,
+      "status": 200,
+      "v": 1,
+      "paths": [
+        "screen-01",
+        "screen-01/240p",
+        "screen-01/360p",
+        "screen-01/480p",
+        "screen-01/720p"
+      ]
+    },
+    "info": {
+      "audio": "none",
+      "bitrate": 8.5,
+      "broadcastId": "008685601da129a4561e52df8e2ffa17",
+      "codec": "H.264",
+      "dvr": true,
+      "elapsedMs": 47873,
+      "fps": 60,
+      "height": 1080,
+      "iceServers": [],
+      "path": "screen-01",
+      "publisher": "KJY",
+      "renditions": [
+        {
+          "codec": "H.264",
+          "fps": 60,
+          "height": 720,
+          "mbps": 4,
+          "name": "720p",
+          "width": 1280
+        },
+        {
+          "codec": "H.264",
+          "fps": 60,
+          "height": 480,
+          "mbps": 1.5,
+          "name": "480p",
+          "width": 852
+        },
+        {
+          "codec": "H.264",
+          "fps": 60,
+          "height": 360,
+          "mbps": 1,
+          "name": "360p",
+          "width": 640
+        },
+        {
+          "codec": "H.264",
+          "fps": 60,
+          "height": 240,
+          "mbps": 0.5,
+          "name": "240p",
+          "width": 426
+        }
+      ],
+      "running": true,
+      "startedAtMs": 1793178833331,
+      "title": "FRAME 고움직임 테스트",
+      "width": 1920
+    },
+    "standalone": null
+  },
+  "definitions": {
+    "viewer": "one WebRTC peer (MediaMTX WHEP source in the generator process): ICE + DTLS-SRTP + RTCP, receives and depacketizes H.264/Opus, no decoding or rendering",
+    "receiving": "received bytes grew by more than 0 kbit/s in a 2000 ms sample window",
+    "firstMedia": "join requested (ramp slot, burst start or churn re-join; queueing included) -> the viewer's generator path has media: ready, with tracks and received bytes. The time is the path ready time (tracks gathered = first RTP) when it is a real time not before the request; MediaMTX's zero-year placeholder and earlier times are ignored. Without a usable ready time the sample clock is used and counted in firstMediaMs.basis / firstMediaFromSampleClock (error up to one sample interval).",
+    "reconnect": "media again after a loss, or a new real ready time of the same session; the placeholder -> real ready time transition is not a reconnect",
+    "sustained": "first media and receiving in >= 95% of the hold windows; successRate = sustained / requested",
+    "fullRate": "sustained, and every quality segment the viewer watched in the hold (>= 4 s) has a mean rate >= 90% of that quality's reference (reference.<quality>.from); fullRateSuccessRate = full-rate viewers / (requested or sessions seen) minus sessions too short to judge (fullRateTooShort, all segments < minSegmentSec), not measured when a watched quality has no reference (an idle path's ingest 0 is no reference)",
+    "fullRateLive": "per sample: share of viewers whose rolling 10 s rate is >= 90% of their quality's rolling reference (stop rule degraded-below-min)",
+    "stall": "a 2000 ms window without growth (<= 0 kbit/s); stallTimeRatio = stalled time / observed time after first media",
+    "cpuPct": "percent of the whole machine (all logical CPUs) from process CPU time; cores = same in CPU cores",
+    "unattributedCpuPct": "host CPU minus generator, target and browser-sampler processes: other programs and kernel network time; a stage is flagged externalLoad when its hold mean is above 25%",
+    "rtpPacketsLost": "losses reported by the generator WebRTC sources (MediaMTX log, \"1 RTP packet lost\" and \"N RTP packets lost\"); lossRatioEst assumes ~1,150 B per RTP packet",
+    "whep": "WHEP signalling seen by the loopback tap (status per offer, Retry-After values); MediaMTX's WHEP client itself retries about every 5 s whatever Retry-After says",
+    "traffic": "bytes received by the generator's protocol viewers (browser pages not counted)",
+    "network": "generator and target location are recorded in host/target; loopback or same-PC traffic does not cross the NIC"
+  },
+  "notMeasured": [
+    "decoded FPS, rendering, A/V sync, player rebuffering and live latency are not measured by protocol viewers (see browser sampler fields)",
+    "target-side dropped frame counts: only the app count of MediaMTX \"too slow, discarding\" warnings (appDiscardWarnings)"
+  ],
+  "trafficPlan": {
+    "viewerSeconds": 15185,
+    "estimatedGB": 16.3,
+    "atKbps": 8593,
+    "at8600kbpsGB": 16.3,
+    "at12000kbpsGB": 22.8,
+    "capGB": 40,
+    "note": "protocol viewers only (browser pages and chat not counted); per-viewer rate = the mix of the plan's qualities",
+    "basis": "per-viewer mean of stage 1"
+  },
+  "stages": [
+    {
+      "stage": 1,
+      "requested": 1,
+      "holdSec": 45.3,
+      "measuredViewers": 1,
+      "joined": 1,
+      "notStarted": 0,
+      "addFailed": 0,
+      "addApiMsP95": 6,
+      "firstMediaMs": {
+        "n": 1,
+        "p50": 2396,
+        "p95": 2396,
+        "max": 2396,
+        "basis": {
+          "ready-time": 1
+        },
+        "sampleClockErrorMs": "<= 2000 (sample-clock basis only)",
+        "readyTimeOnly": {
+          "n": 1,
+          "p50": 2396,
+          "p95": 2396,
+          "max": 2396
+        },
+        "from": "the join's ramp slot",
+        "components": {
+          "queueMs": {
+            "n": 1,
+            "p50": 0,
+            "p95": 0,
+            "max": 0
+          },
+          "addApiMs": {
+            "n": 1,
+            "p50": 6,
+            "p95": 6,
+            "max": 6
+          },
+          "whepAnswerMs": {
+            "n": 1,
+            "p50": 269,
+            "p95": 269,
+            "max": 269
+          },
+          "mediaAfterAnswerMs": {
+            "n": 1,
+            "p50": 2127,
+            "p95": 2127,
+            "max": 2127
+          }
+        }
+      },
+      "firstMediaTimeouts": 0,
+      "firstMediaPending": 0,
+      "firstMediaFromSampleClock": 0,
+      "sustainedReceiving": 1,
+      "successRate": 1,
+      "successBasis": "requested viewers",
+      "fullRateSuccessRate": 1,
+      "fullRateUnjudged": 0,
+      "fullRateTooShort": 0,
+      "fullRateByQuality": {
+        "source": {
+          "segments": 1,
+          "kbpsP50": 8593,
+          "referenceKbps": 8593,
+          "referenceFrom": "target ingest rate of screen-01 (app-stats)",
+          "ratioP5": 1,
+          "ratioP50": 1,
+          "belowFraction": 0
+        }
+      },
+      "referenceKbps": 8593,
+      "referenceFrom": "target ingest rate of screen-01 (app-stats)",
+      "reference": {
+        "source": {
+          "kbps": 8593,
+          "from": "target ingest rate of screen-01 (app-stats)"
+        }
+      },
+      "receivingRatio": {
+        "min": 1,
+        "mean": 1
+      },
+      "fullRateLive": {
+        "min": 1,
+        "mean": 1
+      },
+      "stallTimeRatio": 0,
+      "lowRateWindowRatio": 0,
+      "stallEvents": 0,
+      "viewersWithStall": 0,
+      "rssTrendMBPerMin": {
+        "generator": 59.11,
+        "target": -7.28
+      },
+      "disconnects": 0,
+      "reconnects": 0,
+      "staleReadyTimes": 0,
+      "perViewerKbps": {
+        "p5": 8593,
+        "p50": 8593,
+        "p95": 8593,
+        "mean": 8593
+      },
+      "totalMbps": {
+        "mean": 8.6,
+        "max": 8.9
+      },
+      "sourceKbps": 8593,
+      "rateVsSource": {
+        "p5": 1,
+        "p50": 1,
+        "degradedViewers": 0
+      },
+      "rtpPacketsLost": 0,
+      "lostPerViewerMinute": 0,
+      "lossRatioEst": 0,
+      "processingErrors": 0,
+      "iceCandidatePairs": {
+        "host/udp cgnat-vpn -> host/udp cgnat-vpn": 1
+      },
+      "churn": null,
+      "qualitySwitch": null,
+      "qualityMix": {
+        "source": 1
+      },
+      "chat": {
+        "wanted": 1,
+        "open": 1,
+        "joined": 1,
+        "attempts": 1,
+        "opened": 1,
+        "joinedEvents": 1,
+        "connectFail": 0,
+        "joinRejected": 0,
+        "unexpectedClose": 0,
+        "sent": 0,
+        "acked": 0,
+        "nacked": 0,
+        "nackReasons": {},
+        "deliveries": 0,
+        "nameRejected": 0,
+        "nameErrors": {},
+        "nameExample": "부하-ddd0-v00000",
+        "deliveryRatio": null,
+        "settledExpected": 0,
+        "latencyMs": {
+          "n": 0,
+          "p50": null,
+          "p95": null,
+          "max": null
+        },
+        "connectMs": {
+          "p50": 4,
+          "p95": 4
+        },
+        "joinMs": {
+          "p50": 6,
+          "p95": 6
+        },
+        "lastJoinError": null,
+        "lastClosed": null
+      },
+      "dvr": null,
+      "errors": {
+        "generatorErrorKinds": {},
+        "lossLogLines": 1,
+        "whep": {
+          "posts": 1,
+          "postStatus": {
+            "201": 1
+          },
+          "otherStatus": {
+            "OPTIONS 204": 1,
+            "PATCH 204": 16
+          },
+          "status503": 0,
+          "retryAfter": {},
+          "share503": 0
+        }
+      },
+      "externalLoad": {
+        "unattributedCpuPctMean": 26.5,
+        "unattributedCpuPctMax": 45.6,
+        "samplesAbove": 15,
+        "samples": 23,
+        "flagged": true,
+        "thresholdPct": 25
+      },
+      "resources": {
+        "genCpuPct": {
+          "mean": 0.7,
+          "max": 1.1
+        },
+        "genRssMB": {
+          "max": 299.6
+        },
+        "targetCpuPct": {
+          "mean": 12.8,
+          "max": 14.9
+        },
+        "targetRssMB": {
+          "max": 1334
+        },
+        "hostCpuPct": {
+          "mean": 40,
+          "max": 56.7
+        },
+        "freeMemMB": {
+          "min": 1423
+        },
+        "nicRxMbps": {
+          "mean": 2
+        },
+        "nicTxMbps": {
+          "mean": 0.1
+        },
+        "gpuPct": {
+          "max": 41
+        },
+        "gpuEncPct": {
+          "max": 30
+        },
+        "eventLoopLagP99Ms": {
+          "max": 32.9
+        },
+        "generatorListMs": {
+          "max": 5
+        },
+        "statsVia": "app-stats",
+        "targetSendMbps": {
+          "mean": 8.7
+        },
+        "targetDiscardedFrames": "not measured",
+        "targetSessionsMax": 1,
+        "app": {
+          "httpThreadsMax": 3,
+          "httpRefused": 0,
+          "chatClientsMax": 2,
+          "chatJoinedMax": 2,
+          "chatRefused": 0,
+          "discardWarnings": 0
+        }
+      },
+      "decodedFps": "not measured",
+      "renderedFps": "not measured",
+      "avSync": "not measured",
+      "liveLatencyMs": "not measured",
+      "rebuffering": "stall windows only (byte growth); player rebuffering not measured",
+      "browser": null,
+      "browserPhase": {
+        "tool": "browser-sampler",
+        "url": "http://127.0.0.1:8889/screen-01",
+        "count": 2,
+        "seconds": 20,
+        "startedAt": "2026-10-28T09:15:38.315Z",
+        "browser": "Edg/156.0.4314.42",
+        "headless": true,
+        "definitions": {
+          "firstFrameMs": "page navigation start -> first presented video frame (requestVideoFrameCallback), includes page load, WHEP/ICE and first keyframe",
+          "presentedFps": "presented frames per second in the window (rVFC)",
+          "freeze": "gap > 500 ms between presented frames",
+          "latencyMs": "barcode stamp (source wall clock) -> expected display time; needs a shared clock",
+          "decodedFps": "framesDecoded delta / stats-timestamp delta of the main connection: over the window, or from the first decoded frame when the connection was made inside the window (decodedFpsBasis)",
+          "profiles": "desktop = the window as started; mobile = DevTools emulation (390x844, DPR 3, touch, Android UA) in desktop Edge: mobile-like layout and quality choice, not a phone decoder or mobile network"
+        },
+        "pages": [
+          {
+            "index": 0,
+            "profile": "desktop",
+            "viewport": "1888x984",
+            "dpr": 1,
+            "firstFrameMs": 1707,
+            "windowSec": 20,
+            "presentedFps": 51.9,
+            "freezes": 0,
+            "freezeMs": 0,
+            "maxGapMs": 67,
+            "decodedWidth": 1280,
+            "decodedHeight": 720,
+            "decodedFps": 60,
+            "decodedFpsSpanSec": 9.9,
+            "decodedFpsBasis": "connection created inside the window: from its first decoded frame",
+            "framesDropped": 0,
+            "statsFreezeCount": 0,
+            "statsFreezeSec": 0,
+            "decoder": null,
+            "powerEfficientDecoder": null,
+            "videoPacketsLost": 0,
+            "videoPacketsReceived": 5086,
+            "videoLossRatio": 0,
+            "videoJitterMs": 2,
+            "jitterBufferMs": 7.8,
+            "videoKbps": 3991,
+            "nack": 0,
+            "pli": 1,
+            "audio": null,
+            "rttMs": 1,
+            "peerConnections": 1,
+            "connectionChangedInWindow": true,
+            "videoElementSwitches": 1,
+            "peerConnectionLog": [
+              {
+                "id": 1,
+                "createdMs": 833,
+                "firstDecodedMs": 1817,
+                "state": "closed"
+              },
+              {
+                "id": 2,
+                "createdMs": 11674,
+                "firstDecodedMs": 14018,
+                "state": "connected"
+              }
+            ],
+            "windowStartMs": 3928,
+            "latencyMs": {
+              "n": 10,
+              "p50": 1231,
+              "p95": 2770.10009765625,
+              "min": 402.10009765625,
+              "max": 2770.10009765625,
+              "decodeHitRatio": 0.087,
+              "rejected": 5
+            },
+            "avSync": "not measured",
+            "video": "video",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+          },
+          {
+            "index": 1,
+            "profile": "mobile",
+            "viewport": "390x844",
+            "dpr": 3,
+            "firstFrameMs": 1697,
+            "windowSec": 20,
+            "presentedFps": 52.6,
+            "freezes": 0,
+            "freezeMs": 0,
+            "maxGapMs": 117,
+            "decodedWidth": 1280,
+            "decodedHeight": 720,
+            "decodedFps": 60,
+            "decodedFpsSpanSec": 9.9,
+            "decodedFpsBasis": "connection created inside the window: from its first decoded frame",
+            "framesDropped": 0,
+            "statsFreezeCount": 0,
+            "statsFreezeSec": 0,
+            "decoder": null,
+            "powerEfficientDecoder": null,
+            "videoPacketsLost": 0,
+            "videoPacketsReceived": 5076,
+            "videoLossRatio": 0,
+            "videoJitterMs": 2,
+            "jitterBufferMs": 7.9,
+            "videoKbps": 3995,
+            "nack": 0,
+            "pli": 1,
+            "audio": null,
+            "rttMs": 1,
+            "peerConnections": 1,
+            "connectionChangedInWindow": true,
+            "videoElementSwitches": 1,
+            "peerConnectionLog": [
+              {
+                "id": 1,
+                "createdMs": 790,
+                "firstDecodedMs": 1628,
+                "state": "closed"
+              },
+              {
+                "id": 2,
+                "createdMs": 11630,
+                "firstDecodedMs": 14017,
+                "state": "connected"
+              }
+            ],
+            "windowStartMs": 3884,
+            "latencyMs": {
+              "n": 12,
+              "p50": 1385.800048828125,
+              "p95": 2513.800048828125,
+              "min": 388.5,
+              "max": 2513.800048828125,
+              "decodeHitRatio": 0.074,
+              "rejected": 1
+            },
+            "avSync": "not measured",
+            "video": "video",
+            "userAgent": "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Mobile Safari/537.36"
+          }
+        ],
+        "summary": {
+          "ok": 2,
+          "failed": 0,
+          "firstFrameMs": {
+            "p50": 1697,
+            "p95": 1707
+          },
+          "presentedFps": {
+            "mean": 52.3,
+            "min": 51.9
+          },
+          "decodedFps": {
+            "mean": 60
+          },
+          "freezes": 0,
+          "freezeMs": 0,
+          "framesDropped": 0,
+          "videoLossRatioMax": 0,
+          "resolution": [
+            "1280x720"
+          ],
+          "connectionChanges": 2,
+          "latencyMs": {
+            "p50": 1231,
+            "p95": 2770.10009765625
+          },
+          "byProfile": {
+            "desktop": {
+              "pages": 1,
+              "ok": 1,
+              "viewport": "1888x984@1x",
+              "resolution": [
+                "1280x720"
+              ],
+              "firstFrameMsP50": 1707,
+              "presentedFpsMean": 51.9,
+              "decodedFpsMean": 60,
+              "videoKbpsMean": 3991,
+              "freezes": 0
+            },
+            "mobile": {
+              "pages": 1,
+              "ok": 1,
+              "viewport": "390x844@3x",
+              "resolution": [
+                "1280x720"
+              ],
+              "firstFrameMsP50": 1697,
+              "presentedFpsMean": 52.6,
+              "decodedFpsMean": 60,
+              "videoKbpsMean": 3995,
+              "freezes": 0
+            }
+          }
+        },
+        "mode": "separate",
+        "during": {
+          "sec": 29,
+          "protocolViewers": 1,
+          "receivingRatioMin": 1,
+          "fullRateLiveMin": 1,
+          "totalMbpsMean": 8.6,
+          "targetSessionsMax": 5,
+          "targetDiscardedFrames": 0,
+          "hostCpuPctMax": 72.6,
+          "browserCpuPctMean": 4.2
+        }
+      },
+      "traffic": {
+        "stageGB": 0.089,
+        "holdGB": 0.05,
+        "cumulativeGB": 0.089,
+        "stageSec": 84.4
+      },
+      "abortReason": null
+    },
+    {
+      "stage": 10,
+      "requested": 10,
+      "holdSec": 45.3,
+      "measuredViewers": 10,
+      "joined": 9,
+      "notStarted": 0,
+      "addFailed": 0,
+      "addApiMsP95": 21,
+      "firstMediaMs": {
+        "n": 9,
+        "p50": 3097,
+        "p95": 3154,
+        "max": 3154,
+        "basis": {
+          "ready-time": 9
+        },
+        "sampleClockErrorMs": "<= 2000 (sample-clock basis only)",
+        "readyTimeOnly": {
+          "n": 9,
+          "p50": 3097,
+          "p95": 3154,
+          "max": 3154
+        },
+        "from": "the join's ramp slot",
+        "components": {
+          "queueMs": {
+            "n": 9,
+            "p50": 9,
+            "p95": 15,
+            "max": 15
+          },
+          "addApiMs": {
+            "n": 9,
+            "p50": 5,
+            "p95": 21,
+            "max": 21
+          },
+          "whepAnswerMs": {
+            "n": 9,
+            "p50": 759,
+            "p95": 845,
+            "max": 845
+          },
+          "mediaAfterAnswerMs": {
+            "n": 9,
+            "p50": 2335,
+            "p95": 2601,
+            "max": 2601
+          }
+        }
+      },
+      "firstMediaTimeouts": 0,
+      "firstMediaPending": 0,
+      "firstMediaFromSampleClock": 0,
+      "sustainedReceiving": 10,
+      "successRate": 1,
+      "successBasis": "requested viewers",
+      "fullRateSuccessRate": 1,
+      "fullRateUnjudged": 0,
+      "fullRateTooShort": 0,
+      "fullRateByQuality": {
+        "source": {
+          "segments": 10,
+          "kbpsP50": 8582,
+          "referenceKbps": 8577,
+          "referenceFrom": "target ingest rate of screen-01 (app-stats)",
+          "ratioP5": 1.001,
+          "ratioP50": 1.001,
+          "belowFraction": 0
+        }
+      },
+      "referenceKbps": 8577,
+      "referenceFrom": "target ingest rate of screen-01 (app-stats)",
+      "reference": {
+        "source": {
+          "kbps": 8577,
+          "from": "target ingest rate of screen-01 (app-stats)"
+        }
+      },
+      "receivingRatio": {
+        "min": 1,
+        "mean": 1
+      },
+      "fullRateLive": {
+        "min": 1,
+        "mean": 1
+      },
+      "stallTimeRatio": 0,
+      "lowRateWindowRatio": 0,
+      "stallEvents": 0,
+      "viewersWithStall": 0,
+      "rssTrendMBPerMin": {
+        "generator": 13.63,
+        "target": -27.07
+      },
+      "disconnects": 0,
+      "reconnects": 0,
+      "staleReadyTimes": 0,
+      "perViewerKbps": {
+        "p5": 8582,
+        "p50": 8582,
+        "p95": 8582,
+        "mean": 8582
+      },
+      "totalMbps": {
+        "mean": 85.8,
+        "max": 89.8
+      },
+      "sourceKbps": 8577,
+      "rateVsSource": {
+        "p5": 1.001,
+        "p50": 1.001,
+        "degradedViewers": 0
+      },
+      "rtpPacketsLost": 0,
+      "lostPerViewerMinute": 0,
+      "lossRatioEst": 0,
+      "processingErrors": 0,
+      "iceCandidatePairs": {
+        "host/udp cgnat-vpn -> host/udp cgnat-vpn": 2,
+        "host/udp ula -> host/udp ula": 3,
+        "host/tcp ula -> host/tcp ula": 2,
+        "host/tcp loopback -> host/tcp loopback": 2,
+        "host/udp loopback -> host/udp loopback": 1
+      },
+      "churn": null,
+      "qualitySwitch": null,
+      "qualityMix": {
+        "source": 10
+      },
+      "chat": {
+        "wanted": 10,
+        "open": 10,
+        "joined": 10,
+        "attempts": 9,
+        "opened": 9,
+        "joinedEvents": 9,
+        "connectFail": 0,
+        "joinRejected": 0,
+        "unexpectedClose": 0,
+        "sent": 0,
+        "acked": 0,
+        "nacked": 0,
+        "nackReasons": {},
+        "deliveries": 0,
+        "nameRejected": 0,
+        "nameErrors": {},
+        "nameExample": "부하-ddd0-v00000",
+        "deliveryRatio": null,
+        "settledExpected": 0,
+        "latencyMs": {
+          "n": 0,
+          "p50": null,
+          "p95": null,
+          "max": null
+        },
+        "connectMs": {
+          "p50": 6,
+          "p95": 16
+        },
+        "joinMs": {
+          "p50": 6,
+          "p95": 17
+        },
+        "lastJoinError": null,
+        "lastClosed": null
+      },
+      "dvr": null,
+      "errors": {
+        "generatorErrorKinds": {},
+        "lossLogLines": 9,
+        "whep": {
+          "posts": 9,
+          "postStatus": {
+            "201": 9
+          },
+          "otherStatus": {
+            "OPTIONS 204": 9,
+            "PATCH 204": 130
+          },
+          "status503": 0,
+          "retryAfter": {},
+          "share503": 0
+        }
+      },
+      "externalLoad": {
+        "unattributedCpuPctMean": 26.9,
+        "unattributedCpuPctMax": 45.3,
+        "samplesAbove": 11,
+        "samples": 22,
+        "flagged": true,
+        "thresholdPct": 25
+      },
+      "resources": {
+        "genCpuPct": {
+          "mean": 2.3,
+          "max": 3.1
+        },
+        "genRssMB": {
+          "max": 312.9
+        },
+        "targetCpuPct": {
+          "mean": 19.3,
+          "max": 20.9
+        },
+        "targetRssMB": {
+          "max": 1673.5
+        },
+        "hostCpuPct": {
+          "mean": 48.5,
+          "max": 67.1
+        },
+        "freeMemMB": {
+          "min": 1057
+        },
+        "nicRxMbps": {
+          "mean": 1.8
+        },
+        "nicTxMbps": {
+          "mean": 0.1
+        },
+        "gpuPct": {
+          "max": 42
+        },
+        "gpuEncPct": {
+          "max": 42
+        },
+        "eventLoopLagP99Ms": {
+          "max": 33.7
+        },
+        "generatorListMs": {
+          "max": 5
+        },
+        "statsVia": "app-stats",
+        "targetSendMbps": {
+          "mean": 89.5
+        },
+        "targetDiscardedFrames": "not measured",
+        "targetSessionsMax": 12,
+        "app": {
+          "httpThreadsMax": 12,
+          "httpRefused": 0,
+          "chatClientsMax": 11,
+          "chatJoinedMax": 11,
+          "chatRefused": 0,
+          "discardWarnings": 0
+        }
+      },
+      "decodedFps": "not measured",
+      "renderedFps": "not measured",
+      "avSync": "not measured",
+      "liveLatencyMs": "not measured",
+      "rebuffering": "stall windows only (byte growth); player rebuffering not measured",
+      "browser": null,
+      "browserPhase": {
+        "tool": "browser-sampler",
+        "url": "http://127.0.0.1:8889/screen-01",
+        "count": 2,
+        "seconds": 20,
+        "startedAt": "2026-10-28T09:17:03.832Z",
+        "browser": "Edg/156.0.4314.42",
+        "headless": true,
+        "definitions": {
+          "firstFrameMs": "page navigation start -> first presented video frame (requestVideoFrameCallback), includes page load, WHEP/ICE and first keyframe",
+          "presentedFps": "presented frames per second in the window (rVFC)",
+          "freeze": "gap > 500 ms between presented frames",
+          "latencyMs": "barcode stamp (source wall clock) -> expected display time; needs a shared clock",
+          "decodedFps": "framesDecoded delta / stats-timestamp delta of the main connection: over the window, or from the first decoded frame when the connection was made inside the window (decodedFpsBasis)",
+          "profiles": "desktop = the window as started; mobile = DevTools emulation (390x844, DPR 3, touch, Android UA) in desktop Edge: mobile-like layout and quality choice, not a phone decoder or mobile network"
+        },
+        "pages": [
+          {
+            "index": 0,
+            "profile": "desktop",
+            "viewport": "1888x984",
+            "dpr": 1,
+            "firstFrameMs": 2043,
+            "windowSec": 20,
+            "presentedFps": 53.7,
+            "freezes": 0,
+            "freezeMs": 0,
+            "maxGapMs": 67,
+            "decodedWidth": 1280,
+            "decodedHeight": 720,
+            "decodedFps": 60,
+            "decodedFpsSpanSec": 9.7,
+            "decodedFpsBasis": "connection created inside the window: from its first decoded frame",
+            "framesDropped": 0,
+            "statsFreezeCount": 0,
+            "statsFreezeSec": 0,
+            "decoder": null,
+            "powerEfficientDecoder": null,
+            "videoPacketsLost": 0,
+            "videoPacketsReceived": 5038,
+            "videoLossRatio": 0,
+            "videoJitterMs": 2,
+            "jitterBufferMs": 8.2,
+            "videoKbps": 4036,
+            "nack": 0,
+            "pli": 1,
+            "audio": null,
+            "rttMs": 1,
+            "peerConnections": 1,
+            "connectionChangedInWindow": true,
+            "videoElementSwitches": 1,
+            "peerConnectionLog": [
+              {
+                "id": 1,
+                "createdMs": 944,
+                "firstDecodedMs": 2042,
+                "state": "closed"
+              },
+              {
+                "id": 2,
+                "createdMs": 12047,
+                "firstDecodedMs": 14425,
+                "state": "connected"
+              }
+            ],
+            "windowStartMs": 4123,
+            "latencyMs": {
+              "n": 5,
+              "p50": 2269.800048828125,
+              "p95": 2919.800048828125,
+              "min": 523.400146484375,
+              "max": 2919.800048828125,
+              "decodeHitRatio": 0.034,
+              "rejected": 1
+            },
+            "avSync": "not measured",
+            "video": "video",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+          },
+          {
+            "index": 1,
+            "profile": "mobile",
+            "viewport": "390x844",
+            "dpr": 3,
+            "firstFrameMs": 1991,
+            "windowSec": 20,
+            "presentedFps": 52.8,
+            "freezes": 0,
+            "freezeMs": 0,
+            "maxGapMs": 50,
+            "decodedWidth": 1280,
+            "decodedHeight": 720,
+            "decodedFps": 60,
+            "decodedFpsSpanSec": 9.8,
+            "decodedFpsBasis": "connection created inside the window: from its first decoded frame",
+            "framesDropped": 0,
+            "statsFreezeCount": 0,
+            "statsFreezeSec": 0,
+            "decoder": null,
+            "powerEfficientDecoder": null,
+            "videoPacketsLost": 0,
+            "videoPacketsReceived": 5001,
+            "videoLossRatio": 0,
+            "videoJitterMs": 2,
+            "jitterBufferMs": 8.5,
+            "videoKbps": 4034,
+            "nack": 0,
+            "pli": 1,
+            "audio": null,
+            "rttMs": 1,
+            "peerConnections": 1,
+            "connectionChangedInWindow": true,
+            "videoElementSwitches": 1,
+            "peerConnectionLog": [
+              {
+                "id": 1,
+                "createdMs": 876,
+                "firstDecodedMs": 2016,
+                "state": "closed"
+              },
+              {
+                "id": 2,
+                "createdMs": 11978,
+                "firstDecodedMs": 14217,
+                "state": "connected"
+              }
+            ],
+            "windowStartMs": 4024,
+            "latencyMs": {
+              "n": 5,
+              "p50": 2464.800048828125,
+              "p95": 2899.2001953125,
+              "min": 406.900146484375,
+              "max": 2899.2001953125,
+              "decodeHitRatio": 0.04,
+              "rejected": 2
+            },
+            "avSync": "not measured",
+            "video": "video",
+            "userAgent": "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Mobile Safari/537.36"
+          }
+        ],
+        "summary": {
+          "ok": 2,
+          "failed": 0,
+          "firstFrameMs": {
+            "p50": 1991,
+            "p95": 2043
+          },
+          "presentedFps": {
+            "mean": 53.3,
+            "min": 52.8
+          },
+          "decodedFps": {
+            "mean": 60
+          },
+          "freezes": 0,
+          "freezeMs": 0,
+          "framesDropped": 0,
+          "videoLossRatioMax": 0,
+          "resolution": [
+            "1280x720"
+          ],
+          "connectionChanges": 2,
+          "latencyMs": {
+            "p50": 2269.800048828125,
+            "p95": 2919.800048828125
+          },
+          "byProfile": {
+            "desktop": {
+              "pages": 1,
+              "ok": 1,
+              "viewport": "1888x984@1x",
+              "resolution": [
+                "1280x720"
+              ],
+              "firstFrameMsP50": 2043,
+              "presentedFpsMean": 53.7,
+              "decodedFpsMean": 60,
+              "videoKbpsMean": 4036,
+              "freezes": 0
+            },
+            "mobile": {
+              "pages": 1,
+              "ok": 1,
+              "viewport": "390x844@3x",
+              "resolution": [
+                "1280x720"
+              ],
+              "firstFrameMsP50": 1991,
+              "presentedFpsMean": 52.8,
+              "decodedFpsMean": 60,
+              "videoKbpsMean": 4034,
+              "freezes": 0
+            }
+          }
+        },
+        "mode": "separate",
+        "during": {
+          "sec": 29.4,
+          "protocolViewers": 10,
+          "receivingRatioMin": 1,
+          "fullRateLiveMin": 1,
+          "totalMbpsMean": 86.1,
+          "targetSessionsMax": 14,
+          "targetDiscardedFrames": 0,
+          "hostCpuPctMax": 68.9,
+          "browserCpuPctMean": 4.7
+        }
+      },
+      "traffic": {
+        "stageGB": 0.881,
+        "holdGB": 0.474,
+        "cumulativeGB": 0.97,
+        "stageSec": 85.5
+      },
+      "abortReason": null
+    },
+    {
+      "stage": 25,
+      "requested": 25,
+      "holdSec": 45.5,
+      "measuredViewers": 25,
+      "joined": 15,
+      "notStarted": 0,
+      "addFailed": 0,
+      "addApiMsP95": 9,
+      "firstMediaMs": {
+        "n": 15,
+        "p50": 3228,
+        "p95": 3766,
+        "max": 3766,
+        "basis": {
+          "ready-time": 15
+        },
+        "sampleClockErrorMs": "<= 2000 (sample-clock basis only)",
+        "readyTimeOnly": {
+          "n": 15,
+          "p50": 3228,
+          "p95": 3766,
+          "max": 3766
+        },
+        "from": "the join's ramp slot",
+        "components": {
+          "queueMs": {
+            "n": 15,
+            "p50": 7,
+            "p95": 14,
+            "max": 14
+          },
+          "addApiMs": {
+            "n": 15,
+            "p50": 5,
+            "p95": 9,
+            "max": 9
+          },
+          "whepAnswerMs": {
+            "n": 15,
+            "p50": 831,
+            "p95": 939,
+            "max": 939
+          },
+          "mediaAfterAnswerMs": {
+            "n": 15,
+            "p50": 2475,
+            "p95": 2987,
+            "max": 2987
+          }
+        }
+      },
+      "firstMediaTimeouts": 0,
+      "firstMediaPending": 0,
+      "firstMediaFromSampleClock": 0,
+      "sustainedReceiving": 25,
+      "successRate": 1,
+      "successBasis": "requested viewers",
+      "fullRateSuccessRate": 1,
+      "fullRateUnjudged": 0,
+      "fullRateTooShort": 0,
+      "fullRateByQuality": {
+        "source": {
+          "segments": 25,
+          "kbpsP50": 8601,
+          "referenceKbps": 8598,
+          "referenceFrom": "target ingest rate of screen-01 (app-stats)",
+          "ratioP5": 1,
+          "ratioP50": 1,
+          "belowFraction": 0
+        }
+      },
+      "referenceKbps": 8598,
+      "referenceFrom": "target ingest rate of screen-01 (app-stats)",
+      "reference": {
+        "source": {
+          "kbps": 8598,
+          "from": "target ingest rate of screen-01 (app-stats)"
+        }
+      },
+      "receivingRatio": {
+        "min": 1,
+        "mean": 1
+      },
+      "fullRateLive": {
+        "min": 1,
+        "mean": 1
+      },
+      "stallTimeRatio": 0,
+      "lowRateWindowRatio": 0,
+      "stallEvents": 0,
+      "viewersWithStall": 0,
+      "rssTrendMBPerMin": {
+        "generator": 19.18,
+        "target": -749.31
+      },
+      "disconnects": 0,
+      "reconnects": 0,
+      "staleReadyTimes": 0,
+      "perViewerKbps": {
+        "p5": 8599,
+        "p50": 8601,
+        "p95": 8604,
+        "mean": 8601
+      },
+      "totalMbps": {
+        "mean": 215,
+        "max": 227.3
+      },
+      "sourceKbps": 8598,
+      "rateVsSource": {
+        "p5": 1,
+        "p50": 1,
+        "degradedViewers": 0
+      },
+      "rtpPacketsLost": 0,
+      "lostPerViewerMinute": 0,
+      "lossRatioEst": 0,
+      "processingErrors": 0,
+      "iceCandidatePairs": {
+        "host/udp cgnat-vpn -> host/udp cgnat-vpn": 7,
+        "host/udp ula -> host/udp ula": 8,
+        "host/tcp ula -> host/tcp ula": 2,
+        "host/tcp loopback -> host/tcp loopback": 2,
+        "host/udp loopback -> host/udp loopback": 1,
+        "host/udp private -> host/udp private": 5
+      },
+      "churn": null,
+      "qualitySwitch": null,
+      "qualityMix": {
+        "source": 25
+      },
+      "chat": {
+        "wanted": 25,
+        "open": 25,
+        "joined": 25,
+        "attempts": 15,
+        "opened": 15,
+        "joinedEvents": 15,
+        "connectFail": 0,
+        "joinRejected": 0,
+        "unexpectedClose": 0,
+        "sent": 0,
+        "acked": 0,
+        "nacked": 0,
+        "nackReasons": {},
+        "deliveries": 0,
+        "nameRejected": 0,
+        "nameErrors": {},
+        "nameExample": "부하-ddd0-v00000",
+        "deliveryRatio": null,
+        "settledExpected": 0,
+        "latencyMs": {
+          "n": 0,
+          "p50": null,
+          "p95": null,
+          "max": null
+        },
+        "connectMs": {
+          "p50": 2,
+          "p95": 5
+        },
+        "joinMs": {
+          "p50": 3,
+          "p95": 10
+        },
+        "lastJoinError": null,
+        "lastClosed": null
+      },
+      "dvr": null,
+      "errors": {
+        "generatorErrorKinds": {},
+        "lossLogLines": 15,
+        "whep": {
+          "posts": 15,
+          "postStatus": {
+            "201": 15
+          },
+          "otherStatus": {
+            "OPTIONS 204": 15,
+            "PATCH 204": 230
+          },
+          "status503": 0,
+          "retryAfter": {},
+          "share503": 0
+        }
+      },
+      "externalLoad": {
+        "unattributedCpuPctMean": 56,
+        "unattributedCpuPctMax": 72.8,
+        "samplesAbove": 22,
+        "samples": 22,
+        "flagged": true,
+        "thresholdPct": 25
+      },
+      "resources": {
+        "genCpuPct": {
+          "mean": 4.6,
+          "max": 5.6
+        },
+        "genRssMB": {
+          "max": 392.6
+        },
+        "targetCpuPct": {
+          "mean": 25.6,
+          "max": 28.6
+        },
+        "targetRssMB": {
+          "max": 1694.3
+        },
+        "hostCpuPct": {
+          "mean": 86.3,
+          "max": 100
+        },
+        "freeMemMB": {
+          "min": 326
+        },
+        "nicRxMbps": {
+          "mean": 2
+        },
+        "nicTxMbps": {
+          "mean": 0.1
+        },
+        "gpuPct": {
+          "max": 44
+        },
+        "gpuEncPct": {
+          "max": 43
+        },
+        "eventLoopLagP99Ms": {
+          "max": 113.1
+        },
+        "generatorListMs": {
+          "max": 12
+        },
+        "statsVia": "app-stats",
+        "targetSendMbps": {
+          "mean": 213.7
+        },
+        "targetDiscardedFrames": "not measured",
+        "targetSessionsMax": 27,
+        "app": {
+          "httpThreadsMax": 27,
+          "httpRefused": 0,
+          "chatClientsMax": 26,
+          "chatJoinedMax": 26,
+          "chatRefused": 0,
+          "discardWarnings": 0
+        }
+      },
+      "decodedFps": "not measured",
+      "renderedFps": "not measured",
+      "avSync": "not measured",
+      "liveLatencyMs": "not measured",
+      "rebuffering": "stall windows only (byte growth); player rebuffering not measured",
+      "browser": null,
+      "browserPhase": null,
+      "traffic": {
+        "stageGB": 1.442,
+        "holdGB": 1.188,
+        "cumulativeGB": 2.412,
+        "stageSec": 56.9
+      },
+      "abortReason": null
+    },
+    {
+      "stage": 50,
+      "requested": 50,
+      "holdSec": 30.2,
+      "measuredViewers": 50,
+      "joined": 25,
+      "notStarted": 0,
+      "addFailed": 0,
+      "addApiMsP95": 62,
+      "firstMediaMs": {
+        "n": 25,
+        "p50": 4382,
+        "p95": 4944,
+        "max": 5044,
+        "basis": {
+          "ready-time": 25
+        },
+        "sampleClockErrorMs": "<= 2000 (sample-clock basis only)",
+        "readyTimeOnly": {
+          "n": 25,
+          "p50": 4382,
+          "p95": 4944,
+          "max": 5044
+        },
+        "from": "the join's ramp slot",
+        "components": {
+          "queueMs": {
+            "n": 25,
+            "p50": 4,
+            "p95": 13,
+            "max": 14
+          },
+          "addApiMs": {
+            "n": 25,
+            "p50": 8,
+            "p95": 62,
+            "max": 198
+          },
+          "whepAnswerMs": {
+            "n": 25,
+            "p50": 1455,
+            "p95": 1950,
+            "max": 1986
+          },
+          "mediaAfterAnswerMs": {
+            "n": 25,
+            "p50": 2849,
+            "p95": 3785,
+            "max": 3922
+          }
+        }
+      },
+      "firstMediaTimeouts": 0,
+      "firstMediaPending": 0,
+      "firstMediaFromSampleClock": 0,
+      "sustainedReceiving": 50,
+      "successRate": 1,
+      "successBasis": "requested viewers",
+      "fullRateSuccessRate": 0.24,
+      "fullRateUnjudged": 0,
+      "fullRateTooShort": 0,
+      "fullRateByQuality": {
+        "source": {
+          "segments": 50,
+          "kbpsP50": 7292,
+          "referenceKbps": 8575,
+          "referenceFrom": "target ingest rate of screen-01 (app-stats)",
+          "ratioP5": 0.799,
+          "ratioP50": 0.85,
+          "belowFraction": 38
+        }
+      },
+      "referenceKbps": 8575,
+      "referenceFrom": "target ingest rate of screen-01 (app-stats)",
+      "reference": {
+        "source": {
+          "kbps": 8575,
+          "from": "target ingest rate of screen-01 (app-stats)"
+        }
+      },
+      "receivingRatio": {
+        "min": 1,
+        "mean": 1
+      },
+      "fullRateLive": {
+        "min": 0.16,
+        "mean": 0.492
+      },
+      "stallTimeRatio": 0,
+      "lowRateWindowRatio": 0,
+      "stallEvents": 0,
+      "viewersWithStall": 0,
+      "rssTrendMBPerMin": {
+        "generator": -22.16,
+        "target": 241.22
+      },
+      "disconnects": 0,
+      "reconnects": 0,
+      "staleReadyTimes": 0,
+      "perViewerKbps": {
+        "p5": 6850,
+        "p50": 7292,
+        "p95": 8576,
+        "mean": 7469
+      },
+      "totalMbps": {
+        "mean": 373.5,
+        "max": 458.2
+      },
+      "sourceKbps": 8575,
+      "rateVsSource": {
+        "p5": 0.799,
+        "p50": 0.85,
+        "degradedViewers": 38
+      },
+      "rtpPacketsLost": 0,
+      "lostPerViewerMinute": 0,
+      "lossRatioEst": 0,
+      "processingErrors": 0,
+      "iceCandidatePairs": {
+        "host/udp cgnat-vpn -> host/udp cgnat-vpn": 8,
+        "host/udp ula -> host/udp ula": 18,
+        "host/tcp ula -> host/tcp ula": 4,
+        "host/tcp loopback -> host/tcp loopback": 2,
+        "host/udp loopback -> host/udp loopback": 3,
+        "host/udp private -> host/udp private": 14,
+        "host/tcp private -> host/tcp private": 1
+      },
+      "churn": null,
+      "qualitySwitch": null,
+      "qualityMix": {
+        "source": 50
+      },
+      "chat": {
+        "wanted": 50,
+        "open": 50,
+        "joined": 50,
+        "attempts": 25,
+        "opened": 25,
+        "joinedEvents": 25,
+        "connectFail": 0,
+        "joinRejected": 0,
+        "unexpectedClose": 0,
+        "sent": 13,
+        "acked": 13,
+        "nacked": 0,
+        "nackReasons": {},
+        "deliveries": 644,
+        "nameRejected": 0,
+        "nameErrors": {},
+        "nameExample": "부하-ddd0-v00000",
+        "deliveryRatio": 1,
+        "settledExpected": 444,
+        "latencyMs": {
+          "n": 631,
+          "p50": 2,
+          "p95": 3,
+          "max": 5
+        },
+        "connectMs": {
+          "p50": 3,
+          "p95": 6
+        },
+        "joinMs": {
+          "p50": 4,
+          "p95": 8
+        },
+        "lastJoinError": null,
+        "lastClosed": null
+      },
+      "dvr": null,
+      "errors": {
+        "generatorErrorKinds": {},
+        "lossLogLines": 25,
+        "whep": {
+          "posts": 25,
+          "postStatus": {
+            "201": 25
+          },
+          "otherStatus": {
+            "OPTIONS 204": 25,
+            "PATCH 204": 391
+          },
+          "status503": 0,
+          "retryAfter": {},
+          "share503": 0
+        }
+      },
+      "externalLoad": {
+        "unattributedCpuPctMean": 37.4,
+        "unattributedCpuPctMax": 57,
+        "samplesAbove": 12,
+        "samples": 15,
+        "flagged": true,
+        "thresholdPct": 25
+      },
+      "resources": {
+        "genCpuPct": {
+          "mean": 9,
+          "max": 10.5
+        },
+        "genRssMB": {
+          "max": 532.6
+        },
+        "targetCpuPct": {
+          "mean": 23.1,
+          "max": 25.1
+        },
+        "targetRssMB": {
+          "max": 1536.7
+        },
+        "hostCpuPct": {
+          "mean": 69.6,
+          "max": 86.2
+        },
+        "freeMemMB": {
+          "min": 1066
+        },
+        "nicRxMbps": {
+          "mean": 1.9
+        },
+        "nicTxMbps": {
+          "mean": 0.1
+        },
+        "gpuPct": {
+          "max": 41
+        },
+        "gpuEncPct": {
+          "max": 28
+        },
+        "eventLoopLagP99Ms": {
+          "max": 38.1
+        },
+        "generatorListMs": {
+          "max": 6
+        },
+        "statsVia": "app-stats",
+        "targetSendMbps": {
+          "mean": 378.9
+        },
+        "targetDiscardedFrames": "not measured",
+        "targetSessionsMax": 50,
+        "app": {
+          "httpThreadsMax": 52,
+          "httpRefused": 0,
+          "chatClientsMax": 51,
+          "chatJoinedMax": 51,
+          "chatRefused": 0,
+          "discardWarnings": 138
+        }
+      },
+      "decodedFps": "not measured",
+      "renderedFps": "not measured",
+      "avSync": "not measured",
+      "liveLatencyMs": "not measured",
+      "rebuffering": "stall windows only (byte growth); player rebuffering not measured",
+      "browser": null,
+      "browserPhase": null,
+      "traffic": {
+        "stageGB": 1.981,
+        "holdGB": 1.406,
+        "cumulativeGB": 4.393,
+        "stageSec": 42.6
+      },
+      "abortReason": "degraded-below-min"
+    }
+  ],
+  "abort": {
+    "reason": "degraded-below-min",
+    "stage": 50,
+    "phase": "hold",
+    "t": "2026-10-28T09:19:10.562Z",
+    "detail": {
+      "fullRateLive": 0.16,
+      "min": 0.9,
+      "judged": 50,
+      "refSourceKbps": 8592,
+      "note": "share of viewers at >= 90% of their quality's reference rate (rolling 10 s)"
+    }
+  },
+  "saturation": [
+    {
+      "kind": "external-load",
+      "stage": 1,
+      "phase": "hold",
+      "t": "2026-10-28T09:15:15.591Z",
+      "detail": {
+        "unattributedCpuPct": 30.4,
+        "hostCpuPct": 41.7,
+        "genCpuPct": 0.7,
+        "targetCpuPct": 10.6
+      }
+    },
+    {
+      "kind": "host-cpu",
+      "stage": 25,
+      "phase": "hold",
+      "t": "2026-10-28T09:18:10.499Z",
+      "detail": {
+        "hostCpuPct": 97.3,
+        "genCpuPct": 4.9,
+        "targetCpuPct": 27.5,
+        "unattributedCpuPct": 64.9
+      }
+    },
+    {
+      "kind": "viewers-below-reference-rate",
+      "stage": 50,
+      "phase": "hold",
+      "t": "2026-10-28T09:18:50.482Z",
+      "detail": {
+        "fullRateLive": 0.78,
+        "judged": 50,
+        "refSourceKbps": 8570
+      }
+    },
+    {
+      "kind": "target-discarding-frames",
+      "stage": 50,
+      "phase": "hold",
+      "t": "2026-10-28T09:19:00.523Z",
+      "detail": {
+        "appDiscardWarnings": 1,
+        "sessions": 50,
+        "via": "app-stats mediaDiscardWarnings"
+      }
+    }
+  ],
+  "calibration": null,
+  "cleanup": {
+    "targetSessionsTrace": [
+      {
+        "afterMs": 8,
+        "targetSessions": 50,
+        "generatorPaths": 0
+      },
+      {
+        "afterMs": 2026,
+        "targetSessions": 0,
+        "generatorPaths": 0
+      }
+    ],
+    "baselineTargetSessions": 0,
+    "remainingTargetSessions": 0,
+    "remainingGeneratorPaths": 0,
+    "returnedToBaseline": true,
+    "removeFailures": 0,
+    "targetAfter": {
+      "cpuPct": 12.3,
+      "rssMB": 1298.4,
+      "procs": 11
+    },
+    "targetBaseline": {
+      "cpuPct": 9.5,
+      "rssMB": 1332
+    },
+    "appAfter": {
+      "webrtcSessions": 0,
+      "httpThreads": 2,
+      "chatClients": 1
+    },
+    "chatServerClientsAfter": null
+  },
+  "errors": {
+    "generatorErrorKinds": {},
+    "lossLogLines": 50,
+    "whep": {
+      "requests": 917,
+      "byMethodStatus": {
+        "OPTIONS 204": 50,
+        "POST 201": 50,
+        "PATCH 204": 767,
+        "DELETE 200": 50
+      },
+      "retryAfter": {},
+      "upstreamErrors": 0,
+      "upstreamErrorKinds": {},
+      "viewers": 50,
+      "viewersWith503": 0,
+      "viewersWithoutAnswer201": 0,
+      "retriedViewers": 0
+    },
+    "sourceErrorsSample": {}
+  },
+  "files": {
+    "stagesCsv": "stages.csv",
+    "samplesCsv": "samples.csv",
+    "browserCsv": "browser.csv",
+    "generatorLogs": [
+      "generator-0.log"
+    ]
+  }
+}

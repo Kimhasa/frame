@@ -1,0 +1,10 @@
+label,down_mbps,loss_pct,jitter_ms,best_fit,playing_at_start,playing_at_end,played_sec,switches,downs,ups,failed_starts,drop_first_down_decision_sec,drop_first_down_playing_sec,drop_fit_playing_sec,drop_target,up_holds,freezes,freeze_sec,zero_fps_sec,picture_stalled_sec,reasons,switch_attempts,attempts_stuck,switch_in_progress_sec
+normal,30,0,0,1080p,1080p,1080p,"{""1080p"":39}",0,0,0,0,,,,,,0,0,0,0,,,0,0
+cut-1s,outage,0,0,none,1080p,1080p,"{""1080p"":1}",0,0,0,0,,,,,,0,0,0,0,,,0,0
+after-1s,30,0,0,1080p,1080p,1080p,"{""1080p"":31,""720p"":14}",2,1,1,0,,,,,"1080p@15.2s(hold 12000) undone+33s",3,1.75,0,0,"freeze stable","720p:shown@2.8s 1080p:shown@1.9s",0,3
+cut-3s,outage,0,0,none,1080p,1080p,"{""1080p"":3}",0,0,0,0,,,,,,0,0,2,2,,,0,0
+after-3s,30,0,0,1080p,1080p,1080p,"{""1080p"":32,""720p"":13}",2,1,1,0,,,,,"1080p@16.2s(hold 12000) undone+35s",1,3.2,0,0,"freeze stable","720p:shown@3.2s 1080p:shown@1.3s",0,4
+cut-6s,outage,0,0,none,1080p,1080p,"{""1080p"":6}",0,0,0,0,,,,,,0,0,5,5,,,0,0
+after-6s,30,0,0,1080p,1080p,1080p,"{""1080p"":45,""720p"":14}",2,1,1,0,,,,,"1080p@16.2s(hold 12000)",1,6.2,0,0,"freeze stable","720p:shown@2.6s 1080p:shown@1.7s",0,3
+cut-12s,outage,0,0,none,1080p,1080p,"{""1080p"":12}",0,0,0,0,,,,,,0,0,11,11.1,,1080p:shown@2.9s,0,1
+after-12s,30,0,0,1080p,1080p,1080p,"{""1080p"":60}",0,0,0,0,,,,,,0,12.23,0,0,,,0,0

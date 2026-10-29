@@ -40,6 +40,7 @@ await writeFile(join(app, 'licenses/nlohmann-json-MIT.txt'), json.slice(json.ind
 await copy(join(root, 'packaging/README.txt'), join(app, 'README.txt'));
 await copy(join(root, 'packaging/firewall-rules.ps1'), join(app, 'tools/firewall-rules.ps1'));
 await copy(join(root, 'packaging/frame-console.example.json'), join(app, 'config/frame-console.example.json'));
+await copy(join(root, 'packaging/frame-console.secrets.example.json'), join(app, 'config/frame-console.secrets.example.json'));
 if (keptConfig) await writeFile(join(app, 'config/frame-console.json'), keptConfig);
 else await copy(join(root, 'packaging/frame-console.example.json'), join(app, 'config/frame-console.json'));
 

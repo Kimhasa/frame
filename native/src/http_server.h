@@ -5,6 +5,8 @@
 
 #include "common.h"
 
+#include <map>
+
 namespace fc {
 
 class Streamer;
@@ -20,9 +22,18 @@ class HttpServer {
   int Port() const { return port_; }
   bool Listening() const { return listener_ != INVALID_SOCKET; }
 
+  json Stats() const;  // connection threads, ordinary requests in progress, requests refused with 503
+
  private:
+  struct Connection {
+    HttpServer* server;
+    SOCKET socket;
+    std::string peer;
+  };
+  static DWORD WINAPI ConnectionThread(void* param);
   void AcceptLoop();
   void Handle(SOCKET client, std::string peer);
+  void RecordViewerStats(const std::string& path, const std::string& body, const std::string& peer);
 
   Streamer& streamer_;
   Directory& directory_;
@@ -30,7 +41,9 @@ class HttpServer {
   SOCKET listener_ = INVALID_SOCKET;
   int port_ = 0;
   std::thread acceptThread_;
-  std::atomic<int> active_{0};
+  std::atomic<int> active_{0}, requests_{0}, refused_{0};
+  std::mutex statsMutex_;
+  std::map<std::string, int64_t> statsLast_;
   std::atomic<bool> stopping_{false};
 };
 

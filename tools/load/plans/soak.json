@@ -1,0 +1,12 @@
+{
+  "name": "soak",
+  "_comment": "Long run at the last passing stage of real-app.json (set it with --stages N, --host <sender IP>): 30 min hold with chat and DVR, memory slope per minute and recovery after the viewers leave. Target statistics from /api/stats. Traffic cap 300 GB covers 100 viewers x 30 min at 8.6 Mbit/s (~195 GB); lower stages use less.",
+  "target": { "whep": "http://{host}:8889/{stream}/whep", "base": "http://{host}:8889", "path": "screen-01", "appStats": "http://{host}:8889/api/stats", "requireAppStats": true, "useApi": false, "tree": ["FrameConsole"] },
+  "stages": [50],
+  "holdSec": 1800,
+  "rampPerSec": 10,
+  "chat": { "fraction": 1, "senderFraction": 0.05, "messagesPerMinute": 6 },
+  "dvr": { "fraction": 0.05 },
+  "browser": { "count": 1, "profiles": ["desktop"], "url": "http://{host}:8889/screen-01", "seconds": 60, "mode": "separate" },
+  "limits": { "maxTrafficGB": 300 }
+}

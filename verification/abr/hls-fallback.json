@@ -1,0 +1,30 @@
+{
+  "at": "2026-10-28T05:26:26.446Z",
+  "url": "http://192.168.1.27:8889/screen-01",
+  "firstFrameMs": 267,
+  "start": {
+    "connected": true,
+    "src": "hls/index.m3u8",
+    "size": "1920x1080",
+    "t": 0.2,
+    "paused": false,
+    "muted": false,
+    "timeline": true,
+    "qualities": [
+      "자동",
+      "1080p"
+    ],
+    "heading": null,
+    "rtc": "undefined"
+  },
+  "after5s": {
+    "t": 5.3,
+    "progressed": true
+  },
+  "liveDelayMs": {
+    "p50": 3664,
+    "samples": 20
+  },
+  "edgeGapS": null,
+  "note": "liveDelayMs is modulo 4000 ms (barcode period); when edgeGapS + segmenting delay exceeds 4 s, add 4000 ms"
+}

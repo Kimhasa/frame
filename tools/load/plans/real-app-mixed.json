@@ -1,0 +1,13 @@
+{
+  "name": "real-app-mixed",
+  "_comment": "Mixed scenario on FrameConsole (--host <sender IP>): quality mix source / 720p / 480p over the app's shared on-demand qualities (/<path>/720p/whep, /<path>/480p/whep; the broadcast must offer both renditions, otherwise the run stops with quality-not-offered before stage 10), churn (1 leave + 1 re-join per second, re-joins stop when the hold ends), chat for everyone, 10% DVR readers (skipped and recorded when /info says dvr: false). Every quality is judged against its own ingest rate from /api/stats (paths screen-01, screen-01/720p, screen-01/480p). Hold 45 s per stage (fast iteration). Traffic cap 20 GB covers the planned stages (~4 GB at the mix rate).",
+  "target": { "whep": "http://{host}:8889/{stream}/whep", "base": "http://{host}:8889", "path": "screen-01", "appStats": "http://{host}:8889/api/stats", "requireAppStats": true, "useApi": false, "tree": ["FrameConsole"] },
+  "stages": [10, 25, 50],
+  "holdSec": 45,
+  "rampPerSec": 10,
+  "qualities": { "source": 0.5, "720p": 0.3, "480p": 0.2 },
+  "churn": { "perSec": 1, "rejoinDelayMs": 2000, "minAgeSec": 15 },
+  "chat": { "fraction": 1, "senderFraction": 0.05, "messagesPerMinute": 6 },
+  "dvr": { "fraction": 0.1, "chunkMs": 4000, "intervalMs": 4000 },
+  "limits": { "maxTrafficGB": 20, "abortOnDegraded": true, "minFullRate": 0.9, "minSuccess": 0.9 }
+}

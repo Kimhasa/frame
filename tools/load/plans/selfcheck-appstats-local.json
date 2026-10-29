@@ -1,0 +1,13 @@
+{
+  "name": "selfcheck-appstats",
+  "_comment": "Real-app code path on the standalone target (node tools/load/target.mjs --renditions 720p, then --target-state <dir>/state.json): WHEP through the shim's app-like proxy, the shim's GET /api/stats (contract v 1) as the ONLY target statistics (MediaMTX API not used), quality mix source/720p judged per quality, churn with re-joins that stop at the hold end, chat, and one desktop browser page in a separate phase after stage 1. Short holds for a quick check of the tool, not a capacity measurement.",
+  "target": { "whep": "http://127.0.0.1:21888/{stream}/whep", "base": "http://127.0.0.1:21888", "useApi": false, "appStats": "http://127.0.0.1:21888/api/stats", "requireAppStats": true },
+  "stages": [1, 10, 25],
+  "holdSec": 20,
+  "rampPerSec": 10,
+  "qualities": { "source": 0.7, "720p": 0.3 },
+  "churn": { "perSec": 0.5, "rejoinDelayMs": 1000, "minAgeSec": 8 },
+  "chat": { "fraction": 1, "senderFraction": 0.1, "messagesPerMinute": 6 },
+  "browser": { "count": 1, "profiles": ["desktop"], "seconds": 10, "stages": [1], "mode": "separate" },
+  "limits": { "maxTrafficGB": 20, "abortOnDegraded": true, "minFullRate": 0.9 }
+}

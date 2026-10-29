@@ -1,0 +1,12 @@
+{
+  "back": {
+    "screen": "security",
+    "section": "보안 및 기기",
+    "selected": "보안 및 기기"
+  },
+  "forward": {
+    "screen": "preferences",
+    "section": "알림",
+    "selected": "알림"
+  }
+}

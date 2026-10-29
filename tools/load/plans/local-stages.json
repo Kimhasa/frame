@@ -1,0 +1,9 @@
+{
+  "name": "local-stages",
+  "_comment": "Standalone target on this PC (node tools/load/target.mjs, then --target-state <dir>/state.json). Media-only staged load. The browser pages (1 desktop + 1 mobile-like) run in a separate phase after the hold of stages 1 and 25 only, so no browser session or on-demand quality encoder is part of any hold, least of all the boundary stage. Degradation is recorded but does not stop the run here, so the table shows the stages past the knee; host CPU/memory and success rules still stop it. Loopback traffic is not billable, hence the high traffic cap.",
+  "stages": [1, 10, 25, 50, 100, 150, 200, 300, 400, 500, 700, 1000],
+  "holdSec": 60,
+  "rampPerSec": 10,
+  "browser": { "count": 2, "profiles": ["desktop", "mobile"], "seconds": 20, "stages": [1, 25], "mode": "separate" },
+  "limits": { "maxTrafficGB": 400, "abortOnDegraded": false }
+}

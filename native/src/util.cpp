@@ -6,6 +6,7 @@
 #include <cstdarg>
 #include <cstdio>
 #include <fstream>
+#include <regex>
 
 namespace fc {
 
@@ -142,7 +143,16 @@ void OpenLogIfNeeded() {
 }
 }  // namespace
 
-void LogFile(const std::string& category, const std::string& message) {
+// Credentials never reach the log files: user:password@ in URLs (e.g. a relay publish address that FFmpeg or MediaMTX
+// prints in an error) and bearer tokens are replaced.
+static std::string MaskSecrets(const std::string& text) {
+  if (text.find('@') == std::string::npos && text.find("earer") == std::string::npos) return text;
+  static const std::regex userinfo(R"(([A-Za-z][A-Za-z0-9+.-]*://[^\s/:@]+:)[^\s/@]+@)"), bearer(R"((Bearer\s+)[A-Za-z0-9._~+/=-]+)");
+  return std::regex_replace(std::regex_replace(text, userinfo, "$1***@"), bearer, "$1***");
+}
+
+void LogFile(const std::string& category, const std::string& rawMessage) {
+  const std::string message = MaskSecrets(rawMessage);
   SYSTEMTIME t;
   GetLocalTime(&t);
   std::lock_guard<std::mutex> lock(g_logMutex);
@@ -164,7 +174,7 @@ void PostUi(const json& event) {
 
 void UiLog(const std::string& kind, const std::string& message) {
   LogFile(kind, message);
-  PostUi({{"type", "log"}, {"kind", kind}, {"message", message}});
+  PostUi({{"type", "log"}, {"kind", kind}, {"message", MaskSecrets(message)}});
 }
 
 TaskQueue::TaskQueue(const char* name) : name_(name), thread_([this] { Run(); }) {}

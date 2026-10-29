@@ -1,0 +1,14 @@
+{
+  "name": "mixed-local",
+  "_comment": "Standalone target with --renditions 720p,480p --record: ABR-like quality mix, churn (1 leave + 1 re-join per second), chat for everyone, 10% DVR readers, 10% of the viewers change quality 20 s into each hold, and a separate browser phase (desktop + mobile-like) after stages 10 and 25. Every quality is judged against its own rendition's ingest rate.",
+  "stages": [10, 25, 50],
+  "holdSec": 60,
+  "rampPerSec": 10,
+  "qualities": { "source": 0.5, "720p": 0.3, "480p": 0.2 },
+  "churn": { "perSec": 1, "rejoinDelayMs": 2000, "minAgeSec": 15 },
+  "chat": { "fraction": 1, "senderFraction": 0.05, "messagesPerMinute": 6 },
+  "dvr": { "fraction": 0.1, "chunkMs": 4000, "intervalMs": 4000 },
+  "qualitySwitch": { "fraction": 0.1, "atSec": 20 },
+  "browser": { "count": 2, "profiles": ["desktop", "mobile"], "seconds": 20, "stages": [10, 25], "mode": "separate" },
+  "limits": { "maxTrafficGB": 200 }
+}

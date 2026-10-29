@@ -1,0 +1,6 @@
+{"t":1793165822080,"method":"POST","path":"/live/whep","quality":"source","status":201,"ms":325,"location":"/live/whep/0a1c7527-2c27-4a13-876c-2ba578602cb7"}
+{"t":1793165883150,"method":"POST","path":"/live/720p/whep","quality":"720p","status":201,"ms":2906,"location":"/live/720p/whep/afc2694c-3bfc-4142-a1d3-e0e3740c5af7"}
+{"t":1793165911895,"method":"DELETE","path":"/live/whep/0a1c7527-2c27-4a13-876c-2ba578602cb7","quality":"source","status":200,"ms":35,"location":null}
+{"t":1793165915225,"method":"POST","path":"/live/480p/whep","quality":"480p","status":201,"ms":5113,"location":"/live/480p/whep/2b8d846b-8bac-4d5e-8f29-c6d968c171a0"}
+{"t":1793165921304,"method":"DELETE","path":"/live/720p/whep/afc2694c-3bfc-4142-a1d3-e0e3740c5af7","quality":"720p","status":200,"ms":8,"location":null}
+{"t":1793165937196,"method":"POST","path":"/live/720p/whep","quality":"720p","status":201,"ms":843,"location":"/live/720p/whep/94d29272-5e47-4649-9143-133b25dc3226"}

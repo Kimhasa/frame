@@ -1,0 +1,15 @@
+{"t":1793169221570,"method":"POST","path":"/live/whep","quality":"source","status":201,"ms":123,"location":"/live/whep/cf3afe95-8bee-426a-abe4-030742efce78"}
+{"t":1793169279392,"method":"POST","path":"/live/720p/whep","quality":"720p","status":201,"ms":1717,"location":"/live/720p/whep/75da6360-36f2-4561-840f-3cdeae9e47d8"}
+{"t":1793169281697,"method":"DELETE","path":"/live/whep/cf3afe95-8bee-426a-abe4-030742efce78","quality":"source","status":200,"ms":2,"location":null}
+{"t":1793169294386,"method":"POST","path":"/live/whep","quality":"source","status":201,"ms":126,"location":"/live/whep/3ab8ae71-d897-4492-9f49-427f3e5e8f86"}
+{"t":1793169295215,"method":"DELETE","path":"/live/720p/whep/75da6360-36f2-4561-840f-3cdeae9e47d8","quality":"720p","status":200,"ms":1,"location":null}
+{"t":1793169328371,"method":"POST","path":"/live/720p/whep","quality":"720p","status":201,"ms":1765,"location":"/live/720p/whep/e677cf6d-0e12-44cc-a8be-22ffe111206d"}
+{"t":1793169330714,"method":"DELETE","path":"/live/whep/3ab8ae71-d897-4492-9f49-427f3e5e8f86","quality":"source","status":200,"ms":2,"location":null}
+{"t":1793169343385,"method":"POST","path":"/live/whep","quality":"source","status":201,"ms":128,"location":"/live/whep/6e2cec3d-4378-480e-ad2b-511dd1943055"}
+{"t":1793169344217,"method":"DELETE","path":"/live/720p/whep/e677cf6d-0e12-44cc-a8be-22ffe111206d","quality":"720p","status":200,"ms":2,"location":null}
+{"t":1793169379386,"method":"POST","path":"/live/720p/whep","quality":"720p","status":201,"ms":1718,"location":"/live/720p/whep/7ec2abc2-9128-44dd-9b74-860319508866"}
+{"t":1793169381744,"method":"DELETE","path":"/live/whep/6e2cec3d-4378-480e-ad2b-511dd1943055","quality":"source","status":200,"ms":2,"location":null}
+{"t":1793169394385,"method":"POST","path":"/live/whep","quality":"source","status":201,"ms":107,"location":"/live/whep/b86a65b9-baa5-481b-9fbd-3b86a59bef99"}
+{"t":1793169395212,"method":"DELETE","path":"/live/720p/whep/7ec2abc2-9128-44dd-9b74-860319508866","quality":"720p","status":200,"ms":1,"location":null}
+{"t":1793169448573,"method":"POST","path":"/live/whep","quality":"source","status":201,"ms":97,"location":"/live/whep/08c5bc6f-b9ef-4adb-aa93-503798f840a5"}
+{"t":1793169451220,"method":"DELETE","path":"/live/whep/b86a65b9-baa5-481b-9fbd-3b86a59bef99","quality":"source","status":200,"ms":1,"location":null}

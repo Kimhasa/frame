@@ -1,0 +1,132 @@
+{
+  "version": "3.3",
+  "date": "2026-10-29",
+  "screenCount": 58,
+  "stateCount": 150,
+  "featureCount": 150,
+  "capturePairs": 300,
+  "viewportChecks": 750,
+  "flowEvidence": {
+    "viewerChecks": 26,
+    "engagementChecks": 84,
+    "managementChecks": 52,
+    "accountStudioScreenFlows": 13
+  },
+  "scopeClassification": {
+    "technical_validation": 60,
+    "direct_ui_flow": 55,
+    "named_connection_without_detail": 35
+  },
+  "missingCaptureStates": [],
+  "issues": [],
+  "visualReports": [
+    "visual-review-viewer.json",
+    "visual-review-account-studio.json",
+    "visual-review-engagement.json",
+    "visual-review-management.json"
+  ],
+  "originals": [
+    {
+      "file": "work/console-template.html",
+      "unchanged": true
+    },
+    {
+      "file": "work/console.css",
+      "unchanged": true
+    },
+    {
+      "file": "work/ux.css",
+      "unchanged": true
+    },
+    {
+      "file": "work/components.css",
+      "unchanged": true
+    },
+    {
+      "file": "work/console-ui.css",
+      "unchanged": true
+    },
+    {
+      "file": "work/player-ui.css",
+      "unchanged": true
+    },
+    {
+      "file": "work/mobile-ui.css",
+      "unchanged": true
+    },
+    {
+      "file": "work/console-ux.js",
+      "unchanged": true
+    }
+  ],
+  "protectedFiles": [
+    {
+      "file": "preserved-player.js",
+      "unchanged": true
+    },
+    {
+      "file": "preserved-player.css",
+      "unchanged": true
+    },
+    {
+      "file": "preserved-player-data.js",
+      "unchanged": true
+    },
+    {
+      "file": "design-data.js",
+      "unchanged": true
+    }
+  ],
+  "sources": [
+    {
+      "file": "design-v33-account-studio.css",
+      "sha256": "3a4bbe2d6528379cee08ae7aafb1d87c4a3946d4399d2710578ed8916910ef97"
+    },
+    {
+      "file": "design-v33-account-studio.js",
+      "sha256": "6f55363b4205c5d9597e08a60e77479868fe5e2b00758b40c5f9f2c07494e816"
+    },
+    {
+      "file": "design-v33-engagement.css",
+      "sha256": "a61a6ea4021facf4acec4c6100239a26bd7963764d493797ae7c841ca109c5c4"
+    },
+    {
+      "file": "design-v33-engagement.js",
+      "sha256": "d4ed1b362c5722a22542325a6ac6df53bc12cfb260dbc19ae9c15bded2a27982"
+    },
+    {
+      "file": "design-v33-foundation.css",
+      "sha256": "38b627a971c9fee4f873d0b85d27614866488dae3fb7b487a3b71c2b4bed59c4"
+    },
+    {
+      "file": "design-v33-foundation.js",
+      "sha256": "9d2363b687e8b183d4b626f208ec05d28e7d0e17fb0c7d0df911101582738005"
+    },
+    {
+      "file": "design-v33-management.css",
+      "sha256": "374de54783c00c3b8fe5038d3d2f77beb5a4714d04118c338ddf43c2330ab0c9"
+    },
+    {
+      "file": "design-v33-management.js",
+      "sha256": "790ddc0a3c2f75752e56c83cee5052f8dafbca6bbea2a62112634bd4532207b3"
+    },
+    {
+      "file": "design-v33-viewer.css",
+      "sha256": "73f313b90186fd18e3123468b70dc4f386a01c208488338f6a5823579b99b7ad"
+    },
+    {
+      "file": "design-v33-viewer.js",
+      "sha256": "cecaa1ef7d7e39242edfef547a476728d4612704ef4ad16463a80b0bb474246c"
+    },
+    {
+      "file": "index.html",
+      "sha256": "6b7bd2f692fbb82854362ff34b9bb892af3e848adc77ef2e6f45cbcd45ed2dae"
+    }
+  ],
+  "limitations": [
+    "Source-to-definition audit of 150 features is distinct from implementation completion.",
+    "Primary screen images and selected exception images were inspected; not every state image was independently inspected pixel by pixel.",
+    "Some keyboard checks use DOM key events; physical devices and actual backend/media/finance/authentication remain untested.",
+    "35 features need additional detailed UI design; 60 center on real technical validation."
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "abr-boundary",
+  "description": "1080p(8M, 필요 약 8.8 Mbps)와 720p(4M, 약 4.5 Mbps) 경계. ① 6 Mbps로 150초 유지: 720p만 맞으므로 1080p 상향 시도가 실패할 때마다 상향 대기(12→24→48→96→120초)가 늘어나는지, 시도 횟수가 줄어드는지 본다. ② 7↔11 Mbps를 20초마다 4번 오가며 화질이 회선을 쫓아 왕복하는지 본다. 다른 경계는 --rate-scale로 옮긴다(예: 0.4 → 2.4 / 2.8↔4.4 Mbps, 720p↔480p 경계).",
+  "defaults": {
+    "down": { "rateMbps": 15, "maxQueueMs": 250, "delayMs": 20, "jitterMs": 5 },
+    "up": { "rateMbps": 5, "maxQueueMs": 250, "delayMs": 20 }
+  },
+  "steps": [
+    { "label": "warm-15M", "duration": 40 },
+    { "label": "hold-6M", "duration": 150, "down": { "rateMbps": 6 } },
+    { "repeat": 4, "steps": [
+      { "label": "low-7M", "duration": 20, "down": { "rateMbps": 7 } },
+      { "label": "high-11M", "duration": 20, "down": { "rateMbps": 11 } }
+    ] },
+    { "label": "settle-15M", "duration": 60 }
+  ]
+}

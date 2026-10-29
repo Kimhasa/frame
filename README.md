@@ -1,6 +1,6 @@
 # FRAME Console
 
-Windows 애플리케이션 창 또는 모니터 화면과 오디오를 송출하고, 같은 내부망의 다른 PC에서 브라우저로 시청하는 프로그램입니다. C++17, Windows Graphics Capture, WebView2, FFmpeg, MediaMTX를 사용합니다.
+Windows 애플리케이션 창 또는 모니터 화면과 오디오를 송출하고, 다른 PC와 휴대폰에서 브라우저만으로 시청하는 프로그램입니다. 같은 네트워크에서는 송출 PC가 직접 시청 서버가 되고, 다른 인터넷 회선의 시청자는 중계 서버(`server/`, `deploy/`)를 거칩니다. C++17, Windows Graphics Capture, WebView2, FFmpeg, MediaMTX를 사용합니다.
 
 현재 UI는 0.5 기준이며 플레이어 조작부 자동 숨김은 0.5.1 추가 지시로 관리합니다. 프로그램 창·모니터 선택, 수신 목록, 실시간 재생, 방송 시작부터 되감기, 실시간 복귀와 방송별 채팅을 구현한 상태입니다. 실제 다른 PC 간 수신과 인터넷 공개 접속은 별도 검증이 필요합니다.
 
@@ -13,7 +13,7 @@ Windows x64, Visual Studio 2022 Build Tools(C++ 도구·Windows SDK·CMake·Ninj
 ```bat
 node tools\fetch-deps.mjs
 node work\build-console.mjs
-node tools\verify-ui-v051.mjs
+node tools\verify-ui-v06.mjs
 build\vsbuild.cmd
 node tools\package-dist.mjs
 ```
@@ -39,7 +39,7 @@ UI 기준 파일은 SHA-256으로 검사하므로 Git 체크아웃 시 줄바꿈
 
 `START_HERE.txt`, `UI_HANDOFF.txt`, `CLAUDE_FUNCTIONAL_TASKS.txt`, `CLAUDE_CAPTURE_PLAYER_ADDENDUM.txt`를 먼저 확인하세요. 현재 실제 구현 상태와 검증 보고서를 함께 읽고 이미 구현된 기능을 보존해야 합니다.
 
-현재 시청 서버는 내부망 사용을 기준으로 합니다. 인터넷 중계 서버 배포, 외부 송출과 인터넷 시청 주소 제공은 아직 추가 작업이 필요합니다.
+2026-10-28부터 목표는 인터넷 브라우저 시청(한 방송 최대 1,000명 목표, 자동 재생 화질, 모바일)입니다. 최신 지시는 `CLAUDE_PHASE1_INSTRUCTIONS.txt`, 기능 목록은 `FEATURE_BACKLOG.csv`, 실행 결과는 `verification/REPORT.md`에 있습니다. 중계 서버 코드와 배포 예시는 있으나 실제 공개 서버 배포·다른 인터넷 회선·1,000명은 아직 검증되지 않았습니다.
 
 ## 포함 의존성
 

@@ -1,0 +1,127 @@
+{
+  "date": "2026-10-29",
+  "evidenceType": "Summary of observed CUA/CDP browser runs in this task; previous full-review raw reports remain separate.",
+  "layout": {
+    "screenCount": 58,
+    "stateCount": 150,
+    "widths": [
+      320,
+      390,
+      820,
+      1440,
+      1920
+    ],
+    "checks": 750,
+    "issues": 0
+  },
+  "flow": {
+    "settingsAndCards": {
+      "passed": 44,
+      "scope": "Video/audio/recording panel selection, manual input persistence, invalid value opens video+advanced panel with focus, save, unchanged output choices, title/name gap, live categories removed, VOD metadata retained; four viewport widths."
+    },
+    "historyFollowup": {
+      "passed": 10,
+      "scope": "Both history states at five widths after correcting a 2px overlap and moving delete into the metadata container."
+    },
+    "chat": {
+      "passed": 20,
+      "checks": [
+        {
+          "id": "chat:auto-follow",
+          "passed": true
+        },
+        {
+          "id": "chat:reading-position",
+          "passed": true
+        },
+        {
+          "id": "chat:latest-visible",
+          "passed": true
+        },
+        {
+          "id": "chat:rerender-position",
+          "passed": true
+        },
+        {
+          "id": "nickname:empty-error",
+          "passed": true
+        },
+        {
+          "id": "nickname:cancel",
+          "passed": true
+        },
+        {
+          "id": "nickname:save",
+          "passed": true
+        },
+        {
+          "id": "nickname:past-authors",
+          "passed": true
+        },
+        {
+          "id": "chat:latest-action",
+          "passed": true
+        },
+        {
+          "id": "chat:empty-disabled",
+          "passed": true
+        },
+        {
+          "id": "chat:long-error",
+          "passed": true
+        },
+        {
+          "id": "chat:no-counter",
+          "passed": true
+        },
+        {
+          "id": "chat:channel-isolation",
+          "passed": true
+        },
+        {
+          "id": "chat:channel-return",
+          "passed": true
+        },
+        {
+          "id": "chat:sender-shared",
+          "passed": true
+        },
+        {
+          "id": "nickname:focus-return",
+          "passed": true
+        },
+        {
+          "id": "chat:ime-not-sent",
+          "passed": true
+        },
+        {
+          "id": "chat:keyboard-scope",
+          "passed": true
+        },
+        {
+          "id": "chat:shift-enter-newline",
+          "passed": true
+        },
+        {
+          "id": "chat:single-enter-submit",
+          "passed": true
+        }
+      ]
+    }
+  },
+  "repairs": [
+    "History delete overlapped a two-line title by 2px; moved into card-info with reserved space and retested.",
+    "Nickname-dependent accessible label broke return focus; added stable trigger ID.",
+    "Per-broadcast messages and authors separated in local memory."
+  ],
+  "harnessNotes": [
+    "One exploratory test expression had a syntax error; corrected before running the 20 chat checks.",
+    "An additional combined responsive/landscape rerun exceeded the CUA session limit and is not counted as a completed check.",
+    "The 750-state layout sweep preceded the final data/focus-only chat changes; their affected flows were separately checked."
+  ],
+  "limitations": [
+    "Local prototype only; no real server, OAuth, payment, streaming quality or device integration validated.",
+    "Browser viewport checks do not replace physical phone, virtual-keyboard or mobile media testing.",
+    "Not every feature is complete; previous full feature-scope audit remains applicable."
+  ]
+}

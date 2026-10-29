@@ -43,7 +43,7 @@ void ReadHeaders(HINTERNET request, HttpResponse& response) {
 // Sends one request and calls onHead/onData; the buffered helpers collect the body themselves.
 bool Perform(const std::string& host, int port, const std::string& method, const std::string& path, const std::string& body, const HttpHeaders& headers,
              DWORD timeoutMs, const std::function<bool(const HttpResponse&)>& onHead, const std::function<bool(const char*, size_t)>& onData,
-             HttpResponse& response, std::string* error) {
+             HttpResponse& response, std::string* error, bool secure = false) {
   response = HttpResponse{};
   InternetHandle session{WinHttpOpen(L"FrameConsole", WINHTTP_ACCESS_TYPE_NO_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0)};
   if (!session.h) {
@@ -57,7 +57,8 @@ bool Perform(const std::string& host, int port, const std::string& method, const
     if (error) *error = LastErrorMessage();
     return false;
   }
-  InternetHandle request{WinHttpOpenRequest(connection.h, Wide(method).c_str(), Wide(path).c_str(), nullptr, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, 0)};
+  InternetHandle request{WinHttpOpenRequest(connection.h, Wide(method).c_str(), Wide(path).c_str(), nullptr, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES,
+                                            secure ? WINHTTP_FLAG_SECURE : 0)};
   if (!request.h) {
     if (error) *error = LastErrorMessage();
     return false;
@@ -99,6 +100,31 @@ bool HttpRequestHost(const std::string& host, int port, const std::string& metho
                       return collected.size() <= 4 * 1024 * 1024;
                     },
                     response, error);
+  response.body = std::move(collected);
+  return ok;
+}
+
+bool HttpRequestUrl(const std::string& url, const std::string& method, const std::string& body, const HttpHeaders& headers, HttpResponse& response,
+                    DWORD timeoutMs, std::string* error) {
+  std::wstring wide = Wide(url);
+  URL_COMPONENTS parts{};
+  parts.dwStructSize = sizeof(parts);
+  wchar_t host[256] = {}, path[2048] = {};
+  parts.lpszHostName = host;
+  parts.dwHostNameLength = 256;
+  parts.lpszUrlPath = path;
+  parts.dwUrlPathLength = 2048;
+  if (!WinHttpCrackUrl(wide.c_str(), 0, 0, &parts) || (parts.nScheme != INTERNET_SCHEME_HTTP && parts.nScheme != INTERNET_SCHEME_HTTPS)) {
+    if (error) *error = "invalid URL";
+    return false;
+  }
+  std::string collected;
+  bool ok = Perform(Utf8(host), parts.nPort, method, path[0] ? Utf8(path) : "/", body, headers, timeoutMs, nullptr,
+                    [&](const char* data, size_t size) {
+                      collected.append(data, size);
+                      return collected.size() <= 4 * 1024 * 1024;
+                    },
+                    response, error, parts.nScheme == INTERNET_SCHEME_HTTPS);
   response.body = std::move(collected);
   return ok;
 }

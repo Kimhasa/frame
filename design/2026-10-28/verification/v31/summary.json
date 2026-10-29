@@ -1,0 +1,138 @@
+{
+  "version": "3.1",
+  "date": "2026-10-29",
+  "artboards": 21,
+  "captures": 23,
+  "syntaxModules": [
+    "design-v3-account.js",
+    "design-v3-components.js",
+    "design-v3-core.js",
+    "design-v3-runtime.js",
+    "design-v3-studio.js",
+    "design-v31-layout.js",
+    "design-v31-states.js",
+    "design-v31-viewer.js"
+  ],
+  "responsiveChecks": 162,
+  "stateChecks": 450,
+  "functionalChecks": 18,
+  "issues": [],
+  "layout": {
+    "parity": [
+      {
+        "columns": 1,
+        "id": "profile",
+        "mode": "actual",
+        "navDirection": "row",
+        "previewOrder": null
+      },
+      {
+        "columns": 1,
+        "id": "channel-edit",
+        "mode": "actual",
+        "navDirection": null,
+        "previewOrder": "-1"
+      },
+      {
+        "columns": 1,
+        "id": "studio",
+        "mode": "actual",
+        "navDirection": null,
+        "previewOrder": null
+      },
+      {
+        "columns": 1,
+        "id": "profile",
+        "mode": "preview",
+        "navDirection": "row",
+        "previewOrder": null
+      },
+      {
+        "columns": 1,
+        "id": "channel-edit",
+        "mode": "preview",
+        "navDirection": null,
+        "previewOrder": "-1"
+      },
+      {
+        "columns": 1,
+        "id": "studio",
+        "mode": "preview",
+        "navDirection": null,
+        "previewOrder": null
+      }
+    ],
+    "shortWindow": {
+      "chatComposerBottom": 589.4285888671875,
+      "height": 600,
+      "visible": true
+    }
+  },
+  "edge": {
+    "longChannel": {
+      "overflow": 0
+    },
+    "longSearch": {
+      "headingLines": 2,
+      "overflow": 0
+    },
+    "narrowNavigation": {
+      "selected": "재생",
+      "visible": true
+    }
+  },
+  "player": {
+    "originalQualityMenu": true,
+    "pause": true
+  },
+  "browserEvents": [],
+  "originalChecks": [
+    {
+      "file": "work/console-template.html",
+      "matched": true
+    },
+    {
+      "file": "work/console.css",
+      "matched": true
+    },
+    {
+      "file": "work/ux.css",
+      "matched": true
+    },
+    {
+      "file": "work/components.css",
+      "matched": true
+    },
+    {
+      "file": "work/console-ui.css",
+      "matched": true
+    },
+    {
+      "file": "work/player-ui.css",
+      "matched": true
+    },
+    {
+      "file": "work/mobile-ui.css",
+      "matched": true
+    },
+    {
+      "file": "work/console-ux.js",
+      "matched": true
+    }
+  ],
+  "protectedChecks": [
+    {
+      "file": "preserved-player.js",
+      "unchanged": true
+    },
+    {
+      "file": "preserved-player.css",
+      "unchanged": true
+    },
+    {
+      "file": "preserved-player-data.js",
+      "unchanged": true
+    }
+  ],
+  "scope": "Local UI prototype. Browser viewport and render checks; no physical mobile-device, authentication, payment, capture, encoder, streaming or load validation."
+}

@@ -1,0 +1,309 @@
+{
+  "date": "2026-10-29",
+  "method": "functions.view_image로 실제 저장된 주화면 JPG를 열어 눈으로 확인. DOM/코드 조작 검증과 별개.",
+  "viewports": {
+    "desktop": "1440px 주화면 캡처",
+    "mobile": "390px 주화면 캡처"
+  },
+  "checks": [
+    "본문·보조 글자 가독성",
+    "표·폼·버튼 기준선",
+    "제목·그룹 간격",
+    "카드 경계·중복 구분선",
+    "텍스트 잘림·겹침"
+  ],
+  "desktopScreensViewed": 20,
+  "mobileScreensViewed": 20,
+  "desktopFinalRecapturePending": [],
+  "screens": [
+    {
+      "screenId": "recordings",
+      "desktopImage": "verification/full-review/screens/recordings__0__desktop.jpg",
+      "desktopViewed": true,
+      "desktopResult": "주화면 글자 잘림·겹침·기준선 이탈 없음",
+      "fix": null,
+      "mobileViewed": true,
+      "mobileImage": "verification/full-review/screens/recordings__0__mobile.jpg",
+      "mobileResult": "주화면 본문·레이블·액션의 가독성과 가로 배치 확인; 겹침/잘림 없음"
+    },
+    {
+      "screenId": "schedule",
+      "desktopImage": "verification/full-review/screens/schedule__0__desktop.jpg",
+      "desktopViewed": true,
+      "desktopResult": "주화면 글자 잘림·겹침·기준선 이탈 없음",
+      "fix": null,
+      "mobileViewed": true,
+      "mobileImage": "verification/full-review/screens/schedule__0__mobile.jpg",
+      "mobileResult": "주화면 본문·레이블·액션의 가독성과 가로 배치 확인; 겹침/잘림 없음"
+    },
+    {
+      "screenId": "scenes",
+      "desktopImage": "verification/full-review/screens/scenes__0__desktop.jpg",
+      "desktopViewed": true,
+      "desktopResult": "주화면 글자 잘림·겹침·기준선 이탈 없음",
+      "fix": null,
+      "mobileViewed": true,
+      "mobileImage": "verification/full-review/screens/scenes__0__mobile.jpg",
+      "mobileResult": "주화면 본문·레이블·액션의 가독성과 가로 배치 확인; 겹침/잘림 없음"
+    },
+    {
+      "screenId": "moderation",
+      "desktopImage": "verification/full-review/screens/moderation__0__desktop.jpg",
+      "desktopViewed": true,
+      "desktopResult": "보정 후 최신 실제 캡처 재확인 완료: 정렬·중복 제거·자체 선택 메뉴·문구 정상",
+      "fix": "입력·토글·저장 우측 기준선을 800px 폼 폭으로 통일",
+      "mobileViewed": true,
+      "mobileImage": "verification/full-review/screens/moderation__0__mobile.jpg",
+      "mobileResult": "보정 후 최신 실제 캡처 재확인 완료: 본문·표 레이블·버튼 정렬·자체 선택 메뉴 정상, 검토 런처 겹침 없음",
+      "desktopFinalViewed": true,
+      "mobileFinalImage": "verification/full-review/management-final-visual/moderation-mobile.jpg",
+      "mobileFinalViewed": true
+    },
+    {
+      "screenId": "reports",
+      "desktopImage": "verification/full-review/screens/reports__0__desktop.jpg",
+      "desktopViewed": true,
+      "desktopResult": "주화면 글자 잘림·겹침·기준선 이탈 없음",
+      "fix": null,
+      "mobileViewed": true,
+      "mobileImage": "verification/full-review/screens/reports__0__mobile.jpg",
+      "mobileResult": "주화면 본문·레이블·액션의 가독성과 가로 배치 확인; 겹침/잘림 없음"
+    },
+    {
+      "screenId": "creator-stats",
+      "desktopImage": "verification/full-review/screens/creator-stats__0__desktop.jpg",
+      "desktopViewed": true,
+      "desktopResult": "보정 후 최신 실제 캡처 재확인 완료: 정렬·중복 제거·자체 선택 메뉴·문구 정상",
+      "fix": "같은 기간 선택기 2개를 상단 1개로 정리",
+      "mobileViewed": true,
+      "mobileImage": "verification/full-review/screens/creator-stats__0__mobile.jpg",
+      "mobileResult": "보정 후 최신 실제 캡처 재확인 완료: 본문·표 레이블·버튼 정렬·자체 선택 메뉴 정상, 검토 런처 겹침 없음",
+      "desktopFinalViewed": true,
+      "mobileFinalImage": "verification/full-review/management-final-visual/creator-stats-mobile.jpg",
+      "mobileFinalViewed": true
+    },
+    {
+      "screenId": "revenue",
+      "desktopImage": "verification/full-review/screens/revenue__0__desktop.jpg",
+      "desktopViewed": true,
+      "desktopResult": "보정 후 최신 실제 캡처 재확인 완료: 정렬·중복 제거·자체 선택 메뉴·문구 정상",
+      "fix": "정산 정보는 정산 탭에서만 표시",
+      "mobileViewed": true,
+      "mobileImage": "verification/full-review/screens/revenue__0__mobile.jpg",
+      "mobileResult": "보정 후 최신 실제 캡처 재확인 완료: 본문·표 레이블·버튼 정렬·자체 선택 메뉴 정상, 검토 런처 겹침 없음",
+      "desktopFinalViewed": true,
+      "mobileFinalImage": "verification/full-review/management-final-visual/revenue-mobile.jpg",
+      "mobileFinalViewed": true
+    },
+    {
+      "screenId": "transactions",
+      "desktopImage": "verification/full-review/screens/transactions__0__desktop.jpg",
+      "desktopViewed": true,
+      "desktopResult": "주화면 글자 잘림·겹침·기준선 이탈 없음",
+      "fix": null,
+      "mobileViewed": true,
+      "mobileImage": "verification/full-review/screens/transactions__0__mobile.jpg",
+      "mobileResult": "주화면 본문·레이블·액션의 가독성과 가로 배치 확인; 겹침/잘림 없음"
+    },
+    {
+      "screenId": "integrations",
+      "desktopImage": "verification/full-review/screens/integrations__0__desktop.jpg",
+      "desktopViewed": true,
+      "desktopResult": "주화면 글자 잘림·겹침·기준선 이탈 없음",
+      "fix": null,
+      "mobileViewed": true,
+      "mobileImage": "verification/full-review/screens/integrations__0__mobile.jpg",
+      "mobileResult": "보정 후 최신 실제 캡처 재확인 완료: 본문·표 레이블·버튼 정렬·자체 선택 메뉴 정상, 검토 런처 겹침 없음",
+      "mobileFinalImage": "verification/full-review/management-final-visual/integrations-mobile.jpg",
+      "mobileFinalViewed": true
+    },
+    {
+      "screenId": "missions-manage",
+      "desktopImage": "verification/full-review/screens/missions-manage__0__desktop.jpg",
+      "desktopViewed": true,
+      "desktopResult": "주화면 글자 잘림·겹침·기준선 이탈 없음",
+      "fix": null,
+      "mobileViewed": true,
+      "mobileImage": "verification/full-review/screens/missions-manage__0__mobile.jpg",
+      "mobileResult": "주화면 본문·레이블·액션의 가독성과 가로 배치 확인; 겹침/잘림 없음"
+    },
+    {
+      "screenId": "polls-manage",
+      "desktopImage": "verification/full-review/screens/polls-manage__0__desktop.jpg",
+      "desktopViewed": true,
+      "desktopResult": "보정 후 최신 실제 캡처 재확인 완료: 정렬·중복 제거·자체 선택 메뉴·문구 정상",
+      "fix": "결과 막대와 마감 버튼 우측 기준선 통일",
+      "mobileViewed": true,
+      "mobileImage": "verification/full-review/screens/polls-manage__0__mobile.jpg",
+      "mobileResult": "보정 후 최신 실제 캡처 재확인 완료: 본문·표 레이블·버튼 정렬·자체 선택 메뉴 정상, 검토 런처 겹침 없음",
+      "desktopFinalViewed": true,
+      "mobileFinalImage": "verification/full-review/management-final-visual/polls-manage-mobile.jpg",
+      "mobileFinalViewed": true
+    },
+    {
+      "screenId": "rewards-manage",
+      "desktopImage": "verification/full-review/screens/rewards-manage__0__desktop.jpg",
+      "desktopViewed": true,
+      "desktopResult": "주화면 글자 잘림·겹침·기준선 이탈 없음",
+      "fix": null,
+      "mobileViewed": true,
+      "mobileImage": "verification/full-review/screens/rewards-manage__0__mobile.jpg",
+      "mobileResult": "주화면 본문·레이블·액션의 가독성과 가로 배치 확인; 겹침/잘림 없음"
+    },
+    {
+      "screenId": "members",
+      "desktopImage": "verification/full-review/screens/members__0__desktop.jpg",
+      "desktopViewed": true,
+      "desktopResult": "주화면 글자 잘림·겹침·기준선 이탈 없음",
+      "fix": null,
+      "mobileViewed": true,
+      "mobileImage": "verification/full-review/screens/members__0__mobile.jpg",
+      "mobileResult": "주화면 본문·레이블·액션의 가독성과 가로 배치 확인; 겹침/잘림 없음"
+    },
+    {
+      "screenId": "service-health",
+      "desktopImage": "verification/full-review/screens/service-health__0__desktop.jpg",
+      "desktopViewed": true,
+      "desktopResult": "주화면 글자 잘림·겹침·기준선 이탈 없음",
+      "fix": null,
+      "mobileViewed": true,
+      "mobileImage": "verification/full-review/screens/service-health__0__mobile.jpg",
+      "mobileResult": "보정 후 최신 실제 캡처 재확인 완료: 본문·표 레이블·버튼 정렬·자체 선택 메뉴 정상, 검토 런처 겹침 없음",
+      "mobileFinalImage": "verification/full-review/management-final-visual/service-health-mobile.jpg",
+      "mobileFinalViewed": true
+    },
+    {
+      "screenId": "service-reports",
+      "desktopImage": "verification/full-review/screens/service-reports__0__desktop.jpg",
+      "desktopViewed": true,
+      "desktopResult": "주화면 글자 잘림·겹침·기준선 이탈 없음",
+      "fix": null,
+      "mobileViewed": true,
+      "mobileImage": "verification/full-review/screens/service-reports__0__mobile.jpg",
+      "mobileResult": "주화면 본문·레이블·액션의 가독성과 가로 배치 확인; 겹침/잘림 없음"
+    },
+    {
+      "screenId": "audit",
+      "desktopImage": "verification/full-review/screens/audit__0__desktop.jpg",
+      "desktopViewed": true,
+      "desktopResult": "주화면 글자 잘림·겹침·기준선 이탈 없음",
+      "fix": null,
+      "mobileViewed": true,
+      "mobileImage": "verification/full-review/screens/audit__0__mobile.jpg",
+      "mobileResult": "주화면 본문·레이블·액션의 가독성과 가로 배치 확인; 겹침/잘림 없음"
+    },
+    {
+      "screenId": "policy",
+      "desktopImage": "verification/full-review/screens/policy__0__desktop.jpg",
+      "desktopViewed": true,
+      "desktopResult": "주화면 글자 잘림·겹침·기준선 이탈 없음",
+      "fix": null,
+      "mobileViewed": true,
+      "mobileImage": "verification/full-review/screens/policy__0__mobile.jpg",
+      "mobileResult": "주화면 본문·레이블·액션의 가독성과 가로 배치 확인; 겹침/잘림 없음"
+    },
+    {
+      "screenId": "update",
+      "desktopImage": "verification/full-review/screens/update__0__desktop.jpg",
+      "desktopViewed": true,
+      "desktopResult": "주화면 글자 잘림·겹침·기준선 이탈 없음",
+      "fix": null,
+      "mobileViewed": true,
+      "mobileImage": "verification/full-review/screens/update__0__mobile.jpg",
+      "mobileResult": "주화면 본문·레이블·액션의 가독성과 가로 배치 확인; 겹침/잘림 없음"
+    },
+    {
+      "screenId": "developer",
+      "desktopImage": "verification/full-review/screens/developer__0__desktop.jpg",
+      "desktopViewed": true,
+      "desktopResult": "보정 후 최신 실제 캡처 재확인 완료: 정렬·중복 제거·자체 선택 메뉴·문구 정상",
+      "fix": "입력과 키 발급·웹훅 저장 액션 우측 기준선을 통일",
+      "mobileViewed": true,
+      "mobileImage": "verification/full-review/screens/developer__0__mobile.jpg",
+      "mobileResult": "보정 후 최신 실제 캡처 재확인 완료: 본문·표 레이블·버튼 정렬·자체 선택 메뉴 정상, 검토 런처 겹침 없음",
+      "desktopFinalViewed": true,
+      "mobileFinalImage": "verification/full-review/management-final-visual/developer-mobile.jpg",
+      "mobileFinalViewed": true
+    },
+    {
+      "screenId": "verification",
+      "desktopImage": "verification/full-review/screens/verification__0__desktop.jpg",
+      "desktopViewed": true,
+      "desktopResult": "보정 후 최신 실제 캡처 재확인 완료: 정렬·중복 제거·자체 선택 메뉴·문구 정상",
+      "fix": "표 아래에 있던 설명의 부정확한 아래 항목 표현 제거",
+      "mobileViewed": true,
+      "mobileImage": "verification/full-review/screens/verification__0__mobile.jpg",
+      "mobileResult": "보정 후 최신 실제 캡처 재확인 완료: 본문·표 레이블·버튼 정렬·자체 선택 메뉴 정상, 검토 런처 겹침 없음",
+      "desktopFinalViewed": true,
+      "mobileFinalImage": "verification/full-review/management-final-visual/verification-mobile.jpg",
+      "mobileFinalViewed": true
+    }
+  ],
+  "limitations": [
+    "주화면 이미지 검수이며 모든 상태 이미지의 시각 검수를 완료했다고 주장하지 않음",
+    "전체 150개 기능의 세부 시안·실제 구현 완료를 의미하지 않음; feature-scope-audit.json과 별도 대조",
+    "실제 기능 구현·물리 모바일 기기 테스트를 의미하지 않음"
+  ],
+  "mobileFinalRecapturePending": [],
+  "mobileIssues": [
+    {
+      "screens": [
+        "creator-stats",
+        "service-health"
+      ],
+      "issue": "SVG 날짜축이 가로 축소되어 약 4px로 표시",
+      "fix": "관리 decorator가 같은 날짜의 HTML축 생성, 모바일 12px 글자로 표시하고 PC SVG축 유지",
+      "status": "최신 코드의 실제 모바일 캡처에서 보정 결과 재확인 완료"
+    },
+    {
+      "screens": [
+        "integrations"
+      ],
+      "issue": "채팅봇 행만 버튼이 인라인으로 남아 다른 행과 기준선 불일치",
+      "fix": "모바일에서 아이콘42px+본문 grid, 버튼을 본문 아래 같은 열로 고정",
+      "status": "최신 코드의 실제 모바일 캡처에서 보정 결과 재확인 완료"
+    },
+    {
+      "screens": [
+        "moderation",
+        "developer",
+        "scenes",
+        "audit",
+        "verification"
+      ],
+      "issue": "전역 검토 런처가 모바일 저장 버튼 또는 내용 위에 겹침",
+      "fix": "root가 review=1에서만 런처 표시하도록 전역 수정",
+      "status": "최신 코드의 실제 모바일 캡처에서 보정 결과 재확인 완료"
+    }
+  ],
+  "desktopRecapturesViewed": [
+    "moderation",
+    "creator-stats",
+    "revenue",
+    "polls-manage",
+    "developer",
+    "verification"
+  ],
+  "mobileRecapturesViewed": [
+    "moderation",
+    "creator-stats",
+    "revenue",
+    "polls-manage",
+    "developer",
+    "verification",
+    "service-health",
+    "integrations"
+  ],
+  "finalMobileEvidence": "verification/full-review/management-final-visual/",
+  "finalMobileCaptureManifest": "verification/full-review/management-final-visual/capture-manifest.json",
+  "finalResult": "PC20개·모바일20개 주화면을 실제 이미지로 검토하고, 발견 사항 수정 후 PC6개·모바일8개를 재확인했다. 이 검수 범위에 남은 시각 오류 없음.",
+  "evidenceNotes": [
+    "최종 모바일 보정8개는 전체 screens/300개 집계를 건드리지 않기 위해 별도 폴더에 직접 캡처해 view_image로 확인",
+    "모바일 차트 날짜축 12px, 보정8개 가로 넘침 0·기본 검토 런처 숨김을 DOM으로도 확인",
+    "긴 문서의 fixed 하단 탐색바가 전체 페이지 캡처 중간에 표시되는 현상과 실제 스크롤 후 버튼 접근성을 구분; developer 문서 끝에서 저장 버튼이 탐색바 위에 완전히 표시됨"
+  ],
+  "sourceHashes": {
+    "design-v33-management.js": "790ddc0a3c2f75752e56c83cee5052f8dafbca6bbea2a62112634bd4532207b3",
+    "design-v33-management.css": "374de54783c00c3b8fe5038d3d2f77beb5a4714d04118c338ddf43c2330ab0c9"
+  }
+}

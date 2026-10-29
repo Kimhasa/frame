@@ -21,6 +21,9 @@ bool HttpRequest(const std::string& method, int port, const std::string& path, c
 // Request to another host (directory announcements to a central FRAME Console).
 bool HttpRequestHost(const std::string& host, int port, const std::string& method, const std::string& path, const std::string& body,
                      const HttpHeaders& headers, HttpResponse& response, DWORD timeoutMs, std::string* error = nullptr);
+// Request to an http:// or https:// URL (relay service announcements and status).
+bool HttpRequestUrl(const std::string& url, const std::string& method, const std::string& body, const HttpHeaders& headers, HttpResponse& response,
+                    DWORD timeoutMs, std::string* error = nullptr);
 // Streams the response body of a loopback GET: onHead gets status and headers (body empty), onData each chunk.
 // Either callback returning false stops the transfer. Used for recorded media, which can be large.
 bool HttpStream(int port, const std::string& path, const HttpHeaders& headers, const std::function<bool(const HttpResponse&)>& onHead,

@@ -1,0 +1,6 @@
+Self-check of the tool (standalone target + shim /api/stats only, churn 0.5/s, source/720p mix, holds 20 s). Not a capacity result.
+fullRateSuccessRate in this folder (stage 10: 0.8889, stage 25: 0.9394) was computed before a fix made right after this run:
+churn sessions whose quality segments were all shorter than 4 s were counted as full-rate failures, although no segment of any
+quality was below 90% of its reference (fullRateByQuality.*.belowFraction = 0 everywhere). They are now left out of the
+denominator (fullRateTooShort); with the fix these stages would read 16/16 and 31/31 = 1 (not re-run).
+Also fixed after this run: an idle on-demand path (ingest 0) is no longer accepted as a reference (stage 1 showed 720p reference 0).

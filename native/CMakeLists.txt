@@ -22,6 +22,8 @@ add_executable(FrameConsole WIN32
   src/util.cpp
   src/config.cpp
   src/capture.cpp
+  src/thumbnails.cpp
+  src/window_icon.cpp
   src/audio.cpp
   src/child_process.cpp
   src/http_client.cpp

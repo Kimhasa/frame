@@ -26,5 +26,11 @@
   "recordDir": "",
   "recordMaxGB": 200,
   "recordMinFreeGB": 5,
-  "recordKeepDays": 7
+  "recordKeepDays": 7,
+  "publicUrl": "",
+  "iceHosts": [],
+  "relayPublishUrl": "",
+  "relayApiUrl": "",
+  "relayCaFile": "",
+  "windowPreview": { "firstFrameMs": 1000, "attempts": 3, "retryDelaysMs": [250, 750], "deadlineMs": 5000, "concurrency": 2, "cacheMs": 60000 }
 }

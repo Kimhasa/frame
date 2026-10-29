@@ -1,0 +1,5 @@
+﻿stage,mode,index,profile,viewport,dpr,error,firstFrameMs,presentedFps,decodedFps,decodedFpsBasis,decodedWidth,decodedHeight,freezes,maxGapMs,videoKbps,videoLossRatio,jitterBufferMs,peerConnections,connectionChangedInWindow,latencyP50Ms
+1,separate,0,desktop,1888x984,1,,1707,51.9,60,connection created inside the window: from its first decoded frame,1280,720,0,67,3991,0,7.8,1,true,1231
+1,separate,1,mobile,390x844,3,,1697,52.6,60,connection created inside the window: from its first decoded frame,1280,720,0,117,3995,0,7.9,1,true,1385.800048828125
+10,separate,0,desktop,1888x984,1,,2043,53.7,60,connection created inside the window: from its first decoded frame,1280,720,0,67,4036,0,8.2,1,true,2269.800048828125
+10,separate,1,mobile,390x844,3,,1991,52.8,60,connection created inside the window: from its first decoded frame,1280,720,0,50,4034,0,8.5,1,true,2464.800048828125

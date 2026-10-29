@@ -1,0 +1,70 @@
+{
+  "date": "2026-10-29",
+  "checks": 238,
+  "passed": 238,
+  "protectedFiles": [
+    {
+      "file": "work/console-template.html",
+      "unchanged": true
+    },
+    {
+      "file": "work/console.css",
+      "unchanged": true
+    },
+    {
+      "file": "work/ux.css",
+      "unchanged": true
+    },
+    {
+      "file": "work/components.css",
+      "unchanged": true
+    },
+    {
+      "file": "work/console-ui.css",
+      "unchanged": true
+    },
+    {
+      "file": "work/player-ui.css",
+      "unchanged": true
+    },
+    {
+      "file": "work/mobile-ui.css",
+      "unchanged": true
+    },
+    {
+      "file": "work/console-ux.js",
+      "unchanged": true
+    },
+    {
+      "file": "dist/preserved-player.js",
+      "unchanged": true
+    },
+    {
+      "file": "dist/preserved-player.css",
+      "unchanged": true
+    },
+    {
+      "file": "dist/preserved-player-data.js",
+      "unchanged": true
+    },
+    {
+      "file": "dist/design-data.js",
+      "unchanged": true
+    }
+  ],
+  "sources": [
+    {
+      "file": "dist/design-v33-viewer.js",
+      "sha256": "8bcd77c4aac70055a076d8ad0fe385972d982dad8b11157f3a48c83c21404b8b"
+    },
+    {
+      "file": "dist/design-v33-management.js",
+      "sha256": "bdffda7ee182d532949fd335dbdd021c604fa81700311526d7af6921529ebf20"
+    },
+    {
+      "file": "dist/design-v3-account.js",
+      "sha256": "a9f150cc56e15220952c6cd39b7046238ac78173f6d70db9967193713047cd36"
+    }
+  ],
+  "scope": "Design prototype action labels and accessibility semantics; media assessment only. Existing full review evidence is a separate earlier snapshot."
+}

@@ -1,0 +1,11 @@
+{
+  "name": "burst-local",
+  "_comment": "Join storm on the standalone target: every stage starts from zero (the runner waits until the target reports 0 sessions), all joins are requested at once and sent with 32 add requests in flight; first media counts from the burst start, so the queue behind the 32 is included (firstMediaMs.components.queueMs). Then the viewers leave and the target's session count must return to zero.",
+  "stages": [25, 50, 100],
+  "holdSec": 30,
+  "burst": true,
+  "burstConcurrency": 32,
+  "keepBetweenStages": false,
+  "firstMediaTimeoutMs": 15000,
+  "limits": { "maxTrafficGB": 100, "abortOnDegraded": false }
+}

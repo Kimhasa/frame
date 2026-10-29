@@ -1,0 +1,1298 @@
+[
+  {
+    "id": "live",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 320
+  },
+  {
+    "id": "live",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "불러오는 중",
+    "width": 320
+  },
+  {
+    "id": "live",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "불러오기 실패",
+    "width": 320
+  },
+  {
+    "id": "following",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "팔로우 없음",
+    "width": 320
+  },
+  {
+    "id": "search",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 320
+  },
+  {
+    "id": "channel",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "방송 중",
+    "width": 320
+  },
+  {
+    "id": "profile",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 320
+  },
+  {
+    "id": "preferences",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 320
+  },
+  {
+    "id": "security",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 320
+  },
+  {
+    "id": "channel-edit",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 320
+  },
+  {
+    "id": "studio",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "방송 전",
+    "width": 320
+  },
+  {
+    "id": "studio",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "방송 중",
+    "width": 320
+  },
+  {
+    "id": "watch",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 320
+  },
+  {
+    "id": "info",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 320
+  },
+  {
+    "id": "share",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 320
+  },
+  {
+    "id": "donate",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "금액 선택",
+    "width": 320
+  },
+  {
+    "id": "sources",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "프로그램 창",
+    "width": 320
+  },
+  {
+    "id": "broadcast-settings",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 320
+  },
+  {
+    "id": "live",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 390
+  },
+  {
+    "id": "live",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "불러오는 중",
+    "width": 390
+  },
+  {
+    "id": "live",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "불러오기 실패",
+    "width": 390
+  },
+  {
+    "id": "following",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "팔로우 없음",
+    "width": 390
+  },
+  {
+    "id": "search",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 390
+  },
+  {
+    "id": "channel",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "방송 중",
+    "width": 390
+  },
+  {
+    "id": "profile",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 390
+  },
+  {
+    "id": "preferences",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 390
+  },
+  {
+    "id": "security",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 390
+  },
+  {
+    "id": "channel-edit",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 390
+  },
+  {
+    "id": "studio",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "방송 전",
+    "width": 390
+  },
+  {
+    "id": "studio",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "방송 중",
+    "width": 390
+  },
+  {
+    "id": "watch",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 390
+  },
+  {
+    "id": "info",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 390
+  },
+  {
+    "id": "share",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 390
+  },
+  {
+    "id": "donate",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "금액 선택",
+    "width": 390
+  },
+  {
+    "id": "sources",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "프로그램 창",
+    "width": 390
+  },
+  {
+    "id": "broadcast-settings",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 390
+  },
+  {
+    "id": "live",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 600
+  },
+  {
+    "id": "live",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "불러오는 중",
+    "width": 600
+  },
+  {
+    "id": "live",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "불러오기 실패",
+    "width": 600
+  },
+  {
+    "id": "following",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "팔로우 없음",
+    "width": 600
+  },
+  {
+    "id": "search",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 600
+  },
+  {
+    "id": "channel",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "방송 중",
+    "width": 600
+  },
+  {
+    "id": "profile",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 600
+  },
+  {
+    "id": "preferences",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 600
+  },
+  {
+    "id": "security",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 600
+  },
+  {
+    "id": "channel-edit",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 600
+  },
+  {
+    "id": "studio",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "방송 전",
+    "width": 600
+  },
+  {
+    "id": "studio",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "방송 중",
+    "width": 600
+  },
+  {
+    "id": "watch",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 600
+  },
+  {
+    "id": "info",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 600
+  },
+  {
+    "id": "share",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 600
+  },
+  {
+    "id": "donate",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "금액 선택",
+    "width": 600
+  },
+  {
+    "id": "sources",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "프로그램 창",
+    "width": 600
+  },
+  {
+    "id": "broadcast-settings",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 600
+  },
+  {
+    "id": "live",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 820
+  },
+  {
+    "id": "live",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "불러오는 중",
+    "width": 820
+  },
+  {
+    "id": "live",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "불러오기 실패",
+    "width": 820
+  },
+  {
+    "id": "following",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "팔로우 없음",
+    "width": 820
+  },
+  {
+    "id": "search",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 820
+  },
+  {
+    "id": "channel",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "방송 중",
+    "width": 820
+  },
+  {
+    "id": "profile",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 820
+  },
+  {
+    "id": "preferences",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 820
+  },
+  {
+    "id": "security",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 820
+  },
+  {
+    "id": "channel-edit",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 820
+  },
+  {
+    "id": "studio",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "방송 전",
+    "width": 820
+  },
+  {
+    "id": "studio",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "방송 중",
+    "width": 820
+  },
+  {
+    "id": "watch",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 820
+  },
+  {
+    "id": "info",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 820
+  },
+  {
+    "id": "share",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 820
+  },
+  {
+    "id": "donate",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "금액 선택",
+    "width": 820
+  },
+  {
+    "id": "sources",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "프로그램 창",
+    "width": 820
+  },
+  {
+    "id": "broadcast-settings",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 820
+  },
+  {
+    "id": "live",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 851
+  },
+  {
+    "id": "live",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "불러오는 중",
+    "width": 851
+  },
+  {
+    "id": "live",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "불러오기 실패",
+    "width": 851
+  },
+  {
+    "id": "following",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "팔로우 없음",
+    "width": 851
+  },
+  {
+    "id": "search",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 851
+  },
+  {
+    "id": "channel",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "방송 중",
+    "width": 851
+  },
+  {
+    "id": "profile",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 851
+  },
+  {
+    "id": "preferences",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 851
+  },
+  {
+    "id": "security",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 851
+  },
+  {
+    "id": "channel-edit",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 851
+  },
+  {
+    "id": "studio",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "방송 전",
+    "width": 851
+  },
+  {
+    "id": "studio",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "방송 중",
+    "width": 851
+  },
+  {
+    "id": "watch",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 851
+  },
+  {
+    "id": "info",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 851
+  },
+  {
+    "id": "share",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 851
+  },
+  {
+    "id": "donate",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "금액 선택",
+    "width": 851
+  },
+  {
+    "id": "sources",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "프로그램 창",
+    "width": 851
+  },
+  {
+    "id": "broadcast-settings",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 851
+  },
+  {
+    "id": "live",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 1024
+  },
+  {
+    "id": "live",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "불러오는 중",
+    "width": 1024
+  },
+  {
+    "id": "live",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "불러오기 실패",
+    "width": 1024
+  },
+  {
+    "id": "following",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "팔로우 없음",
+    "width": 1024
+  },
+  {
+    "id": "search",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 1024
+  },
+  {
+    "id": "channel",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "방송 중",
+    "width": 1024
+  },
+  {
+    "id": "profile",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 1024
+  },
+  {
+    "id": "preferences",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 1024
+  },
+  {
+    "id": "security",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 1024
+  },
+  {
+    "id": "channel-edit",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 1024
+  },
+  {
+    "id": "studio",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "방송 전",
+    "width": 1024
+  },
+  {
+    "id": "studio",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "방송 중",
+    "width": 1024
+  },
+  {
+    "id": "watch",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 1024
+  },
+  {
+    "id": "info",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 1024
+  },
+  {
+    "id": "share",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 1024
+  },
+  {
+    "id": "donate",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "금액 선택",
+    "width": 1024
+  },
+  {
+    "id": "sources",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "프로그램 창",
+    "width": 1024
+  },
+  {
+    "id": "broadcast-settings",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 1024
+  },
+  {
+    "id": "live",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 1440
+  },
+  {
+    "id": "live",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "불러오는 중",
+    "width": 1440
+  },
+  {
+    "id": "live",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "불러오기 실패",
+    "width": 1440
+  },
+  {
+    "id": "following",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "팔로우 없음",
+    "width": 1440
+  },
+  {
+    "id": "search",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 1440
+  },
+  {
+    "id": "channel",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "방송 중",
+    "width": 1440
+  },
+  {
+    "id": "profile",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 1440
+  },
+  {
+    "id": "preferences",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 1440
+  },
+  {
+    "id": "security",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 1440
+  },
+  {
+    "id": "channel-edit",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 1440
+  },
+  {
+    "id": "studio",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "방송 전",
+    "width": 1440
+  },
+  {
+    "id": "studio",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "방송 중",
+    "width": 1440
+  },
+  {
+    "id": "watch",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 1440
+  },
+  {
+    "id": "info",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 1440
+  },
+  {
+    "id": "share",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 1440
+  },
+  {
+    "id": "donate",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "금액 선택",
+    "width": 1440
+  },
+  {
+    "id": "sources",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "프로그램 창",
+    "width": 1440
+  },
+  {
+    "id": "broadcast-settings",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 1440
+  },
+  {
+    "id": "live",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 1920
+  },
+  {
+    "id": "live",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "불러오는 중",
+    "width": 1920
+  },
+  {
+    "id": "live",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "불러오기 실패",
+    "width": 1920
+  },
+  {
+    "id": "following",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "팔로우 없음",
+    "width": 1920
+  },
+  {
+    "id": "search",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 1920
+  },
+  {
+    "id": "channel",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "방송 중",
+    "width": 1920
+  },
+  {
+    "id": "profile",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 1920
+  },
+  {
+    "id": "preferences",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 1920
+  },
+  {
+    "id": "security",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 1920
+  },
+  {
+    "id": "channel-edit",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 1920
+  },
+  {
+    "id": "studio",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "방송 전",
+    "width": 1920
+  },
+  {
+    "id": "studio",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "방송 중",
+    "width": 1920
+  },
+  {
+    "id": "watch",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 1920
+  },
+  {
+    "id": "info",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 1920
+  },
+  {
+    "id": "share",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 1920
+  },
+  {
+    "id": "donate",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "금액 선택",
+    "width": 1920
+  },
+  {
+    "id": "sources",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "프로그램 창",
+    "width": 1920
+  },
+  {
+    "id": "broadcast-settings",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 1920
+  },
+  {
+    "id": "live",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 3787
+  },
+  {
+    "id": "live",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "불러오는 중",
+    "width": 3787
+  },
+  {
+    "id": "live",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "불러오기 실패",
+    "width": 3787
+  },
+  {
+    "id": "following",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "팔로우 없음",
+    "width": 3787
+  },
+  {
+    "id": "search",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 3787
+  },
+  {
+    "id": "channel",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "방송 중",
+    "width": 3787
+  },
+  {
+    "id": "profile",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 3787
+  },
+  {
+    "id": "preferences",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 3787
+  },
+  {
+    "id": "security",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 3787
+  },
+  {
+    "id": "channel-edit",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 3787
+  },
+  {
+    "id": "studio",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "방송 전",
+    "width": 3787
+  },
+  {
+    "id": "studio",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "방송 중",
+    "width": 3787
+  },
+  {
+    "id": "watch",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 3787
+  },
+  {
+    "id": "info",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 3787
+  },
+  {
+    "id": "share",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 3787
+  },
+  {
+    "id": "donate",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "금액 선택",
+    "width": 3787
+  },
+  {
+    "id": "sources",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "프로그램 창",
+    "width": 3787
+  },
+  {
+    "id": "broadcast-settings",
+    "overflow": 0,
+    "scopeOverflow": 0,
+    "spill": [],
+    "state": "기본",
+    "width": 3787
+  }
+]

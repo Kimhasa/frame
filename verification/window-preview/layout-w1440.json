@@ -1,0 +1,411 @@
+{
+ "tag": "w1440",
+ "emulated": null,
+ "measuredAt": "2026-10-28T08:16:32.611Z",
+ "viewport": {
+  "w": 1441,
+  "h": 1001,
+  "dpr": 1.75,
+  "scrollbar": 0
+ },
+ "dialog": {
+  "x": 160.6,
+  "y": 50.1,
+  "w": 1120,
+  "h": 901
+ },
+ "passed": true,
+ "checks": [
+  {
+   "name": "player frames unchanged by the 0.6.1 styles (removed for the comparison)",
+   "ok": true,
+   "data": {
+    "removedBytes": 2816,
+    "frames": [
+     [
+      "sender-preview",
+      858,
+      450.5
+     ],
+     [
+      "viewer-stage",
+      0,
+      0
+     ],
+     [
+      "viewer-preview",
+      0,
+      0
+     ]
+    ]
+   }
+  },
+  {
+   "name": "dialog width min(1120, visible width - 48) and centred",
+   "ok": true,
+   "data": {
+    "dialog": {
+     "x": 160.6,
+     "y": 50.1,
+     "w": 1120,
+     "h": 901
+    },
+    "viewport": {
+     "w": 1441,
+     "h": 1001,
+     "dpr": 1.75,
+     "scrollbar": 0
+    }
+   }
+  },
+  {
+   "name": "dialog height at most 90 % of the viewport; buttons inside the window",
+   "ok": true,
+   "data": {
+    "dialogH": 901,
+    "maxH": 900.9,
+    "confirmBottom": 935.5
+   }
+  },
+  {
+   "name": "no sideways scroll (page or dialog); the list scrolls by itself when longer",
+   "ok": true,
+   "data": {
+    "content": 4321,
+    "visible": 688,
+    "pageX": false,
+    "dialogX": false
+   }
+  },
+  {
+   "name": "two columns unless a card would be under ~280 px",
+   "ok": true,
+   "data": {
+    "columns": 2,
+    "cardW": 521
+   }
+  },
+  {
+   "name": "thumbnail box 16:9 at the card width; overlay on it (< 1 px)",
+   "ok": true,
+   "data": [
+    [
+     {
+      "x": 184.7,
+      "y": 215.1,
+      "w": 519.9,
+      "h": 292.4
+     },
+     {
+      "x": 185.1,
+      "y": 215.5,
+      "w": 519,
+      "h": 291.9
+     }
+    ],
+    [
+     {
+      "x": 721.7,
+      "y": 215.1,
+      "w": 519.9,
+      "h": 292.4
+     },
+     {
+      "x": 722.1,
+      "y": 215.5,
+      "w": 519,
+      "h": 291.9
+     }
+    ]
+   ]
+  },
+  {
+   "name": "title rows: one height on every card, 24 px icon, 16 px title, inside the card",
+   "ok": true,
+   "data": {
+    "labelH": 48,
+    "font": "16px 550"
+   }
+  },
+  {
+   "name": "long Korean title: one line with ellipsis, full title in tooltip and accessible name",
+   "ok": true,
+   "data": {
+    "ellipsis": true,
+    "labelH": 48
+   }
+  },
+  {
+   "name": "same title and program: the cards still differ by the least needed",
+   "ok": true,
+   "data": [
+    "FRAME 같은 제목 시험 (probe.exe 1)",
+    "FRAME 같은 제목 시험 (probe.exe 2)"
+   ]
+  },
+  {
+   "name": "windows without an icon keep the default icon (same 24 px box); the list is not held up by a hung window",
+   "ok": true,
+   "data": [
+    [
+     "빈 창 시험",
+     false
+    ],
+    [
+     "캡처 제외 시험",
+     false
+    ],
+    [
+     "응답 없음 시험",
+     false
+    ],
+    [
+     "비율 울트라와이드",
+     false
+    ],
+    [
+     "비율 정사각",
+     false
+    ],
+    [
+     "비율 세로",
+     false
+    ],
+    [
+     "비율 4x3",
+     false
+    ],
+    [
+     "비율 16x9",
+     false
+    ]
+   ]
+  },
+  {
+   "name": "edge bands 16x9 (1280x720): all four edges in the image, aspect kept, contain fit",
+   "ok": true,
+   "data": {
+    "size": [
+     916,
+     516
+    ],
+    "top": [
+     254,
+     0,
+     0
+    ],
+    "bottom": [
+     0,
+     0,
+     254
+    ],
+    "left": [
+     252,
+     0,
+     254
+    ],
+    "right": [
+     0,
+     200,
+     0
+    ],
+    "centre": [
+     217,
+     219,
+     221
+    ],
+    "shown": [
+     518.1,
+     291.8
+    ],
+    "box": [
+     519.9,
+     291.8
+    ]
+   }
+  },
+  {
+   "name": "edge bands 4x3 (1024x768): all four edges in the image, aspect kept, contain fit",
+   "ok": true,
+   "data": {
+    "size": [
+     688,
+     516
+    ],
+    "top": [
+     255,
+     1,
+     1
+    ],
+    "bottom": [
+     0,
+     0,
+     254
+    ],
+    "left": [
+     253,
+     0,
+     255
+    ],
+    "right": [
+     0,
+     199,
+     0
+    ],
+    "centre": [
+     213,
+     216,
+     219
+    ],
+    "shown": [
+     389.1,
+     291.8
+    ],
+    "box": [
+     519.9,
+     291.8
+    ]
+   }
+  },
+  {
+   "name": "edge bands 세로 (600x1000): all four edges in the image, aspect kept, contain fit",
+   "ok": true,
+   "data": {
+    "size": [
+     310,
+     516
+    ],
+    "top": [
+     230,
+     9,
+     8
+    ],
+    "bottom": [
+     5,
+     3,
+     224
+    ],
+    "left": [
+     234,
+     12,
+     235
+    ],
+    "right": [
+     16,
+     188,
+     15
+    ],
+    "centre": [
+     230,
+     232,
+     234
+    ],
+    "shown": [
+     175.3,
+     291.8
+    ],
+    "box": [
+     519.9,
+     291.8
+    ]
+   }
+  },
+  {
+   "name": "edge bands 정사각 (800x800): all four edges in the image, aspect kept, contain fit",
+   "ok": true,
+   "data": {
+    "size": [
+     516,
+     516
+    ],
+    "top": [
+     255,
+     1,
+     1
+    ],
+    "bottom": [
+     0,
+     0,
+     254
+    ],
+    "left": [
+     253,
+     0,
+     255
+    ],
+    "right": [
+     0,
+     200,
+     0
+    ],
+    "centre": [
+     227,
+     229,
+     231
+    ],
+    "shown": [
+     291.8,
+     291.8
+    ],
+    "box": [
+     519.9,
+     291.8
+    ]
+   }
+  },
+  {
+   "name": "edge bands 울트라와이드 (1720x720): all four edges in the image, aspect kept, contain fit",
+   "ok": true,
+   "data": {
+    "size": [
+     920,
+     384
+    ],
+    "top": [
+     230,
+     9,
+     8
+    ],
+    "bottom": [
+     5,
+     3,
+     224
+    ],
+    "left": [
+     234,
+     12,
+     235
+    ],
+    "right": [
+     15,
+     189,
+     12
+    ],
+    "centre": [
+     207,
+     210,
+     213
+    ],
+    "shown": [
+     519.9,
+     217
+    ],
+    "box": [
+     519.9,
+     291.8
+    ]
+   }
+  },
+  {
+   "name": "keyboard: Tab moves between cards, the focused card is scrolled into view; Escape closes",
+   "ok": true,
+   "data": {
+    "focused": {
+     "cls": "source-choice",
+     "visible": true
+    },
+    "closed": true
+   }
+  }
+ ]
+}

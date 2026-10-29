@@ -1,0 +1,292 @@
+[
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "live"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "watch"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "following"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "search"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "channel"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "vod"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "vod-watch"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "clips"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "clip-watch"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "history"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "notifications"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "studio"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "sources"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "broadcast-settings"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "connection"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "broadcast-details"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "broadcast-end"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "recordings"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "schedule"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "scenes"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "login"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "profile"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "security"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "preferences"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "channel-edit"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "moderation"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "reports"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "creator-stats"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "revenue"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "transactions"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "integrations"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "missions-manage"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "polls-manage"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "rewards-manage"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "members"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "donate"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "membership"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "mission"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "poll"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "rewards"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "share"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "info"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "quality"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "nickname"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "manual"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "report-content"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "clip-create"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "service-health"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "service-reports"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "audit"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "policy"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "update"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "devices"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "recommendations"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "raid"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "drop-rewards"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "developer"
+  },
+  {
+    "footerVisible": true,
+    "overflow": 0,
+    "screen": "verification"
+  }
+]

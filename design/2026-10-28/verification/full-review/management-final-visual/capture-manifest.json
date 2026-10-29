@@ -1,0 +1,76 @@
+{
+  "captures": [
+    {
+      "screenId": "moderation",
+      "path": "C:/Users/wlsdu/OneDrive/Desktop/frame/design/2026-10-28/verification/full-review/management-final-visual/moderation-mobile.jpg",
+      "axisFont": null,
+      "height": 887,
+      "launcherVisible": false,
+      "overflow": 0
+    },
+    {
+      "screenId": "creator-stats",
+      "path": "C:/Users/wlsdu/OneDrive/Desktop/frame/design/2026-10-28/verification/full-review/management-final-visual/creator-stats-mobile.jpg",
+      "axisFont": "12px",
+      "height": 1212,
+      "launcherVisible": false,
+      "overflow": 0
+    },
+    {
+      "screenId": "revenue",
+      "path": "C:/Users/wlsdu/OneDrive/Desktop/frame/design/2026-10-28/verification/full-review/management-final-visual/revenue-mobile.jpg",
+      "axisFont": null,
+      "height": 1313,
+      "launcherVisible": false,
+      "overflow": 0
+    },
+    {
+      "screenId": "polls-manage",
+      "path": "C:/Users/wlsdu/OneDrive/Desktop/frame/design/2026-10-28/verification/full-review/management-final-visual/polls-manage-mobile.jpg",
+      "axisFont": null,
+      "height": 846,
+      "launcherVisible": false,
+      "overflow": 0
+    },
+    {
+      "screenId": "developer",
+      "path": "C:/Users/wlsdu/OneDrive/Desktop/frame/design/2026-10-28/verification/full-review/management-final-visual/developer-mobile.jpg",
+      "axisFont": null,
+      "height": 895,
+      "launcherVisible": false,
+      "overflow": 0
+    },
+    {
+      "screenId": "verification",
+      "path": "C:/Users/wlsdu/OneDrive/Desktop/frame/design/2026-10-28/verification/full-review/management-final-visual/verification-mobile.jpg",
+      "axisFont": null,
+      "height": 1407,
+      "launcherVisible": false,
+      "overflow": 0
+    },
+    {
+      "screenId": "service-health",
+      "path": "C:/Users/wlsdu/OneDrive/Desktop/frame/design/2026-10-28/verification/full-review/management-final-visual/service-health-mobile.jpg",
+      "axisFont": "12px",
+      "height": 1524,
+      "launcherVisible": false,
+      "overflow": 0
+    },
+    {
+      "screenId": "integrations",
+      "path": "C:/Users/wlsdu/OneDrive/Desktop/frame/design/2026-10-28/verification/full-review/management-final-visual/integrations-mobile.jpg",
+      "axisFont": null,
+      "height": 846,
+      "launcherVisible": false,
+      "overflow": 0
+    }
+  ],
+  "lastAction": {
+    "buttonBottom": 740.1428871154785,
+    "navigationTop": 784.0000610351562,
+    "pass": true,
+    "screen": "developer",
+    "scrollY": 51.42856979370117,
+    "test": "모바일 문서 끝에서 저장 버튼 접근"
+  }
+}

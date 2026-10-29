@@ -61,7 +61,10 @@ class Streamer {
   // Thread-safe snapshots for the UI and the viewer HTTP server.
   json Status() const;
   json ViewerInfo(const std::string& path) const;
+  // Aggregate media-server counters for /api/stats (paths, readers, WebRTC sessions, bytes); cached for 1 s, no addresses.
+  json ServerStats();
   int WebrtcHttpPort() const { return running_ ? webrtcHttpPort_.load() : 0; }
+  int HlsPort() const { return running_ ? hlsPort_ : 0; }
   std::string StreamPath() const;
   bool KnownStreamPath(const std::string& path) const;
   // Latest list-card JPEG for the running broadcast (empty when the id is not the current broadcast).
@@ -88,6 +91,11 @@ class Streamer {
   void ConfigureEncoderLocked(const std::string& encoder);
   void UpdateThumbnail();
   std::string RenditionCommand(const Rendition& r) const;
+  bool RelayTarget(std::string& url, std::string& error) const;
+  std::vector<std::wstring> RelayArgs(const std::string& url) const;
+  std::string RelayApi() const;
+  std::string IceHostsYaml() const;
+  void RelayLoop();
   bool WaitPublished(DWORD timeoutMs, std::string& error);
   void Fail(const std::string& reason);
   void KeepAwake(bool on);
@@ -112,6 +120,7 @@ class Streamer {
   std::atomic<int> webrtcHttpPort_{0};
   int apiPort_ = 0;
   int playbackPort_ = 0;
+  int hlsPort_ = 0;
 
   // Recording (DVR): MediaMTX records the published stream; recording_ is its current on/off state.
   RecordStore record_;
@@ -129,6 +138,12 @@ class Streamer {
   ScopedHandle stopEvent_;
   std::thread pump_, audioWriter_, stats_;
   std::atomic<bool> statsStop_{false};
+  std::thread relay_;  // relay list announcements and status, when an internet relay is configured
+  std::atomic<bool> relayStop_{false};
+  std::atomic<int64_t> discardWarnings_{0};  // MediaMTX "too slow" / discarding lines: a reader could not keep up
+  std::mutex serverStatsMutex_;
+  json serverStatsCache_;
+  int64_t serverStatsAt_ = 0;
 
   // Measurements (reset at start).
   std::atomic<uint64_t> written_{0}, uniqueSent_{0}, duplicates_{0}, skipped_{0};

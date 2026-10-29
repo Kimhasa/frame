@@ -15,7 +15,7 @@ namespace {
 constexpr size_t kMaxFrame = 16 * 1024;
 constexpr size_t kHistory = 200;
 constexpr size_t kHistoryOnJoin = 100;
-constexpr int kMaxClients = 300;
+constexpr int kMaxClients = 2000;  // each one holds a viewer-server connection thread (small stack) and a socket
 
 std::string Sha1(const std::string& data) {
   unsigned char digest[20] = {};
@@ -211,6 +211,13 @@ int ChatHub::ConnectionCount() const {
   return static_cast<int>(clients_.size());
 }
 
+json ChatHub::Stats() const {
+  std::lock_guard<std::mutex> lock(mutex_);
+  int joined = 0;
+  for (const auto& c : clients_) joined += c->joined ? 1 : 0;
+  return {{"clients", clients_.size()}, {"joined", joined}, {"refused", refused_.load()}};
+}
+
 void ChatHub::Broadcast(const json& event) {
   std::vector<std::shared_ptr<Client>> members;
   {
@@ -238,8 +245,9 @@ void ChatHub::Serve(SOCKET socket, const std::string& key, const std::string& pe
   {
     std::lock_guard<std::mutex> lock(mutex_);
     if (static_cast<int>(clients_.size()) >= kMaxClients) {
-      std::string busy = "HTTP/1.1 503 Service Unavailable\r\nContent-Length: 0\r\nConnection: close\r\n\r\n";
+      std::string busy = "HTTP/1.1 503 Service Unavailable\r\nRetry-After: 2\r\nContent-Length: 0\r\nConnection: close\r\n\r\n";
       SendAll(socket, busy.data(), busy.size());
+      ++refused_;
       return;
     }
     clients_.push_back(client);

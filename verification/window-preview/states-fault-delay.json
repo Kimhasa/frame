@@ -1,0 +1,33 @@
+{
+ "phase": "fault",
+ "fault": "delay",
+ "measuredAt": "2026-10-28T08:15:56.777Z",
+ "passed": true,
+ "checks": [
+  {
+   "name": "first frame late (fault delay): 응답이 늦습니다, then a current image on the next attempt",
+   "ok": true,
+   "data": {
+    "slow": "응답이 늦습니다",
+    "ready": {
+     "id": "wa40936-11832",
+     "state": "ready",
+     "fresh": "true",
+     "chip": "",
+     "retry": false,
+     "retryDisabled": false,
+     "disabled": false,
+     "pressed": "false",
+     "describedBy": true,
+     "detail": "",
+     "image": "25343:RRYCneXL+aOF6UUUVtFaCP/Z",
+     "h": 341.6,
+     "thumbH": 292.4,
+     "overlayH": 291.9,
+     "overlayTop": 0.4,
+     "waitedMs": 434
+    }
+   }
+  }
+ ]
+}

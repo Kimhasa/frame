@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <cmath>
 #include <fstream>
+#include <set>
 #include <sstream>
 
 #include "http_client.h"
@@ -489,7 +490,9 @@ json Streamer::ViewerInfo(const std::string& path) const {
   std::lock_guard<std::mutex> lock(mutex_);
   if (!running_ || path != settings_.streamPath) return {{"running", false}, {"path", path}};
   json renditions = json::array();
-  for (const auto& r : renditions_) renditions.push_back({{"name", r.name}, {"width", r.width}, {"height", r.height}});
+  // What each shared quality really is, for the viewers' automatic quality choice (same codec and frame rate as the source).
+  for (const auto& r : renditions_)
+    renditions.push_back({{"name", r.name}, {"width", r.width}, {"height", r.height}, {"mbps", r.mbps}, {"fps", settings_.fps}, {"codec", "H.264"}});
   return {{"running", true},
           {"path", settings_.streamPath},
           {"width", width_},
@@ -506,6 +509,192 @@ json Streamer::ViewerInfo(const std::string& path) const {
           {"publisher", publisher_},
           {"renditions", renditions},
           {"iceServers", settings_.iceServers}};
+}
+
+std::string Streamer::IceHostsYaml() const {
+  std::string out;
+  for (const auto& host : settings_.iceHosts)
+    if (host.is_string() && host.get<std::string>() != settings_.serverHost) out += ", " + YamlQuote(host.get<std::string>());
+  return out;
+}
+
+static std::string PercentEncode(const std::string& text) {
+  std::string out;
+  for (unsigned char c : text) out += isalnum(c) || c == '-' || c == '.' || c == '_' || c == '~' ? std::string(1, static_cast<char>(c)) : Printf("%%%02X", c);
+  return out;
+}
+
+bool Streamer::RelayTarget(std::string& url, std::string& error) const {
+  // relayPublishUrl may name the relay only (the broadcast's stream ID is appended) or include the path; the relay lists
+  // and serves the broadcast under the announced stream ID, so a different path would never be playable there.
+  url = settings_.relayPublishUrl;
+  size_t slash = url.find('/', url.find("://") + 3);
+  if (slash == std::string::npos) url += "/" + settings_.streamPath;
+  else if (url.substr(slash + 1) != settings_.streamPath) {
+    error = "중계 송출 주소의 경로(" + url.substr(slash + 1) + ")가 방송 스트림 ID(" + settings_.streamPath + ")와 다릅니다. 경로를 지우거나 같게 맞추세요.";
+    return false;
+  }
+  Secrets secrets = LoadSecrets();
+  if (!secrets.relayUser.empty()) {
+    size_t at = url.find("://") + 3;
+    url.insert(at, PercentEncode(secrets.relayUser) + ":" + PercentEncode(secrets.relayPassword) + "@");
+  }
+  return true;
+}
+
+std::vector<std::wstring> Streamer::RelayArgs(const std::string& url) const {
+  // The stream FFmpeg already encoded, read back from the local MediaMTX and sent unchanged (no second encode). The
+  // credentials only reach this process's command line (masked in the log), never mediamtx.yml. 1190-byte RTP packets
+  // fit the relay's WebRTC packets without repacketising.
+  std::vector<std::string> a = {"-hide_banner", "-nostdin", "-loglevel", "warning", "-rtsp_transport", "tcp",
+                                "-i", Printf("rtsp://127.0.0.1:%d/%s", settings_.publishPort, settings_.streamPath.c_str()),
+                                "-map", "0", "-c", "copy", "-f", "rtsp", "-rtsp_transport", "tcp", "-pkt_size", "1190"};
+  if (!settings_.relayCaFile.empty()) {
+    fs::path ca = Wide(settings_.relayCaFile);
+    if (ca.is_relative()) ca = ConfigPath().parent_path() / ca;
+    a.insert(a.end(), {"-ca_file", Utf8(ca.wstring())});
+  }
+  a.push_back(url);
+  std::vector<std::wstring> out;
+  for (const auto& s : a) out.push_back(Wide(s));
+  return out;
+}
+
+std::string Streamer::RelayApi() const { return !settings_.relayApiUrl.empty() ? settings_.relayApiUrl : settings_.publicUrl; }
+
+void Streamer::RelayLoop() {
+  // Sends the copy to the relay (restarted with growing pauses when the relay or the upload drops it), registers the
+  // broadcast on the relay's public list (the relay checks the token, not the sender's address), keeps the list thumbnail
+  // fresh and reports whether internet viewers can really play it there. Local sending, recording and same-network
+  // viewers never depend on the relay.
+  const std::string api = RelayApi();
+  Secrets secrets = LoadSecrets();
+  HttpHeaders auth = {{"Content-Type", "application/json"}};
+  if (!secrets.relayToken.empty()) auth.push_back({"Authorization", "Bearer " + secrets.relayToken});
+  std::string target, targetError;
+  bool copyWanted = !settings_.relayPublishUrl.empty();
+  if (copyWanted && !RelayTarget(target, targetError)) {
+    UiLog("중계", targetError);
+    copyWanted = false;
+  }
+  std::unique_ptr<ChildProcess> copy;
+  int64_t copyStartedAt = 0, nextCopyAt = 0;
+  int copyFailures = 0;
+  bool copyReported = false;
+  int lastState = -1, tick = 0;
+  std::string id;
+  while (!relayStop_) {
+    BroadcastItem item;
+    if (copyWanted && LocalItem(item)) {
+      int64_t now = EpochMillis();
+      if (copy && !copy->Running()) {
+        std::string tail = JoinTail(copy->Tail(), 2);
+        LogFile("relay", Printf("copy exited (code %lu): ", copy->ExitCode()) + tail);
+        copyFailures = now - copyStartedAt > 30000 ? 1 : copyFailures + 1;
+        int64_t pause = std::min<int64_t>(30000, 2000LL << std::min(copyFailures - 1, 4));
+        if (!copyReported)
+          UiLog("중계", Printf("중계 서버로 보내는 연결이 끊겼습니다. %lld초 뒤 다시 연결합니다. ", static_cast<long long>(pause / 1000)) + tail.substr(0, 200));
+        copyReported = true;
+        nextCopyAt = now + pause;
+        copy.reset();
+      }
+      HttpResponse ready;
+      if (!copy && now >= nextCopyAt && HttpRequest("GET", apiPort_, "/v3/paths/get/" + settings_.streamPath, "", {}, ready, 1000) &&
+          ready.status == 200 && json::parse(ready.body, nullptr, false).value("ready", false)) {
+        copy = std::make_unique<ChildProcess>();
+        std::string error;
+        auto onLine = [](const std::string& line) { LogFile("relay", line); };
+        if (copy->Start(ffmpegExe_, RelayArgs(target), RuntimeDir(), onLine, onLine, error)) {
+          copyStartedAt = now;
+        } else {
+          LogFile("relay", "copy start failed: " + error);
+          copy.reset();
+          nextCopyAt = now + 10000;
+        }
+      }
+      if (copy && copyReported && now - copyStartedAt > 10000 && copy->Running()) copyReported = false;  // up again; report the next drop
+    }
+    // Ticks are 100 ms: announcement and relay status every 2 s, thumbnail every 10 s.
+    if (tick % 20 == 0 && LocalItem(item)) {
+      id = item.id;
+      json renditions = ViewerInfo(item.path).value("renditions", json::array());
+      json message = {{"v", 1}, {"type", "announce"},
+                      {"item", {{"id", item.id}, {"title", item.title}, {"publisher", item.publisher}, {"path", item.path}, {"width", item.width},
+                                {"height", item.height}, {"fps", item.fps}, {"startedAtMs", item.startedAtMs}, {"bitrate", settings_.bitrateMbps},
+                                {"audio", settings_.audio}, {"renditions", renditions}, {"sentAtMs", EpochMillis()}}}};
+      HttpResponse r;
+      std::string error;
+      int round = tick / 20;
+      if (!api.empty() && !secrets.relayToken.empty() &&
+          (!HttpRequestUrl(api + "/api/broadcasts/announce", "POST", message.dump(), auth, r, 3000, &error) || r.status / 100 != 2) && round % 15 == 0)
+        LogFile("relay", "announce failed: " + (error.empty() ? Printf("%d ", r.status) + r.body.substr(0, 160) : error));
+      if (!api.empty() && !secrets.relayToken.empty() && round % 5 == 0) {
+        std::string jpeg = Thumbnail(item.id);
+        HttpHeaders imageHeaders = {{"Content-Type", "image/jpeg"}, {"Authorization", "Bearer " + secrets.relayToken}};
+        if (!jpeg.empty()) HttpRequestUrl(api + "/api/broadcasts/" + item.id + "/thumbnail", "PUT", jpeg, imageHeaders, r, 3000, &error);
+      }
+      int state = 0;
+      if (!api.empty() && HttpRequestUrl(api + "/" + item.path + "/info", "GET", "", {}, r, 3000, &error) && r.status == 200) {
+        json info = json::parse(r.body, nullptr, false);
+        state = info.is_object() && info.value("running", false) && info.value("mediaReady", true) ? 1 : 0;
+      }
+      if (state != lastState && !api.empty()) {
+        if (state) UiLog("중계", "중계 서버에서 시청할 수 있습니다: " + (settings_.publicUrl.empty() ? api : settings_.publicUrl) + "/" + item.path);
+        else if (round >= 3) UiLog("중계", "중계 서버에서 아직 방송을 받지 못했습니다. 중계 주소·인증 정보·방화벽을 확인하세요(로컬 송출은 계속됩니다).");
+        if (state || round >= 3) lastState = state;
+      }
+    }
+    ++tick;
+    Sleep(100);
+  }
+  if (copy) copy->Terminate();
+  if (!api.empty() && !secrets.relayToken.empty() && !id.empty()) {
+    HttpResponse r;
+    HttpRequestUrl(api + "/api/broadcasts/announce", "POST", json{{"v", 1}, {"type", "bye"}, {"id", id}}.dump(), auth, r, 2000);
+  }
+}
+
+json Streamer::ServerStats() {
+  // Aggregate counters only (no addresses, no control), cached for 1 s so frequent polling cannot load MediaMTX.
+  std::lock_guard<std::mutex> lock(serverStatsMutex_);
+  int64_t now = EpochMillis();
+  if (!serverStatsCache_.is_null() && now - serverStatsAt_ < 1000) return serverStatsCache_;
+  json out = {{"v", 1}, {"timeMs", now}, {"running", running_.load()}, {"paths", json::object()},
+              {"webrtc", {{"sessions", 0}, {"bytesSent", 0}, {"bytesReceived", 0}}}, {"mediaDiscardWarnings", discardWarnings_.load()}};
+  int api = running_ ? apiPort_ : 0;
+  auto bytes = [](const json& item, const char* a, const char* b) {
+    const json* v = item.contains(a) ? &item[a] : item.contains(b) ? &item[b] : nullptr;
+    return v && v->is_number() ? v->get<int64_t>() : int64_t{0};
+  };
+  HttpResponse r;
+  if (api && HttpRequest("GET", api, "/v3/paths/list?itemsPerPage=1000", "", {}, r, 1500) && r.status == 200) {
+    json list = json::parse(r.body, nullptr, false);
+    if (list.is_object() && list["items"].is_array())
+      for (const auto& p : list["items"]) {
+        if (!p.is_object()) continue;
+        out["paths"][p.value("name", std::string())] = {{"ready", p.value("ready", false)},
+                                                        {"readers", p.contains("readers") && p["readers"].is_array() ? p["readers"].size() : 0},
+                                                        {"bytesReceived", bytes(p, "inboundBytes", "bytesReceived")},
+                                                        {"bytesSent", bytes(p, "outboundBytes", "bytesSent")}};
+      }
+  }
+  int64_t sessions = 0, sent = 0, received = 0;
+  for (int page = 0; api && page < 20; ++page) {
+    if (!HttpRequest("GET", api, Printf("/v3/webrtcsessions/list?itemsPerPage=1000&page=%d", page), "", {}, r, 2000) || r.status != 200) break;
+    json list = json::parse(r.body, nullptr, false);
+    if (!list.is_object() || !list["items"].is_array()) break;
+    for (const auto& s : list["items"]) {
+      if (!s.is_object()) continue;
+      ++sessions;
+      sent += bytes(s, "outboundBytes", "bytesSent");
+      received += bytes(s, "inboundBytes", "bytesReceived");
+    }
+    if (page + 1 >= list.value("pageCount", 1)) break;
+  }
+  out["webrtc"] = {{"sessions", sessions}, {"bytesSent", sent}, {"bytesReceived", received}};
+  serverStatsCache_ = out;
+  serverStatsAt_ = now;
+  return out;
 }
 
 std::string Streamer::RenditionCommand(const Rendition& r) const {
@@ -542,13 +731,15 @@ bool Streamer::StartMediaMtx(std::string& field, std::string& error) {
   webrtcHttpPort_ = FreeLoopbackPort();
   apiPort_ = FreeLoopbackPort();
   playbackPort_ = FreeLoopbackPort();
-  if (!webrtcHttpPort_ || !apiPort_ || !playbackPort_ || webrtcHttpPort_ == apiPort_ || playbackPort_ == apiPort_ || playbackPort_ == webrtcHttpPort_) {
+  hlsPort_ = FreeLoopbackPort();
+  std::set<int> ports = {webrtcHttpPort_.load(), apiPort_, playbackPort_, hlsPort_};
+  if (!webrtcHttpPort_ || !apiPort_ || !playbackPort_ || !hlsPort_ || ports.size() != 4) {
     error = "내부 서버 포트를 할당할 수 없습니다.";
     return false;
   }
   std::ostringstream y;
   y << "# Generated by FRAME Console for one session. Edit config\\frame-console.json instead.\n"
-    << "logLevel: info\nlogDestinations: [stdout]\nreadTimeout: 10s\nwriteTimeout: 10s\nwriteQueueSize: 2048\n"
+    << "logLevel: info\nlogDestinations: [stdout]\nreadTimeout: 10s\nwriteTimeout: 10s\nwriteQueueSize: 4096\n"
     << "authInternalUsers:\n"
     << "  - user: any\n    pass:\n    ips: ['127.0.0.1', '::1']\n    permissions:\n      - action: publish\n      - action: read\n      - action: api\n      - action: playback\n"
     << "  - user: any\n    pass:\n    ips: []\n    permissions:\n      - action: read\n"
@@ -556,11 +747,15 @@ bool Streamer::StartMediaMtx(std::string& field, std::string& error) {
     // Recorded-media server for the DVR, loopback only; the viewer server forwards bounded chunk requests to it.
     << "playback: true\nplaybackAddress: 127.0.0.1:" << playbackPort_ << "\n"
     << "rtsp: true\nrtspTransports: [tcp]\nrtspEncryption: \"no\"\nrtspAddress: 127.0.0.1:" << settings_.publishPort << "\n"
-    << "rtmp: false\nhls: false\nsrt: false\nmoq: false\n"
+    << "rtmp: false\nsrt: false\nmoq: false\n"
+    // Low-latency HLS (fMP4, H.264 + Opus as published, no re-encode) on loopback, made only when a viewer asks for it:
+    // the fallback for browsers or networks where WebRTC does not work. The viewer server forwards /<path>/hls/<file>.
+    << "hls: true\nhlsAddress: 127.0.0.1:" << hlsPort_ << "\nhlsVariant: lowLatency\nhlsAlwaysRemux: false\nhlsSegmentCount: 7\n"
+    << "hlsSegmentDuration: 1s\nhlsPartDuration: 200ms\nhlsAllowOrigins: ['*']\n"
     << "webrtc: true\nwebrtcAddress: 127.0.0.1:" << webrtcHttpPort_ << "\nwebrtcEncryption: false\nwebrtcAllowOrigins: ['*']\n"
     << "webrtcTrustedProxies: ['127.0.0.1']\nwebrtcLocalUDPAddress: ':" << settings_.iceUdpPort << "'\n"
     << "webrtcLocalTCPAddress: '" << (settings_.iceTcpPort ? ":" + std::to_string(settings_.iceTcpPort) : std::string()) << "'\n"
-    << "webrtcIPsFromInterfaces: true\nwebrtcIPsFromInterfacesList: []\nwebrtcAdditionalHosts: [" << YamlQuote(settings_.serverHost) << "]\n"
+    << "webrtcIPsFromInterfaces: true\nwebrtcIPsFromInterfacesList: []\nwebrtcAdditionalHosts: [" << YamlQuote(settings_.serverHost) << IceHostsYaml() << "]\n"
     << "webrtcICEServers2:";
   if (settings_.iceServers.empty()) y << " []";
   y << "\n";
@@ -581,7 +776,7 @@ bool Streamer::StartMediaMtx(std::string& field, std::string& error) {
   }
   for (const auto& r : renditions_) {
     y << "  " << YamlQuote(settings_.streamPath + "/" + r.name) << ":\n    runOnDemand: " << YamlQuote(RenditionCommand(r))
-      << "\n    runOnDemandStartTimeout: 15s\n    runOnDemandCloseAfter: 10s\n";
+      << "\n    runOnDemandStartTimeout: 15s\n    runOnDemandCloseAfter: 30s\n";  // outlives a viewer's brief quality round trip
   }
   fs::path config = RuntimeDir() / L"mediamtx.yml";
   {
@@ -594,8 +789,9 @@ bool Streamer::StartMediaMtx(std::string& field, std::string& error) {
   }
   mediamtx_ = std::make_unique<ChildProcess>();
   auto sessions = std::make_shared<std::map<std::string, std::string>>();
-  auto onLine = [sessions](const std::string& line) {
+  auto onLine = [this, sessions](const std::string& line) {
     LogFile("mediamtx", line);
+    if (line.find("too slow") != std::string::npos || line.find("discarding") != std::string::npos) ++discardWarnings_;
     size_t recorder = line.find("[recorder]");
     if (recorder != std::string::npos && (line.find(" ERR ") != std::string::npos || line.find(" WAR ") != std::string::npos)) {
       // Disk full, permission or write errors; at most one entry per 10 s in the event table, all of them in the log file.
@@ -871,6 +1067,8 @@ bool Streamer::Start(const Settings& settings, std::shared_ptr<WindowCapture> ca
   KeepAwake(true);
   statsStop_ = false;
   stats_ = std::thread([this] { StatsLoop(); });
+  relayStop_ = false;
+  if (!settings_.relayPublishUrl.empty() || !settings_.relayApiUrl.empty()) relay_ = std::thread([this] { RelayLoop(); });
 
   int refresh = WindowMonitorRefreshRate(capture->Window());
   std::string audioText = settings.audio == "none" ? "없음" : "Opus " + std::to_string(settings.audioBitrateKbps) + "kbps 48kHz 스테레오";
@@ -936,6 +1134,8 @@ void Streamer::Stop(const std::string& reason, bool failed) {
   KeepAwake(false);
   statsStop_ = true;
   if (stats_.joinable() && stats_.get_id() != std::this_thread::get_id()) stats_.join();
+  relayStop_ = true;
+  if (relay_.joinable()) relay_.join();
   StopFfmpeg();
   if (audio_) audio_->Stop();
   audio_.reset();

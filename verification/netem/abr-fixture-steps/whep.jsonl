@@ -1,0 +1,13 @@
+{"t":1793167967098,"method":"POST","path":"/live/whep","quality":"source","status":201,"ms":193,"location":"/live/whep/05e5c11a-7036-4d7a-b250-e02517d07fca"}
+{"t":1793168028494,"method":"POST","path":"/live/480p/whep","quality":"480p","status":201,"ms":1626,"location":"/live/480p/whep/b2b97887-837f-462c-b0f7-ba0d434aec89"}
+{"t":1793168037272,"method":"DELETE","path":"/live/whep/05e5c11a-7036-4d7a-b250-e02517d07fca","quality":"source","status":200,"ms":6,"location":null}
+{"t":1793168050509,"method":"POST","path":"/live/720p/whep","quality":"720p","status":201,"ms":1674,"location":"/live/720p/whep/b21aecae-2359-4fa9-91fb-74393b1aed9f"}
+{"t":1793168052911,"method":"DELETE","path":"/live/480p/whep/b2b97887-837f-462c-b0f7-ba0d434aec89","quality":"480p","status":200,"ms":3,"location":null}
+{"t":1793168065509,"method":"POST","path":"/live/whep","quality":"source","status":201,"ms":129,"location":"/live/whep/1f043cfa-3646-4aa3-8a18-437280a2afd4"}
+{"t":1793168285045,"method":"DELETE","path":"/live/720p/whep/b21aecae-2359-4fa9-91fb-74393b1aed9f","quality":"720p","status":200,"ms":5,"location":null}
+{"t":1793168288509,"method":"POST","path":"/live/480p/whep","quality":"480p","status":201,"ms":1646,"location":"/live/480p/whep/9e907f31-3e3f-4b5a-be3a-bd5dc5ca88dc"}
+{"t":1793168290905,"method":"DELETE","path":"/live/whep/1f043cfa-3646-4aa3-8a18-437280a2afd4","quality":"source","status":200,"ms":1,"location":null}
+{"t":1793168315512,"method":"POST","path":"/live/720p/whep","quality":"720p","status":201,"ms":1603,"location":"/live/720p/whep/2dd9976a-e174-4cdf-949b-4085e0c85a14"}
+{"t":1793168317863,"method":"DELETE","path":"/live/480p/whep/9e907f31-3e3f-4b5a-be3a-bd5dc5ca88dc","quality":"480p","status":200,"ms":1,"location":null}
+{"t":1793168342498,"method":"POST","path":"/live/whep","quality":"source","status":201,"ms":133,"location":"/live/whep/e2d91b8c-31fc-4a85-b8b3-afa4478c3159"}
+{"t":1793168343183,"method":"DELETE","path":"/live/720p/whep/2dd9976a-e174-4cdf-949b-4085e0c85a14","quality":"720p","status":200,"ms":1,"location":null}

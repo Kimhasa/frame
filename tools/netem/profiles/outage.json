@@ -1,0 +1,18 @@
+{
+  "name": "outage",
+  "description": "양방향 순간 끊김 0.5·2·5·10초와 사이의 정상 구간(20초). 짧은 끊김 뒤 같은 연결의 자동 회복, 긴 끊김의 연결 상태 변화와 재연결을 시험한다.",
+  "defaults": {
+    "both": { "rateMbps": 30, "maxQueueMs": 250, "delayMs": 20 }
+  },
+  "steps": [
+    { "label": "normal", "duration": 20 },
+    { "label": "cut-0.5s", "duration": 0.5, "outage": true },
+    { "label": "after-0.5s", "duration": 20 },
+    { "label": "cut-2s", "duration": 2, "outage": true },
+    { "label": "after-2s", "duration": 20 },
+    { "label": "cut-5s", "duration": 5, "outage": true },
+    { "label": "after-5s", "duration": 20 },
+    { "label": "cut-10s", "duration": 10, "outage": true },
+    { "label": "after-10s", "duration": 25 }
+  ]
+}

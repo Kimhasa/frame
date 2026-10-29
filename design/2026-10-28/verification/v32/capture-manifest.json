@@ -1,0 +1,171 @@
+[
+  {
+    "name": "settings-profile",
+    "screen": "profile",
+    "section": "프로필",
+    "state": "기본",
+    "width": 1440,
+    "height": 1107,
+    "measured": {
+      "height": 1107,
+      "inner": 1440,
+      "overflow": 0
+    }
+  },
+  {
+    "name": "settings-account",
+    "screen": "security",
+    "section": "계정 연결",
+    "state": "기본",
+    "width": 1440,
+    "height": 1000,
+    "measured": {
+      "height": 1000,
+      "inner": 1440,
+      "overflow": 0
+    }
+  },
+  {
+    "name": "settings-security",
+    "screen": "security",
+    "section": "보안 및 기기",
+    "state": "기본",
+    "width": 1440,
+    "height": 1000,
+    "measured": {
+      "height": 1000,
+      "inner": 1440,
+      "overflow": 0
+    }
+  },
+  {
+    "name": "settings-notifications",
+    "screen": "preferences",
+    "section": "알림",
+    "state": "기본",
+    "width": 1440,
+    "height": 1000,
+    "measured": {
+      "height": 1000,
+      "inner": 1440,
+      "overflow": 0
+    }
+  },
+  {
+    "name": "settings-playback",
+    "screen": "preferences",
+    "section": "재생",
+    "state": "기본",
+    "width": 1440,
+    "height": 1000,
+    "measured": {
+      "height": 1000,
+      "inner": 1440,
+      "overflow": 0
+    }
+  },
+  {
+    "name": "settings-profile-mobile",
+    "screen": "profile",
+    "section": "프로필",
+    "state": "기본",
+    "width": 390,
+    "height": 844,
+    "measured": {
+      "height": 1130,
+      "inner": 390,
+      "overflow": 0
+    }
+  },
+  {
+    "name": "settings-account-mobile",
+    "screen": "security",
+    "section": "계정 연결",
+    "state": "기본",
+    "width": 390,
+    "height": 844,
+    "measured": {
+      "height": 846,
+      "inner": 390,
+      "overflow": 0
+    }
+  },
+  {
+    "name": "settings-security-mobile",
+    "screen": "security",
+    "section": "보안 및 기기",
+    "state": "기본",
+    "width": 390,
+    "height": 844,
+    "measured": {
+      "height": 846,
+      "inner": 390,
+      "overflow": 0
+    }
+  },
+  {
+    "name": "settings-notifications-mobile",
+    "screen": "preferences",
+    "section": "알림",
+    "state": "기본",
+    "width": 390,
+    "height": 844,
+    "measured": {
+      "height": 881,
+      "inner": 390,
+      "overflow": 0
+    }
+  },
+  {
+    "name": "settings-playback-mobile",
+    "screen": "preferences",
+    "section": "재생",
+    "state": "기본",
+    "width": 390,
+    "height": 844,
+    "measured": {
+      "height": 855,
+      "inner": 390,
+      "overflow": 0
+    }
+  },
+  {
+    "name": "settings-profile-error",
+    "screen": "profile",
+    "section": "프로필",
+    "state": "닉네임 오류",
+    "width": 1440,
+    "height": 1107,
+    "measured": {
+      "height": 1107,
+      "inner": 1440,
+      "overflow": 0
+    }
+  },
+  {
+    "name": "settings-notifications-blocked",
+    "screen": "preferences",
+    "section": "알림",
+    "state": "알림 차단",
+    "width": 1440,
+    "height": 1000,
+    "measured": {
+      "height": 1000,
+      "inner": 1440,
+      "overflow": 0
+    }
+  },
+  {
+    "name": "settings-security-reauth",
+    "screen": "security",
+    "section": "보안 및 기기",
+    "state": "재인증 필요",
+    "width": 1440,
+    "height": 1000,
+    "measured": {
+      "height": 1000,
+      "inner": 1440,
+      "overflow": 0
+    }
+  }
+]

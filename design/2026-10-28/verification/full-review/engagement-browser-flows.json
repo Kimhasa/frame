@@ -1,0 +1,630 @@
+{
+  "date": "2026-10-29",
+  "scope": "Local UI prototype only. No external payment, cast, reporting, encoding, or account API is invoked.",
+  "browser": {
+    "type": "Chrome extension",
+    "tabId": "1421141249",
+    "fallbackReason": "Subagent IAB capability unavailable; used a separate Chrome QA tab. No native OS input or user-owned tabs were operated."
+  },
+  "methods": [
+    "CDP Runtime.evaluate for authored local prototype navigation and DOM input/click/submit events",
+    "Condition-based completion waits, maximum 5 seconds",
+    "DOM-dispatched keyboard-handler checks for tab/radio arrows, Tab/Shift+Tab boundary trap, Escape and listbox focus",
+    "390x844 mobile viewport for expanded forms, errors and confirmations"
+  ],
+  "checks": [
+    {
+      "detail": {
+        "errors": [
+          "v33-engage-donate-payment",
+          "v33-engage-donate-consent"
+        ],
+        "focus": "v33-engage-donate-payment",
+        "heading": "후원하기",
+        "screen": "donate",
+        "state": "금액 선택"
+      },
+      "name": "empty payment/consent produces inline errors and focus",
+      "passed": true,
+      "screen": "donate"
+    },
+    {
+      "detail": {},
+      "name": "minimum amount error",
+      "passed": true,
+      "screen": "donate"
+    },
+    {
+      "detail": {},
+      "name": "editing clears amount error",
+      "passed": true,
+      "screen": "donate"
+    },
+    {
+      "detail": {},
+      "name": "tab End selects video",
+      "passed": true,
+      "screen": "donate"
+    },
+    {
+      "detail": {},
+      "name": "video requires URL",
+      "passed": true,
+      "screen": "donate"
+    },
+    {
+      "detail": {},
+      "name": "tab draft is retained",
+      "passed": true,
+      "screen": "donate"
+    },
+    {
+      "detail": {},
+      "name": "valid submit enters processing and removes submit",
+      "passed": true,
+      "screen": "donate"
+    },
+    {
+      "detail": {},
+      "name": "completion retains selected amount",
+      "passed": true,
+      "screen": "donate"
+    },
+    {
+      "detail": {
+        "screen": "watch",
+        "state": "지난 구간"
+      },
+      "name": "close restores originating watch state",
+      "passed": true,
+      "screen": "donate"
+    },
+    {
+      "detail": {},
+      "name": "payment and billing consent required",
+      "passed": true,
+      "screen": "membership"
+    },
+    {
+      "detail": {},
+      "name": "gift quantity updates total",
+      "passed": true,
+      "screen": "membership"
+    },
+    {
+      "detail": {},
+      "name": "gift still requires explicit consent",
+      "passed": true,
+      "screen": "membership"
+    },
+    {
+      "detail": {},
+      "name": "gift completes with recipient quantity",
+      "passed": true,
+      "screen": "membership"
+    },
+    {
+      "detail": {},
+      "name": "Tab traps focus at dialog start",
+      "passed": true,
+      "screen": "membership"
+    },
+    {
+      "detail": {},
+      "name": "Shift Tab traps focus at dialog end",
+      "passed": true,
+      "screen": "membership"
+    },
+    {
+      "detail": {},
+      "name": "Escape restores original viewing state",
+      "passed": true,
+      "screen": "membership"
+    },
+    {
+      "detail": {},
+      "name": "mission requires title and completion condition",
+      "passed": true,
+      "screen": "mission"
+    },
+    {
+      "detail": {},
+      "name": "paid mission reveals amount and payment fields",
+      "passed": true,
+      "screen": "mission"
+    },
+    {
+      "detail": {},
+      "name": "paid mission requires payment and agreement",
+      "passed": true,
+      "screen": "mission"
+    },
+    {
+      "detail": {},
+      "name": "proposal receipt waits for acceptance",
+      "passed": true,
+      "screen": "mission"
+    },
+    {
+      "detail": {},
+      "name": "close restores watch time state",
+      "passed": true,
+      "screen": "mission"
+    },
+    {
+      "detail": {},
+      "name": "failure is not success tone",
+      "passed": true,
+      "screen": "mission"
+    },
+    {
+      "detail": {},
+      "name": "vote disabled until selection",
+      "passed": true,
+      "screen": "poll"
+    },
+    {
+      "detail": {},
+      "name": "radio arrow selects and focuses next option",
+      "passed": true,
+      "screen": "poll"
+    },
+    {
+      "detail": {},
+      "name": "vote result retains own selection and locks options",
+      "passed": true,
+      "screen": "poll"
+    },
+    {
+      "detail": {},
+      "name": "question tab hides vote controls",
+      "passed": true,
+      "screen": "poll"
+    },
+    {
+      "detail": {},
+      "name": "empty question error and focus",
+      "passed": true,
+      "screen": "poll"
+    },
+    {
+      "detail": {},
+      "name": "question receipt retains submitted text",
+      "passed": true,
+      "screen": "poll"
+    },
+    {
+      "detail": {},
+      "name": "another question resets field",
+      "passed": true,
+      "screen": "poll"
+    },
+    {
+      "detail": {},
+      "name": "closed poll is read only",
+      "passed": true,
+      "screen": "poll"
+    },
+    {
+      "detail": {},
+      "name": "insufficient rewards are disabled with shortfall",
+      "passed": true,
+      "screen": "rewards"
+    },
+    {
+      "detail": {},
+      "name": "confirmation previews remaining points",
+      "passed": true,
+      "screen": "rewards"
+    },
+    {
+      "detail": {},
+      "name": "cancel returns to chosen reward focus without debit",
+      "passed": true,
+      "screen": "rewards"
+    },
+    {
+      "detail": {},
+      "name": "single redemption debits and records once",
+      "passed": true,
+      "screen": "rewards"
+    },
+    {
+      "detail": {},
+      "name": "result has no repeat submit",
+      "passed": true,
+      "screen": "rewards"
+    },
+    {
+      "detail": {},
+      "name": "history shows selected reward and debit",
+      "passed": true,
+      "screen": "rewards"
+    },
+    {
+      "detail": {},
+      "name": "return from ledger retains balance",
+      "passed": true,
+      "screen": "rewards"
+    },
+    {
+      "detail": {},
+      "name": "Escape restores viewing state",
+      "passed": true,
+      "screen": "rewards"
+    },
+    {
+      "detail": {},
+      "name": "reason required and focused",
+      "passed": true,
+      "screen": "report-content"
+    },
+    {
+      "detail": {},
+      "name": "other reason requires detail",
+      "passed": true,
+      "screen": "report-content"
+    },
+    {
+      "detail": {},
+      "name": "detail error clears while editing",
+      "passed": true,
+      "screen": "report-content"
+    },
+    {
+      "detail": {},
+      "name": "submission busy blocks duplicate controls",
+      "passed": true,
+      "screen": "report-content"
+    },
+    {
+      "detail": {},
+      "name": "report success retains reason",
+      "passed": true,
+      "screen": "report-content"
+    },
+    {
+      "detail": {},
+      "name": "Escape restores prior viewing state",
+      "passed": true,
+      "screen": "report-content"
+    },
+    {
+      "detail": {},
+      "name": "non-other detail is optional",
+      "passed": true,
+      "screen": "report-content"
+    },
+    {
+      "detail": {},
+      "name": "clip validates time order and title",
+      "passed": true,
+      "screen": "clip-create"
+    },
+    {
+      "detail": {},
+      "name": "clip rejects over 60 seconds",
+      "passed": true,
+      "screen": "clip-create"
+    },
+    {
+      "detail": {},
+      "name": "duration slider updates end time",
+      "passed": true,
+      "screen": "clip-create"
+    },
+    {
+      "detail": {},
+      "name": "end time updates duration slider",
+      "passed": true,
+      "screen": "clip-create"
+    },
+    {
+      "detail": {},
+      "name": "clip creation shows busy and no resubmit",
+      "passed": true,
+      "screen": "clip-create"
+    },
+    {
+      "detail": {},
+      "name": "clip success keeps input title and viewing link",
+      "passed": true,
+      "screen": "clip-create"
+    },
+    {
+      "detail": {},
+      "name": "close restores watch state",
+      "passed": true,
+      "screen": "clip-create"
+    },
+    {
+      "detail": {},
+      "name": "device search shows busy without action buttons",
+      "passed": true,
+      "screen": "devices"
+    },
+    {
+      "detail": {},
+      "name": "device search returns available device list",
+      "passed": true,
+      "screen": "devices"
+    },
+    {
+      "detail": {},
+      "name": "connecting retains selected device",
+      "passed": true,
+      "screen": "devices"
+    },
+    {
+      "detail": {},
+      "name": "connected result names selected device",
+      "passed": true,
+      "screen": "devices"
+    },
+    {
+      "detail": {},
+      "name": "disconnect returns device list",
+      "passed": true,
+      "screen": "devices"
+    },
+    {
+      "detail": {},
+      "name": "failure has recovery and retry",
+      "passed": true,
+      "screen": "devices"
+    },
+    {
+      "detail": {},
+      "name": "failure cancel restores watch state",
+      "passed": true,
+      "screen": "devices"
+    },
+    {
+      "detail": {},
+      "name": "raid next disabled before selection",
+      "passed": true,
+      "screen": "raid"
+    },
+    {
+      "detail": {},
+      "name": "search empty state hides channel and disables next",
+      "passed": true,
+      "screen": "raid"
+    },
+    {
+      "detail": {},
+      "name": "selecting channel stays in raid modal",
+      "passed": true,
+      "screen": "raid"
+    },
+    {
+      "detail": {},
+      "name": "raid confirmation explains voluntary move",
+      "passed": true,
+      "screen": "raid"
+    },
+    {
+      "detail": {},
+      "name": "back preserves chosen channel and focusable controls",
+      "passed": true,
+      "screen": "raid"
+    },
+    {
+      "detail": {},
+      "name": "raid completion has no repeated confirm",
+      "passed": true,
+      "screen": "raid"
+    },
+    {
+      "detail": {},
+      "name": "raid close restores origin state",
+      "passed": true,
+      "screen": "raid"
+    },
+    {
+      "detail": {},
+      "name": "incomplete viewing has disabled claim and remaining condition",
+      "passed": true,
+      "screen": "drop-rewards"
+    },
+    {
+      "detail": {},
+      "name": "progressbar has meaningful accessible values",
+      "passed": true,
+      "screen": "drop-rewards"
+    },
+    {
+      "detail": {},
+      "name": "eligible claim enabled",
+      "passed": true,
+      "screen": "drop-rewards"
+    },
+    {
+      "detail": {},
+      "name": "claim marks received and disables duplicate",
+      "passed": true,
+      "screen": "drop-rewards"
+    },
+    {
+      "detail": {},
+      "name": "disabled repeated claim does not change state",
+      "passed": true,
+      "screen": "drop-rewards"
+    },
+    {
+      "screen": "clip-create",
+      "name": "correcting invalid interval through duration slider clears linked end-field error",
+      "passed": true,
+      "detail": {
+        "retestedAfterReload": true,
+        "end": "00:19:00",
+        "remainingErrors": [
+          "title"
+        ]
+      }
+    },
+    {
+      "detail": {
+        "dialogWidth": 362.2857360839844,
+        "errors": 3,
+        "overflow": 0,
+        "spill": [],
+        "width": 390
+      },
+      "name": "390px mobile expanded/error/confirmation layout remains within viewport",
+      "passed": true,
+      "screen": "donate"
+    },
+    {
+      "detail": {
+        "dialogWidth": 362.2857360839844,
+        "errors": 3,
+        "overflow": 0,
+        "spill": [],
+        "width": 390
+      },
+      "name": "390px mobile expanded/error/confirmation layout remains within viewport",
+      "passed": true,
+      "screen": "membership"
+    },
+    {
+      "detail": {
+        "dialogWidth": 362.2857360839844,
+        "errors": 4,
+        "overflow": 0,
+        "spill": [],
+        "width": 390
+      },
+      "name": "390px mobile expanded/error/confirmation layout remains within viewport",
+      "passed": true,
+      "screen": "mission"
+    },
+    {
+      "detail": {
+        "dialogWidth": 362.2857360839844,
+        "errors": 1,
+        "overflow": 0,
+        "spill": [],
+        "width": 390
+      },
+      "name": "390px mobile expanded/error/confirmation layout remains within viewport",
+      "passed": true,
+      "screen": "poll"
+    },
+    {
+      "detail": {
+        "dialogWidth": 362.2857360839844,
+        "errors": 0,
+        "overflow": 0,
+        "spill": [],
+        "width": 390
+      },
+      "name": "390px mobile expanded/error/confirmation layout remains within viewport",
+      "passed": true,
+      "screen": "rewards"
+    },
+    {
+      "detail": {
+        "dialogWidth": 362.2857360839844,
+        "errors": 1,
+        "overflow": 0,
+        "spill": [],
+        "width": 390
+      },
+      "name": "390px mobile expanded/error/confirmation layout remains within viewport",
+      "passed": true,
+      "screen": "report-content"
+    },
+    {
+      "detail": {
+        "dialogWidth": 362.2857360839844,
+        "errors": 1,
+        "overflow": 0,
+        "spill": [],
+        "width": 390
+      },
+      "name": "390px mobile expanded/error/confirmation layout remains within viewport",
+      "passed": true,
+      "screen": "clip-create"
+    },
+    {
+      "detail": {
+        "dialogWidth": 362.2857360839844,
+        "errors": 0,
+        "overflow": 0,
+        "spill": [],
+        "width": 390
+      },
+      "name": "390px mobile expanded/error/confirmation layout remains within viewport",
+      "passed": true,
+      "screen": "devices"
+    },
+    {
+      "detail": {
+        "dialogWidth": 362.2857360839844,
+        "errors": 0,
+        "overflow": 0,
+        "spill": [],
+        "width": 390
+      },
+      "name": "390px mobile expanded/error/confirmation layout remains within viewport",
+      "passed": true,
+      "screen": "raid"
+    },
+    {
+      "detail": {
+        "dialogWidth": 358.0000305175781,
+        "errors": 0,
+        "overflow": 0,
+        "spill": [],
+        "width": 390
+      },
+      "name": "390px mobile expanded/error/confirmation layout remains within viewport",
+      "passed": true,
+      "screen": "drop-rewards"
+    },
+    {
+      "detail": {
+        "focusAction": "donate",
+        "screen": "watch",
+        "state": "지난 구간"
+      },
+      "name": "cancel from real watch button restores initiating control focus and playback state",
+      "passed": true,
+      "screen": "donate"
+    },
+    {
+      "detail": {
+        "focus": "v33-engage-donate-payment"
+      },
+      "name": "custom payment listbox ArrowDown and Escape focus behavior",
+      "passed": true,
+      "screen": "donate"
+    }
+  ],
+  "resolvedIssues": [
+    {
+      "screen": "clip-create",
+      "problem": "When an invalid end time was corrected through the length slider, the linked end field retained its previous red error.",
+      "change": "Cleared end-field error, aria-invalid/describedby and field styling when the synchronized interval becomes valid.",
+      "file": "dist/design-v33-engagement.js",
+      "retest": "Passed in reloaded real browser"
+    }
+  ],
+  "runtimeEvents": [],
+  "remainingLimitations": [
+    "Real service/API integration remains outside design-prototype scope.",
+    "Keyboard handler behavior was tested with DOM KeyboardEvents. Trusted browser default Enter/Tab actions were not driven because raw CDP Input is not available and native OS focus operations were excluded.",
+    "Mobile viewport checks are browser emulation, not physical-phone tests."
+  ],
+  "cleanup": {
+    "deviceMetricsReset": true,
+    "deliverableMarked": false
+  },
+  "summary": {
+    "screens": 10,
+    "checks": 84,
+    "failed": 0,
+    "runtimeErrors": 0
+  }
+}

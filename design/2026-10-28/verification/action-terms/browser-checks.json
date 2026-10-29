@@ -1,0 +1,1577 @@
+{
+  "date": "2026-10-29",
+  "scope": "UI 시안의 명칭·접근성 이름·동작 검사",
+  "widths": [
+    320,
+    390,
+    820,
+    1440
+  ],
+  "checks": [
+    {
+      "id": "channel:followed",
+      "ok": true,
+      "width": 320
+    },
+    {
+      "id": "channel:cancel",
+      "ok": true,
+      "width": 320
+    },
+    {
+      "id": "channel:media-retained",
+      "ok": true,
+      "width": 320
+    },
+    {
+      "id": "channel:follow",
+      "ok": true,
+      "width": 320
+    },
+    {
+      "id": "channel:layout",
+      "ok": true,
+      "details": {
+        "width": 320,
+        "scroll": 320
+      },
+      "width": 320
+    },
+    {
+      "id": "watch:followed",
+      "ok": true,
+      "width": 320
+    },
+    {
+      "id": "watch:cancel",
+      "ok": true,
+      "width": 320
+    },
+    {
+      "id": "watch:media-retained",
+      "ok": true,
+      "width": 320
+    },
+    {
+      "id": "watch:follow",
+      "ok": true,
+      "width": 320
+    },
+    {
+      "id": "watch:layout",
+      "ok": true,
+      "details": {
+        "width": 320,
+        "scroll": 320
+      },
+      "width": 320
+    },
+    {
+      "id": "vod-watch:followed",
+      "ok": true,
+      "width": 320
+    },
+    {
+      "id": "vod-watch:cancel",
+      "ok": true,
+      "width": 320
+    },
+    {
+      "id": "vod-watch:media-retained",
+      "ok": true,
+      "width": 320
+    },
+    {
+      "id": "vod-watch:follow",
+      "ok": true,
+      "width": 320
+    },
+    {
+      "id": "vod-watch:layout",
+      "ok": true,
+      "details": {
+        "width": 320,
+        "scroll": 320
+      },
+      "width": 320
+    },
+    {
+      "id": "clip-watch:followed",
+      "ok": true,
+      "width": 320
+    },
+    {
+      "id": "clip-watch:cancel",
+      "ok": true,
+      "width": 320
+    },
+    {
+      "id": "clip-watch:media-retained",
+      "ok": true,
+      "width": 320
+    },
+    {
+      "id": "clip-watch:follow",
+      "ok": true,
+      "width": 320
+    },
+    {
+      "id": "clip-watch:layout",
+      "ok": true,
+      "details": {
+        "width": 320,
+        "scroll": 320
+      },
+      "width": 320
+    },
+    {
+      "id": "following:destination",
+      "ok": true,
+      "width": 320
+    },
+    {
+      "id": "following:listed",
+      "ok": true,
+      "width": 320
+    },
+    {
+      "id": "reminder:off",
+      "ok": true,
+      "width": 320
+    },
+    {
+      "id": "reminder:on",
+      "ok": true,
+      "width": 320
+    },
+    {
+      "id": "reminder:cancel",
+      "ok": true,
+      "width": 320
+    },
+    {
+      "id": "notifications:action",
+      "ok": true,
+      "width": 320
+    },
+    {
+      "id": "notifications:read",
+      "ok": true,
+      "width": 320
+    },
+    {
+      "id": "channel:followed",
+      "ok": true,
+      "width": 390
+    },
+    {
+      "id": "channel:cancel",
+      "ok": true,
+      "width": 390
+    },
+    {
+      "id": "channel:media-retained",
+      "ok": true,
+      "width": 390
+    },
+    {
+      "id": "channel:follow",
+      "ok": true,
+      "width": 390
+    },
+    {
+      "id": "channel:layout",
+      "ok": true,
+      "details": {
+        "width": 390,
+        "scroll": 390
+      },
+      "width": 390
+    },
+    {
+      "id": "watch:followed",
+      "ok": true,
+      "width": 390
+    },
+    {
+      "id": "watch:cancel",
+      "ok": true,
+      "width": 390
+    },
+    {
+      "id": "watch:media-retained",
+      "ok": true,
+      "width": 390
+    },
+    {
+      "id": "watch:follow",
+      "ok": true,
+      "width": 390
+    },
+    {
+      "id": "watch:layout",
+      "ok": true,
+      "details": {
+        "width": 390,
+        "scroll": 390
+      },
+      "width": 390
+    },
+    {
+      "id": "vod-watch:followed",
+      "ok": true,
+      "width": 390
+    },
+    {
+      "id": "vod-watch:cancel",
+      "ok": true,
+      "width": 390
+    },
+    {
+      "id": "vod-watch:media-retained",
+      "ok": true,
+      "width": 390
+    },
+    {
+      "id": "vod-watch:follow",
+      "ok": true,
+      "width": 390
+    },
+    {
+      "id": "vod-watch:layout",
+      "ok": true,
+      "details": {
+        "width": 390,
+        "scroll": 390
+      },
+      "width": 390
+    },
+    {
+      "id": "clip-watch:followed",
+      "ok": true,
+      "width": 390
+    },
+    {
+      "id": "clip-watch:cancel",
+      "ok": true,
+      "width": 390
+    },
+    {
+      "id": "clip-watch:media-retained",
+      "ok": true,
+      "width": 390
+    },
+    {
+      "id": "clip-watch:follow",
+      "ok": true,
+      "width": 390
+    },
+    {
+      "id": "clip-watch:layout",
+      "ok": true,
+      "details": {
+        "width": 390,
+        "scroll": 390
+      },
+      "width": 390
+    },
+    {
+      "id": "following:destination",
+      "ok": true,
+      "width": 390
+    },
+    {
+      "id": "following:listed",
+      "ok": true,
+      "width": 390
+    },
+    {
+      "id": "reminder:off",
+      "ok": true,
+      "width": 390
+    },
+    {
+      "id": "reminder:on",
+      "ok": true,
+      "width": 390
+    },
+    {
+      "id": "reminder:cancel",
+      "ok": true,
+      "width": 390
+    },
+    {
+      "id": "notifications:action",
+      "ok": true,
+      "width": 390
+    },
+    {
+      "id": "notifications:read",
+      "ok": true,
+      "width": 390
+    },
+    {
+      "id": "channel:followed",
+      "ok": true,
+      "width": 820
+    },
+    {
+      "id": "channel:cancel",
+      "ok": true,
+      "width": 820
+    },
+    {
+      "id": "channel:media-retained",
+      "ok": true,
+      "width": 820
+    },
+    {
+      "id": "channel:follow",
+      "ok": true,
+      "width": 820
+    },
+    {
+      "id": "channel:layout",
+      "ok": true,
+      "details": {
+        "width": 820,
+        "scroll": 810
+      },
+      "width": 820
+    },
+    {
+      "id": "watch:followed",
+      "ok": true,
+      "width": 820
+    },
+    {
+      "id": "watch:cancel",
+      "ok": true,
+      "width": 820
+    },
+    {
+      "id": "watch:media-retained",
+      "ok": true,
+      "width": 820
+    },
+    {
+      "id": "watch:follow",
+      "ok": true,
+      "width": 820
+    },
+    {
+      "id": "watch:layout",
+      "ok": true,
+      "details": {
+        "width": 820,
+        "scroll": 810
+      },
+      "width": 820
+    },
+    {
+      "id": "vod-watch:followed",
+      "ok": true,
+      "width": 820
+    },
+    {
+      "id": "vod-watch:cancel",
+      "ok": true,
+      "width": 820
+    },
+    {
+      "id": "vod-watch:media-retained",
+      "ok": true,
+      "width": 820
+    },
+    {
+      "id": "vod-watch:follow",
+      "ok": true,
+      "width": 820
+    },
+    {
+      "id": "vod-watch:layout",
+      "ok": true,
+      "details": {
+        "width": 820,
+        "scroll": 810
+      },
+      "width": 820
+    },
+    {
+      "id": "clip-watch:followed",
+      "ok": true,
+      "width": 820
+    },
+    {
+      "id": "clip-watch:cancel",
+      "ok": true,
+      "width": 820
+    },
+    {
+      "id": "clip-watch:media-retained",
+      "ok": true,
+      "width": 820
+    },
+    {
+      "id": "clip-watch:follow",
+      "ok": true,
+      "width": 820
+    },
+    {
+      "id": "clip-watch:layout",
+      "ok": true,
+      "details": {
+        "width": 820,
+        "scroll": 810
+      },
+      "width": 820
+    },
+    {
+      "id": "following:destination",
+      "ok": true,
+      "width": 820
+    },
+    {
+      "id": "following:listed",
+      "ok": true,
+      "width": 820
+    },
+    {
+      "id": "reminder:off",
+      "ok": true,
+      "width": 820
+    },
+    {
+      "id": "reminder:on",
+      "ok": true,
+      "width": 820
+    },
+    {
+      "id": "reminder:cancel",
+      "ok": true,
+      "width": 820
+    },
+    {
+      "id": "notifications:action",
+      "ok": true,
+      "width": 820
+    },
+    {
+      "id": "notifications:read",
+      "ok": true,
+      "width": 820
+    },
+    {
+      "id": "channel:followed",
+      "ok": true,
+      "width": 1440
+    },
+    {
+      "id": "channel:cancel",
+      "ok": true,
+      "width": 1440
+    },
+    {
+      "id": "channel:media-retained",
+      "ok": true,
+      "width": 1440
+    },
+    {
+      "id": "channel:follow",
+      "ok": true,
+      "width": 1440
+    },
+    {
+      "id": "channel:layout",
+      "ok": true,
+      "details": {
+        "width": 1440,
+        "scroll": 1430
+      },
+      "width": 1440
+    },
+    {
+      "id": "watch:followed",
+      "ok": true,
+      "width": 1440
+    },
+    {
+      "id": "watch:cancel",
+      "ok": true,
+      "width": 1440
+    },
+    {
+      "id": "watch:media-retained",
+      "ok": true,
+      "width": 1440
+    },
+    {
+      "id": "watch:follow",
+      "ok": true,
+      "width": 1440
+    },
+    {
+      "id": "watch:layout",
+      "ok": true,
+      "details": {
+        "width": 1440,
+        "scroll": 1440
+      },
+      "width": 1440
+    },
+    {
+      "id": "vod-watch:followed",
+      "ok": true,
+      "width": 1440
+    },
+    {
+      "id": "vod-watch:cancel",
+      "ok": true,
+      "width": 1440
+    },
+    {
+      "id": "vod-watch:media-retained",
+      "ok": true,
+      "width": 1440
+    },
+    {
+      "id": "vod-watch:follow",
+      "ok": true,
+      "width": 1440
+    },
+    {
+      "id": "vod-watch:layout",
+      "ok": true,
+      "details": {
+        "width": 1440,
+        "scroll": 1440
+      },
+      "width": 1440
+    },
+    {
+      "id": "clip-watch:followed",
+      "ok": true,
+      "width": 1440
+    },
+    {
+      "id": "clip-watch:cancel",
+      "ok": true,
+      "width": 1440
+    },
+    {
+      "id": "clip-watch:media-retained",
+      "ok": true,
+      "width": 1440
+    },
+    {
+      "id": "clip-watch:follow",
+      "ok": true,
+      "width": 1440
+    },
+    {
+      "id": "clip-watch:layout",
+      "ok": true,
+      "details": {
+        "width": 1440,
+        "scroll": 1440
+      },
+      "width": 1440
+    },
+    {
+      "id": "following:destination",
+      "ok": true,
+      "width": 1440
+    },
+    {
+      "id": "following:listed",
+      "ok": true,
+      "width": 1440
+    },
+    {
+      "id": "reminder:off",
+      "ok": true,
+      "width": 1440
+    },
+    {
+      "id": "reminder:on",
+      "ok": true,
+      "width": 1440
+    },
+    {
+      "id": "reminder:cancel",
+      "ok": true,
+      "width": 1440
+    },
+    {
+      "id": "notifications:action",
+      "ok": true,
+      "width": 1440
+    },
+    {
+      "id": "notifications:read",
+      "ok": true,
+      "width": 1440
+    },
+    {
+      "id": "schedule-delete:row",
+      "ok": true,
+      "width": 320
+    },
+    {
+      "id": "schedule-delete:confirm",
+      "ok": true,
+      "details": {
+        "text": "예약 취소"
+      },
+      "width": 320
+    },
+    {
+      "id": "schedule-delete:layout",
+      "ok": true,
+      "details": {
+        "left": 14.000000953674316,
+        "right": 306.0000009536743,
+        "width": 320
+      },
+      "width": 320
+    },
+    {
+      "id": "schedule-delete:cancel",
+      "ok": true,
+      "width": 320
+    },
+    {
+      "id": "moderator-remove:row",
+      "ok": true,
+      "width": 320
+    },
+    {
+      "id": "moderator-remove:confirm",
+      "ok": true,
+      "details": {
+        "text": "권한 해제"
+      },
+      "width": 320
+    },
+    {
+      "id": "moderator-remove:layout",
+      "ok": true,
+      "details": {
+        "left": 14.000000953674316,
+        "right": 306.0000009536743,
+        "width": 320
+      },
+      "width": 320
+    },
+    {
+      "id": "moderator-remove:cancel",
+      "ok": true,
+      "width": 320
+    },
+    {
+      "id": "blocked-remove:row",
+      "ok": true,
+      "width": 320
+    },
+    {
+      "id": "blocked-remove:confirm",
+      "ok": true,
+      "details": {
+        "text": "참여 제한 해제"
+      },
+      "width": 320
+    },
+    {
+      "id": "blocked-remove:layout",
+      "ok": true,
+      "details": {
+        "left": 14.000000953674316,
+        "right": 306.0000009536743,
+        "width": 320
+      },
+      "width": 320
+    },
+    {
+      "id": "blocked-remove:cancel",
+      "ok": true,
+      "width": 320
+    },
+    {
+      "id": "message-delete:confirm",
+      "ok": true,
+      "details": {
+        "text": "메시지 삭제"
+      },
+      "width": 320
+    },
+    {
+      "id": "message-delete:layout",
+      "ok": true,
+      "details": {
+        "left": 14.000000953674316,
+        "right": 306.0000009536743,
+        "width": 320
+      },
+      "width": 320
+    },
+    {
+      "id": "message-delete:cancel",
+      "ok": true,
+      "width": 320
+    },
+    {
+      "id": "poll-close:confirm",
+      "ok": true,
+      "details": {
+        "text": "투표 마감"
+      },
+      "width": 320
+    },
+    {
+      "id": "poll-close:layout",
+      "ok": true,
+      "details": {
+        "left": 14.000000953674316,
+        "right": 306.0000009536743,
+        "width": 320
+      },
+      "width": 320
+    },
+    {
+      "id": "poll-close:cancel",
+      "ok": true,
+      "width": 320
+    },
+    {
+      "id": "source-delete:confirm",
+      "ok": true,
+      "details": {
+        "text": "소스 삭제"
+      },
+      "width": 320
+    },
+    {
+      "id": "source-delete:layout",
+      "ok": true,
+      "details": {
+        "left": 14.000000953674316,
+        "right": 306.0000009536743,
+        "width": 320
+      },
+      "width": 320
+    },
+    {
+      "id": "source-delete:cancel",
+      "ok": true,
+      "width": 320
+    },
+    {
+      "id": "key-create:layout",
+      "ok": true,
+      "details": {
+        "left": 0,
+        "right": 0,
+        "width": 320
+      },
+      "width": 320
+    },
+    {
+      "id": "key-create:cancel",
+      "ok": true,
+      "width": 320
+    },
+    {
+      "id": "key-revoke:confirm",
+      "ok": true,
+      "details": {
+        "text": "키 폐기"
+      },
+      "width": 320
+    },
+    {
+      "id": "key-revoke:layout",
+      "ok": true,
+      "details": {
+        "left": 14.000000953674316,
+        "right": 306.0000009536743,
+        "width": 320
+      },
+      "width": 320
+    },
+    {
+      "id": "key-revoke:cancel",
+      "ok": true,
+      "width": 320
+    },
+    {
+      "id": "report:save",
+      "ok": true,
+      "width": 320
+    },
+    {
+      "id": "refund:draft",
+      "ok": true,
+      "width": 320
+    },
+    {
+      "id": "channel-role:action",
+      "ok": true,
+      "width": 320
+    },
+    {
+      "id": "channel-role:confirm",
+      "ok": true,
+      "details": {
+        "text": "채널 운영 권한을 해제할까요?이 멤버는 채널 관리 메뉴를 이용할 수 없게 돼요.취소권한 해제"
+      },
+      "width": 320
+    },
+    {
+      "id": "schedule-delete:row",
+      "ok": true,
+      "width": 390
+    },
+    {
+      "id": "schedule-delete:confirm",
+      "ok": true,
+      "details": {
+        "text": "예약 취소"
+      },
+      "width": 390
+    },
+    {
+      "id": "schedule-delete:layout",
+      "ok": true,
+      "details": {
+        "left": 14.000000953674316,
+        "right": 376.2857370376587,
+        "width": 390
+      },
+      "width": 390
+    },
+    {
+      "id": "schedule-delete:cancel",
+      "ok": true,
+      "width": 390
+    },
+    {
+      "id": "moderator-remove:row",
+      "ok": true,
+      "width": 390
+    },
+    {
+      "id": "moderator-remove:confirm",
+      "ok": true,
+      "details": {
+        "text": "권한 해제"
+      },
+      "width": 390
+    },
+    {
+      "id": "moderator-remove:layout",
+      "ok": true,
+      "details": {
+        "left": 14.000000953674316,
+        "right": 376.2857370376587,
+        "width": 390
+      },
+      "width": 390
+    },
+    {
+      "id": "moderator-remove:cancel",
+      "ok": true,
+      "width": 390
+    },
+    {
+      "id": "blocked-remove:row",
+      "ok": true,
+      "width": 390
+    },
+    {
+      "id": "blocked-remove:confirm",
+      "ok": true,
+      "details": {
+        "text": "참여 제한 해제"
+      },
+      "width": 390
+    },
+    {
+      "id": "blocked-remove:layout",
+      "ok": true,
+      "details": {
+        "left": 14.000000953674316,
+        "right": 376.2857370376587,
+        "width": 390
+      },
+      "width": 390
+    },
+    {
+      "id": "blocked-remove:cancel",
+      "ok": true,
+      "width": 390
+    },
+    {
+      "id": "message-delete:confirm",
+      "ok": true,
+      "details": {
+        "text": "메시지 삭제"
+      },
+      "width": 390
+    },
+    {
+      "id": "message-delete:layout",
+      "ok": true,
+      "details": {
+        "left": 14.000000953674316,
+        "right": 376.2857370376587,
+        "width": 390
+      },
+      "width": 390
+    },
+    {
+      "id": "message-delete:cancel",
+      "ok": true,
+      "width": 390
+    },
+    {
+      "id": "poll-close:confirm",
+      "ok": true,
+      "details": {
+        "text": "투표 마감"
+      },
+      "width": 390
+    },
+    {
+      "id": "poll-close:layout",
+      "ok": true,
+      "details": {
+        "left": 14.000000953674316,
+        "right": 376.2857370376587,
+        "width": 390
+      },
+      "width": 390
+    },
+    {
+      "id": "poll-close:cancel",
+      "ok": true,
+      "width": 390
+    },
+    {
+      "id": "source-delete:confirm",
+      "ok": true,
+      "details": {
+        "text": "소스 삭제"
+      },
+      "width": 390
+    },
+    {
+      "id": "source-delete:layout",
+      "ok": true,
+      "details": {
+        "left": 14.000000953674316,
+        "right": 376.2857370376587,
+        "width": 390
+      },
+      "width": 390
+    },
+    {
+      "id": "source-delete:cancel",
+      "ok": true,
+      "width": 390
+    },
+    {
+      "id": "key-create:layout",
+      "ok": true,
+      "details": {
+        "left": 0,
+        "right": 0,
+        "width": 390
+      },
+      "width": 390
+    },
+    {
+      "id": "key-create:cancel",
+      "ok": true,
+      "width": 390
+    },
+    {
+      "id": "key-revoke:confirm",
+      "ok": true,
+      "details": {
+        "text": "키 폐기"
+      },
+      "width": 390
+    },
+    {
+      "id": "key-revoke:layout",
+      "ok": true,
+      "details": {
+        "left": 14.000000953674316,
+        "right": 376.2857370376587,
+        "width": 390
+      },
+      "width": 390
+    },
+    {
+      "id": "key-revoke:cancel",
+      "ok": true,
+      "width": 390
+    },
+    {
+      "id": "report:save",
+      "ok": true,
+      "width": 390
+    },
+    {
+      "id": "refund:draft",
+      "ok": true,
+      "width": 390
+    },
+    {
+      "id": "channel-role:action",
+      "ok": true,
+      "width": 390
+    },
+    {
+      "id": "channel-role:confirm",
+      "ok": true,
+      "details": {
+        "text": "채널 운영 권한을 해제할까요?이 멤버는 채널 관리 메뉴를 이용할 수 없게 돼요.취소권한 해제"
+      },
+      "width": 390
+    },
+    {
+      "id": "schedule-delete:row",
+      "ok": true,
+      "width": 820
+    },
+    {
+      "id": "schedule-delete:confirm",
+      "ok": true,
+      "details": {
+        "text": "예약 취소"
+      },
+      "width": 820
+    },
+    {
+      "id": "schedule-delete:layout",
+      "ok": true,
+      "details": {
+        "left": 130,
+        "right": 690,
+        "width": 820
+      },
+      "width": 820
+    },
+    {
+      "id": "schedule-delete:cancel",
+      "ok": true,
+      "width": 820
+    },
+    {
+      "id": "moderator-remove:row",
+      "ok": true,
+      "width": 820
+    },
+    {
+      "id": "moderator-remove:confirm",
+      "ok": true,
+      "details": {
+        "text": "권한 해제"
+      },
+      "width": 820
+    },
+    {
+      "id": "moderator-remove:layout",
+      "ok": true,
+      "details": {
+        "left": 130,
+        "right": 690,
+        "width": 820
+      },
+      "width": 820
+    },
+    {
+      "id": "moderator-remove:cancel",
+      "ok": true,
+      "width": 820
+    },
+    {
+      "id": "blocked-remove:row",
+      "ok": true,
+      "width": 820
+    },
+    {
+      "id": "blocked-remove:confirm",
+      "ok": true,
+      "details": {
+        "text": "참여 제한 해제"
+      },
+      "width": 820
+    },
+    {
+      "id": "blocked-remove:layout",
+      "ok": true,
+      "details": {
+        "left": 130,
+        "right": 690,
+        "width": 820
+      },
+      "width": 820
+    },
+    {
+      "id": "blocked-remove:cancel",
+      "ok": true,
+      "width": 820
+    },
+    {
+      "id": "message-delete:confirm",
+      "ok": true,
+      "details": {
+        "text": "메시지 삭제"
+      },
+      "width": 820
+    },
+    {
+      "id": "message-delete:layout",
+      "ok": true,
+      "details": {
+        "left": 130,
+        "right": 690,
+        "width": 820
+      },
+      "width": 820
+    },
+    {
+      "id": "message-delete:cancel",
+      "ok": true,
+      "width": 820
+    },
+    {
+      "id": "poll-close:confirm",
+      "ok": true,
+      "details": {
+        "text": "투표 마감"
+      },
+      "width": 820
+    },
+    {
+      "id": "poll-close:layout",
+      "ok": true,
+      "details": {
+        "left": 130,
+        "right": 690,
+        "width": 820
+      },
+      "width": 820
+    },
+    {
+      "id": "poll-close:cancel",
+      "ok": true,
+      "width": 820
+    },
+    {
+      "id": "source-delete:confirm",
+      "ok": true,
+      "details": {
+        "text": "소스 삭제"
+      },
+      "width": 820
+    },
+    {
+      "id": "source-delete:layout",
+      "ok": true,
+      "details": {
+        "left": 124.85714721679688,
+        "right": 684.8571472167969,
+        "width": 820
+      },
+      "width": 820
+    },
+    {
+      "id": "source-delete:cancel",
+      "ok": true,
+      "width": 820
+    },
+    {
+      "id": "key-create:layout",
+      "ok": true,
+      "details": {
+        "left": 0,
+        "right": 0,
+        "width": 820
+      },
+      "width": 820
+    },
+    {
+      "id": "key-create:cancel",
+      "ok": true,
+      "width": 820
+    },
+    {
+      "id": "key-revoke:confirm",
+      "ok": true,
+      "details": {
+        "text": "키 폐기"
+      },
+      "width": 820
+    },
+    {
+      "id": "key-revoke:layout",
+      "ok": true,
+      "details": {
+        "left": 130,
+        "right": 690,
+        "width": 820
+      },
+      "width": 820
+    },
+    {
+      "id": "key-revoke:cancel",
+      "ok": true,
+      "width": 820
+    },
+    {
+      "id": "report:save",
+      "ok": true,
+      "width": 820
+    },
+    {
+      "id": "refund:draft",
+      "ok": true,
+      "width": 820
+    },
+    {
+      "id": "channel-role:action",
+      "ok": true,
+      "width": 820
+    },
+    {
+      "id": "channel-role:confirm",
+      "ok": true,
+      "details": {
+        "text": "채널 운영 권한을 해제할까요?이 멤버는 채널 관리 메뉴를 이용할 수 없게 돼요.취소권한 해제"
+      },
+      "width": 820
+    },
+    {
+      "id": "schedule-delete:row",
+      "ok": true,
+      "width": 1440
+    },
+    {
+      "id": "schedule-delete:confirm",
+      "ok": true,
+      "details": {
+        "text": "예약 취소"
+      },
+      "width": 1440
+    },
+    {
+      "id": "schedule-delete:layout",
+      "ok": true,
+      "details": {
+        "left": 440.0000305175781,
+        "right": 1000.0000305175781,
+        "width": 1440
+      },
+      "width": 1440
+    },
+    {
+      "id": "schedule-delete:cancel",
+      "ok": true,
+      "width": 1440
+    },
+    {
+      "id": "moderator-remove:row",
+      "ok": true,
+      "width": 1440
+    },
+    {
+      "id": "moderator-remove:confirm",
+      "ok": true,
+      "details": {
+        "text": "권한 해제"
+      },
+      "width": 1440
+    },
+    {
+      "id": "moderator-remove:layout",
+      "ok": true,
+      "details": {
+        "left": 440.0000305175781,
+        "right": 1000.0000305175781,
+        "width": 1440
+      },
+      "width": 1440
+    },
+    {
+      "id": "moderator-remove:cancel",
+      "ok": true,
+      "width": 1440
+    },
+    {
+      "id": "blocked-remove:row",
+      "ok": true,
+      "width": 1440
+    },
+    {
+      "id": "blocked-remove:confirm",
+      "ok": true,
+      "details": {
+        "text": "참여 제한 해제"
+      },
+      "width": 1440
+    },
+    {
+      "id": "blocked-remove:layout",
+      "ok": true,
+      "details": {
+        "left": 440.0000305175781,
+        "right": 1000.0000305175781,
+        "width": 1440
+      },
+      "width": 1440
+    },
+    {
+      "id": "blocked-remove:cancel",
+      "ok": true,
+      "width": 1440
+    },
+    {
+      "id": "message-delete:confirm",
+      "ok": true,
+      "details": {
+        "text": "메시지 삭제"
+      },
+      "width": 1440
+    },
+    {
+      "id": "message-delete:layout",
+      "ok": true,
+      "details": {
+        "left": 440.0000305175781,
+        "right": 1000.0000305175781,
+        "width": 1440
+      },
+      "width": 1440
+    },
+    {
+      "id": "message-delete:cancel",
+      "ok": true,
+      "width": 1440
+    },
+    {
+      "id": "poll-close:confirm",
+      "ok": true,
+      "details": {
+        "text": "투표 마감"
+      },
+      "width": 1440
+    },
+    {
+      "id": "poll-close:layout",
+      "ok": true,
+      "details": {
+        "left": 440.0000305175781,
+        "right": 1000.0000305175781,
+        "width": 1440
+      },
+      "width": 1440
+    },
+    {
+      "id": "poll-close:cancel",
+      "ok": true,
+      "width": 1440
+    },
+    {
+      "id": "source-delete:confirm",
+      "ok": true,
+      "details": {
+        "text": "소스 삭제"
+      },
+      "width": 1440
+    },
+    {
+      "id": "source-delete:layout",
+      "ok": true,
+      "details": {
+        "left": 440.0000305175781,
+        "right": 1000.0000305175781,
+        "width": 1440
+      },
+      "width": 1440
+    },
+    {
+      "id": "source-delete:cancel",
+      "ok": true,
+      "width": 1440
+    },
+    {
+      "id": "key-create:layout",
+      "ok": true,
+      "details": {
+        "left": 0,
+        "right": 0,
+        "width": 1440
+      },
+      "width": 1440
+    },
+    {
+      "id": "key-create:cancel",
+      "ok": true,
+      "width": 1440
+    },
+    {
+      "id": "key-revoke:confirm",
+      "ok": true,
+      "details": {
+        "text": "키 폐기"
+      },
+      "width": 1440
+    },
+    {
+      "id": "key-revoke:layout",
+      "ok": true,
+      "details": {
+        "left": 440.0000305175781,
+        "right": 1000.0000305175781,
+        "width": 1440
+      },
+      "width": 1440
+    },
+    {
+      "id": "key-revoke:cancel",
+      "ok": true,
+      "width": 1440
+    },
+    {
+      "id": "report:save",
+      "ok": true,
+      "width": 1440
+    },
+    {
+      "id": "refund:draft",
+      "ok": true,
+      "width": 1440
+    },
+    {
+      "id": "channel-role:action",
+      "ok": true,
+      "width": 1440
+    },
+    {
+      "id": "channel-role:confirm",
+      "ok": true,
+      "details": {
+        "text": "채널 운영 권한을 해제할까요?이 멤버는 채널 관리 메뉴를 이용할 수 없게 돼요.취소권한 해제"
+      },
+      "width": 1440
+    },
+    {
+      "id": "key-create:action",
+      "ok": true,
+      "width": 320
+    },
+    {
+      "id": "key-create:confirm",
+      "ok": true,
+      "details": {
+        "label": "키 발급"
+      },
+      "width": 320
+    },
+    {
+      "id": "key-create:action",
+      "ok": true,
+      "width": 390
+    },
+    {
+      "id": "key-create:confirm",
+      "ok": true,
+      "details": {
+        "label": "키 발급"
+      },
+      "width": 390
+    },
+    {
+      "id": "key-create:action",
+      "ok": true,
+      "width": 820
+    },
+    {
+      "id": "key-create:confirm",
+      "ok": true,
+      "details": {
+        "label": "키 발급"
+      },
+      "width": 820
+    },
+    {
+      "id": "key-create:action",
+      "ok": true,
+      "width": 1440
+    },
+    {
+      "id": "key-create:confirm",
+      "ok": true,
+      "details": {
+        "label": "키 발급"
+      },
+      "width": 1440
+    },
+    {
+      "id": "follow:keyboard-enter",
+      "ok": true,
+      "width": 1440
+    },
+    {
+      "id": "follow:keyboard-space",
+      "ok": true,
+      "width": 1440
+    }
+  ],
+  "passed": true,
+  "harnessCorrections": [
+    {
+      "id": "key-create:confirm",
+      "ok": false,
+      "details": {
+        "text": "소스 삭제"
+      },
+      "width": 320,
+      "reason": "발급된 API 키가 있는 상태에서는 새 키 발급 버튼이 없으므로 미발급 상태로 바로잡아 재검증함."
+    },
+    {
+      "id": "key-create:confirm",
+      "ok": false,
+      "details": {
+        "text": "소스 삭제"
+      },
+      "width": 390,
+      "reason": "발급된 API 키가 있는 상태에서는 새 키 발급 버튼이 없으므로 미발급 상태로 바로잡아 재검증함."
+    },
+    {
+      "id": "key-create:confirm",
+      "ok": false,
+      "details": {
+        "text": "소스 삭제"
+      },
+      "width": 820,
+      "reason": "발급된 API 키가 있는 상태에서는 새 키 발급 버튼이 없으므로 미발급 상태로 바로잡아 재검증함."
+    },
+    {
+      "id": "key-create:confirm",
+      "ok": false,
+      "details": {
+        "text": "소스 삭제"
+      },
+      "width": 1440,
+      "reason": "발급된 API 키가 있는 상태에서는 새 키 발급 버튼이 없으므로 미발급 상태로 바로잡아 재검증함."
+    }
+  ],
+  "limitations": [
+    "로컬 시안 검사이며 실제 팔로우 서버, 결제, 계정 권한 API와 영상 전송 성능을 검증하지 않음.",
+    "기존 전체 기능 검수 증빙은 별도 보존하며 이번 명칭 변경 후에는 변경된 화면을 대상으로 추가 검사함."
+  ]
+}

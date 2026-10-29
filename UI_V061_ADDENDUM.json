@@ -1,0 +1,43 @@
+{
+  "version": "0.6.1",
+  "base": "UI_V06_ADDENDUM.json, UI_V051_ADDENDUM.json and UI_V05_LOCK.json (all unchanged)",
+  "request": "CLAUDE_WINDOW_PREVIEW_ADDENDUM.txt (1. 허용 변경: 송출 대상 선택 모달의 폭 확대와 높이·스크롤, 카드·썸네일 크기와 비율, 영역 안의 짧은 상태·실패 이유와 작은 재시도 조작, 썸네일 아래 앱 아이콘·창 제목 행)",
+  "note": "Allowed UI exception for the 송출 대상 선택 dialog (the earlier \"모달 크기 유지\" is lifted by this request). No earlier record is modified. tools/verify-ui-v061.mjs proves the page equals a build of the same sources without work/source-preview.css plus that stylesheet, that every rule in it is scoped to #source-dialog or to elements new in 0.6.1, and runs tools/verify-ui-v06.mjs on the build without it. The template, the locked stylesheets and the dialog markup are unchanged; the cards are built by work/console-ux.js, which is not a locked source.",
+  "stylesheet": {
+    "path": "work/source-preview.css",
+    "sha256": "acdcdce4b3403c76535d72365a217e78889bae5ceafe6ac4247c1bbe5816d98d",
+    "scope": "Every selector starts with #source-dialog or with an element new in 0.6.1 (.source-item, .source-overlay, .source-state, .source-retry, .source-app-icon); at-rules only @media (max-width: N px). The player frames, other dialogs and pages are untouched (tools/test-window-preview-layout.mjs compares the player boxes with the stylesheet removed). Appended after work/mobile-ui.css by work/build-console.mjs."
+  },
+  "script": {
+    "path": "work/console-ux.js",
+    "functions": [
+      "renderWindows",
+      "sourceSizes",
+      "applyThumb",
+      "thumbDetail",
+      "onThumbState",
+      "showThumb",
+      "showIcon",
+      "retryThumb",
+      "thumbPriority",
+      "closeThumbs"
+    ],
+    "structure": "Each card is wrapped in div.source-item = [button.source-choice (span.source-thumb + span.source-label = [span.source-app-icon, span.source-window-name]), span.source-overlay = [span.source-state, button.source-retry]]. The retry button is a sibling of the card button (no nested buttons), placed over the thumbnail area; the card button names the status through aria-describedby, keeps the full title as its text (accessible name) and tooltip. The manual title fit (fitLabel, which did not leave room for an icon) is replaced by CSS ellipsis."
+  },
+  "allowedDifferences": [
+    "Dialog: width min(1120 px, visible width - 48 px) (24 px each side), height at most 90 % of the viewport; the header, tabs and 취소/선택 stay in place and the list scrolls between them; no sideways scroll. One column only below 680 px (cards would be under ~280 px).",
+    "Thumbnails: 16:9 box at the card width (520 x 292 px at 1440 x 1000) instead of the fixed 112 / 95 px height; images keep their aspect (contain), so 16:9 windows fill the box and other shapes keep the bars they need. Images are made at the card width in device pixels (e.g. 916 x 516 at 175 %).",
+    "Title row: app icon (24 px, the window's own Windows icon, its class icon or its program's icon; a plain window icon of the same size otherwise) + window title in Pretendard 16 px / 550, one line with ellipsis, full title as tooltip and accessible name; same title: program name, same title and program: also its number.",
+    "Status label at the top left of the thumbnail area (대기 중 / 불러오는 중 / 응답이 늦습니다 / 다시 시도하는 중 / 미리보기를 가져오지 못했습니다 / 최소화된 창 / 창이 닫혔습니다 / 창이 숨겨졌습니다 / 캡처가 제외된 창 / 이전 화면), shown only while it applies (wait labels after 400 ms) and cleared on success; small 다시 시도 button at the bottom right after the automatic attempts; a closed window's card is disabled.",
+    "Unchanged: 2-column cards, card border and selection outline, colours, fonts, icons, tabs, buttons, the monitor tab's cards (only wider), the sender and viewer player frames and every other page or dialog."
+  ],
+  "evidence": [
+    "verification/window-preview/layout-*.json",
+    "verification/window-preview/screens/",
+    "verification/window-preview/states-live.json",
+    "verification/window-preview/states-fault-drop.json",
+    "verification/window-preview/states-fault-delay.json",
+    "verification/window-preview/states-fault-corrupt.json",
+    "verification/window-preview/cards/"
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "version": "3.3",
+  "date": "2026-10-29",
+  "method": "Actual local browser UI through mcp__cua_repl, Playwright locators and read-only DOM observations",
+  "browser": "Chrome extension, dedicated QA tab 1421141252",
+  "browserFallback": "The requested iab creation returned Browser is not available; a new dedicated Chrome session was used without touching existing tabs or native OS UI.",
+  "baseUrl": "http://127.0.0.1:5328/index.html",
+  "loadHandling": "Each full page navigation/reload waited for load before deep interactions.",
+  "scope": "13 representative account/studio screen flows. The root's complete state/width rendering scan is a separate verification.",
+  "screenCount": 13,
+  "passedScreenGroups": 13,
+  "consoleErrorLogs": [],
+  "actualServiceEffects": false,
+  "restrictionsObserved": [
+    "Only local prototype forms and in-memory examples were changed.",
+    "No real account, OAuth, permission, device session, capture, encoder or network setting was changed.",
+    "No browser permission prompt or OS action was used.",
+    "No viewport override, metrics reset, deliverable mark or handoff mark was used."
+  ],
+  "bugsFixedAndRetested": [
+    {
+      "issue": "Empty channel member input produced only a toast and left focus on Add.",
+      "fix": "Added inline error, aria linkage and focus to member-name; typing clears the stale error.",
+      "retest": {"error": "추가할 닉네임 또는 이메일을 입력하세요.", "focusedField": "member-name", "errorCountAfterInput": 0, "ariaInvalidAfterInput": null}
+    },
+    {
+      "issue": "The broadcast title's accessible name changed when the wrapping label gained an error message.",
+      "fix": "Added stable aria-label to studio/details title and tag inputs without changing preview or quality controls.",
+      "retest": "The exact 방송 제목 textbox remained locatable after validation failure, accepted correction and saved successfully."
+    }
+  ],
+  "screens": [
+    {"screen": "profile", "pass": true, "checks": ["필수 닉네임 오류", "사용자 ID 첫글자 오류·aria·초점", "수정 저장", "초안 취소 및 제목 초점"], "evidence": {"focus": "프로필", "handle": "review_user", "nickname": "검수 계정", "saveDisabled": true}},
+    {"screen": "security", "pass": true, "checks": ["잘못된 이메일 오류·초점", "확인 후 이메일 값 미변경", "모달 취소·기기 제거의 로컬 목록 반영", "다른 기기 없음 disabled", "재인증 CTA → 로컬 제공자 확인 → 보안 및 기기 복귀"], "evidence": {"allDisabled": true, "devices": 1, "section": "보안 및 기기", "reauthReturn": {"url": "http://127.0.0.1:5328/index.html?screen=security&state=%EA%B8%B0%EB%B3%B8&device=desktop&section=security", "section": "보안 및 기기"}}},
+    {"screen": "preferences", "pass": true, "checks": ["즉시 토글", "화살표 탭 전환/초점", "알림 차단 도움말·닫기 후 원래 상태"], "evidence": {"blocked": "브라우저 알림이 차단되어 있어요.알림을 받으려면 사이트 설정에서 허용하세요.설정 방법", "dialog": false, "focus": "v32-settings-permission-help", "section": "알림"}},
+    {"screen": "login", "pass": true, "checks": ["동의 필요 disabled", "동의 후 이메일 경로", "필수/형식 오류 값 유지·초점", "로컬 로그인 후 홈 복귀"], "evidence": {"consentDisabled": true, "url": "http://127.0.0.1:5328/index.html?screen=live&state=%EA%B8%B0%EB%B3%B8&device=desktop", "heading": "지금 라이브"}},
+    {"screen": "channel-edit", "pass": true, "checks": ["브랜딩에서 숨은 주소 오류를 기본정보로 안내", "수정 저장·취소 복원", "Home/End 탭 키보드", "멤버 추가 모달 취소", "빈 멤버 입력 인라인 오류·초점과 입력 시 오류 제거 재검증"], "evidence": {"focus": "기본 정보", "handle": "review_channel", "name": "검수 채널", "tab": "기본 정보", "memberRetest": {"errorCount": 0, "invalid": null}}},
+    {"screen": "studio", "pass": true, "checks": ["빈 제목 검증·초점", "오류 후 접근가능 이름 유지 재검증", "화면 선택 후 로컬 방송 시작"], "evidence": {"heading": "방송 중", "title": "로컬 방송 검수"}},
+    {"screen": "broadcast-details", "pass": true, "checks": ["X 닫기 초안 폐기", "빈 제목 오류·초점", "수정 저장 후 방송 중 복귀"], "evidence": {"detailsError": {"error": "방송 제목을 입력해 주세요.", "focus": "방송 제목"}, "dialog": false, "heading": "방송 중", "title": "저장한 방송 제목"}},
+    {"screen": "broadcast-settings", "pass": true, "checks": ["익명 토글 이름 수정 확인", "수동 비트레이트 빈 값 가드·초점", "해상도/FPS 표시 보존", "취소 후 방송 중 복귀"], "evidence": {"qualityBefore": {"fps": "60 fps", "resolution": "1080p"}, "qualityAfter": {"fps": "60 fps", "resolution": "1080p"}, "bitrateError": {"error": "0.5~200 Mbps 사이의 값을 입력하세요.", "focus": "bitrate"}, "url": "http://127.0.0.1:5328/index.html?screen=studio&device=desktop&state=%EB%B0%A9%EC%86%A1+%EC%A4%91"}},
+    {"screen": "nickname", "pass": true, "checks": ["빈 닉네임 오류·초점", "수정 저장·호출 방송 화면 복귀"], "evidence": {"nicknameError": {"error": "닉네임은 1~20자로 입력하세요.", "focus": "nickname"}, "chatName": "검수 닉네임", "dialog": false, "heading": "방송 중"}},
+    {"screen": "broadcast-end", "pass": true, "checks": ["종료 확인 취소 유지", "보관 해제 후 종료 요약", "미보관 요약의 녹화 CTA 제거"], "evidence": {"recordingLink": false, "summary": "방송이 종료되었어요"}},
+    {"screen": "sources", "pass": true, "checks": ["탭 전환 후 유효 선택 없으면 확정 비활성화", "End 키 전체화면 전환·초점", "모니터 선택·확정 후 미리보기 대상 반영", "닫힌 창 선택 불가", "취소 복귀"], "evidence": {"sourceMonitorEvidence": {"focus": "화면 변경", "heading": "방송 준비", "source": "모니터 1"}, "closedSourceEvidence": {"confirmDisabled": false, "disabled": [{"disabled": true, "name": "작업실 — Discord", "pressed": "false"}]}, "url": "http://127.0.0.1:5328/index.html?screen=studio&state=%EB%B0%A9%EC%86%A1+%EC%A0%84&device=desktop"}},
+    {"screen": "connection", "pass": true, "checks": ["포트 정수 범위 오류·초점", "로컬 형식 확인 로딩과 중복 버튼 비활성화", "재렌더링 초안 보존", "저장 후 유지·취소 후 저장값 복원"], "evidence": {"connectionError": {"error": "포트는 1~65535 사이의 정수로 입력하세요.", "focus": "publish-port"}, "connectionBusy": {"busy": "true", "confirmDisabled": true, "saveDisabled": true, "server": "qa.example.test"}, "port": "8554", "server": "qa.example.test"}},
+    {"screen": "manual", "pass": true, "checks": ["viewer-port 범위 오류·초점", "로컬 연결 중 disabled/aria-busy", "취소 650ms 이후 원치 않는 시청 이동 없음", "다시 연결 후 로컬 시청 복귀"], "evidence": {"manualError": {"error": "포트는 1~65535 사이의 정수로 입력하세요.", "focus": "viewer-port"}, "manualBusy": {"busy": "true", "connectDisabled": true}, "manualCancelEvidence": {"elapsedMs": 17500, "url": "http://127.0.0.1:5328/index.html?screen=profile&device=desktop&state=%EA%B8%B0%EB%B3%B8&section=profile"}, "url": "http://127.0.0.1:5328/index.html?screen=watch&device=desktop&state=%EA%B8%B0%EB%B3%B8", "dialogOpen": false}}
+  ],
+  "remainingLimitations": [
+    "This report verifies local prototype interaction, not real authentication, security, payment, network, capture, encoder or broadcast behavior.",
+    "Provider linking and email change retain the existing local confirmation-only limitation.",
+    "The representative browser flows were exercised in a desktop Chrome QA tab; the root's separate full-render scan owns width/state coverage and screenshots.",
+    "Original player, preview image content and quality options/values were not redesigned."
+  ]
+}

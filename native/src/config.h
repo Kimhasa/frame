@@ -16,6 +16,16 @@ struct Resolution {
 const std::vector<Resolution>& Resolutions();
 const Resolution* FindResolution(const std::string& value);
 
+// Window-picker thumbnails (송출 대상 선택 → 프로그램 창): starting values to be tuned per PC ("windowPreview" in the file).
+struct WindowPreviewSettings {
+  int firstFrameMs = 1000;                    // wait for the first frame of one attempt
+  int attempts = 3;                           // first attempt + automatic retries
+  std::vector<int> retryDelaysMs{250, 750};   // pause before the 2nd, 3rd attempt
+  int deadlineMs = 5000;                      // the whole job of one window, from its first attempt; wins over attempts
+  int concurrency = 2;                        // windows captured at the same time
+  int cacheMs = 60000;                        // a reopened list shows the last image this long, marked as earlier (0: off)
+};
+
 struct Settings {
   std::string serverHost = "auto";  // "auto" picks the primary LAN IPv4 address at launch.
   std::string streamPath = "screen-01";
@@ -47,7 +57,22 @@ struct Settings {
   double recordMinFreeGB = 5;       // stop recording (live continues) when the disk has less free space than this
   int recordKeepDays = 7;           // finished broadcasts older than this are deleted at start-up; 0 keeps them
   std::string rateControl = "vbr"; // vbr: quality-capped variable bitrate (bitrate is the cap); cbr: constant bitrate
+  // Internet viewing. The roles stay apart: serverHost is this PC's own address for viewers on the same network;
+  // the fields below describe how viewers on other networks reach the broadcast.
+  std::string publicUrl;            // base URL internet viewers open, e.g. https://watch.example.com (empty: none)
+  json iceHosts = json::array();    // extra WebRTC host candidates (public IP or DNS name) offered by this PC's server
+  std::string relayPublishUrl;      // rtsp(s)://relay:port[/<path>]: copy of the encoded stream sent to an internet relay
+  std::string relayApiUrl;          // relay web service for list announcements and thumbnails (empty: publicUrl)
+  std::string relayCaFile;          // PEM file trusted for an rtsps relay with its own certificate (empty: system trust)
+  WindowPreviewSettings windowPreview;
 };
+
+// Credentials kept out of the settings file, the UI and the logs: config/frame-console.secrets.json.
+struct Secrets {
+  std::string relayUser, relayPassword;  // publish credentials of the relay's MediaMTX
+  std::string relayToken;                // bearer token for the relay's list announcements
+};
+Secrets LoadSecrets();
 
 fs::path ConfigPath();
 Settings LoadSettings(std::string* warning);

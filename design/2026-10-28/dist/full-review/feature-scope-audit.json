@@ -1,0 +1,2550 @@
+{
+  "date": "2026-10-29",
+  "purpose": "150개 기능 정의의 시안 범위를 정확히 기록. 기술 시험이나 전체 기능 개발 완료 판정이 아님",
+  "basis": {
+    "manifest": "design-manifest.json",
+    "inventory": "SCREEN_INVENTORY.txt",
+    "sourceFiles": [
+      "dist/design-v33-management.js",
+      "dist/design-v33-engagement.js",
+      "dist/design-v33-viewer.js",
+      "dist/design-v33-account-studio.js",
+      "dist/design-v32-settings.js",
+      "dist/design-v3-account.js",
+      "dist/design-v2-flows.js",
+      "dist/preserved-player.js",
+      "dist/preserved-player-data.js"
+    ],
+    "method": "기능 이름·수락 기준·연결 화면을 최신 renderer/override/event 소스에 역추적",
+    "readOnly": true
+  },
+  "classification": {
+    "technical_validation": "실제 서버·미디어·회선·실기기·성능 시험으로 판정해야 하는 대상",
+    "direct_ui_flow": "시안에 직접 표현된 입력/조작/상태 흐름. 실제 기능 구현과 완료 판정은 별도",
+    "named_connection_without_detail": "연결된 화면이 있으나 기능 이름의 핵심 세부 UI는 미설계 또는 부분 표현"
+  },
+  "counts": {
+    "technical_validation": 60,
+    "direct_ui_flow": 55,
+    "named_connection_without_detail": 35
+  },
+  "total": 150,
+  "completionRule": "어떤 항목도 소스 존재만으로 디자인·조작·실기능 완료로 처리하지 않는다. root의 시각·동작 검수와 실제 기술 검증을 분리한다.",
+  "freeze": "플레이어·영상·화질 제어는 동결. 관련 누락은 이 감사에서 수정하지 않았다.",
+  "importantUiDetailGaps": [
+    {
+      "id": "G01",
+      "featureIds": [
+        "PLAYER-09",
+        "PLAYER-10"
+      ],
+      "title": "재생 속도·구간 반복·자막 선택",
+      "surface": "기본 renderer의 speed 버튼은 최종 preserved controls로 교체됨. 보존 컨트롤에 속도·반복·자막 조작을 찾지 못함.",
+      "missing": "속도 메뉴, A-B 반복 설정/해제, 자막 켜기·트랙·언어 및 자막 없음 상태",
+      "suggestion": "미디어 동결을 별도 해제한 후 플레이어 옵션 범위와 지원 상태를 먼저 설계"
+    },
+    {
+      "id": "G02",
+      "featureIds": [
+        "CONTENT-06",
+        "CONTENT-07",
+        "CONTENT-08"
+      ],
+      "title": "영상 구간 탐색·타임라인 정보",
+      "surface": "재생바와 클립 시작/종료 입력은 있음.",
+      "missing": "챕터·북마크 작성/목록/탐색, 타임라인 썸네일, 지난 시점의 채팅 다시보기 표시",
+      "suggestion": "실시간/과거 시점의 UI 차이와 보조 탐색 패널 상태 정의. 미디어 동결 범위는 보류"
+    },
+    {
+      "id": "G03",
+      "featureIds": [
+        "CONTENT-09"
+      ],
+      "title": "시청자 영상 다운로드와 보관 정책",
+      "surface": "recordings는 로컬 파일 정보만, 공개 VOD는 시청 카드만 제공.",
+      "missing": "다운로드 허용/불가·만료·파일 선택·진행/실패, 보관기간 편집",
+      "suggestion": "제작자 권한 설정과 시청자 다운로드 버튼의 조건·상태를 분리 설계"
+    },
+    {
+      "id": "G04",
+      "featureIds": [
+        "CHAT-04",
+        "CHAT-10",
+        "CHAT-12"
+      ],
+      "title": "채팅 기록·참여자·메시지별 상호작용",
+      "surface": "메시지 입력, 고정/삭제/제한, 닉네임과 로그인 필요 상태는 있음.",
+      "missing": "기록 검색/기간, 참여자 목록, 멘션·답글·이모티콘 선택, 로그인 외 읽기 전용 사유",
+      "suggestion": "메시지 더보기/답글, 참여자 패널, 채팅 불가 상태를 적은 조작으로 설계"
+    },
+    {
+      "id": "G05",
+      "featureIds": [
+        "AUTH-05",
+        "AUTH-10"
+      ],
+      "title": "개인 데이터·탈퇴·동의 관리",
+      "surface": "프로필 편집, 기기 목록, 시청 기록 삭제는 있음.",
+      "missing": "탈퇴 확인/재인증/보관 영향, 동의 변경·철회, 본인 차단 목록·보관 설정",
+      "suggestion": "내 설정의 계정 관리에서 영향 확인과 취소·실패·완료 흐름 정의"
+    },
+    {
+      "id": "G06",
+      "featureIds": [
+        "AUTH-06",
+        "AUTH-09"
+      ],
+      "title": "로그인 복구와 추가 인증 정책",
+      "surface": "이메일·비밀번호 로그인, 연결 제공자 보안 안내, 재인증 필요 상태는 있음.",
+      "missing": "비밀번호 찾기·메일 확인·OTP/복구 코드 등 필요한 인증 방식을 실제로 선택한 세부 시안",
+      "suggestion": "제공자 위임/자체 인증 범위를 먼저 결정. 위임이면 실제 이동·복귀 경로, 자체면 등록/복구 상태 설계"
+    },
+    {
+      "id": "G07",
+      "featureIds": [
+        "CHANNEL-02",
+        "CHANNEL-09"
+      ],
+      "title": "채널 링크·커뮤니티",
+      "surface": "프로필·배너·소개·채널 공지 필드는 있음.",
+      "missing": "외부 링크 관리, 공개 게시글·댓글·답글·편집·삭제·신고",
+      "suggestion": "채널 공지와 커뮤니티 게시글을 구분하고 작성자·시청자·운영자 권한별 화면 정의"
+    },
+    {
+      "id": "G08",
+      "featureIds": [
+        "PAY-04",
+        "PAY-03"
+      ],
+      "title": "정산 등록과 환불/분쟁 전체 상태",
+      "surface": "수익 카드·CSV, 정산 필요 항목 안내, 환불 요청 작성은 있음.",
+      "missing": "정산 등록/본인 확인/반려·수수료·지급 내역, 환불 승인/거절·분쟁 진행·취소 상태",
+      "suggestion": "결제/정산 사업자·정책 확정 후 민감 정보 보호 경계와 상태별 상세를 설계"
+    },
+    {
+      "id": "G09",
+      "featureIds": [
+        "PAY-05",
+        "PAY-06"
+      ],
+      "title": "음성·영상 후원의 방송자 운영",
+      "surface": "시청자 후원 방식·메시지·영상 URL·시작 시점 입력은 있음.",
+      "missing": "승인·차단·재생 대기열·미리 듣기/보기·길이 제한·건너뛰기",
+      "suggestion": "방송 중 운영 화면에 최소 대기열과 승인/스킵 상태 정의. 실제 재생은 미디어 범위 별도 승인"
+    },
+    {
+      "id": "G10",
+      "featureIds": [
+        "PAY-07",
+        "PAY-08"
+      ],
+      "title": "멤버십 이용 중 관리",
+      "surface": "가입·선물 입력, 가입자 목록·혜택 편집은 있음.",
+      "missing": "다음 결제·자동 갱신·해지·만료·실패 복구·수령/중복 상태",
+      "suggestion": "가입 전 화면과 이용 중 관리 화면을 구분하고 해지 효력 시점 표시"
+    },
+    {
+      "id": "G11",
+      "featureIds": [
+        "PAY-09",
+        "ENGAGE-03"
+      ],
+      "title": "미션의 거절·실패·만료·취소",
+      "surface": "제안·수락 대기·수락·진행·완료와 실패 검토 상태는 있음.",
+      "missing": "운영자가 실제 선택하는 거절/실패/시간 만료/취소, 유료 미션 금액 대기·환불 상태",
+      "suggestion": "미션 상태 전이와 유료/무료 차이를 먼저 확정한 후 상세 액션·확인·결과를 설계"
+    },
+    {
+      "id": "G12",
+      "featureIds": [
+        "PAY-10",
+        "ENGAGE-08"
+      ],
+      "title": "공동 목표·누적 후원·리액션",
+      "surface": "미션·포인트 보상 이름에 연결되며 응원 보상 항목은 있음.",
+      "missing": "공동 목표 생성·목표액·진행률·달성·중단·참여 내역과 독립 리액션 입력",
+      "suggestion": "개인 미션과 다른 기능으로 정보 구조를 분리. 요구가 확정되기 전 완료로 집계하지 않기"
+    },
+    {
+      "id": "G13",
+      "featureIds": [
+        "PAY-11",
+        "EXT-02",
+        "CAST-12"
+      ],
+      "title": "장면 합성과 후원 랭킹·알림 위젯 구성",
+      "surface": "오버레이 표시용 URL, 장면의 오버레이 소스 종류는 있음.",
+      "missing": "기간별 랭킹·익명 정책·위젯 종류/테마/표시값·권한·미리보기 관리; 카메라·이미지·자막 등 소스별 속성, 배치·순서·장면 합성 편집",
+      "suggestion": "방송자 위젯 설정과 공개 위젯을 나눠 설계"
+    },
+    {
+      "id": "G14",
+      "featureIds": [
+        "PAY-12"
+      ],
+      "title": "광고·스폰서 운영",
+      "surface": "수익 화면에 광고·스폰서 탭과 빈 상태만 있음.",
+      "missing": "캠페인/소재·광고 주기·스폰서 표시·성과·지급 상태",
+      "suggestion": "수익화 방식이 결정된 뒤 흐름을 추가. 현재는 연결된 자리만 있는 범위로 기록"
+    },
+    {
+      "id": "G15",
+      "featureIds": [
+        "ENGAGE-02"
+      ],
+      "title": "방송자 Q&A 처리",
+      "surface": "시청자 질문 제출/재작성과 관리 화면의 질문 빈 상태가 있음.",
+      "missing": "질문이 관리 큐로 들어오는 연결, 선택·고정·답변 중·완료·삭제",
+      "suggestion": "시청자 제출과 방송자 큐를 같은 로컬 예시 상태로 연결한 상세 시안 필요"
+    },
+    {
+      "id": "G16",
+      "featureIds": [
+        "ENGAGE-05",
+        "ENGAGE-06"
+      ],
+      "title": "보상 요청 처리와 예측",
+      "surface": "보상 편집·시청자 교환 확인·차감 기록은 있음. 예측은 빈 탭뿐.",
+      "missing": "방송자 교환 요청 승인/거절/취소·포인트 복원, 예측 생성/참여/결과/취소",
+      "suggestion": "포인트 원장과 운영 결과를 구분하고 유료 미션과 혼동하지 않도록 별도 상태 설계"
+    },
+    {
+      "id": "G17",
+      "featureIds": [
+        "ENGAGE-07",
+        "CHANNEL-10"
+      ],
+      "title": "출석·연속 시청·배지·즐겨찾기",
+      "surface": "출석 적립 토글, 보상 수령 배지 예시, 시청 기록·삭제·이어보기 카드 있음.",
+      "missing": "출석·연속 일수/달성 조건/배지 보관함, 즐겨찾기 추가/해제/목록",
+      "suggestion": "필요성이 확정된 기능만 사용자 메뉴에 추가하고 일반 시청 화면을 통계로 채우지 않기"
+    },
+    {
+      "id": "G18",
+      "featureIds": [
+        "OPS-02",
+        "OPS-05",
+        "OPS-06",
+        "OPS-07",
+        "OPS-09"
+      ],
+      "title": "운영·분석의 상세 화면",
+      "surface": "서비스 상태 카드, 기간별 방송 통계, 수익 내역과 활동 기록 필터는 있음.",
+      "missing": "장애 상세 로그·오류 추적, 유입/재방문/이탈·콘텐츠별 분석, 수익 분석·보관/삭제 이력 상세",
+      "suggestion": "관리자 업무에 필요한 드릴다운·필터·빈/오류/권한 상태 설계. 실제 계측 검증과는 별개"
+    },
+    {
+      "id": "G19",
+      "featureIds": [
+        "OPS-10"
+      ],
+      "title": "정책과 권리 운영",
+      "surface": "신고 제출·검토·조치 UI는 있고 정책 문서는 준비 상태.",
+      "missing": "실제 약관/개인정보/콘텐츠 정책 문서와 버전·권리 신고 후 삭제/이의 흐름",
+      "suggestion": "법률·운영 정책 확정이 선행. 임의 약관이나 가짜 완료 상태로 채우지 않기"
+    },
+    {
+      "id": "G20",
+      "featureIds": [
+        "EXT-07",
+        "CHANNEL-06"
+      ],
+      "title": "언어·지역·시간대와 예약 일관성",
+      "surface": "최신 내 설정은 프로필/계정/보안/알림/재생이며 예약 날짜·시간 입력은 있음.",
+      "missing": "언어·지역·시간대 설정, 예약 수정 시 공개 일정/알림·시간대가 연결되는 흐름",
+      "suggestion": "다국어가 후순위면 명시적으로 보류하고 예약에는 기준 시간대를 먼저 결정"
+    }
+  ],
+  "features": [
+    {
+      "featureId": "PERF-01",
+      "name": "단일 시청 기준 성능 계측",
+      "priority": "P0",
+      "screens": [
+        "service-health",
+        "verification"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "첫 프레임·지연·FPS·손실·서버 자원을 같은 시계 기준으로 기록"
+    },
+    {
+      "featureId": "PERF-02",
+      "name": "실제 미디어 수신 부하 발생기",
+      "priority": "P0",
+      "screens": [
+        "verification"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "API 요청 수와 구분해 실제 지속 수신 세션 수를 증명"
+    },
+    {
+      "featureId": "PERF-03",
+      "name": "단일 방송 1000명 단계 부하",
+      "priority": "P0",
+      "screens": [
+        "service-health",
+        "verification"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "1·10·50·100·300·500·1000명 결과와 최초 병목 기록"
+    },
+    {
+      "featureId": "PERF-04",
+      "name": "여러 방송 합산 부하",
+      "priority": "P1",
+      "screens": [
+        "verification"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "방송 수·시청자 분포·화질 분포를 나눠 측정"
+    },
+    {
+      "featureId": "PERF-05",
+      "name": "동시 입장과 이탈·교체 부하",
+      "priority": "P0",
+      "screens": [
+        "verification"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "입장 폭주·지속 교체에서 성공률과 연결 정리 확인"
+    },
+    {
+      "featureId": "PERF-06",
+      "name": "영상·채팅·DVR 혼합 부하",
+      "priority": "P0",
+      "screens": [
+        "verification"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "미디어와 실제 채팅·탐색을 함께 실행해 오류와 지연 비교"
+    },
+    {
+      "featureId": "PERF-07",
+      "name": "장시간 안정성과 누수",
+      "priority": "P0",
+      "screens": [
+        "verification"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "예산 내 최종 통과 인원에서 지속 시험·자원 회복 확인"
+    },
+    {
+      "featureId": "PERF-08",
+      "name": "부하 발생기 자체 한계 측정",
+      "priority": "P0",
+      "screens": [
+        "verification"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "생성기 CPU·메모리·NIC 포화를 서버 한계와 구분"
+    },
+    {
+      "featureId": "PERF-09",
+      "name": "수용 상한과 과부하 복구",
+      "priority": "P0",
+      "screens": [
+        "service-health",
+        "verification"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "300/400 상수 외 연결 처리·대기·거절·재시도·복구 검증"
+    },
+    {
+      "featureId": "PERF-10",
+      "name": "재현 가능한 성능 보고서",
+      "priority": "P0",
+      "screens": [
+        "verification"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "조건·도구·실제 인원·기간·p50/p95·비용 범위를 기계 판독 결과로 저장"
+    },
+    {
+      "featureId": "ABR-01",
+      "name": "화질별 공유 인코딩 단계",
+      "priority": "P0",
+      "screens": [
+        "watch",
+        "quality"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "실제 해상도·FPS·코덱·대역폭을 제공하고 시청자별 인코딩 방지"
+    },
+    {
+      "featureId": "ABR-02",
+      "name": "시청자별 자동 화질 선택",
+      "priority": "P0",
+      "screens": [
+        "watch",
+        "quality"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "자동 모드가 원본 고정 대신 실제 화질 스트림을 변경"
+    },
+    {
+      "featureId": "ABR-03",
+      "name": "빠른 하향과 보수적 상향",
+      "priority": "P0",
+      "screens": [
+        "watch",
+        "quality"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "관찰 창·안전 여유·유지 시간으로 전환 이유를 설명"
+    },
+    {
+      "featureId": "ABR-04",
+      "name": "화질 왕복 전환 억제",
+      "priority": "P0",
+      "screens": [
+        "watch",
+        "quality"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "경계 속도·지터에서 화질이 지속 왕복하지 않음"
+    },
+    {
+      "featureId": "ABR-05",
+      "name": "수동 화질 선택 유지",
+      "priority": "P0",
+      "screens": [
+        "watch",
+        "quality"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "자동 기능 추가 후에도 사용자의 수동 선택을 보존"
+    },
+    {
+      "featureId": "ABR-06",
+      "name": "전환 중 영상·음성 연속성",
+      "priority": "P0",
+      "screens": [
+        "watch",
+        "quality"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "키프레임 준비·실패 복구·오디오 중복·검은 화면·누수 검증"
+    },
+    {
+      "featureId": "ABR-07",
+      "name": "다른 시청자 화질 독립성",
+      "priority": "P0",
+      "screens": [
+        "watch",
+        "quality"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "느린 한 시청자로 다른 시청자나 원본 품질을 일괄 저하시키지 않음"
+    },
+    {
+      "featureId": "ABR-08",
+      "name": "회선 상태별 자동 전환 시험",
+      "priority": "P0",
+      "screens": [
+        "watch",
+        "quality"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "실제 미디어 경로의 대역폭·지연·손실·끊김을 재현"
+    },
+    {
+      "featureId": "ABR-09",
+      "name": "자동 상태와 실제 화질 표시",
+      "priority": "P0",
+      "screens": [
+        "watch",
+        "quality"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "메뉴·통계·실제 디코딩 해상도가 일치"
+    },
+    {
+      "featureId": "ABR-10",
+      "name": "화질 인코더 예열과 공유 수명",
+      "priority": "P0",
+      "screens": [
+        "watch",
+        "quality"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "첫 요청 몰림·콜드 스타트·유휴 종료·실패를 처리"
+    },
+    {
+      "featureId": "ABR-11",
+      "name": "단말 디코딩 한계 대응",
+      "priority": "P0",
+      "screens": [
+        "watch",
+        "quality"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "네트워크와 디코딩 드롭을 구분하고 기능 감지로 대응"
+    },
+    {
+      "featureId": "ABR-12",
+      "name": "DVR와 자동 화질 정책",
+      "priority": "P0",
+      "screens": [
+        "watch",
+        "quality"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "원본 녹화 제한과 지원 화질을 사실대로 표시하며 탐색 모드를 보존"
+    },
+    {
+      "featureId": "MOB-01",
+      "name": "iPhone Safari 실제 재생",
+      "priority": "P0",
+      "screens": [
+        "watch"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "실제 기기에서 영상·음성·전환·복구를 확인하고 기기/OS 기록"
+    },
+    {
+      "featureId": "MOB-02",
+      "name": "Android Chrome 실제 재생",
+      "priority": "P0",
+      "screens": [
+        "watch"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "실제 기기에서 영상·음성·전환·복구를 확인하고 기기/OS 기록"
+    },
+    {
+      "featureId": "MOB-03",
+      "name": "휴대폰 세로·가로 반응형",
+      "priority": "P0",
+      "screens": [
+        "live",
+        "watch"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "360·390·430px와 회전에서 가로 넘침·가려짐 없이 시청"
+    },
+    {
+      "featureId": "MOB-04",
+      "name": "태블릿 배치",
+      "priority": "P0",
+      "screens": [
+        "live",
+        "watch"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "영상·채팅·메뉴를 사용할 수 있고 데스크톱 배치 보존"
+    },
+    {
+      "featureId": "MOB-05",
+      "name": "모바일 탐색·채팅 배치",
+      "priority": "P0",
+      "screens": [
+        "live",
+        "watch"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "사이드바가 좁은 화면을 점유하지 않고 채팅과 영상 전환 가능"
+    },
+    {
+      "featureId": "MOB-06",
+      "name": "터치 컨트롤과 탐색",
+      "priority": "P0",
+      "screens": [
+        "watch"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "hover 없이 탭·드래그·스크롤 충돌을 실제 조작으로 검증"
+    },
+    {
+      "featureId": "MOB-07",
+      "name": "자동 재생·소리 켜기",
+      "priority": "P0",
+      "screens": [
+        "watch"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "차단 정책을 처리하고 음소거 재생과 오디오 성공을 구분"
+    },
+    {
+      "featureId": "MOB-08",
+      "name": "인라인·전체 화면·PiP 지원 감지",
+      "priority": "P0",
+      "screens": [
+        "watch"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "해당 기기에서 가능한 기능만 제공하며 복귀 상태 보존"
+    },
+    {
+      "featureId": "MOB-09",
+      "name": "모바일 DVR·실시간 복귀",
+      "priority": "P0",
+      "screens": [
+        "watch"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "지원 경로에서 되감기와 라이브 복귀가 동작하며 제한 명시"
+    },
+    {
+      "featureId": "MOB-10",
+      "name": "키보드·안전 영역·모달",
+      "priority": "P0",
+      "screens": [
+        "watch"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "노치·주소창·키보드 표시에도 입력과 완료 버튼 접근 가능"
+    },
+    {
+      "featureId": "MOB-11",
+      "name": "백그라운드·통신망 전환 복구",
+      "priority": "P0",
+      "screens": [
+        "watch"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "잠금 복귀·Wi-Fi/셀룰러 전환 후 중복 없이 회복"
+    },
+    {
+      "featureId": "MOB-12",
+      "name": "네이티브 HLS·MSE/MMS 호환",
+      "priority": "P0",
+      "screens": [
+        "watch",
+        "quality"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "기능 감지와 실제 코덱·오디오 지원을 검증하고 버전 고정"
+    },
+    {
+      "featureId": "NET-01",
+      "name": "공개 시청 URL과 주소 역할 분리",
+      "priority": "P0",
+      "screens": [
+        "connection",
+        "share",
+        "manual"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "시청 URL·로컬 입력·중계 입력·ICE 주소를 별도 관리"
+    },
+    {
+      "featureId": "NET-02",
+      "name": "외부 중계 서버로 실제 송출",
+      "priority": "P0",
+      "screens": [
+        "studio",
+        "connection",
+        "verification"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "Windows 송출 앱에서 인증된 공개 중계 경로로 전송"
+    },
+    {
+      "featureId": "NET-03",
+      "name": "HTTPS·WSS·역방향 프록시",
+      "priority": "P0",
+      "screens": [
+        "verification"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "페이지·영상 협상·채팅·DVR 경로와 인증서가 일치"
+    },
+    {
+      "featureId": "NET-04",
+      "name": "WebRTC·HLS 배포 방식 결정",
+      "priority": "P0",
+      "screens": [
+        "manual",
+        "verification"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "1000명·모바일·ABR·DVR·지연·비용을 비교해 구현 경로 결정"
+    },
+    {
+      "featureId": "NET-05",
+      "name": "NAT·STUN/TURN·연결 대체 경로",
+      "priority": "P0",
+      "screens": [
+        "connection",
+        "manual",
+        "verification"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "서로 다른 인터넷 회선에서 실제 미디어 도달성 확인"
+    },
+    {
+      "featureId": "NET-06",
+      "name": "공개 방송 목록 등록",
+      "priority": "P0",
+      "screens": [
+        "live"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "사설 IP·멀티캐스트에만 의존하지 않는 등록과 만료 구현"
+    },
+    {
+      "featureId": "NET-07",
+      "name": "공개 썸네일·채팅·DVR URL",
+      "priority": "P0",
+      "screens": [
+        "live",
+        "share",
+        "manual"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "각 API와 미디어 링크가 외부 시청자에게 도달 가능"
+    },
+    {
+      "featureId": "NET-08",
+      "name": "최소 송출 인증·관리 권한 분리",
+      "priority": "P0",
+      "screens": [
+        "studio",
+        "connection"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "익명 시청과 별개로 무단 송출·관리 API 접근 차단"
+    },
+    {
+      "featureId": "NET-09",
+      "name": "복제 서버·CDN 확장 경로",
+      "priority": "P1",
+      "screens": [
+        "service-health",
+        "verification"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "측정 병목에 맞춰 확장하고 프로토콜·권한·세션 경로 검증"
+    },
+    {
+      "featureId": "NET-10",
+      "name": "무료 자원·트래픽 예산",
+      "priority": "P0",
+      "screens": [
+        "service-health",
+        "verification"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "한도·영상 허용 범위·예상 전송량·시험 중단 조건 명시"
+    },
+    {
+      "featureId": "NET-11",
+      "name": "배포·재시작·진단 절차",
+      "priority": "P0",
+      "screens": [
+        "connection",
+        "verification"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "비밀 없는 설정 예시와 재현 가능한 서비스 실행 절차 제공"
+    },
+    {
+      "featureId": "NET-12",
+      "name": "환경 배지와 과거 전제 정리",
+      "priority": "P0",
+      "screens": [
+        "live"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "제품의 내부망 표시 제거와 활성 문서 전제 갱신·원본 보존"
+    },
+    {
+      "featureId": "CAST-01",
+      "name": "프로그램 창 선택과 미리보기",
+      "priority": "P1",
+      "screens": [
+        "sources"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "기존 기능 보존·동일 제목 창 구분과 종료 처리"
+    },
+    {
+      "featureId": "CAST-02",
+      "name": "모니터 선택과 미리보기",
+      "priority": "P1",
+      "screens": [
+        "sources"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "번호·주 모니터·해상도·고정 ID로 대상을 선택"
+    },
+    {
+      "featureId": "CAST-03",
+      "name": "제목 표시줄·테두리 제외",
+      "priority": "P1",
+      "screens": [
+        "sources"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "일반/자체 프레임·최대화에서 실제 인코더 입력까지 확인"
+    },
+    {
+      "featureId": "CAST-04",
+      "name": "고정 출력 화면과 비율 보존",
+      "priority": "P1",
+      "screens": [
+        "studio"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "창 크기 변경에도 출력 규격·플레이어 틀 유지"
+    },
+    {
+      "featureId": "CAST-05",
+      "name": "DPI·모니터 이동·분리",
+      "priority": "P1",
+      "screens": [
+        "sources"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "다른 배율과 실제 분리에서 임의 대상 전환 없이 처리"
+    },
+    {
+      "featureId": "CAST-06",
+      "name": "해상도·목표 FPS 설정",
+      "priority": "P1",
+      "screens": [
+        "studio",
+        "broadcast-settings"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "목표 FPS와 실제 캡처·새 프레임·인코딩 값을 구분"
+    },
+    {
+      "featureId": "CAST-07",
+      "name": "144·165fps 실제 성능",
+      "priority": "P1",
+      "screens": [
+        "studio",
+        "broadcast-settings",
+        "verification"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "지원 장비에서 반복 프레임과 새 프레임을 구분해 측정"
+    },
+    {
+      "featureId": "CAST-08",
+      "name": "GPU 인코더와 실패 대체",
+      "priority": "P1",
+      "screens": [
+        "studio",
+        "broadcast-settings"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "NVENC 외 QSV/AMF·소프트웨어 대체를 실제 검증"
+    },
+    {
+      "featureId": "CAST-09",
+      "name": "송출 비트레이트 자동·수동",
+      "priority": "P1",
+      "screens": [
+        "studio",
+        "broadcast-settings"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "해상도·FPS 계산과 실제 인코더 설정 일치·수동 보존"
+    },
+    {
+      "featureId": "CAST-10",
+      "name": "시스템·마이크 혼합과 음량",
+      "priority": "P1",
+      "screens": [
+        "studio",
+        "broadcast-settings"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "독립 음량·음소거·권한 오류와 송출 중 조절 보존"
+    },
+    {
+      "featureId": "CAST-11",
+      "name": "오디오·비디오 동기화",
+      "priority": "P0",
+      "screens": [
+        "watch",
+        "studio"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "부하·재연결·화질 전환 후 실제 동기화 측정"
+    },
+    {
+      "featureId": "CAST-12",
+      "name": "장면 전환·오버레이 합성",
+      "priority": "P2",
+      "screens": [
+        "scenes"
+      ],
+      "scopeClass": "named_connection_without_detail",
+      "sourceCoverage": "장면 이름·소스 이름/종류 추가와 선택은 있으나 실제 합성 편집을 위한 핵심 세부 UI는 없음",
+      "partialDetailGaps": [
+        "G13"
+      ],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "여러 소스·카메라·자막/이미지를 장면 단위로 합성"
+    },
+    {
+      "featureId": "PLAYER-01",
+      "name": "영상 클릭 재생·일시정지",
+      "priority": "P0",
+      "screens": [
+        "watch"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "터치·컨트롤 조작과 중복 실행 없이 기존 동작 보존"
+    },
+    {
+      "featureId": "PLAYER-02",
+      "name": "음소거·음량 조절",
+      "priority": "P0",
+      "screens": [
+        "watch"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "프로토콜 교체·PiP 복귀 후 시청자 음량 유지"
+    },
+    {
+      "featureId": "PLAYER-03",
+      "name": "하단 컨트롤 자동 숨김",
+      "priority": "P0",
+      "screens": [
+        "watch"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "hover/터치/키보드 접근·슬라이더 조작 중 표시 보존"
+    },
+    {
+      "featureId": "PLAYER-04",
+      "name": "확대 보기·전체 화면",
+      "priority": "P0",
+      "screens": [
+        "watch"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "데스크톱 사이드바 정책 유지와 기기별 지원 처리"
+    },
+    {
+      "featureId": "PLAYER-05",
+      "name": "PiP와 재생 요소 수명",
+      "priority": "P0",
+      "screens": [
+        "watch"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "라이브/DVR/전환에서 지원 범위·이전 창·중복 소리 정리"
+    },
+    {
+      "featureId": "PLAYER-06",
+      "name": "재생바·시간·라이브 복귀",
+      "priority": "P0",
+      "screens": [
+        "watch"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "네트워크·모바일 변경 후에도 실제 시점과 모드 유지"
+    },
+    {
+      "featureId": "PLAYER-07",
+      "name": "재접속·취소·오류 복구",
+      "priority": "P0",
+      "screens": [
+        "watch",
+        "info"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "이전 요청이 새 재생을 덮어쓰지 않고 복구 상한 명시"
+    },
+    {
+      "featureId": "PLAYER-08",
+      "name": "키보드·초점·접근성",
+      "priority": "P1",
+      "screens": [
+        "watch"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "스크린리더 이름·탭 이동·대비·입력 중 단축키를 점검"
+    },
+    {
+      "featureId": "PLAYER-09",
+      "name": "재생 속도·구간 반복",
+      "priority": "P2",
+      "screens": [
+        "watch",
+        "vod-watch"
+      ],
+      "scopeClass": "named_connection_without_detail",
+      "sourceCoverage": "화면 연결 또는 일부 입력·상태만 있으며 수락 기준의 핵심 세부 UI가 없음",
+      "partialDetailGaps": [
+        "G01"
+      ],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "과거 영상에서만 지원 범위를 명확히 제공"
+    },
+    {
+      "featureId": "PLAYER-10",
+      "name": "실시간 자막·자막 선택",
+      "priority": "P2",
+      "screens": [
+        "watch",
+        "vod-watch"
+      ],
+      "scopeClass": "named_connection_without_detail",
+      "sourceCoverage": "화면 연결 또는 일부 입력·상태만 있으며 수락 기준의 핵심 세부 UI가 없음",
+      "partialDetailGaps": [
+        "G01"
+      ],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "실제 자막 트랙·시각 동기화·언어 선택 제공"
+    },
+    {
+      "featureId": "CONTENT-01",
+      "name": "방송 처음부터 DVR",
+      "priority": "P0",
+      "screens": [
+        "watch"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "늦게 접속해 처음으로 탐색·실시간 복귀하는 기능 보존"
+    },
+    {
+      "featureId": "CONTENT-02",
+      "name": "분할 녹화와 저장 한도",
+      "priority": "P1",
+      "screens": [
+        "broadcast-end",
+        "recordings"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "완료 방송 정리와 현재 방송 앞부분 보존 확인"
+    },
+    {
+      "featureId": "CONTENT-03",
+      "name": "디스크 부족·중단 구간 처리",
+      "priority": "P1",
+      "screens": [
+        "broadcast-end",
+        "recordings"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "라이브 유지·녹화 재개·탐색 공백 처리를 검증"
+    },
+    {
+      "featureId": "CONTENT-04",
+      "name": "방송 종료 후 다시보기 서비스",
+      "priority": "P2",
+      "screens": [
+        "vod",
+        "vod-watch"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "종료 방송 목록·공유 URL·삭제·권한 제공"
+    },
+    {
+      "featureId": "CONTENT-05",
+      "name": "클립 생성과 공유",
+      "priority": "P2",
+      "screens": [
+        "clips",
+        "clip-watch",
+        "clip-create"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "구간 선택·변환·재생 URL·원본 삭제 정책 관리"
+    },
+    {
+      "featureId": "CONTENT-06",
+      "name": "하이라이트·챕터·북마크",
+      "priority": "P2",
+      "screens": [
+        "vod-watch",
+        "clip-create"
+      ],
+      "scopeClass": "named_connection_without_detail",
+      "sourceCoverage": "화면 연결 또는 일부 입력·상태만 있으며 수락 기준의 핵심 세부 UI가 없음",
+      "partialDetailGaps": [
+        "G02"
+      ],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "영상 내 구간 메타데이터와 탐색 연동"
+    },
+    {
+      "featureId": "CONTENT-07",
+      "name": "시간축 썸네일 미리보기",
+      "priority": "P2",
+      "screens": [
+        "watch",
+        "vod-watch"
+      ],
+      "scopeClass": "named_connection_without_detail",
+      "sourceCoverage": "화면 연결 또는 일부 입력·상태만 있으며 수락 기준의 핵심 세부 UI가 없음",
+      "partialDetailGaps": [
+        "G02"
+      ],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "가벼운 썸네일로 탐색 위치 예고"
+    },
+    {
+      "featureId": "CONTENT-08",
+      "name": "채팅 다시보기 동기화",
+      "priority": "P2",
+      "screens": [
+        "watch",
+        "vod-watch"
+      ],
+      "scopeClass": "named_connection_without_detail",
+      "sourceCoverage": "화면 연결 또는 일부 입력·상태만 있으며 수락 기준의 핵심 세부 UI가 없음",
+      "partialDetailGaps": [
+        "G02"
+      ],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "저장된 채팅을 영상 시각에 맞춰 재생"
+    },
+    {
+      "featureId": "CONTENT-09",
+      "name": "영상 다운로드·보관 정책",
+      "priority": "P2",
+      "screens": [
+        "vod",
+        "recordings"
+      ],
+      "scopeClass": "named_connection_without_detail",
+      "sourceCoverage": "화면 연결 또는 일부 입력·상태만 있으며 수락 기준의 핵심 세부 UI가 없음",
+      "partialDetailGaps": [
+        "G03"
+      ],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "로컬 파일 외 사용자 다운로드 권한·만료·용량 제공"
+    },
+    {
+      "featureId": "CONTENT-10",
+      "name": "다시보기 다중 화질",
+      "priority": "P2",
+      "screens": [
+        "vod",
+        "vod-watch"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "원본 외 실제 변환 결과와 저장·트래픽 비용 관리"
+    },
+    {
+      "featureId": "CHAT-01",
+      "name": "송출자·시청자 양방향 채팅",
+      "priority": "P0",
+      "screens": [
+        "watch",
+        "studio"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "1000명 연결 흐름·모바일에서도 영상과 독립 유지"
+    },
+    {
+      "featureId": "CHAT-02",
+      "name": "닉네임 설정·입력 검증",
+      "priority": "P1",
+      "screens": [
+        "nickname"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "표시 이름과 계정 신원을 구분하고 중복 정책 명시"
+    },
+    {
+      "featureId": "CHAT-03",
+      "name": "전송 확인·재연결·중복 제거",
+      "priority": "P0",
+      "screens": [
+        "watch",
+        "studio"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "단절·IP 변경·재전송에서 누락/중복/실패를 검증"
+    },
+    {
+      "featureId": "CHAT-04",
+      "name": "채팅 영속 저장·검색",
+      "priority": "P2",
+      "screens": [
+        "moderation"
+      ],
+      "scopeClass": "named_connection_without_detail",
+      "sourceCoverage": "화면 연결 또는 일부 입력·상태만 있으며 수락 기준의 핵심 세부 UI가 없음",
+      "partialDetailGaps": [
+        "G04"
+      ],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "방송 종료 후 기록·보관 기간·열람 권한 관리"
+    },
+    {
+      "featureId": "CHAT-05",
+      "name": "메시지 삭제·고정",
+      "priority": "P1",
+      "screens": [
+        "moderation"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "권한 있는 운영자만 삭제/고정하고 모든 클라이언트 반영"
+    },
+    {
+      "featureId": "CHAT-06",
+      "name": "일시 제한·차단·해제",
+      "priority": "P1",
+      "screens": [
+        "moderation"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "지속 사용자 ID 기준으로 제한과 해제 기록"
+    },
+    {
+      "featureId": "CHAT-07",
+      "name": "채팅 운영자 지정",
+      "priority": "P1",
+      "screens": [
+        "moderation"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "소유자·운영자 권한과 조치 이력 분리"
+    },
+    {
+      "featureId": "CHAT-08",
+      "name": "금칙어·링크·스팸 필터",
+      "priority": "P1",
+      "screens": [
+        "moderation"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "기본 속도 제한 외 설정 가능한 필터·검토 처리"
+    },
+    {
+      "featureId": "CHAT-09",
+      "name": "신고·검토·제재 이력",
+      "priority": "P1",
+      "screens": [
+        "reports",
+        "report-content",
+        "service-reports"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "신고 접수·증거·조치·해제와 접근 권한 관리"
+    },
+    {
+      "featureId": "CHAT-10",
+      "name": "멘션·답글·이모티콘·배지",
+      "priority": "P2",
+      "screens": [
+        "watch",
+        "moderation"
+      ],
+      "scopeClass": "named_connection_without_detail",
+      "sourceCoverage": "화면 연결 또는 일부 입력·상태만 있으며 수락 기준의 핵심 세부 UI가 없음",
+      "partialDetailGaps": [
+        "G04"
+      ],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "안전한 렌더링과 사용자·멤버십 권한 연동"
+    },
+    {
+      "featureId": "CHAT-11",
+      "name": "느린 채팅·팔로워 전용 모드",
+      "priority": "P2",
+      "screens": [
+        "moderation"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "현재 고정 속도 제한과 별도로 운영 설정·자격 검사"
+    },
+    {
+      "featureId": "CHAT-12",
+      "name": "참여자 목록·읽기 전용 상태",
+      "priority": "P1",
+      "screens": [
+        "watch",
+        "moderation"
+      ],
+      "scopeClass": "named_connection_without_detail",
+      "sourceCoverage": "화면 연결 또는 일부 입력·상태만 있으며 수락 기준의 핵심 세부 UI가 없음",
+      "partialDetailGaps": [
+        "G04"
+      ],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "세션과 사람 수를 구분하고 채팅 불가 사유를 제공"
+    },
+    {
+      "featureId": "AUTH-01",
+      "name": "소셜로그인 OAuth/OIDC",
+      "priority": "P1",
+      "screens": [
+        "login"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "우선 한 제공자로 로그인·콜백·로그아웃·오류 처리"
+    },
+    {
+      "featureId": "AUTH-02",
+      "name": "고정 사용자 ID·프로필",
+      "priority": "P1",
+      "screens": [
+        "profile",
+        "nickname"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "닉네임/IP와 독립된 사용자 ID로 데이터 연결"
+    },
+    {
+      "featureId": "AUTH-03",
+      "name": "로그인 유지·세션 회수",
+      "priority": "P1",
+      "screens": [
+        "login",
+        "security"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "만료·갱신·기기 로그아웃과 서버 검증 구현"
+    },
+    {
+      "featureId": "AUTH-04",
+      "name": "계정 연동·중복 계정 처리",
+      "priority": "P2",
+      "screens": [
+        "login",
+        "security"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "여러 소셜 계정의 소유 확인과 데이터 연결 정책"
+    },
+    {
+      "featureId": "AUTH-05",
+      "name": "회원 탈퇴·정보 관리",
+      "priority": "P1",
+      "screens": [
+        "profile",
+        "security"
+      ],
+      "scopeClass": "named_connection_without_detail",
+      "sourceCoverage": "화면 연결 또는 일부 입력·상태만 있으며 수락 기준의 핵심 세부 UI가 없음",
+      "partialDetailGaps": [
+        "G05"
+      ],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "본인 데이터 수정·탈퇴·보관 정책 적용"
+    },
+    {
+      "featureId": "AUTH-06",
+      "name": "비밀번호·메일·OTP 로그인",
+      "priority": "P2",
+      "screens": [
+        "login",
+        "security"
+      ],
+      "scopeClass": "named_connection_without_detail",
+      "sourceCoverage": "화면 연결 또는 일부 입력·상태만 있으며 수락 기준의 핵심 세부 UI가 없음",
+      "partialDetailGaps": [
+        "G06"
+      ],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "필요한 방식만 선택해 복구·확인·남용 제한 구현"
+    },
+    {
+      "featureId": "AUTH-07",
+      "name": "소유자·운영자·시청자 역할",
+      "priority": "P1",
+      "screens": [
+        "channel-edit",
+        "moderation"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "서버에서 권한을 검사하고 UI 표시와 분리"
+    },
+    {
+      "featureId": "AUTH-08",
+      "name": "채널별 접근 권한",
+      "priority": "P1",
+      "screens": [
+        "channel",
+        "channel-edit"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "초대·제한 방송과 콘텐츠별 시청/관리 권한 검증"
+    },
+    {
+      "featureId": "AUTH-09",
+      "name": "2단계 인증·중요 작업 재확인",
+      "priority": "P2",
+      "screens": [
+        "security"
+      ],
+      "scopeClass": "named_connection_without_detail",
+      "sourceCoverage": "화면 연결 또는 일부 입력·상태만 있으며 수락 기준의 핵심 세부 UI가 없음",
+      "partialDetailGaps": [
+        "G06"
+      ],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "민감한 변경·정산 작업에 추가 인증 적용"
+    },
+    {
+      "featureId": "AUTH-10",
+      "name": "동의·활동 이력·차단 관리",
+      "priority": "P2",
+      "screens": [
+        "history",
+        "security",
+        "preferences",
+        "audit",
+        "policy"
+      ],
+      "scopeClass": "named_connection_without_detail",
+      "sourceCoverage": "화면 연결 또는 일부 입력·상태만 있으며 수락 기준의 핵심 세부 UI가 없음",
+      "partialDetailGaps": [
+        "G05"
+      ],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "필요 데이터만 저장하고 본인/운영자 열람 범위 구분"
+    },
+    {
+      "featureId": "CHANNEL-01",
+      "name": "고정 채널 페이지·주소",
+      "priority": "P1",
+      "screens": [
+        "channel",
+        "channel-edit"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "방송 세션이 바뀌어도 같은 채널과 이력 유지"
+    },
+    {
+      "featureId": "CHANNEL-02",
+      "name": "프로필·배너·소개·링크",
+      "priority": "P2",
+      "screens": [
+        "channel",
+        "channel-edit"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [
+        "G07"
+      ],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "채널 소유자 편집과 안전한 공개 렌더링"
+    },
+    {
+      "featureId": "CHANNEL-03",
+      "name": "팔로우·팔로우 목록",
+      "priority": "P1",
+      "screens": [
+        "following",
+        "channel"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "사용자별 채널 관계와 중복·해제 처리"
+    },
+    {
+      "featureId": "CHANNEL-04",
+      "name": "방송 시작 알림·설정",
+      "priority": "P1",
+      "screens": [
+        "following",
+        "notifications",
+        "preferences"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "구독한 알림만 전달하고 수신 설정·중복 방지"
+    },
+    {
+      "featureId": "CHANNEL-05",
+      "name": "제목·카테고리·태그 관리",
+      "priority": "P1",
+      "screens": [
+        "broadcast-details",
+        "channel-edit"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "창 제목 기본값 외 채널 소유자가 메타데이터 편집"
+    },
+    {
+      "featureId": "CHANNEL-06",
+      "name": "방송 예약·일정·예고",
+      "priority": "P2",
+      "screens": [
+        "channel",
+        "schedule"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [
+        "G20"
+      ],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "시간대·시작 변경·취소·알림을 일치시킴"
+    },
+    {
+      "featureId": "CHANNEL-07",
+      "name": "검색·정렬·카테고리 탐색",
+      "priority": "P2",
+      "screens": [
+        "live",
+        "search"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "현재 방송 목록 검색 외 서버 검색·필터·정렬 제공"
+    },
+    {
+      "featureId": "CHANNEL-08",
+      "name": "추천·개인화 피드",
+      "priority": "P3",
+      "screens": [
+        "recommendations"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "측정 가능한 신호와 노출 정책으로 추천 제공"
+    },
+    {
+      "featureId": "CHANNEL-09",
+      "name": "공지·게시글·댓글",
+      "priority": "P2",
+      "screens": [
+        "channel",
+        "channel-edit"
+      ],
+      "scopeClass": "named_connection_without_detail",
+      "sourceCoverage": "화면 연결 또는 일부 입력·상태만 있으며 수락 기준의 핵심 세부 UI가 없음",
+      "partialDetailGaps": [
+        "G07"
+      ],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "채널 커뮤니티와 신고·삭제 권한 구현"
+    },
+    {
+      "featureId": "CHANNEL-10",
+      "name": "시청 기록·이어보기·즐겨찾기",
+      "priority": "P2",
+      "screens": [
+        "history"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [
+        "G17"
+      ],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "사용자별 기록·최근 위치·삭제 설정 제공"
+    },
+    {
+      "featureId": "PAY-01",
+      "name": "일반 금액·메시지 후원",
+      "priority": "P2",
+      "screens": [
+        "donate"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "서버 결제 확인 후 후원 내역과 알림 생성"
+    },
+    {
+      "featureId": "PAY-02",
+      "name": "결제 검증·중복 처리 방지",
+      "priority": "P2",
+      "screens": [
+        "transactions",
+        "donate"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "웹훅 검증·재처리·거래 상태 일관성·장애 복구"
+    },
+    {
+      "featureId": "PAY-03",
+      "name": "취소·환불·분쟁 처리",
+      "priority": "P2",
+      "screens": [
+        "transactions",
+        "donate"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [
+        "G08"
+      ],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "결제사 상태와 내부 기록을 일치시키고 이력 보존"
+    },
+    {
+      "featureId": "PAY-04",
+      "name": "정산·수익 내역",
+      "priority": "P2",
+      "screens": [
+        "revenue"
+      ],
+      "scopeClass": "named_connection_without_detail",
+      "sourceCoverage": "화면 연결 또는 일부 입력·상태만 있으며 수락 기준의 핵심 세부 UI가 없음",
+      "partialDetailGaps": [
+        "G08"
+      ],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "실제 정산 데이터와 조회 권한·수수료 내역 관리"
+    },
+    {
+      "featureId": "PAY-05",
+      "name": "TTS·음성 후원",
+      "priority": "P2",
+      "screens": [
+        "donate"
+      ],
+      "scopeClass": "named_connection_without_detail",
+      "sourceCoverage": "화면 연결 또는 일부 입력·상태만 있으며 수락 기준의 핵심 세부 UI가 없음",
+      "partialDetailGaps": [
+        "G09"
+      ],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "음성 생성·필터·재생 대기열·건너뛰기 제공"
+    },
+    {
+      "featureId": "PAY-06",
+      "name": "영상 후원",
+      "priority": "P2",
+      "screens": [
+        "donate"
+      ],
+      "scopeClass": "named_connection_without_detail",
+      "sourceCoverage": "화면 연결 또는 일부 입력·상태만 있으며 수락 기준의 핵심 세부 UI가 없음",
+      "partialDetailGaps": [
+        "G09"
+      ],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "외부 영상 검증·승인·길이 제한·재생 대기열 관리"
+    },
+    {
+      "featureId": "PAY-07",
+      "name": "유료 멤버십·구독",
+      "priority": "P2",
+      "screens": [
+        "members",
+        "membership"
+      ],
+      "scopeClass": "named_connection_without_detail",
+      "sourceCoverage": "화면 연결 또는 일부 입력·상태만 있으며 수락 기준의 핵심 세부 UI가 없음",
+      "partialDetailGaps": [
+        "G10"
+      ],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "정기 결제·만료·해지와 혜택 권한 연결"
+    },
+    {
+      "featureId": "PAY-08",
+      "name": "멤버십·구독 선물",
+      "priority": "P3",
+      "screens": [
+        "members",
+        "membership"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [
+        "G10"
+      ],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "수령 대상·중복·기간·거래 기록 관리"
+    },
+    {
+      "featureId": "PAY-09",
+      "name": "유료 미션 후원",
+      "priority": "P3",
+      "screens": [
+        "missions-manage",
+        "mission"
+      ],
+      "scopeClass": "named_connection_without_detail",
+      "sourceCoverage": "화면 연결 또는 일부 입력·상태만 있으며 수락 기준의 핵심 세부 UI가 없음",
+      "partialDetailGaps": [
+        "G11"
+      ],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "금액 대기·기한·결과 확정·취소/실패 상태 관리"
+    },
+    {
+      "featureId": "PAY-10",
+      "name": "공동 목표·누적 후원",
+      "priority": "P3",
+      "screens": [
+        "missions-manage",
+        "mission"
+      ],
+      "scopeClass": "named_connection_without_detail",
+      "sourceCoverage": "화면 연결 또는 일부 입력·상태만 있으며 수락 기준의 핵심 세부 UI가 없음",
+      "partialDetailGaps": [
+        "G12"
+      ],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "참여 금액·목표 달성·중단 처리 일관성 보장"
+    },
+    {
+      "featureId": "PAY-11",
+      "name": "후원 랭킹·알림 위젯",
+      "priority": "P2",
+      "screens": [
+        "revenue",
+        "donate"
+      ],
+      "scopeClass": "named_connection_without_detail",
+      "sourceCoverage": "화면 연결 또는 일부 입력·상태만 있으며 수락 기준의 핵심 세부 UI가 없음",
+      "partialDetailGaps": [
+        "G13"
+      ],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "실제 거래 기반 집계·익명 정책·오버레이 제공"
+    },
+    {
+      "featureId": "PAY-12",
+      "name": "광고·스폰서 수익화",
+      "priority": "P3",
+      "screens": [
+        "revenue"
+      ],
+      "scopeClass": "named_connection_without_detail",
+      "sourceCoverage": "화면 연결 또는 일부 입력·상태만 있으며 수락 기준의 핵심 세부 UI가 없음",
+      "partialDetailGaps": [
+        "G14"
+      ],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "광고 재생·빈도·성과·수익 데이터 관리"
+    },
+    {
+      "featureId": "ENGAGE-01",
+      "name": "실시간 투표",
+      "priority": "P2",
+      "screens": [
+        "polls-manage",
+        "poll"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "선택지·마감·중복 투표 방지·결과 공개"
+    },
+    {
+      "featureId": "ENGAGE-02",
+      "name": "질문 수집·Q&A",
+      "priority": "P2",
+      "screens": [
+        "polls-manage",
+        "poll"
+      ],
+      "scopeClass": "named_connection_without_detail",
+      "sourceCoverage": "화면 연결 또는 일부 입력·상태만 있으며 수락 기준의 핵심 세부 UI가 없음",
+      "partialDetailGaps": [
+        "G15"
+      ],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "질문 제출·선택·고정·완료와 운영 권한 제공"
+    },
+    {
+      "featureId": "ENGAGE-03",
+      "name": "무료 미션·도전 과제",
+      "priority": "P2",
+      "screens": [
+        "missions-manage",
+        "mission"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [
+        "G11"
+      ],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "제안·수락·진행·완료/실패·기한 상태 관리"
+    },
+    {
+      "featureId": "ENGAGE-04",
+      "name": "시청 포인트 적립·사용",
+      "priority": "P2",
+      "screens": [
+        "rewards-manage",
+        "rewards"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "활동 검증·포인트 원장·중복 적립 방지"
+    },
+    {
+      "featureId": "ENGAGE-05",
+      "name": "포인트 보상 교환",
+      "priority": "P2",
+      "screens": [
+        "rewards-manage",
+        "rewards"
+      ],
+      "scopeClass": "named_connection_without_detail",
+      "sourceCoverage": "화면 연결 또는 일부 입력·상태만 있으며 수락 기준의 핵심 세부 UI가 없음",
+      "partialDetailGaps": [
+        "G16"
+      ],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "교환 조건·차감·승인·취소와 원장 연동"
+    },
+    {
+      "featureId": "ENGAGE-06",
+      "name": "포인트 예측·참여 결과",
+      "priority": "P3",
+      "screens": [
+        "polls-manage",
+        "poll"
+      ],
+      "scopeClass": "named_connection_without_detail",
+      "sourceCoverage": "화면 연결 또는 일부 입력·상태만 있으며 수락 기준의 핵심 세부 UI가 없음",
+      "partialDetailGaps": [
+        "G16"
+      ],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "유료 미션과 구분하고 이용 범위·취소·결과 처리 검토"
+    },
+    {
+      "featureId": "ENGAGE-07",
+      "name": "출석·연속 시청·배지",
+      "priority": "P2",
+      "screens": [
+        "rewards-manage",
+        "rewards"
+      ],
+      "scopeClass": "named_connection_without_detail",
+      "sourceCoverage": "화면 연결 또는 일부 입력·상태만 있으며 수락 기준의 핵심 세부 UI가 없음",
+      "partialDetailGaps": [
+        "G17"
+      ],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "사용자별 실제 참여와 보상 중복 관리"
+    },
+    {
+      "featureId": "ENGAGE-08",
+      "name": "리액션·응원·커뮤니티 목표",
+      "priority": "P2",
+      "screens": [
+        "missions-manage",
+        "rewards"
+      ],
+      "scopeClass": "named_connection_without_detail",
+      "sourceCoverage": "화면 연결 또는 일부 입력·상태만 있으며 수락 기준의 핵심 세부 UI가 없음",
+      "partialDetailGaps": [
+        "G12"
+      ],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "과다 요청 제한과 실제 집계 상태 제공"
+    },
+    {
+      "featureId": "ENGAGE-09",
+      "name": "채널 간 시청자 연결·레이드",
+      "priority": "P3",
+      "screens": [
+        "raid"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "이동 안내·수신 채널 상태·참여 권한 관리"
+    },
+    {
+      "featureId": "ENGAGE-10",
+      "name": "시청 보상·드롭스 연동",
+      "priority": "P3",
+      "screens": [
+        "rewards-manage",
+        "rewards",
+        "drop-rewards"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "외부 보상 자격·중복·교환 상태와 연동 계약 관리"
+    },
+    {
+      "featureId": "OPS-01",
+      "name": "미디어 관측·성능 대시보드",
+      "priority": "P0",
+      "screens": [
+        "info",
+        "service-health"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "서버/단말 지표를 세션별 연결하고 개인정보 최소 수집"
+    },
+    {
+      "featureId": "OPS-02",
+      "name": "장애 로그·오류 추적·알림",
+      "priority": "P0",
+      "screens": [
+        "service-health"
+      ],
+      "scopeClass": "named_connection_without_detail",
+      "sourceCoverage": "화면 연결 또는 일부 입력·상태만 있으며 수락 기준의 핵심 세부 UI가 없음",
+      "partialDetailGaps": [
+        "G18"
+      ],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "공개 경로·미디어·채팅 오류를 구분하고 재현 정보 제공"
+    },
+    {
+      "featureId": "OPS-03",
+      "name": "설정·비밀 관리",
+      "priority": "P0",
+      "screens": [
+        "audit",
+        "developer",
+        "verification"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "환경별 설정과 비밀을 코드·UI·로그에서 분리"
+    },
+    {
+      "featureId": "OPS-04",
+      "name": "일관된 배포·복구·백업",
+      "priority": "P1",
+      "screens": [
+        "verification"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "데이터 복구와 이전 버전 복귀 절차 검증"
+    },
+    {
+      "featureId": "OPS-05",
+      "name": "시청 시간·유입·재방문 분석",
+      "priority": "P2",
+      "screens": [
+        "broadcast-end",
+        "creator-stats"
+      ],
+      "scopeClass": "named_connection_without_detail",
+      "sourceCoverage": "화면 연결 또는 일부 입력·상태만 있으며 수락 기준의 핵심 세부 UI가 없음",
+      "partialDetailGaps": [
+        "G18"
+      ],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "연결 수와 실제 사용자/시청 시간을 구분해 집계"
+    },
+    {
+      "featureId": "OPS-06",
+      "name": "채널·콘텐츠 성과 분석",
+      "priority": "P2",
+      "screens": [
+        "creator-stats"
+      ],
+      "scopeClass": "named_connection_without_detail",
+      "sourceCoverage": "화면 연결 또는 일부 입력·상태만 있으며 수락 기준의 핵심 세부 UI가 없음",
+      "partialDetailGaps": [
+        "G18"
+      ],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "방송·다시보기·클립별 재생/이탈/참여 통계"
+    },
+    {
+      "featureId": "OPS-07",
+      "name": "수익·후원·멤버십 분석",
+      "priority": "P2",
+      "screens": [
+        "revenue"
+      ],
+      "scopeClass": "named_connection_without_detail",
+      "sourceCoverage": "화면 연결 또는 일부 입력·상태만 있으며 수락 기준의 핵심 세부 UI가 없음",
+      "partialDetailGaps": [
+        "G18"
+      ],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "실제 거래와 맞는 집계·권한별 보고서 제공"
+    },
+    {
+      "featureId": "OPS-08",
+      "name": "서비스 관리자·신고 운영",
+      "priority": "P1",
+      "screens": [
+        "report-content",
+        "service-reports"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "계정·채널·신고·제재를 역할별 관리"
+    },
+    {
+      "featureId": "OPS-09",
+      "name": "감사 기록·보관·데이터 삭제",
+      "priority": "P1",
+      "screens": [
+        "audit"
+      ],
+      "scopeClass": "named_connection_without_detail",
+      "sourceCoverage": "화면 연결 또는 일부 입력·상태만 있으며 수락 기준의 핵심 세부 UI가 없음",
+      "partialDetailGaps": [
+        "G18"
+      ],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "민감한 운영 조치와 보관 기간·삭제 결과 기록"
+    },
+    {
+      "featureId": "OPS-10",
+      "name": "방송 콘텐츠 권리·이용 정책",
+      "priority": "P2",
+      "screens": [
+        "report-content",
+        "service-reports",
+        "policy"
+      ],
+      "scopeClass": "named_connection_without_detail",
+      "sourceCoverage": "화면 연결 또는 일부 입력·상태만 있으며 수락 기준의 핵심 세부 UI가 없음",
+      "partialDetailGaps": [
+        "G19"
+      ],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "신고·삭제·공개 범위·서비스 정책을 운영 흐름에 반영"
+    },
+    {
+      "featureId": "EXT-01",
+      "name": "OBS 등 외부 송출 도구 입력",
+      "priority": "P2",
+      "screens": [
+        "connection",
+        "integrations"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "인증된 RTMP/SRT 등 필요한 입력 경로와 키 회수 제공"
+    },
+    {
+      "featureId": "EXT-02",
+      "name": "브라우저 소스 오버레이",
+      "priority": "P2",
+      "screens": [
+        "scenes",
+        "integrations"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [
+        "G13"
+      ],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "후원·미션·채팅 위젯 URL과 표시/관리 권한 분리"
+    },
+    {
+      "featureId": "EXT-03",
+      "name": "채팅봇·명령어·자동 응답",
+      "priority": "P2",
+      "screens": [
+        "integrations"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "봇 권한·속도 제한·명령어·이벤트 연결"
+    },
+    {
+      "featureId": "EXT-04",
+      "name": "외부 API·웹훅",
+      "priority": "P2",
+      "screens": [
+        "integrations",
+        "developer"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "서명·권한 범위·재전송·중복 이벤트 처리"
+    },
+    {
+      "featureId": "EXT-05",
+      "name": "임베드·공유 링크",
+      "priority": "P2",
+      "screens": [
+        "clip-watch",
+        "share"
+      ],
+      "scopeClass": "direct_ui_flow",
+      "sourceCoverage": "해당 화면의 입력·조작·상태 또는 목록 흐름이 소스에 표현됨",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "방송별 공유와 삽입 허용·권한·자동 재생 정책 적용"
+    },
+    {
+      "featureId": "EXT-06",
+      "name": "업데이트·버전 배포",
+      "priority": "P1",
+      "screens": [
+        "update"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "현재 패키징 외 배포 버전·무결성·업데이트 절차 관리"
+    },
+    {
+      "featureId": "EXT-07",
+      "name": "다국어·지역·시간대",
+      "priority": "P3",
+      "screens": [
+        "preferences"
+      ],
+      "scopeClass": "named_connection_without_detail",
+      "sourceCoverage": "화면 연결 또는 일부 입력·상태만 있으며 수락 기준의 핵심 세부 UI가 없음",
+      "partialDetailGaps": [
+        "G20"
+      ],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "제품 문구·일정·날짜·숫자 표시 분리"
+    },
+    {
+      "featureId": "EXT-08",
+      "name": "TV·캐스트·추가 기기",
+      "priority": "P3",
+      "screens": [
+        "devices"
+      ],
+      "scopeClass": "technical_validation",
+      "sourceCoverage": "측정·서버·실기기 중심의 판정 대상. 일부 표시/조작 표면이 있어도 검증 완료가 아님",
+      "partialDetailGaps": [],
+      "visualAndInteractionStatus": "root 통합 브라우저 QA 결과와 별도로 대조 필요",
+      "actualImplementationStatus": "이 감사에서는 판정하지 않음",
+      "acceptance": "대상별 재생·리모컨·화질·코덱 지원 검증"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+FRAME v2 thumbnail assets
+Mode: built-in image_gen. Generated fictional content for local design review; not actual broadcasts.
+Destination: design/2026-10-28/dist/assets/editorial/
+
+Filename: forest-game.png
+Prompt: Use case: stylized-concept. Asset type: a single realistic 16:9 livestream gaming thumbnail, no webpage UI. Create a premium high-detail gameplay screenshot of an original fantasy adventure: a small blue-cloaked explorer seen from behind crossing a mossy stone bridge in a lush forest toward enormous ancient ruins, dappled golden sunlight, detailed vegetation, atmospheric depth, bright jade and warm golden colors. It should look like a real modern PC game captured mid exploration, not a poster or vector illustration. Subtle tiny game HUD at edges is allowed, but no readable text, logos, brands, watermark, captions, or border. Wide framing, center composition readable at 360px thumbnail size.
+
+Filename: creative-studio.png
+Prompt: Use case: photorealistic-natural. Asset type: a single 16:9 livestream thumbnail for a creative workspace stream, no webpage UI. Candid editorial photograph of a young adult Korean woman artist in a warm, airy home studio, working on a pen display drawing a colorful blue and coral landscape illustration. Side three-quarter angle includes her face, hands, drawing screen and a neatly arranged desk. Natural sunlight, a few plants, neutral cream walls, thoughtful contemporary furniture, authentic details, natural skin texture. High quality believable video frame, inviting and calm, soft cinematic colors but not exaggerated bokeh. No readable text, logos, branding, watermark, captions, or border. Make the face and illustration clearly readable at small thumbnail size.
+
+Filename: night-drive.png
+Prompt: Use case: photorealistic-natural. Asset type: a single 16:9 immersive driving livestream thumbnail, no webpage UI. Realistic racing simulator gameplay view from just above the hood of a dark sports car driving through a rainy modern Seoul-like downtown at blue hour, reflective pavement, layered teal and warm amber storefront lighting, elegant tall buildings, traffic in distance. It should read as a genuine attractive game stream still with rich realistic detail, not an advertisement or concept poster. Motion restrained so it remains sharp, small unobtrusive racing HUD at very edges allowed. No readable text, logos, identifiable brands, watermarks, captions or border. Wide framing, balanced vivid colors, high-end realistic game rendering.
+

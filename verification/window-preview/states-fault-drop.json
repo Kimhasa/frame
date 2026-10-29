@@ -1,0 +1,107 @@
+{
+ "phase": "fault",
+ "fault": "drop",
+ "measuredAt": "2026-10-28T08:15:46.666Z",
+ "passed": true,
+ "checks": [
+  {
+   "name": "no first frame: retrying shows 응답이 늦습니다 (no retry button yet)",
+   "ok": true,
+   "data": {
+    "id": "wa40936-11832",
+    "state": "retrying",
+    "chip": "응답이 늦습니다",
+    "retry": false,
+    "retryDisabled": false,
+    "disabled": false,
+    "pressed": "false",
+    "describedBy": true,
+    "detail": "창이 제한 시간 안에 화면을 보내지 않았습니다. 다시 시도하고 있습니다.",
+    "image": null,
+    "h": 341.6,
+    "thumbH": 292.4,
+    "overlayH": 291.9,
+    "overlayTop": 0.4,
+    "waitedMs": 1084
+   }
+  },
+  {
+   "name": "attempts used up within the 5 s deadline: timeout, retry button",
+   "ok": true,
+   "data": {
+    "id": "wa40936-11832",
+    "state": "timeout",
+    "chip": "응답이 늦습니다",
+    "retry": true,
+    "retryDisabled": false,
+    "disabled": false,
+    "pressed": "false",
+    "describedBy": true,
+    "detail": "창이 제한 시간 안에 화면을 보내지 않았습니다. 3번 시도했습니다.",
+    "image": null,
+    "h": 341.6,
+    "thumbH": 292.4,
+    "overlayH": 291.9,
+    "overlayTop": 0.4,
+    "waitedMs": 3024
+   }
+  },
+  {
+   "name": "manual retry: queued at once, retry hidden, card not selected, dialog stays open",
+   "ok": true,
+   "data": {
+    "id": "wa40936-11832",
+    "state": "loading",
+    "chip": "불러오는 중",
+    "retry": false,
+    "retryDisabled": false,
+    "disabled": false,
+    "pressed": "false",
+    "describedBy": true,
+    "detail": "",
+    "image": null,
+    "h": 341.6,
+    "thumbH": 292.4,
+    "overlayH": 291.9,
+    "overlayTop": 0.4
+   }
+  },
+  {
+   "name": "manual retry runs a full new job and ends in timeout again",
+   "ok": true,
+   "data": {
+    "id": "wa40936-11832",
+    "state": "timeout",
+    "chip": "응답이 늦습니다",
+    "retry": true,
+    "retryDisabled": false,
+    "disabled": false,
+    "pressed": "false",
+    "describedBy": true,
+    "detail": "창이 제한 시간 안에 화면을 보내지 않았습니다. 3번 시도했습니다.",
+    "image": null,
+    "h": 341.6,
+    "thumbH": 292.4,
+    "overlayH": 291.9,
+    "overlayTop": 0.4,
+    "waitedMs": 3890
+   }
+  },
+  {
+   "name": "keyboard: Tab from the card focuses its retry button, Enter retries",
+   "ok": true,
+   "data": {
+    "focused": "source-retry|FRAME 미리보기 시험 GDI 미리보기 다시 시도",
+    "state": "loading"
+   }
+  },
+  {
+   "name": "dialog closed during retries: job cancelled, no later attempt for that list",
+   "ok": true,
+   "data": {
+    "closedLine": "[thumb] gen 1 closed after 9625 ms: ready 21, minimized 1, timeout 0, failed 0, closed 0, excluded 1, unfinished 1",
+    "later": 0
+   }
+  }
+ ]
+}

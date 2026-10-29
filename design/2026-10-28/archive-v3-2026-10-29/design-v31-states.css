@@ -1,0 +1,30 @@
+.empty-state.v31-empty{width:100%;max-width:460px;min-width:0;min-height:0;margin:0 auto;padding:62px 16px 70px;display:flex;align-items:center;justify-content:flex-start;flex-direction:column;gap:0;text-align:center;border:0;border-radius:0;background:transparent;box-shadow:none;color:var(--ink,#191d23)}
+.v31-empty .v31-empty-icon{display:flex;align-items:center;justify-content:center;width:48px;height:48px;flex:none;border-radius:15px;background:#f0f4f3;color:#82928b;margin:0 0 19px}
+.v31-empty.v31-empty-search .v31-empty-icon{background:#f1f4f7;color:#7d8a97}
+.v31-empty.v31-empty-login .v31-empty-icon{background:#edf6f0;color:#6d9a80}
+.v31-empty.v31-empty-error .v31-empty-icon{background:#f5f3ef;color:#a08a69}
+.v31-empty .v31-empty-icon>svg{display:block;width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.v31-empty>h2{max-width:100%;font-size:20px;line-height:1.5;letter-spacing:-.6px;font-weight:670;overflow-wrap:anywhere;margin:0;color:#29313a;word-break:keep-all}
+.v31-empty>p{max-width:330px;margin:9px 0 0;font-size:14px;line-height:1.8;letter-spacing:-.22px;color:#7b858f;word-break:keep-all;overflow-wrap:anywhere}
+.v31-empty .v31-empty-actions{display:flex;align-items:center;justify-content:center;gap:8px;max-width:100%;margin-top:23px}
+.v31-empty .v31-empty-action{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:38px;padding:8px 16px;border:1px solid #dfe5e3;border-radius:8px;background:#fff;color:#4d6358;font-size:13px;line-height:1.5;font-weight:600;letter-spacing:-.15px;white-space:normal;max-width:100%;box-shadow:0 1px 2px #22392c03}
+.v31-empty .v31-empty-action:hover:not(:disabled){border-color:#b8cdbf;background:#f6faf7}
+.v31-empty .v31-empty-action.primary{background:#159667;color:#fff;border-color:#159667}
+.v31-empty .v31-empty-action.primary:hover:not(:disabled){background:#087d52;border-color:#087d52}
+.v31-empty .v31-empty-action>svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;flex:none}
+.v31-empty .v31-empty-action:focus-visible{outline:2px solid #159667;outline-offset:3px}
+.v31-search-intro{margin:0 auto;max-width:600px}
+.v31-search-intro>.v31-empty{padding-bottom:0}
+.v31-search-suggestions{display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:wrap;padding:25px 12px 60px}
+.v31-search-suggestions>span{font-size:11px;font-weight:500;color:#a0a8ae;margin-right:4px}
+.v31-search-suggestions>.v31-suggestion{border:0;background:#f4f6f7;border-radius:7px;font-size:12px;font-weight:500;line-height:1.5;min-height:29px;padding:5px 10px;color:#808b95}
+.v31-search-suggestions>.v31-suggestion:hover{background:#eaf3ee;color:#4e866a}
+.source-dialog-body>.v31-empty{padding:42px 14px 48px}
+.source-dialog-body>.v31-empty>h2{font-size:18px}
+.v3-catalog .skeleton-card{min-width:0;background:transparent;border:0;border-radius:0;overflow:visible}
+.v3-catalog .skeleton-card .thumb.skeleton{border-radius:13px;aspect-ratio:16/9;min-height:0;background:#eff2f4}
+.v3-catalog .skeleton-card .lines{padding:15px 0 10px;display:grid;gap:9px}
+.v3-catalog .skeleton-card .lines>.skeleton{height:13px;display:block;border-radius:4px;background:#eff2f4;width:79%}
+.v3-catalog .skeleton-card .lines>.skeleton:last-child{width:48%;height:10px;background:#f3f5f6}
+@container(max-width:600px){.empty-state.v31-empty{padding:49px 10px 56px;max-width:420px}.v31-empty>h2{font-size:19px;line-height:1.55;letter-spacing:-.5px}.v31-empty>p{font-size:13px;line-height:1.8;max-width:295px}.v31-empty .v31-empty-icon{margin-bottom:17px}.v31-empty .v31-empty-actions{margin-top:21px}.v31-empty .v31-empty-action{min-height:37px;font-size:12px;padding:8px 15px}.v31-search-intro>.v31-empty{padding-top:30px;padding-bottom:0}.v31-search-suggestions{padding-top:22px;padding-bottom:42px;gap:6px}.v31-search-suggestions>span{flex-basis:100%;margin:0 0 3px}.v3-catalog .skeleton-card .thumb.skeleton{border-radius:11px}}
+@media(prefers-reduced-motion:reduce){.v3-catalog .skeleton-card .skeleton{animation:none}}

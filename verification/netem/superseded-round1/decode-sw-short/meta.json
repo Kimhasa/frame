@@ -1,0 +1,194 @@
+{
+  "tool": "tools/netem/run-verify.mjs",
+  "date": "2026-10-28T03:37:15.239Z",
+  "host": {
+    "node": "v24.22.1",
+    "os": "win32",
+    "cpu": "11th Gen Intel(R) Core(TM) i7-11800H @ 2.30GHz",
+    "logicalCpus": 16,
+    "memGB": 15.8
+  },
+  "browser": "Edg/156.0.4314.42",
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0",
+  "mediamtx": "v1.21.3",
+  "ffmpeg": "ffmpeg version 9.0.2-essentials_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers",
+  "source": {
+    "video": "testsrc2 1920x1080 60fps",
+    "encoder": "h264_nvenc",
+    "mbps": 8,
+    "gop": 60,
+    "bframes": 0,
+    "audio": "sine 440 Hz, Opus 128k stereo 10 ms"
+  },
+  "page": "whep",
+  "viewerUrl": "http://127.0.0.1:22080/?whep=http%3A%2F%2F127.0.0.1%3A22889%2Ftest%2Fwhep",
+  "edgeArgs": [
+    "--disable-accelerated-video-decode"
+  ],
+  "attached": true,
+  "proxy": {
+    "listen": "127.0.0.1:22300",
+    "target": "127.0.0.1:22189",
+    "keepLocalCandidates": false
+  },
+  "profile": {
+    "file": "C:\\Users\\wlsdu\\OneDrive\\Desktop\\frame\\tools\\netem\\profiles\\loss-jitter.json",
+    "name": "loss-jitter",
+    "timeScale": 0.25,
+    "rateScale": 1,
+    "total": 35,
+    "steps": [
+      {
+        "label": "clean",
+        "start": 0,
+        "duration": 5
+      },
+      {
+        "label": "loss0.5-j5",
+        "start": 5,
+        "duration": 5
+      },
+      {
+        "label": "loss2-j15",
+        "start": 10,
+        "duration": 5
+      },
+      {
+        "label": "loss5-burst3-j30",
+        "start": 15,
+        "duration": 5
+      },
+      {
+        "label": "loss10-j10",
+        "start": 20,
+        "duration": 5
+      },
+      {
+        "label": "packet-jitter20",
+        "start": 25,
+        "duration": 5
+      },
+      {
+        "label": "clean-again",
+        "start": 30,
+        "duration": 5
+      }
+    ]
+  },
+  "warmupSeconds": 5,
+  "ports": {
+    "rtsp": 22554,
+    "webrtc": 22889,
+    "iceUdp": 22189,
+    "iceTcp": 22190,
+    "proxy": 22300,
+    "devtools": 22222,
+    "page": 22080
+  },
+  "page_state": {
+    "netem": {
+      "cfg": {
+        "proxyAddress": "127.0.0.1",
+        "proxyPort": 22300,
+        "serverAddress": null,
+        "serverPort": null,
+        "keepLocalCandidates": false,
+        "keepIceServers": false,
+        "recordOnly": false
+      },
+      "rewrites": [
+        {
+          "at": 1793158587158,
+          "kept": [
+            {
+              "from": "a=candidate:2494380076 1 udp 2130706431 fd7a:115c:a1e0::1439:f820 22189 typ host ufrag KXmbXyprcmwRmeug generation 0",
+              "to": "a=candidate:2494380076 1 udp 2130706431 127.0.0.1 22300 typ host ufrag KXmbXyprcmwRmeug generation 0"
+            },
+            {
+              "from": "a=candidate:2494380076 2 udp 2130706431 fd7a:115c:a1e0::1439:f820 22189 typ host ufrag KXmbXyprcmwRmeug generation 0",
+              "to": "a=candidate:2494380076 2 udp 2130706431 127.0.0.1 22300 typ host ufrag KXmbXyprcmwRmeug generation 0"
+            }
+          ],
+          "dropped": [
+            {
+              "line": "a=candidate:694045132 1 tcp 1671430143 fd7a:115c:a1e0::1439:f820 22190 typ host tcptype passive ufrag KXmbXyprcmwRmeug generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:694045132 2 tcp 1671430143 fd7a:115c:a1e0::1439:f820 22190 typ host tcptype passive ufrag KXmbXyprcmwRmeug generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:2535500899 1 tcp 1671430143 100.93.248.31 22190 typ host tcptype passive ufrag KXmbXyprcmwRmeug generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:2535500899 2 tcp 1671430143 100.93.248.31 22190 typ host tcptype passive ufrag KXmbXyprcmwRmeug generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:362531068 1 tcp 1671430143 192.168.1.27 22190 typ host tcptype passive ufrag KXmbXyprcmwRmeug generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:362531068 2 tcp 1671430143 192.168.1.27 22190 typ host tcptype passive ufrag KXmbXyprcmwRmeug generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:375738803 1 tcp 1671430143 127.0.0.1 22190 typ host tcptype passive ufrag KXmbXyprcmwRmeug generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:375738803 2 tcp 1671430143 127.0.0.1 22190 typ host tcptype passive ufrag KXmbXyprcmwRmeug generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:718527875 1 udp 2130706431 100.93.248.31 22189 typ host ufrag KXmbXyprcmwRmeug generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:718527875 2 udp 2130706431 100.93.248.31 22189 typ host ufrag KXmbXyprcmwRmeug generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:2825435420 1 udp 2130706431 192.168.1.27 22189 typ host ufrag KXmbXyprcmwRmeug generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:2825435420 2 udp 2130706431 192.168.1.27 22189 typ host ufrag KXmbXyprcmwRmeug generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:2878742611 1 udp 2130706431 127.0.0.1 22189 typ host ufrag KXmbXyprcmwRmeug generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:2878742611 2 udp 2130706431 127.0.0.1 22189 typ host ufrag KXmbXyprcmwRmeug generation 0",
+              "why": "duplicate"
+            }
+          ]
+        }
+      ],
+      "strippedOffers": 1,
+      "droppedPatches": 0,
+      "created": 1
+    },
+    "viewer": {
+      "connects": 1,
+      "failures": 0,
+      "state": "연결 상태: connected",
+      "lastError": null,
+      "firstFrameMs": [
+        2342
+      ]
+    },
+    "videos": [
+      {
+        "videoWidth": 1920,
+        "videoHeight": 1080,
+        "totalVideoFrames": 2600,
+        "droppedVideoFrames": 210
+      }
+    ]
+  }
+}

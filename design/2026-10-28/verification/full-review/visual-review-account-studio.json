@@ -1,0 +1,322 @@
+{
+  "date": "2026-10-29",
+  "method": "Actual screenshot pixels inspected with view_image; separate from source/DOM and browser flow coverage.",
+  "captureCohort": "Completed 300-entry capture index before final launcher/search fixture refresh. Only stateIndex 0 representative images were visually inspected in this report.",
+  "screenCount": 13,
+  "imageCount": 26,
+  "allDefinedStatesVisuallyInspected": false,
+  "sourceUiChanges": [
+    "Only owner-approved audio icon styling in dist/design-v33-account-studio.css; no media or quality option/value/behavior change."
+  ],
+  "screens": [
+    {
+      "screen": "login",
+      "state": "기본",
+      "stateIndex": 0,
+      "reviewedFiles": [
+        {
+          "device": "desktop",
+          "file": "verification/full-review/screens/login__0__desktop.jpg",
+          "reviewedBy": "view_image",
+          "visualResult": "no_new_blocking_issue"
+        },
+        {
+          "device": "mobile",
+          "file": "verification/full-review/screens/login__0__mobile.jpg",
+          "reviewedBy": "view_image",
+          "visualResult": "no_new_blocking_issue"
+        }
+      ],
+      "notes": "PC의 좌우 로그인 구성과 모바일 단일 패널, 버튼·약관 배치 확인"
+    },
+    {
+      "screen": "profile",
+      "state": "기본",
+      "stateIndex": 0,
+      "reviewedFiles": [
+        {
+          "device": "desktop",
+          "file": "verification/full-review/screens/profile__0__desktop.jpg",
+          "reviewedBy": "view_image",
+          "visualResult": "no_new_blocking_issue"
+        },
+        {
+          "device": "mobile",
+          "file": "verification/full-review/screens/profile__0__mobile.jpg",
+          "reviewedBy": "view_image",
+          "visualResult": "no_new_blocking_issue"
+        }
+      ],
+      "notes": "사진·입력·사용자 ID·저장 영역 정렬 확인"
+    },
+    {
+      "screen": "security",
+      "state": "기본",
+      "stateIndex": 0,
+      "reviewedFiles": [
+        {
+          "device": "desktop",
+          "file": "verification/full-review/screens/security__0__desktop.jpg",
+          "reviewedBy": "view_image",
+          "visualResult": "no_new_blocking_issue"
+        },
+        {
+          "device": "mobile",
+          "file": "verification/full-review/screens/security__0__mobile.jpg",
+          "reviewedBy": "view_image",
+          "visualResult": "no_new_blocking_issue"
+        }
+      ],
+      "notes": "제공자 연결·알림 이메일 정렬 및 모바일 버튼 배치 확인"
+    },
+    {
+      "screen": "preferences",
+      "state": "기본",
+      "stateIndex": 0,
+      "reviewedFiles": [
+        {
+          "device": "desktop",
+          "file": "verification/full-review/screens/preferences__0__desktop.jpg",
+          "reviewedBy": "view_image",
+          "visualResult": "no_new_blocking_issue"
+        },
+        {
+          "device": "mobile",
+          "file": "verification/full-review/screens/preferences__0__mobile.jpg",
+          "reviewedBy": "view_image",
+          "visualResult": "no_new_blocking_issue"
+        }
+      ],
+      "notes": "투명 밑줄 메뉴·토글 정렬·보조 문구 확인"
+    },
+    {
+      "screen": "channel-edit",
+      "state": "기본",
+      "stateIndex": 0,
+      "reviewedFiles": [
+        {
+          "device": "desktop",
+          "file": "verification/full-review/screens/channel-edit__0__desktop.jpg",
+          "reviewedBy": "view_image",
+          "visualResult": "no_new_blocking_issue"
+        },
+        {
+          "device": "mobile",
+          "file": "verification/full-review/screens/channel-edit__0__mobile.jpg",
+          "reviewedBy": "view_image",
+          "visualResult": "no_new_blocking_issue"
+        }
+      ],
+      "notes": "PC 우측 미리보기와 모바일 상단 요약, 입력·저장 정렬 확인"
+    },
+    {
+      "screen": "studio",
+      "state": "방송 전",
+      "stateIndex": 0,
+      "reviewedFiles": [
+        {
+          "device": "desktop",
+          "file": "verification/full-review/screens/studio__0__desktop.jpg",
+          "reviewedBy": "view_image",
+          "visualResult": "no_new_blocking_issue"
+        },
+        {
+          "device": "mobile",
+          "file": "verification/full-review/screens/studio__0__mobile.jpg",
+          "reviewedBy": "view_image",
+          "visualResult": "no_new_blocking_issue"
+        }
+      ],
+      "notes": "PC 영상/채팅 병렬과 모바일 수직 배치, 방송 정보 입력 영역 확인"
+    },
+    {
+      "screen": "sources",
+      "state": "프로그램 창",
+      "stateIndex": 0,
+      "reviewedFiles": [
+        {
+          "device": "desktop",
+          "file": "verification/full-review/screens/sources__0__desktop.jpg",
+          "reviewedBy": "view_image",
+          "visualResult": "no_new_blocking_issue"
+        },
+        {
+          "device": "mobile",
+          "file": "verification/full-review/screens/sources__0__mobile.jpg",
+          "reviewedBy": "view_image",
+          "visualResult": "no_new_blocking_issue"
+        }
+      ],
+      "notes": "PC 2열/모바일 1열 미리보기, 선택 표시·고정 하단 버튼 확인"
+    },
+    {
+      "screen": "broadcast-settings",
+      "state": "기본",
+      "stateIndex": 0,
+      "reviewedFiles": [
+        {
+          "device": "desktop",
+          "file": "verification/full-review/screens/broadcast-settings__0__desktop.jpg",
+          "reviewedBy": "view_image",
+          "visualResult": "issue_found_and_fixed"
+        },
+        {
+          "device": "mobile",
+          "file": "verification/full-review/screens/broadcast-settings__0__mobile.jpg",
+          "reviewedBy": "view_image",
+          "visualResult": "issue_found_and_fixed"
+        }
+      ],
+      "notes": "초기 캡처에서 오디오 SVG 과대 렌더링 발견 후 CSS 수정 및 PC/모바일 브라우저 재검증"
+    },
+    {
+      "screen": "connection",
+      "state": "기본",
+      "stateIndex": 0,
+      "reviewedFiles": [
+        {
+          "device": "desktop",
+          "file": "verification/full-review/screens/connection__0__desktop.jpg",
+          "reviewedBy": "view_image",
+          "visualResult": "no_new_blocking_issue"
+        },
+        {
+          "device": "mobile",
+          "file": "verification/full-review/screens/connection__0__mobile.jpg",
+          "reviewedBy": "view_image",
+          "visualResult": "no_new_blocking_issue"
+        }
+      ],
+      "notes": "PC 포트 2열/모바일 세로 입력, 키 표시와 하단 버튼 정렬 확인"
+    },
+    {
+      "screen": "broadcast-details",
+      "state": "기본",
+      "stateIndex": 0,
+      "reviewedFiles": [
+        {
+          "device": "desktop",
+          "file": "verification/full-review/screens/broadcast-details__0__desktop.jpg",
+          "reviewedBy": "view_image",
+          "visualResult": "no_new_blocking_issue"
+        },
+        {
+          "device": "mobile",
+          "file": "verification/full-review/screens/broadcast-details__0__mobile.jpg",
+          "reviewedBy": "view_image",
+          "visualResult": "no_new_blocking_issue"
+        }
+      ],
+      "notes": "PC/모바일 제목·카테고리·태그 입력과 저장/취소 배치 확인"
+    },
+    {
+      "screen": "broadcast-end",
+      "state": "종료 확인",
+      "stateIndex": 0,
+      "reviewedFiles": [
+        {
+          "device": "desktop",
+          "file": "verification/full-review/screens/broadcast-end__0__desktop.jpg",
+          "reviewedBy": "view_image",
+          "visualResult": "no_new_blocking_issue"
+        },
+        {
+          "device": "mobile",
+          "file": "verification/full-review/screens/broadcast-end__0__mobile.jpg",
+          "reviewedBy": "view_image",
+          "visualResult": "no_new_blocking_issue"
+        }
+      ],
+      "notes": "대상 방송 제목·보관 선택·종료/취소 정렬 확인"
+    },
+    {
+      "screen": "nickname",
+      "state": "기본",
+      "stateIndex": 0,
+      "reviewedFiles": [
+        {
+          "device": "desktop",
+          "file": "verification/full-review/screens/nickname__0__desktop.jpg",
+          "reviewedBy": "view_image",
+          "visualResult": "no_new_blocking_issue"
+        },
+        {
+          "device": "mobile",
+          "file": "verification/full-review/screens/nickname__0__mobile.jpg",
+          "reviewedBy": "view_image",
+          "visualResult": "no_new_blocking_issue"
+        }
+      ],
+      "notes": "입력·도움말·저장/취소와 닫기 정렬 확인"
+    },
+    {
+      "screen": "manual",
+      "state": "기본",
+      "stateIndex": 0,
+      "reviewedFiles": [
+        {
+          "device": "desktop",
+          "file": "verification/full-review/screens/manual__0__desktop.jpg",
+          "reviewedBy": "view_image",
+          "visualResult": "no_new_blocking_issue"
+        },
+        {
+          "device": "mobile",
+          "file": "verification/full-review/screens/manual__0__mobile.jpg",
+          "reviewedBy": "view_image",
+          "visualResult": "no_new_blocking_issue"
+        }
+      ],
+      "notes": "서버·포트·프로토콜·스트림 입력 및 모바일 버튼 정렬 확인"
+    }
+  ],
+  "findings": [
+    {
+      "id": "ASV-01",
+      "severity": "major",
+      "screen": "broadcast-settings",
+      "devices": [
+        "desktop",
+        "mobile"
+      ],
+      "observed": "오디오 스피커·마이크 SVG에 크기/선 스타일이 없어 약200px 검정 채움으로 표시되고 모바일 라벨이 세로로 깨짐",
+      "fix": "Scope #product-dialog:has([name=\"bitrate\"]) .audio-head only: flex row, 20px SVG, fill:none, stroke:currentColor, percentage alignment.",
+      "status": "fixed_and_live_reverified",
+      "postFixEvidence": {
+        "desktop": {
+          "svgWidth": 20,
+          "svgHeight": 20,
+          "fill": "none",
+          "resolution": "1080p",
+          "fps": "60 fps"
+        },
+        "mobilePreview": {
+          "dialogWidth": 366,
+          "audioRowHeight": 24,
+          "audioRowWidth": 154.43,
+          "audioRowScrollWidth": 154,
+          "svgWidth": 20,
+          "svgHeight": 20,
+          "labels": [
+            "시스템 소리80%",
+            "마이크60%"
+          ],
+          "resolution": "1080p",
+          "fps": "60 fps"
+        },
+        "pixelInspection": "Actual Chrome desktop screenshot and cropped mobile-preview screenshot both inspected after the fix."
+      },
+      "captureAction": "Root recaptures the broadcast-settings state images and reruns build-full-review.mjs."
+    }
+  ],
+  "knownCaptureArtifacts": [
+    "Small design-review launcher in initial captures is already being removed by the root capture fixture.",
+    "Search value 123 in some PC captures is fixture state and scheduled for reset before final capture.",
+    "Long mobile full-page screenshots show fixed bottom navigation at the viewport position; this static composition is separate from live scrolling behavior."
+  ],
+  "remainingLimitations": [
+    "26 representative images, not all 300 state/device captures, were inspected here.",
+    "Root owns final fixture refresh and full capture collection.",
+    "Actual application, native device, stream, encoder, authentication, security and network behavior were not tested by image inspection."
+  ]
+}

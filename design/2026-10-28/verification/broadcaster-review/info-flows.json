@@ -1,0 +1,121 @@
+{
+  "date": "2026-10-29",
+  "scope": "FRAME local design prototype broadcast metadata flows; no actual media/auth/network/permission test",
+  "browser": {
+    "requested": "IAB",
+    "actual": "Chrome dedicated QA tab",
+    "reason": "IAB unavailable in child tool session",
+    "temporaryTab": "1421141560",
+    "rootTab34": "untouched"
+  },
+  "method": "UI click/fill/select for flows; read-only runtime snapshots via CDP; one explicit local F.render() to reproduce background/modal error-ID regression",
+  "result": {
+    "total": 15,
+    "passed": 15,
+    "failed": 0
+  },
+  "tests": [
+    {
+      "test": "unchanged_save_disabled",
+      "pass": true
+    },
+    {
+      "test": "edit_enables_save_and_cancel",
+      "pass": true
+    },
+    {
+      "test": "typing_original_value_disables_save",
+      "pass": true
+    },
+    {
+      "test": "cancel_restores_last_saved",
+      "pass": true
+    },
+    {
+      "test": "empty_title_inline_error_focus",
+      "pass": true
+    },
+    {
+      "test": "save_syncs_title_category_catalog",
+      "pass": true
+    },
+    {
+      "test": "leaving_preserves_draft_without_applying",
+      "pass": true
+    },
+    {
+      "test": "start_applies_valid_draft_after_guards",
+      "pass": true
+    },
+    {
+      "test": "live_details_uses_saved_model_and_disabled_save",
+      "pass": true
+    },
+    {
+      "test": "live_details_cancel_keeps_saved",
+      "pass": true
+    },
+    {
+      "test": "live_details_empty_title_error_focus",
+      "pass": true
+    },
+    {
+      "test": "live_details_save_updates_saved_card_and_live_context",
+      "pass": true
+    },
+    {
+      "test": "details_close_discards_modal_draft",
+      "pass": true
+    },
+    {
+      "test": "blocked_connection_start_does_not_apply_draft",
+      "pass": true,
+      "evidence": "source-flow disables start for connection-failure state"
+    },
+    {
+      "test": "details_error_has_unique_id_after_full_background_render",
+      "pass": true
+    }
+  ],
+  "fixes": [
+    {
+      "bug": "start intent expired between event listeners",
+      "fix": "clear with setTimeout(0) after complete click dispatch"
+    },
+    {
+      "bug": "background studio and details shared title error ID",
+      "fix": "hide background error during details modal render"
+    },
+    {
+      "bug": "footer could inspect state before original input listener",
+      "fix": "refresh footer in window input bubble phase"
+    }
+  ],
+  "consoleErrorCount": 0,
+  "consoleErrors": [],
+  "screenshots": [
+    {
+      "file": "info-saved-live.jpg",
+      "mimeType": "image/jpeg",
+      "purpose": "saved broadcast metadata and live context"
+    },
+    {
+      "file": "info-error-modal.jpg",
+      "mimeType": "image/jpeg",
+      "purpose": "one unique inline error in details modal after full render"
+    }
+  ],
+  "syntax": "node --check dist/design-v36-broadcast-info.js passed",
+  "unchanged": [
+    "Preserved player and quality controls",
+    "Source and connection guard ownership",
+    "Encoder/audio/recording values",
+    "Actual C++ app and media/network behavior"
+  ],
+  "limitations": [
+    "This verifies local draft/save/cancel state only; publishing visibility and permissions are not implemented",
+    "Source connection-failure fixture disables Start; no bypass of disabled control was attempted",
+    "Full state/width visual coverage is root verification"
+  ],
+  "cleanup": "QA tab closed after report"
+}

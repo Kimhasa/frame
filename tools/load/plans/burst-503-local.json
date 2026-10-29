@@ -1,0 +1,11 @@
+{
+  "name": "burst-503-local",
+  "_comment": "Refusal path: start the standalone target with --request-limit 4 (the shim then answers like the app past kMaxRequests: 503 Busy, Retry-After: 1) and send a 32-viewer burst through the shim's WHEP proxy. Shows the 503 + Retry-After counts of the WHEP tap in results.json and the whep-503-share stop.",
+  "target": { "whep": "http://127.0.0.1:21888/{stream}/whep", "base": "http://127.0.0.1:21888", "appStats": "http://127.0.0.1:21888/api/stats" },
+  "stages": [32],
+  "holdSec": 30,
+  "burst": true,
+  "burstConcurrency": 32,
+  "firstMediaTimeoutMs": 15000,
+  "limits": { "maxTrafficGB": 20, "max503Share": 0.1, "min503Requests": 10, "sustain503Sec": 6 }
+}

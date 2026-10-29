@@ -1,0 +1,9 @@
+{
+  "name": "calibrate",
+  "_comment": "Generator calibration: grows until the generator or this host saturates (or success < 99%) and reports what one generator session costs. Run it against a target on the same PC as the generator, or against the real target before a load run.",
+  "calibrate": true,
+  "calibrateStages": [10, 25, 50, 75, 100, 150, 200, 300, 400, 500, 700, 1000],
+  "holdSec": 20,
+  "rampPerSec": 20,
+  "limits": { "maxTrafficGB": 400 }
+}

@@ -1,0 +1,113 @@
+.v32-settings.v3-account.v3-settings{max-width:1020px;padding-top:4px;padding-bottom:44px;color:#20272d}
+.v32-settings .v3-page-heading{display:block;margin-bottom:22px}
+.v32-settings .v3-page-heading h1{font-size:27px;font-weight:740;letter-spacing:-.045em;line-height:1.4}
+.v32-settings .v3-settings-layout{display:flex;flex-direction:column;align-items:stretch;gap:31px}
+.v32-settings .v3-settings-nav{position:static;display:flex;flex-direction:row;align-items:stretch;gap:31px;width:100%;max-width:100%;padding:0;margin:0;border:0;border-bottom:1px solid #e5e9ec;overflow-x:auto;overscroll-behavior-inline:contain;scrollbar-width:none}
+.v32-settings .v3-settings-nav::-webkit-scrollbar{display:none}
+.v32-settings .v3-settings-nav button,.v32-settings .v3-settings-nav button.active,.v32-settings .v3-settings-nav button:hover{position:relative;flex:none;min-height:49px;padding:12px 1px 15px;border:0;border-radius:0;background:transparent;box-shadow:none;color:#687680;font-size:15px;font-weight:550;white-space:nowrap}
+.v32-settings .v3-settings-nav button.active,.v32-settings .v3-settings-nav button[aria-selected=true]{color:#202b26;font-weight:700}
+.v32-settings .v3-settings-nav button.active:after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:#264334;border-radius:2px}
+.v32-settings .v3-settings-nav button svg{display:none}
+.v32-settings .v3-settings-nav button:hover{color:#202b26}
+.v32-settings .v3-settings-nav button:focus-visible{outline:2px solid #248965;outline-offset:-4px;border-radius:3px}
+.v32-settings .v3-settings-body{max-width:800px;width:100%;min-width:0}
+.v32-settings .v3-section-heading{display:block;position:relative;min-height:0;gap:0;margin:0 0 26px}
+.v32-settings .v3-section-heading h2{font-size:21px;line-height:1.4;font-weight:700;letter-spacing:-.035em;margin:0}
+.v32-settings .v3-section-heading p{display:block;max-width:580px;margin:7px 0 0;color:#667581;font-size:14px;line-height:1.7;font-weight:400}
+.v32-settings .v3-section-heading .v32-settings-channel-link{position:absolute;right:0;top:0;min-height:36px;padding:5px 0 5px 12px;color:#6e7c86;font-size:14px;gap:5px}
+.v32-settings .v3-section-heading .v32-settings-channel-link svg{width:16px;height:16px}
+.v32-settings .v3-profile-identity{display:flex;align-items:center;flex-wrap:nowrap;gap:20px;padding:21px 0 25px;margin:0 0 29px;border-top:0;border-bottom:1px solid #e9edf0}
+.v32-settings .v3-profile-identity .v3-account-avatar.large{width:76px;height:76px;flex:none}
+.v32-settings .v3-profile-identity>div{display:flex;flex:1;min-width:0;flex-direction:column;align-items:flex-start;gap:5px}
+.v32-settings .v3-profile-identity strong{font-size:15px;line-height:1.5;font-weight:600}
+.v32-settings .v3-profile-identity>div>span{font-size:14px;line-height:1.6;color:#687680;letter-spacing:-.02em}
+.v32-settings .v3-profile-identity .v32-settings-photo-button{margin:0;color:#4b5c68;min-height:42px;height:42px;font-size:14px;flex:none}
+.v32-settings .v3-form-width{width:100%;max-width:none}
+.v32-settings .v3-field{gap:9px;margin-bottom:25px}
+.v32-settings .v3-field>label{font-size:14px;line-height:1.5;font-weight:650;color:#36434e}
+.v32-settings .v3-field>input,.v32-settings .v3-field>textarea{font-size:15px;min-height:47px;padding:12px 14px;border-radius:8px;border-color:#dce3e8;color:#25313c;background:#fff}
+.v32-settings .v3-field>textarea{min-height:110px;line-height:1.8}
+.v32-settings .v3-field small{font-size:14px;line-height:1.65;color:#687680}
+.v32-settings .v3-field.has-error small,.v32-settings .v3-field .v3-error{color:#bd4351}
+.v32-settings .v3-url-field{min-height:47px;padding:0 14px;gap:4px;border-color:#dce3e8;border-radius:8px}
+.v32-settings .v3-url-field>span{font-size:16px;color:#92a09e;font-weight:500}
+.v32-settings .v3-url-field>input{min-height:45px;font-size:15px;padding:0;letter-spacing:0}
+.v32-settings .v3-save-bar{position:relative;display:flex;align-items:center;justify-content:space-between;flex-wrap:nowrap;gap:20px;padding:21px 0 0;margin-top:33px;border-top:1px solid #e7ecef;background:#fff}
+.v32-settings .v3-save-bar .v3-save-note{display:block;font-size:14px;line-height:1.6;color:#687680;font-weight:400}
+.v32-settings .v3-save-bar.has-changes .v3-save-note{color:#8e724b}
+.v32-settings .v3-save-bar>div{gap:9px;flex:none;align-items:center}
+.v32-settings .v3-btn{min-height:44px;height:44px;padding:0 17px;font-size:14px;font-weight:600;border-color:#dce3e8;border-radius:8px;background:#fff;color:#485865}
+.v32-settings .v3-btn.primary{background:#0d9464;border-color:#0d9464;color:#fff;min-width:128px}
+.v32-settings .v3-btn.primary:disabled{background:#edf2ef;border-color:#edf2ef;color:#a4b1aa}
+.v32-settings .v3-text-button{min-height:44px;font-size:14px}
+.v32-settings .v32-settings-connections{border:1px solid #e5eaed;border-radius:12px;padding:0 22px;overflow:hidden}
+.v32-settings .v3-account-connected{gap:17px;padding:24px 0;min-height:90px;box-sizing:border-box;border-top:0!important;border-bottom:1px solid #edf0f2}
+.v32-settings .v3-account-connected:last-child{border-bottom:0}
+.v32-settings .v3-account-connected .v3-provider-icon{width:43px;height:43px;border:0;background:#f7f9fa;font-size:26px;border-radius:11px;flex:none}
+.v32-settings .v3-account-connected .v3-provider-icon.naver{background:#f1faf5;color:#02b655}
+.v32-settings .v3-account-connected>div:nth-child(2){flex:1;min-width:0}
+.v32-settings .v32-settings-provider-title{display:flex;align-items:center;flex-wrap:wrap;gap:9px}
+.v32-settings .v32-settings-provider-title strong{font-size:15px;font-weight:650;line-height:1.5}
+.v32-settings .v3-account-connected p{font-size:14px;line-height:1.6;color:#687680;margin:5px 0 0;overflow-wrap:anywhere}
+.v32-settings .v3-connection-tag{min-height:23px;padding:1px 7px;font-size:11px;line-height:1.5;font-weight:550;border:0;background:#f0f6f3;color:#438269;border-radius:4px}
+.v32-settings .v32-settings-provider-manage{gap:6px}
+.v32-settings .v32-settings-provider-manage svg{width:15px;height:15px}
+.v32-settings .v3-account-email-block{margin-top:32px}
+.v32-settings .v32-settings-block-heading{margin-bottom:12px}
+.v32-settings .v32-settings-block-heading h3{font-size:16px;font-weight:650;line-height:1.5;margin:0}
+.v32-settings .v3-readonly-row{display:flex;gap:20px;align-items:center;justify-content:space-between;border:1px solid #e5eaed;border-radius:10px;padding:13px 18px;min-height:70px;box-sizing:border-box}
+.v32-settings .v3-readonly-row strong{font-size:15px;color:#3f4e5a;font-weight:500;overflow-wrap:anywhere;min-width:0}
+.v32-settings .v3-readonly-row .v3-btn{margin:0;font-size:14px;flex:none;padding:0 15px;color:#52626e}
+.v32-settings .v3-security-summary{display:flex;align-items:center;flex-wrap:nowrap;gap:15px;background:transparent;border:0;border-bottom:1px solid #e7ecef;border-radius:0;padding:1px 0 27px}
+.v32-settings .v3-security-icon{width:43px;height:43px;background:#f1f6f3;border-radius:11px;color:#5a8c73;flex:none}
+.v32-settings .v3-security-icon svg{width:22px;height:22px}
+.v32-settings .v3-security-summary>div{flex:1;min-width:0}
+.v32-settings .v3-security-summary strong{font-size:15px;font-weight:650}
+.v32-settings .v3-security-summary p{font-size:14px;line-height:1.7;color:#687680;margin:5px 0 0}
+.v32-settings .v3-security-summary .v3-btn{margin:0;flex:none}
+.v32-settings .v3-subsection-title{align-items:center;gap:16px;margin:30px 0 13px}
+.v32-settings .v3-subsection-title h3{font-size:16px;font-weight:650;line-height:1.5}
+.v32-settings .v3-subsection-title>span{color:#687680;font-size:14px;line-height:1.5}
+.v32-settings .v3-device-list{border:1px solid #e5eaed;border-radius:12px;overflow:hidden;padding:0 21px}
+.v32-settings .v3-device{min-height:89px;box-sizing:border-box;padding:19px 0;gap:16px;border-bottom:1px solid #edf0f2}
+.v32-settings .v3-device:last-child{border-bottom:0}
+.v32-settings .v3-device-icon{width:37px;height:42px;flex:none;color:#85949f}
+.v32-settings .v3-device-icon svg{height:25px;width:25px}
+.v32-settings .v3-device>div{display:flex;flex:1;flex-direction:column;align-items:flex-start;gap:5px;min-width:0}
+.v32-settings .v3-device strong{font-size:15px;font-weight:550;line-height:1.5}
+.v32-settings .v3-device p{margin:0;font-size:14px;line-height:1.6;color:#687680}
+.v32-settings .v3-device .v3-text-button{font-size:14px;color:#7c8993;flex:none}
+.v32-settings .v3-section-actions{margin-top:14px;justify-content:flex-end}
+.v32-settings .v3-section-actions .v3-text-button{color:#7c8993;font-size:14px}
+.v32-settings .v3-section-actions .v3-text-button:disabled{color:#b4bdc4;opacity:1;cursor:default}
+.v32-settings .v32-settings-device-note{margin-right:auto;color:#687680;font-size:14px;line-height:1.7}
+.v32-settings .v32-settings-device-empty{margin:0;padding:23px 0;color:#687680;font-size:14px;line-height:1.7}
+.v32-settings .v32-settings-permission{display:flex;align-items:flex-start;gap:13px;padding:18px 0 22px;margin:-3px 0 0;border-bottom:1px solid #e8edf0;color:#8a7656}
+.v32-settings .v32-settings-permission>svg{width:19px;height:19px;margin-top:2px;flex:none;color:#9c8c6b}
+.v32-settings .v32-settings-permission>div{flex:1;min-width:0}
+.v32-settings .v32-settings-permission strong{font-size:14px;font-weight:600;line-height:1.7}
+.v32-settings .v32-settings-permission p{margin:4px 0 0;font-size:14px;line-height:1.7;color:#687680}
+.v32-settings .v32-settings-permission>.v3-text-button{flex:none;font-size:14px;min-height:44px;margin-top:-6px;padding:0;color:#857d6a}
+.v32-settings .v32-settings-permission+.v3-setting-group{border-top:0}
+.v32-settings.v32-settings-help p{font-size:15px;line-height:1.85;color:#6c7882;margin:0 0 12px}
+.v32-settings.v32-settings-help p:last-child{margin-bottom:0}
+.v32-settings .v3-setting-group{border-top:1px solid #e8edf0}
+.v32-settings .v3-setting{min-height:96px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:28px;padding:22px 0;border-bottom:1px solid #e8edf0;cursor:pointer}
+.v32-settings .v3-setting>div{flex:1;min-width:0}
+.v32-settings .v3-setting strong{font-size:16px;line-height:1.5;font-weight:600;color:#34434e}
+.v32-settings .v3-setting p{margin:5px 0 0;font-size:14px;line-height:1.7;color:#667581}
+.v32-settings .v3-switch,.v32-settings .v3-switch[aria-checked=true]{position:relative;display:block;width:48px;min-width:48px;height:44px;min-height:44px;padding:0;background:transparent;border:0;border-radius:7px;flex:none;box-shadow:none}
+.v32-settings .v3-switch:before{content:"";position:absolute;left:3px;top:10px;width:42px;height:24px;border-radius:20px;background:#d7dfe3;transition:background-color .15s}
+.v32-settings .v3-switch[aria-checked=true]:before{background:#129467}
+.v32-settings .v3-switch>span{position:absolute;width:18px;height:18px;left:6px;top:13px;margin:0;transform:translateX(0);border-radius:50%;background:#fff;box-shadow:0 1px 3px #20332a20;transition:transform .15s}
+.v32-settings .v3-switch[aria-checked=true]>span{transform:translateX(18px)}
+.v32-settings .v3-switch:focus-visible{outline:2px solid #188963;outline-offset:2px}
+.v32-settings .v3-notification-foot{display:flex;align-items:center;justify-content:space-between;gap:11px;margin-top:19px;font-size:14px;line-height:1.7;color:#687680}
+.v32-settings .v3-notification-foot>svg{display:none}
+.v32-settings .v3-notification-foot .v3-text-button{margin:0;font-size:14px;color:#728377;flex:none}
+.v32-settings .v3-inline-error{font-size:14px;line-height:1.7;border-radius:9px;margin-bottom:24px}
+@container(max-width:850px){.v32-settings.v3-account.v3-settings{max-width:none}.v32-settings .v3-settings-layout{display:flex;gap:28px}.v32-settings .v3-settings-body{max-width:none}.v32-settings .v3-settings-nav{gap:27px;margin:0;padding:0}.v32-settings .v3-settings-nav button,.v32-settings .v3-settings-nav button.active{min-height:48px;font-size:15px;padding:12px 1px 14px;background:transparent}.v32-settings .v3-profile-identity{gap:17px}.v32-settings .v3-security-summary{flex-wrap:nowrap}.v32-settings .v3-security-summary .v3-btn{margin:0}.v32-settings .v3-device-list{padding:0 18px}}
+@container(max-width:600px){.v32-settings.v3-account.v3-settings{padding-top:2px;padding-bottom:32px}.v32-settings .v3-page-heading{margin-bottom:17px}.v32-settings .v3-page-heading h1{font-size:24px}.v32-settings .v3-settings-layout{gap:26px}.v32-settings .v3-settings-nav{gap:25px}.v32-settings .v3-settings-nav button,.v32-settings .v3-settings-nav button.active{font-size:14px;min-height:46px;padding:11px 1px 13px}.v32-settings .v3-section-heading{margin-bottom:21px}.v32-settings .v3-section-heading h2{font-size:20px}.v32-settings .v3-section-heading p{font-size:14px;line-height:1.7;max-width:100%}.v32-settings .v3-section-heading .v32-settings-channel-link{position:static;padding:6px 0 0;min-height:38px;font-size:14px;margin-top:7px}.v32-settings .v3-profile-identity{gap:14px;flex-wrap:wrap;position:relative;padding:16px 0 23px;margin-bottom:25px}.v32-settings .v3-profile-identity .v3-account-avatar.large{width:64px;height:64px}.v32-settings .v3-profile-identity>div{gap:3px;min-width:140px}.v32-settings .v3-profile-identity>div>span{font-size:14px;max-width:190px;line-height:1.6}.v32-settings .v3-profile-identity .v32-settings-photo-button{margin-left:78px;height:44px;min-height:44px}.v32-settings .v3-field{margin-bottom:24px}.v32-settings .v3-field>input,.v32-settings .v3-field>textarea{font-size:15px}.v32-settings .v3-field small{font-size:13px}.v32-settings .v3-save-bar{flex-wrap:wrap;gap:15px;padding-top:18px;margin-top:29px}.v32-settings .v3-save-bar>div{margin-left:auto}.v32-settings .v3-save-bar .v3-save-note{font-size:13px;width:100%}.v32-settings .v3-save-bar>div .v3-btn{height:44px;min-height:44px;font-size:14px}.v32-settings .v32-settings-connections{padding:0 15px}.v32-settings .v3-account-connected{gap:12px;padding:21px 0;flex-wrap:wrap}.v32-settings .v3-account-connected .v3-provider-icon{height:38px;width:38px;font-size:23px;border-radius:9px}.v32-settings .v32-settings-provider-title{gap:6px}.v32-settings .v3-account-connected p{font-size:14px}.v32-settings .v3-account-connected>.v3-btn{margin-left:50px;min-height:44px;height:44px}.v32-settings .v3-account-email-block{margin-top:28px}.v32-settings .v3-readonly-row{padding:13px 15px;gap:12px;flex-wrap:wrap}.v32-settings .v3-readonly-row strong{font-size:14px;flex:1;min-width:150px}.v32-settings .v3-readonly-row .v3-btn{min-height:44px;height:44px}.v32-settings .v3-security-summary{flex-wrap:wrap;gap:12px;padding-bottom:24px}.v32-settings .v3-security-summary>div{min-width:180px;flex:1}.v32-settings .v3-security-summary p{font-size:14px}.v32-settings .v3-security-summary .v3-btn{margin-left:55px;min-height:44px;height:44px}.v32-settings .v3-subsection-title{margin-top:28px}.v32-settings .v3-device-list{padding:0 14px}.v32-settings .v3-device{gap:10px;min-height:91px;padding:19px 0;flex-wrap:wrap}.v32-settings .v3-device-icon{width:29px}.v32-settings .v3-device strong{font-size:14px}.v32-settings .v3-device p{font-size:14px}.v32-settings .v3-device .v3-text-button{font-size:14px;min-height:44px}.v32-settings .v3-section-actions{justify-content:flex-start}.v32-settings .v3-section-actions .v3-text-button{font-size:14px;min-height:44px}.v32-settings .v3-setting{padding:20px 0;gap:20px;min-height:96px}.v32-settings .v3-setting strong{font-size:15px}.v32-settings .v3-setting p{font-size:14px;line-height:1.7}.v32-settings .v3-notification-foot{align-items:flex-start;flex-wrap:wrap;gap:4px;font-size:14px}.v32-settings .v3-notification-foot>span{width:100%;flex:auto}.v32-settings .v3-notification-foot .v3-text-button{width:auto;justify-content:flex-start}}
+@media(prefers-reduced-motion:reduce){.v32-settings .v3-switch:before,.v32-settings .v3-switch>span{transition:none}}
+@container(max-width:600px){.v32-settings .v3-section-heading .v32-settings-channel-link{position:absolute;right:0;top:0;margin-top:0;padding:5px 0 5px 10px;min-height:36px}.v32-settings .v3-profile-identity{display:grid;grid-template-columns:64px minmax(0,1fr);column-gap:14px;row-gap:9px;align-items:center}.v32-settings .v3-profile-identity>.v3-account-avatar{grid-column:1;grid-row:1/3}.v32-settings .v3-profile-identity>div{grid-column:2;grid-row:1;min-width:0}.v32-settings .v3-profile-identity .v32-settings-photo-button{grid-column:2;grid-row:2;justify-self:start;width:fit-content;margin-left:0}}
+@container(max-width:600px){.v32-settings .v3-section-actions{align-items:flex-start;flex-direction:column;gap:5px}.v32-settings .v32-settings-device-note{margin:0;font-size:14px}.v32-settings .v3-field small,.v32-settings .v3-save-bar .v3-save-note{font-size:14px}.v32-settings .v32-settings-permission{flex-wrap:wrap;gap:9px 12px;padding-top:13px}.v32-settings .v32-settings-permission>div{min-width:180px}.v32-settings .v32-settings-permission>.v3-text-button{margin:0 0 0 31px;min-height:44px}}

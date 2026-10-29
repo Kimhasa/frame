@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WHEP 시험 수신</title>
+<style>
+  :root { color-scheme: dark; }
+  body { margin: 0; background: #0b0d10; color: #c9d1d9; font: 13px/1.4 system-ui, sans-serif; }
+  video { display: block; width: 100%; max-height: 90vh; background: #000; }
+  #status { padding: 6px 10px; }
+</style>
+</head>
+<body>
+<video id="video" autoplay muted playsinline></video>
+<div id="status">대기 중</div>
+<script>
+// Minimal WHEP reader for tools/netem tests. It negotiates the way the FRAME viewer does (work/console-ux.js openSession:
+// recvonly video+audio, max-bundle, offer sent after up to 2 s of gathering, answer applied with setRemoteDescription),
+// so the netem attach script sees the same calls. ?whep=<url of /<path>/whep>. Reconnects after a failed connection.
+const params = new URLSearchParams(location.search);
+const whep = params.get('whep');
+const video = document.getElementById('video'), status = document.getElementById('status');
+window.viewer = { connects: 0, failures: 0, state: 'idle', lastError: null, firstFrameMs: [] };
+function show(text) { status.textContent = text; window.viewer.state = text; }
+function gathered(pc, timeout) {
+  if (pc.iceGatheringState === 'complete') return Promise.resolve();
+  return new Promise(resolve => { pc.addEventListener('icegatheringstatechange', () => { if (pc.iceGatheringState === 'complete') resolve(); }); setTimeout(resolve, timeout); });
+}
+let current = null;
+async function connect() {
+  const started = performance.now();
+  const pc = new RTCPeerConnection({ iceServers: [], bundlePolicy: 'max-bundle' });
+  current = pc;
+  pc.addTransceiver('video', { direction: 'recvonly' }); pc.addTransceiver('audio', { direction: 'recvonly' });
+  const media = new MediaStream();
+  pc.addEventListener('track', event => { media.addTrack(event.track); video.srcObject = media; });
+  pc.addEventListener('connectionstatechange', () => {
+    show('연결 상태: ' + pc.connectionState);
+    if (pc.connectionState === 'failed' && current === pc) { window.viewer.failures++; pc.close(); setTimeout(connect, 1000); }
+  });
+  video.requestVideoFrameCallback?.(() => window.viewer.firstFrameMs.push(Math.round(performance.now() - started)));
+  try {
+    await pc.setLocalDescription(await pc.createOffer());
+    await gathered(pc, 2000);
+    const response = await fetch(whep, { method: 'POST', headers: { 'Content-Type': 'application/sdp' }, body: pc.localDescription.sdp });
+    if (response.status !== 201) throw new Error('whep ' + response.status);
+    await pc.setRemoteDescription({ type: 'answer', sdp: await response.text() });
+    window.viewer.connects++;
+  } catch (error) {
+    window.viewer.lastError = String(error.message || error);
+    show('연결 실패: ' + window.viewer.lastError);
+    pc.close();
+    if (current === pc) setTimeout(connect, 2000);
+  }
+}
+if (whep) connect(); else show('?whep=<WHEP 주소>가 필요합니다.');
+</script>
+</body>
+</html>

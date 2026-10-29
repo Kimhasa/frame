@@ -1,0 +1,5 @@
+These two runs were made while the tools were being debugged and are NOT valid measurements:
+- 20261028-115251-smoke-local: three headless Edge instances leaked by an earlier browser-sampler version were still decoding the stream (host CPU 100%), live testsrc2 source.
+- 20261028-120218-smoke-local: clip source published without in-band SPS/PPS (dump_extra on AVCC), so viewers received audio only (~160 kbit/s); fixed with h264_mp4toannexb.
+Kept only as a record of the bugs the later runs no longer have.
+- 20261028-131103-local-stages: another workload on this PC took the host to 100% CPU and 19 MB free memory at stage 10 (generator 1.8%, target 5.9%); the run stopped itself (host-cpu). Repeated right after as 20261028-13xxxx-local-stages.

@@ -1,0 +1,396 @@
+{
+  "date": "2026-10-29T06:15:46.770Z",
+  "scope": "20 management/operations screens; browser-local UI interaction checks",
+  "method": "One background IAB tab. CDP Runtime.evaluate called the local app navigation and dispatched DOM click/input/submit/keyboard events; no actual API/payment/security/install/media operations.",
+  "viewports": {
+    "desktop": "Browser default viewport",
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "mobile": true,
+      "dialogWidth": 362.2857360839844,
+      "rootOverflow": 0
+    }
+  },
+  "screenCount": 20,
+  "checkCount": 52,
+  "passed": 52,
+  "failed": 0,
+  "checks": [
+    {
+      "screen": "schedule",
+      "test": "빈 제목 오류",
+      "pass": true
+    },
+    {
+      "screen": "schedule",
+      "test": "예약 추가 결과 반영",
+      "pass": true
+    },
+    {
+      "screen": "schedule",
+      "test": "취소 시 저장값 보존",
+      "pass": true
+    },
+    {
+      "screen": "schedule",
+      "test": "탭 방향키 이동",
+      "pass": true
+    },
+    {
+      "screen": "recordings",
+      "test": "파일 상세 모달",
+      "pass": true
+    },
+    {
+      "screen": "recordings",
+      "test": "닫기 후 화면 복원",
+      "pass": true
+    },
+    {
+      "screen": "scenes",
+      "test": "이름 필수 오류",
+      "pass": true
+    },
+    {
+      "screen": "scenes",
+      "test": "장면 생성 및 선택",
+      "pass": true
+    },
+    {
+      "screen": "scenes",
+      "test": "소스 목록 반영",
+      "pass": true
+    },
+    {
+      "screen": "moderation",
+      "test": "전송 간격 오류",
+      "pass": true
+    },
+    {
+      "screen": "moderation",
+      "test": "설정 저장",
+      "pass": true
+    },
+    {
+      "screen": "moderation",
+      "test": "운영자 추가",
+      "pass": true
+    },
+    {
+      "screen": "moderation",
+      "test": "권한 해제 확인 결과",
+      "pass": true
+    },
+    {
+      "screen": "reports",
+      "test": "조치 선택 필수",
+      "pass": true
+    },
+    {
+      "screen": "reports",
+      "test": "처리 완료 반영",
+      "pass": true
+    },
+    {
+      "pass": true,
+      "screen": "creator-stats",
+      "test": "30일 기간과 카드/차트 반영"
+    },
+    {
+      "pass": true,
+      "screen": "revenue",
+      "test": "정산 필요 항목 안내"
+    },
+    {
+      "pass": true,
+      "screen": "revenue",
+      "test": "수익 탭 내용 구분"
+    },
+    {
+      "pass": true,
+      "screen": "transactions",
+      "test": "환불 사유 오류"
+    },
+    {
+      "pass": true,
+      "screen": "transactions",
+      "test": "요청 작성 상태 반영"
+    },
+    {
+      "pass": true,
+      "screen": "transactions",
+      "test": "작성한 요청 재확인"
+    },
+    {
+      "pass": true,
+      "screen": "integrations",
+      "test": "명령어 오류"
+    },
+    {
+      "pass": true,
+      "screen": "integrations",
+      "test": "채팅봇 편집 저장"
+    },
+    {
+      "pass": true,
+      "screen": "missions-manage",
+      "test": "수락 후 진행 중 목록"
+    },
+    {
+      "pass": true,
+      "screen": "missions-manage",
+      "test": "완료 결과 반영"
+    },
+    {
+      "pass": true,
+      "screen": "polls-manage",
+      "test": "선택지 수 오류"
+    },
+    {
+      "pass": true,
+      "screen": "polls-manage",
+      "test": "투표 생성 결과"
+    },
+    {
+      "pass": true,
+      "screen": "polls-manage",
+      "test": "마감 확인 결과"
+    },
+    {
+      "pass": true,
+      "screen": "rewards-manage",
+      "test": "포인트 범위 오류"
+    },
+    {
+      "pass": true,
+      "screen": "rewards-manage",
+      "test": "보상 저장 결과"
+    },
+    {
+      "pass": true,
+      "screen": "members",
+      "test": "혜택 편집 저장"
+    },
+    {
+      "pass": true,
+      "role": "alert",
+      "screen": "service-health",
+      "test": "장애 상태 지표 구분"
+    },
+    {
+      "pass": true,
+      "screen": "service-health",
+      "test": "검증 자료 이동"
+    },
+    {
+      "pass": true,
+      "screen": "verification",
+      "test": "기술 검증 자료와 일반 메뉴 분리"
+    },
+    {
+      "pass": true,
+      "screen": "service-reports",
+      "test": "서비스 신고 처리 및 내역"
+    },
+    {
+      "pass": true,
+      "screen": "service-reports",
+      "test": "처리 메모 보존"
+    },
+    {
+      "pass": true,
+      "screen": "audit",
+      "test": "기록 없는 필터 상태"
+    },
+    {
+      "pass": true,
+      "screen": "audit",
+      "test": "조건 초기화"
+    },
+    {
+      "pass": true,
+      "screen": "policy",
+      "test": "정책 탭과 신고 이동 제공"
+    },
+    {
+      "pass": true,
+      "screen": "update",
+      "test": "설치 안내 열기"
+    },
+    {
+      "pass": true,
+      "screen": "update",
+      "test": "닫기 후 모달 해제"
+    },
+    {
+      "pass": true,
+      "screen": "developer",
+      "test": "키 이름 필수 오류"
+    },
+    {
+      "pass": true,
+      "screen": "developer",
+      "test": "고정 무효 예시 키 확인"
+    },
+    {
+      "pass": true,
+      "screen": "developer",
+      "test": "키 폐기 로컬 상태"
+    },
+    {
+      "pass": true,
+      "screen": "developer",
+      "test": "HTTPS 주소 오류"
+    },
+    {
+      "pass": true,
+      "screen": "developer",
+      "test": "웹훅 로컬 저장"
+    },
+    {
+      "pass": true,
+      "screen": "developer",
+      "test": "실전송 없는 요청 미리보기"
+    },
+    {
+      "pass": true,
+      "screen": "schedule",
+      "test": "모바일 모달 Tab 순환"
+    },
+    {
+      "pass": true,
+      "screen": "schedule",
+      "test": "모바일 모달 Shift+Tab 순환"
+    },
+    {
+      "pass": true,
+      "screen": "schedule",
+      "test": "Escape 닫기 및 열기 버튼 포커스 복원"
+    },
+    {
+      "pass": true,
+      "screen": "schedule",
+      "test": "모바일 표 컬럼 레이블"
+    },
+    {
+      "pass": true,
+      "screen": "schedule",
+      "test": "모바일 가로 넘침 없음"
+    }
+  ],
+  "initialFailures": [
+    {
+      "pass": false,
+      "screen": "service-health",
+      "test": "장애 상태 지표 구분"
+    }
+  ],
+  "fixes": [
+    {
+      "screen": "service-health",
+      "issue": "Error notice lacked role=alert",
+      "file": "dist/design-v33-management.js",
+      "change": "Management decorator assigns role=alert to .inline-notice.error and inline errors",
+      "retest": {
+        "pass": true,
+        "role": "alert",
+        "screen": "service-health",
+        "test": "장애 상태 지표 구분"
+      }
+    }
+  ],
+  "browserEvents": [],
+  "qaHarnessNotes": [
+    "A batch script initially had an escaped newline SyntaxError before any page action ran; corrected the harness and ran the batch. This was not an application error."
+  ],
+  "notTested": [
+    "Native folder/file operations",
+    "Actual CSV file content through browser download event",
+    "Real OAuth, permission or financial operations",
+    "Actual backend persistence/API/Webhook HTTP delivery",
+    "Real media/cast/installer operations",
+    "Physical mobile devices or OS keyboard"
+  ],
+  "nonOwnedObservation": "Global sidebar mapping was fixed by root; rechecked viewer technical links hidden, reports creator sidebar and operations technical sidebar.",
+  "postVisualFixChecks": [
+    {
+      "pass": true,
+      "screen": "moderation",
+      "test": "입력/토글/저장 우측 정렬"
+    },
+    {
+      "pass": true,
+      "screen": "creator-stats",
+      "test": "기간 선택기 1개"
+    },
+    {
+      "pass": true,
+      "screen": "revenue",
+      "test": "수익 내역의 정산 정보 중복 제거"
+    },
+    {
+      "pass": true,
+      "screen": "revenue",
+      "test": "정산 탭 상세 보존"
+    },
+    {
+      "pass": true,
+      "screen": "polls-manage",
+      "test": "결과 막대/마감 버튼 우측 정렬"
+    },
+    {
+      "pass": true,
+      "screen": "developer",
+      "test": "입력/저장 우측 정렬"
+    },
+    {
+      "pass": true,
+      "screen": "verification",
+      "test": "불필요한 위치 설명 제거"
+    }
+  ],
+  "navigationRetest": {
+    "operationsTechnicalNavigation": true,
+    "reportsCreatorNavigation": true,
+    "viewerTechnicalHidden": true
+  },
+  "customChoiceChecks": [
+    {
+      "pass": true,
+      "test": "신고 조치 오류 포커스·연결"
+    },
+    {
+      "pass": true,
+      "test": "선택 후 오류 정리"
+    },
+    {
+      "pass": true,
+      "test": "조치 hidden 입력 저장"
+    },
+    {
+      "pass": true,
+      "test": "보상 제한 저장"
+    },
+    {
+      "pass": true,
+      "test": "투표 시간 저장"
+    },
+    {
+      "pass": true,
+      "test": "소스 종류 저장"
+    },
+    {
+      "pass": true,
+      "test": "키 권한 확인 본문"
+    },
+    {
+      "pass": true,
+      "test": "웹훅 이벤트 저장"
+    },
+    {
+      "pass": true,
+      "test": "관리 native select 제거"
+    }
+  ]
+}

@@ -8,6 +8,7 @@
 #include <WebView2.h>
 #include <WebView2EnvironmentOptions.h>
 
+#include <map>
 #include <regex>
 
 #include "capture.h"
@@ -16,6 +17,8 @@
 #include "chat.h"
 #include "directory.h"
 #include "streamer.h"
+#include "thumbnails.h"
+#include "window_icon.h"
 
 using Microsoft::WRL::Callback;
 using Microsoft::WRL::ComPtr;
@@ -42,7 +45,7 @@ class App {
   void OnWebMessage(const std::string& text);
   void SendToPage(const std::string& jsonText);
   json InitEvent();
-  void ListWindows();
+  void ListWindows(int thumbWidth, int iconSize);
   void SelectWindow(const std::string& id);
   void ListMonitors();
   void SelectMonitor(const std::string& id);
@@ -77,6 +80,7 @@ class App {
   std::unique_ptr<Directory> directory_;
   std::unique_ptr<ChatHub> chat_;
   std::unique_ptr<HttpServer> http_;
+  std::unique_ptr<WindowThumbnails> thumbnails_;
   std::string httpError_;
   std::mutex sourceMutex_;
   std::shared_ptr<WindowCapture> source_;
@@ -198,6 +202,8 @@ int App::Run(HINSTANCE instance, int show) {
   GetClientRect(hwnd_, &actual);
   LogFile("app", Printf("client %ldx%ld px at %u dpi", actual.right, actual.bottom, dpi));
   SetUiWindow(hwnd_);
+  thumbnails_ = std::make_unique<WindowThumbnails>(gpu_, gpuReady_, hwnd_);
+  thumbnails_->Configure(settings_.windowPreview);
   ShowWindow(hwnd_, show == SW_SHOWMAXIMIZED || show == SW_MAXIMIZE ? show : SW_SHOWNORMAL);
   UpdateWindow(hwnd_);
   CreateWebView(browserFolder);
@@ -210,6 +216,7 @@ int App::Run(HINSTANCE instance, int show) {
   }
   previewQuit_ = true;
   if (previewThread_.joinable()) previewThread_.join();
+  thumbnails_.reset();
   thumbs_->Shutdown();
   control_->Shutdown();
   http_.reset();
@@ -391,7 +398,28 @@ void App::OnWebMessage(const std::string& text) {
     std::string id = msg["id"];
     control_->Post([this, id] { SelectMonitor(id); });
   } else if (cmd == "listWindows") {
-    thumbs_->Post([this] { ListWindows(); });
+    // Sizes of the card's thumbnail (width) and app icon in device pixels, so neither is stretched up on screen.
+    auto size = [&](const char* key, int low, int high, int fallback) { return msg.contains(key) && msg[key].is_number_integer() ? std::clamp(msg[key].get<int>(), low, high) : fallback; };
+    int thumbWidth = size("thumbWidth", 320, 1280, 480), iconSize = size("iconSize", 16, 96, 32);
+    thumbs_->Post([this, thumbWidth, iconSize] { ListWindows(thumbWidth, iconSize); });
+  } else if (cmd == "thumbPriority" && msg.contains("gen") && msg["gen"].is_number_integer() && msg.contains("ids") && msg["ids"].is_array()) {
+    std::vector<std::string> ids;
+    for (const auto& id : msg["ids"])
+      if (id.is_string() && id.get<std::string>().size() <= 40 && ids.size() < 200) ids.push_back(id);
+    std::string selected = msg.contains("selected") && msg["selected"].is_string() ? msg["selected"].get<std::string>().substr(0, 40) : "";
+    thumbnails_->Prioritize(msg["gen"].get<int>(), std::move(ids), selected);
+  } else if (cmd == "thumbRetry" && msg.contains("gen") && msg["gen"].is_number_integer() && msg.contains("id") && msg["id"].is_string() && msg["id"].get<std::string>().size() <= 40) {
+    thumbnails_->Retry(msg["gen"].get<int>(), msg["id"].get<std::string>());
+  } else if (cmd == "thumbCancel") {
+    thumbnails_->Close();
+  } else if (cmd == "thumbShown" && msg.contains("id") && msg["id"].is_string() && msg["id"].get<std::string>().size() <= 40) {
+    // The UI's side of a thumbnail: decoded and shown, or not (a native success that never reached the card).
+    auto number = [&](const char* key) { return msg.contains(key) && msg[key].is_number() ? msg[key].get<double>() : -1.0; };
+    bool ok = msg.contains("ok") && msg["ok"].is_boolean() && msg["ok"].get<bool>();
+    if (!ok && msg.contains("gen") && msg["gen"].is_number_integer() && msg.contains("req") && msg["req"].is_number_integer())
+      thumbnails_->ShowFailed(msg["gen"].get<int>(), msg["id"].get<std::string>(), msg["req"].get<int>());
+    LogFile("thumb", Printf("gen %.0f req %.0f %s: ui %s after %.0f ms (decode %.0f ms)", number("gen"), number("req"), msg["id"].get<std::string>().c_str(),
+                            ok ? "shown" : "could not decode the image", number("ms"), number("decodeMs")));
   } else if (cmd == "selectWindow" && msg.contains("id") && msg["id"].is_string()) {
     std::string id = msg["id"];
     control_->Post([this, id] { SelectWindow(id); });
@@ -440,7 +468,8 @@ void App::CopyText(const std::string& text) {
   PostUi({{"type", "copied"}});
 }
 
-void App::ListWindows() {
+void App::ListWindows(int thumbWidth, int iconSize) {
+  // The names come first; the thumbnails follow from their own worker (generation: late images never reach a newer list).
   int generation = ++listGeneration_;
   auto windows = EnumerateSourceWindows(hwnd_);
   json items = json::array();
@@ -451,24 +480,21 @@ void App::ListWindows() {
                      {"width", w.rect.right - w.rect.left},
                      {"height", w.rect.bottom - w.rect.top},
                      {"minimized", w.minimized}});
-  PostUi({{"type", "windows"}, {"items", items}});
-  if (!gpuReady_) return;
-  FrameConverter converter;
+  PostUi({{"type", "windows"}, {"gen", generation}, {"items", items}});
+  thumbnails_->Open(generation, windows, thumbWidth);
+  // App icons for the title rows, one event per window as each is ready; a newer list stops this one.
+  int64_t started = QpcNow();
+  std::map<std::string, int> sources;
   for (const auto& w : windows) {
-    if (generation != listGeneration_) return;  // the dialog was reopened
-    if (w.minimized) continue;
-    WindowCapture capture(gpu_);
-    std::string error;
-    if (!capture.Start(w.hwnd, false, error)) continue;
-    for (int i = 0; i < 40 && capture.FrameCount() == 0; ++i) Sleep(10);
-    std::vector<uint8_t> bgr;
-    UINT tw = 0, th = 0;
-    bool ok = false;
-    capture.WithLatest([&](ID3D11Texture2D* texture, UINT sw, UINT sh, uint64_t) { ok = converter.ToBgr(gpu_, texture, sw, sh, 480, 270, bgr, tw, th, error); });
-    capture.Stop();
-    std::string jpeg;
-    if (ok && EncodeJpeg(bgr, tw, th, 0.8f, jpeg)) PostUi({{"type", "thumb"}, {"id", SourceId(w.hwnd, w.pid)}, {"jpeg", Base64(jpeg)}});
+    if (generation != listGeneration_) return;
+    std::string source;
+    std::string png = WindowIconPng(w.hwnd, w.pid, w.exePath, iconSize, source);
+    ++sources[source];
+    if (!png.empty()) PostUi({{"type", "icon"}, {"gen", generation}, {"id", SourceId(w.hwnd, w.pid)}, {"png", png}});
   }
+  std::string counts;
+  for (const auto& [source, count] : sources) counts += Printf("%s%s %d", counts.empty() ? "" : ", ", source.c_str(), count);
+  LogFile("icon", Printf("gen %d: %zu windows at %d px in %.0f ms (%s)", generation, windows.size(), iconSize, QpcSeconds(QpcNow() - started) * 1000, counts.c_str()));
 }
 
 void App::SelectWindow(const std::string& id) {
@@ -719,6 +745,7 @@ void App::BeginShutdown() {
   closing_ = true;
   ShowWindow(hwnd_, SW_HIDE);
   previewQuit_ = true;
+  thumbnails_->Close();
   SetTimer(hwnd_, kShutdownTimer, 8000, nullptr);  // the Job Object still ends children if this takes too long
   control_->Post([this] {
     streamer_->Stop("프로그램 종료", false);

@@ -1,0 +1,141 @@
+{
+  "date": "2026-10-28",
+  "version": "2.0",
+  "renderStates": 450,
+  "renderExceptions": 0,
+  "rootHorizontalOverflow": 0,
+  "intentionalScrollRows": [
+    {
+      "device": "mobile",
+      "screen": "live",
+      "state": "기본",
+      "controls": [
+        "지식"
+      ],
+      "reason": "가로 스크롤 카테고리 내부"
+    },
+    {
+      "device": "mobile",
+      "screen": "live",
+      "state": "불러오는 중",
+      "controls": [
+        "지식"
+      ],
+      "reason": "가로 스크롤 카테고리 내부"
+    },
+    {
+      "device": "mobile",
+      "screen": "live",
+      "state": "방송 없음",
+      "controls": [
+        "지식"
+      ],
+      "reason": "가로 스크롤 카테고리 내부"
+    },
+    {
+      "device": "mobile",
+      "screen": "live",
+      "state": "불러오기 실패",
+      "controls": [
+        "지식"
+      ],
+      "reason": "가로 스크롤 카테고리 내부"
+    },
+    {
+      "device": "mobile",
+      "screen": "recordings",
+      "state": "기본",
+      "controls": [
+        "열기",
+        "열기"
+      ],
+      "reason": "가로 스크롤 표 내부"
+    },
+    {
+      "device": "mobile",
+      "screen": "recordings",
+      "state": "저장 공간 부족",
+      "controls": [
+        "열기",
+        "열기"
+      ],
+      "reason": "가로 스크롤 표 내부"
+    },
+    {
+      "device": "mobile",
+      "screen": "schedule",
+      "state": "기본",
+      "controls": [
+        "수정",
+        "수정"
+      ],
+      "reason": "가로 스크롤 표 내부"
+    },
+    {
+      "device": "mobile",
+      "screen": "reports",
+      "state": "기본",
+      "controls": [
+        "검토",
+        "내역"
+      ],
+      "reason": "가로 스크롤 표 내부"
+    },
+    {
+      "device": "mobile",
+      "screen": "transactions",
+      "state": "기본",
+      "controls": [
+        "상세",
+        "관리"
+      ],
+      "reason": "가로 스크롤 표 내부"
+    },
+    {
+      "device": "mobile",
+      "screen": "transactions",
+      "state": "환불 요청",
+      "controls": [
+        "상세",
+        "관리"
+      ],
+      "reason": "가로 스크롤 표 내부"
+    },
+    {
+      "device": "mobile",
+      "screen": "missions-manage",
+      "state": "기본",
+      "controls": [
+        "수락",
+        "검토"
+      ],
+      "reason": "가로 스크롤 표 내부"
+    },
+    {
+      "device": "mobile",
+      "screen": "service-reports",
+      "state": "기본",
+      "controls": [
+        "검토",
+        "검토"
+      ],
+      "reason": "가로 스크롤 표 내부"
+    }
+  ],
+  "captures": 18,
+  "brokenLocalReferences": [],
+  "functionalObservations": [
+    "방송 카드의 썸네일과 프로필 클릭 경로 구분",
+    "검색어 작업 유지 및 채널·라이브 결과 표시",
+    "검색 결과에서 선택한 공개 채널로 이동",
+    "공개 채널에서 시청자용 방송 일정 탭 표시",
+    "캡처 갤러리 확대·닫기"
+  ],
+  "consoleErrorsObserved": 0,
+  "limits": [
+    "로컬 예시 데이터와 Chromium 디자인 검사",
+    "실제 앱 미디어·로그인·결제는 변경하거나 검증하지 않음",
+    "iOS Safari·Android 실제 기기·동시 시청 부하는 미검증",
+    "후속 관리 화면 표는 모바일에서 가로 스크롤 구조 유지"
+  ]
+}

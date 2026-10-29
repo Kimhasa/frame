@@ -1,0 +1,114 @@
+{
+  "at": "2026-10-28T05:27:30.682Z",
+  "base": "http://192.168.1.27:8889/screen-01",
+  "note": "single PC LAN, size-driven only (no network shaping)",
+  "results": [
+    {
+      "step": "renditions",
+      "value": [
+        {
+          "codec": "H.264",
+          "fps": 60,
+          "height": 720,
+          "mbps": 4,
+          "name": "720p",
+          "width": 1280
+        },
+        {
+          "codec": "H.264",
+          "fps": 60,
+          "height": 480,
+          "mbps": 1.5,
+          "name": "480p",
+          "width": 852
+        },
+        {
+          "codec": "H.264",
+          "fps": 60,
+          "height": 360,
+          "mbps": 1,
+          "name": "360p",
+          "width": 640
+        },
+        {
+          "codec": "H.264",
+          "fps": 60,
+          "height": 240,
+          "mbps": 0.5,
+          "name": "240p",
+          "width": 426
+        }
+      ]
+    },
+    {
+      "step": "viewer start",
+      "mode": "auto",
+      "playing": "1920x1080",
+      "decoded": "1920x1080",
+      "label": "1080p",
+      "holdUpMs": 12000,
+      "decisions": []
+    },
+    {
+      "step": "small player",
+      "mode": "auto",
+      "playing": "640x360",
+      "decoded": "640x360",
+      "label": "360p",
+      "holdUpMs": 12000,
+      "decisions": [
+        "1080p>360p 표시 크기 274px 3280ms"
+      ]
+    },
+    {
+      "step": "app viewer",
+      "mode": "auto",
+      "playing": "1920x1080",
+      "decoded": "1920x1080",
+      "label": "1080p",
+      "holdUpMs": 12000,
+      "decisions": []
+    },
+    {
+      "step": "full size again",
+      "mode": "auto",
+      "playing": "1920x1080",
+      "decoded": "1920x1080",
+      "label": "1080p",
+      "holdUpMs": 12000,
+      "decisions": [
+        "1080p>360p 표시 크기 274px 3280ms",
+        "360p>1080p 표시 크기 870px 1007ms"
+      ],
+      "secondsToOriginal": 5
+    },
+    {
+      "step": "manual 480p",
+      "mode": "854x480",
+      "playing": "854x480",
+      "decoded": "852x480",
+      "label": "480p",
+      "holdUpMs": 12000,
+      "decisions": [
+        "1080p>360p 표시 크기 274px 3280ms",
+        "360p>1080p 표시 크기 870px 1007ms"
+      ]
+    },
+    {
+      "step": "auto again",
+      "mode": "auto",
+      "playing": "854x480",
+      "decoded": "852x480",
+      "label": "480p",
+      "holdUpMs": 12000,
+      "decisions": [
+        "1080p>360p 표시 크기 274px 3280ms",
+        "360p>1080p 표시 크기 870px 1007ms"
+      ]
+    },
+    {
+      "step": "menu detail",
+      "value": "현재 480p"
+    }
+  ]
+}

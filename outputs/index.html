@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="color-scheme" content="light">
   <title>FRAME Console</title>
   <link rel="preload" href="./assets/fonts/PretendardVariable.woff2" as="font" type="font/woff2" crossorigin>
@@ -587,7 +587,217 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
 #viewer-preview .player-controls { transition: opacity .18s ease; }
 #viewer-preview.controls-idle .player-controls { opacity: 0; pointer-events: none; transition: opacity .4s ease; }
 #viewer-preview.controls-idle { cursor: none; }
-/* end FRAME 0.5.1 addendum */</style>
+/* end FRAME 0.5.1 addendum */
+/* FRAME 0.6 mobile addendum (allowed UI exception, recorded in UI_V06_ADDENDUM.json): phone and tablet viewer layout,
+   touch targets and safe areas. Only two kinds of media query are used (checked by tools/verify-ui-v06.mjs):
+   - (max-width: 800px): narrow windows with any pointer, the FrameConsole app in a narrow window included;
+   - (pointer: coarse): touch screens; every selector starts with :root:not(.frame-native), so the FrameConsole app
+     (WebView2; its script sets html.frame-native) keeps the desktop UI on a Windows touch screen.
+   Mouse windows 801 px wide or more therefore render exactly as in 0.5.1, the removed badge aside. One script hook sits
+   outside the media queries: html.volume-readonly, set only where video.volume cannot be changed (iOS).
+   --frame-visual-height: set by the script from visualViewport.height (on-screen keyboard); 100dvh without it.
+   Existing components, colours, Pretendard and spacing are reused; the narrow-window rules of 0.5 are extended. */
+
+/* Touch screens: about 44 px hit boxes; icons, track and thumb keep the desktop drawing. */
+@media (pointer: coarse) {
+  :root:not(.frame-native) .app-layout .nav-item, :root:not(.frame-native) .is-viewing .nav-item { min-height: 44px; }
+  :root:not(.frame-native) .icon-button { min-width: 44px; min-height: 44px; }
+  :root:not(.frame-native) .compact-toolbar button, :root:not(.frame-native) .dialog-footer button { min-height: 44px; }
+  :root:not(.frame-native) .catalog-actions .refresh-button { width: 44px; min-width: 44px; }
+  :root:not(.frame-native) .catalog-search { height: 44px; }
+  :root:not(.frame-native) .viewing-actions button, :root:not(.frame-native) .viewing-actions #viewer-info-button, :root:not(.frame-native) .viewing-actions #chat-toggle { min-width: 44px; min-height: 44px; }
+  :root:not(.frame-native) .viewing-actions #viewer-info-button, :root:not(.frame-native) .viewing-actions #chat-toggle { width: auto; }
+  :root:not(.frame-native) #viewer-stage .player-controls .player-button { width: auto; min-width: 44px; min-height: 44px; padding: 6px 10px; }
+  :root:not(.frame-native) #viewer-stage .player-controls .live-button { min-height: 44px; }
+  /* Range inputs: a 44 px box around the unchanged 3-4 px track; the timeline keeps its height with negative margins. */
+  :root:not(.frame-native) .player-volume input[type='range'] { height: 44px; }
+  :root:not(.frame-native) .timeline input[type=range] { height: 44px; margin: -13px 0; }
+  :root:not(.frame-native) .timeline-times { pointer-events: none; }
+  :root:not(.frame-native) #viewer-stage .player-quality-menu { bottom: 60px; max-height: min(350px, calc(100% - 70px)); }
+  :root:not(.frame-native) .quality-menu-option { min-height: 44px; }
+  :root:not(.frame-native) .chat-head { padding-top: 5px; padding-bottom: 5px; }
+  :root:not(.frame-native) .chat-head-actions .chat-name-button { min-height: 44px; }
+  :root:not(.frame-native) .chat-compose-actions button { min-height: 44px; min-width: 64px; }
+  :root:not(.frame-native) .dialog-head .icon-button { margin: -5px -5px -5px 0; }
+  /* 16 px text in fields: iOS Safari zooms the page into smaller fields on focus. */
+  :root:not(.frame-native) .chat-composer textarea, :root:not(.frame-native) .field input, :root:not(.frame-native) .catalog-search input { font-size: 16px; }
+  /* No double-tap zoom on the player (taps show the controls / pause), no hover look stuck after a tap. */
+  :root:not(.frame-native) #viewer-preview { touch-action: manipulation; container-type: inline-size; }
+  :root:not(.frame-native) .player-button:hover:not(:disabled), :root:not(.frame-native) .live-button:hover:not(:disabled) { background: transparent; }
+  :root:not(.frame-native) .player-button:active:not(:disabled), :root:not(.frame-native) .live-button:active:not(:disabled) { background: #ffffff20; }
+  /* Only what this device can do: picture-in-picture stays hidden where the script found no support. */
+  :root:not(.frame-native) #player-pip:disabled { display: none; }
+  /* The player's own width decides how much fits in the bar (chat open, rail, rotation): labels go first (600 px), then
+     the volume slider (500 px; the mute button stays, the device has volume keys), then picture-in-picture (340 px), so
+     the fullscreen button stays inside the player down to a 300 px player (320 px phone). */
+  @container (max-width: 600px) { :root:not(.frame-native) .player-controls .control-label { display: none; } }
+  @container (max-width: 500px) { :root:not(.frame-native) .player-toolbar { gap: 0; } :root:not(.frame-native) .player-controls .player-volume input[type='range'] { display: none; } }
+  @container (max-width: 340px) { :root:not(.frame-native) .player-controls #player-pip { display: none; } }
+}
+
+/* Narrow windows (800 px or less, any pointer): safe areas, the viewing actions in the top bar, dialogs inside the visible
+   height, the 0.5 tab bar with labels that fit, and the stacked viewer: player on top, chat below. */
+@media (max-width: 800px) {
+  :root { --frame-vh: var(--frame-visual-height, 100dvh); --frame-topbar: 54px; --frame-nav: 45px; --frame-chat-min: 220px; }
+  .topbar { padding-left: max(17px, env(safe-area-inset-left)); padding-right: max(17px, env(safe-area-inset-right)); }
+  .app-layout { min-height: calc(var(--frame-vh) - var(--frame-topbar)); }
+  .app-layout.is-viewing { min-height: 0; }
+  .app-layout .sidebar .sidebar-bottom, .is-viewing:not(.is-expanded) .sidebar .sidebar-bottom { display: none; }
+  /* The info and chat buttons move from their own row into the free right side of the top bar. */
+  #viewer-stage .viewing-toolbar { position: fixed; z-index: 5; top: 0; right: max(12px, env(safe-area-inset-right)); height: var(--frame-topbar); min-height: 0; margin: 0; padding: 0; background: none; }
+  #viewer-stage .viewing-actions { gap: 4px; }
+  #viewer-stage .viewing-actions button { color: #e2e6eb; background: transparent; border-color: transparent; }
+  #viewer-stage .viewing-actions button:hover:not(:disabled) { background: #ffffff20; border-color: transparent; }
+  #viewer-stage #chat-toggle[aria-expanded=true] { color: #22d581; background: #ffffff14; border-color: transparent; }
+  .is-viewing .content { padding: 9px max(9px, env(safe-area-inset-right)) max(9px, env(safe-area-inset-bottom)) max(9px, env(safe-area-inset-left)); }
+  .chat-panel:not(.is-sender-chat) { position: relative; inset: auto; width: auto; box-shadow: none; z-index: auto; }
+  /* Dialogs: header and buttons stay put, the body scrolls; inside the safe area and the smallest visible height. */
+  dialog[open]:not(.sender-settings-dialog) { display: flex; flex-direction: column; overflow: hidden; inset: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    max-width: none; max-height: calc(var(--frame-visual-height, 100svh) - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 16px); }
+  dialog[open]:not(.sender-settings-dialog) > :not(.dialog-body) { flex: none; }
+  dialog[open]:not(.sender-settings-dialog) > .dialog-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+  dialog { width: min(540px, calc(100vw - 24px - env(safe-area-inset-left) - env(safe-area-inset-right))); }
+  .network-dialog { width: min(480px, calc(100vw - 24px - env(safe-area-inset-left) - env(safe-area-inset-right))); }
+  .toast { bottom: calc(25px + env(safe-area-inset-bottom)); }
+  .nav-item, .is-viewing .nav-item, .is-viewing:not(.is-expanded) .nav-item, .is-viewing.is-expanded .nav-item { width: auto; min-height: 44px; padding: 10px 14px; }
+  /* Stacked viewer in the visible height (top bar and tab bar excluded). The player is 16:9 from 427 px width and 240 px
+     tall below it (a wider frame, the picture letterboxed); it gets lower only when the chat would drop under its minimum
+     height (short window, on-screen keyboard). The picture is always fitted whole (object-fit: contain) and the controls
+     are drawn over it, so the frame does not move when they show or hide. The workspace is a size container
+     (frame-workspace) for the low-height rules of touch screens below. */
+  .app-layout.is-viewing > .content { display: flex; flex-direction: column; height: calc(var(--frame-vh) - var(--frame-topbar) - var(--frame-nav)); }
+  .app-layout.is-viewing #viewer-view, .app-layout.is-viewing #viewer-stage { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; width: 100%; }
+  .app-layout.is-viewing #viewer-stage .viewer-workspace { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; container: frame-workspace / size; }
+  .app-layout.is-viewing #viewer-stage .viewer-player-panel { display: flex; flex-direction: column; flex: 0 1 auto; min-height: 0; }
+  .app-layout.is-viewing #viewer-stage .player { flex: 0 1 max(240px, 56.25cqw); height: auto; min-height: 0; aspect-ratio: auto; }
+  .app-layout.is-viewing #viewer-stage .chat-panel { flex: 1 1 0; height: auto; min-height: var(--frame-chat-min); }
+  /* Expanded view: the player takes the free height (portrait sources); with the chat open both share it. */
+  .app-layout.is-viewing .is-wide #viewer-stage .viewer-player-panel, .app-layout.is-viewing .is-wide #viewer-stage .player { flex: 1 1 0; }
+}
+
+/* Touch tablets (801 to 1366 px) and landscape phones: the same top bar, safe-area and dialog rules, and the 0.5 compact
+   rail (the expanded-view sidebar) instead of the 220 px sidebar or the tab bar. */
+@media (pointer: coarse) and (min-width: 801px) and (max-width: 1366px), (pointer: coarse) and (orientation: landscape) and (max-height: 500px) {
+  :root:not(.frame-native) { --frame-vh: var(--frame-visual-height, 100dvh); --frame-topbar: 58px; --frame-nav: 0px; --frame-chat-min: 220px; }
+  :root:not(.frame-native) .topbar { padding-left: max(17px, env(safe-area-inset-left)); padding-right: max(17px, env(safe-area-inset-right)); }
+  :root:not(.frame-native) .app-layout { min-height: calc(var(--frame-vh) - var(--frame-topbar)); }
+  :root:not(.frame-native) .app-layout.is-viewing { min-height: 0; }
+  :root:not(.frame-native) #viewer-stage .viewing-toolbar { position: fixed; z-index: 5; top: 0; right: max(12px, env(safe-area-inset-right)); height: var(--frame-topbar); min-height: 0; margin: 0; padding: 0; background: none; }
+  :root:not(.frame-native) #viewer-stage .viewing-actions { gap: 4px; }
+  :root:not(.frame-native) #viewer-stage .viewing-actions button { color: #e2e6eb; background: transparent; border-color: transparent; }
+  :root:not(.frame-native) #viewer-stage .viewing-actions button:hover:not(:disabled) { background: #ffffff20; border-color: transparent; }
+  :root:not(.frame-native) #viewer-stage #chat-toggle[aria-expanded=true] { color: #22d581; background: #ffffff14; border-color: transparent; }
+  :root:not(.frame-native) .chat-panel:not(.is-sender-chat) { position: relative; inset: auto; width: auto; box-shadow: none; z-index: auto; }
+  :root:not(.frame-native) dialog[open]:not(.sender-settings-dialog) { display: flex; flex-direction: column; overflow: hidden; inset: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    max-width: none; max-height: calc(var(--frame-visual-height, 100svh) - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 16px); }
+  :root:not(.frame-native) dialog[open]:not(.sender-settings-dialog) > :not(.dialog-body) { flex: none; }
+  :root:not(.frame-native) dialog[open]:not(.sender-settings-dialog) > .dialog-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+  :root:not(.frame-native) dialog { width: min(540px, calc(100vw - 24px - env(safe-area-inset-left) - env(safe-area-inset-right))); }
+  :root:not(.frame-native) .network-dialog { width: min(480px, calc(100vw - 24px - env(safe-area-inset-left) - env(safe-area-inset-right))); }
+  :root:not(.frame-native) .app-layout, :root:not(.frame-native) .app-layout.is-viewing, :root:not(.frame-native) .app-layout.is-viewing.is-expanded { display: grid; grid-template-columns: calc(72px + env(safe-area-inset-left)) minmax(0, 1fr); }
+  :root:not(.frame-native) .sidebar, :root:not(.frame-native) .is-expanded .sidebar { display: flex; position: sticky; z-index: 3; top: var(--frame-topbar); height: calc(var(--frame-vh) - var(--frame-topbar)); padding-left: env(safe-area-inset-left); border-right: 1px solid #dce1e6; border-bottom: 0; }
+  :root:not(.frame-native) .sidebar .nav-title, :root:not(.frame-native) .sidebar .sidebar-bottom, :root:not(.frame-native) .nav-label { display: none; }
+  :root:not(.frame-native) .nav-menu { flex-direction: column; padding: 18px 7px; gap: 7px; }
+  :root:not(.frame-native) .app-layout .nav-item { width: 100%; min-height: 48px; padding: 12px; justify-content: center; border-radius: 5px; }
+  :root:not(.frame-native) .nav-item svg { width: 17px; height: 17px; }
+  :root:not(.frame-native) .nav-item[aria-selected='true']::before { display: none; }
+  :root:not(.frame-native) .nav-item[aria-selected='true'] { background: var(--green-wash) !important; }
+  :root:not(.frame-native) .content { padding-left: 16px; padding-right: max(22px, env(safe-area-inset-right)); padding-bottom: max(28px, env(safe-area-inset-bottom)); }
+  :root:not(.frame-native) .is-viewing .content { padding: 8px max(8px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) 8px; }
+  :root:not(.frame-native) .toast { left: calc(50% + 36px); bottom: calc(25px + env(safe-area-inset-bottom)); }
+}
+
+/* Touch tablets in portrait: the stacked viewer of the narrow window (16:9 player, chat below). */
+@media (pointer: coarse) and (orientation: portrait) and (min-width: 801px) and (max-width: 1366px) {
+  :root:not(.frame-native) .app-layout.is-viewing > .content { display: flex; flex-direction: column; height: calc(var(--frame-vh) - var(--frame-topbar) - var(--frame-nav)); }
+  :root:not(.frame-native) .app-layout.is-viewing #viewer-view, :root:not(.frame-native) .app-layout.is-viewing #viewer-stage { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; width: 100%; }
+  :root:not(.frame-native) .app-layout.is-viewing #viewer-stage .viewer-workspace { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; container: frame-workspace / size; }
+  :root:not(.frame-native) .app-layout.is-viewing #viewer-stage .viewer-player-panel { display: flex; flex-direction: column; flex: 0 1 auto; min-height: 0; }
+  :root:not(.frame-native) .app-layout.is-viewing #viewer-stage .player { flex: 0 1 56.25cqw; height: auto; min-height: 0; aspect-ratio: auto; }
+  :root:not(.frame-native) .app-layout.is-viewing #viewer-stage .chat-panel { flex: 1 1 0; height: auto; min-height: var(--frame-chat-min); }
+  :root:not(.frame-native) .app-layout.is-viewing .is-wide #viewer-stage .viewer-player-panel, :root:not(.frame-native) .app-layout.is-viewing .is-wide #viewer-stage .player { flex: 1 1 0; }
+}
+
+/* Touch in landscape (phones and tablets up to 1366 px): the player fills the visible height beside the chat column.
+   Overrides the stacked viewer of the narrow window for landscape phones of 800 px or less. */
+@media (pointer: coarse) and (orientation: landscape) and (max-width: 1366px) {
+  :root:not(.frame-native) .app-layout.is-viewing > .content { display: flex; flex-direction: column; height: calc(var(--frame-vh) - var(--frame-topbar) - var(--frame-nav)); }
+  :root:not(.frame-native) .app-layout.is-viewing #viewer-view, :root:not(.frame-native) .app-layout.is-viewing #viewer-stage { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; width: 100%; }
+  :root:not(.frame-native) .app-layout.is-viewing #viewer-stage .viewer-workspace { display: flex; flex-direction: row; flex: 1 1 auto; min-height: 0; gap: 8px; container: frame-workspace / size; }
+  :root:not(.frame-native) .app-layout.is-viewing #viewer-stage .viewer-player-panel { display: flex; flex-direction: column; flex: 1 1 0; min-width: 0; min-height: 0; }
+  :root:not(.frame-native) .app-layout.is-viewing #viewer-stage .player { flex: 1 1 0; height: auto; min-height: 0; aspect-ratio: auto; }
+  :root:not(.frame-native) .app-layout.is-viewing #viewer-stage .chat-panel { flex: 0 0 clamp(240px, 34%, 320px); height: auto; min-height: 0; }
+}
+
+/* Landscape phones: a lower top bar and tighter dialog edges. */
+@media (pointer: coarse) and (orientation: landscape) and (max-height: 500px) {
+  :root:not(.frame-native) { --frame-topbar: 48px; }
+  :root:not(.frame-native) .topbar { height: 48px; }
+  :root:not(.frame-native) .dialog-head, :root:not(.frame-native) .network-dialog .dialog-head { padding: 10px 20px; }
+  :root:not(.frame-native) .dialog-footer, :root:not(.frame-native) .network-dialog .dialog-footer { padding: 10px 20px; }
+  :root:not(.frame-native) .network-dialog .dialog-body { padding: 14px 20px 4px; }
+}
+
+/* Touch phones: the send button beside the message box (more room for messages); the box grows with its text where
+   field-sizing is supported and otherwise keeps its two rows. The shorter composer lowers the chat's minimum height. */
+@media (pointer: coarse) and (max-width: 800px), (pointer: coarse) and (orientation: landscape) and (max-height: 500px) {
+  :root:not(.frame-native) { --frame-chat-min: 180px; }
+  :root:not(.frame-native) .chat-composer { display: flex; align-items: flex-end; gap: 8px; padding: 8px; flex-wrap: wrap; }
+  :root:not(.frame-native) .chat-composer textarea { flex: 1 1 0; min-width: 0; height: auto; min-height: 44px; max-height: 96px; field-sizing: content; padding: 8px 11px; }
+  :root:not(.frame-native) .chat-compose-actions { margin-top: 0; }
+  :root:not(.frame-native) .chat-composer .error { flex-basis: 100%; margin-top: 0; }
+}
+
+/* Touch screens with little visible height (on-screen keyboard: --frame-visual-height from visualViewport; a short
+   window): the message box and send button stay above the keyboard. Below 340 px of workspace the chat keeps less
+   minimum height, below 200 px its header (name, close; the top-bar chat button still closes it) gives way to the
+   messages and the box. The player controls give way where they no longer fit in the player (portrait: the chat takes
+   the rest of the height; landscape: the player has the full height) and come back when the keyboard closes. */
+@media (pointer: coarse) {
+  @container frame-workspace (max-height: 340px) { :root:not(.frame-native) .app-layout.is-viewing #viewer-stage .chat-panel { --frame-chat-min: 150px; } }
+  @container frame-workspace (max-height: 200px) { :root:not(.frame-native) .app-layout.is-viewing #viewer-stage .chat-panel { --frame-chat-min: 100px; } :root:not(.frame-native) #viewer-stage .chat-panel .chat-head { display: none; } }
+}
+@media (pointer: coarse) and (orientation: portrait) {
+  @container frame-workspace (max-height: 290px) { :root:not(.frame-native) #viewer-stage .player-controls, :root:not(.frame-native) #viewer-stage .player-quality-menu { display: none; } }
+}
+@media (pointer: coarse) and (orientation: landscape) {
+  @container frame-workspace (max-height: 140px) { :root:not(.frame-native) #viewer-stage .player-controls, :root:not(.frame-native) #viewer-stage .player-quality-menu { display: none; } }
+}
+
+/* Script hook (no media query; a desktop browser never gets the class): where video.volume cannot be changed (iOS) the
+   volume slider is hidden and the mute button stays. #viewer-fullscreen is hidden by the script with the hidden
+   attribute (0.5 rule [hidden] { display: none !important }) where no fullscreen API exists. */
+:root.volume-readonly .player-volume input[type='range'] { display: none; }
+/* end FRAME 0.6 mobile addendum */
+
+/* FRAME 0.6.1 window-preview addendum (CLAUDE_WINDOW_PREVIEW_ADDENDUM.txt): the 송출 대상 선택 dialog only. A wider
+   dialog (up to 1120 px, 24 px from each side of the visible area, at most 90 % of the height, list scrolls between the tabs and the
+   buttons), 16:9 thumbnails sized by the card width, an app icon + window title row, and a short status and small retry
+   button inside the thumbnail area. Every rule is scoped to #source-dialog or to elements new in 0.6.1; the 2-column
+   cards, selection outline, colours and fonts of 0.6 stay. */
+#source-dialog { width: min(1120px, calc(100% - 48px)); max-width: none; }
+#source-dialog[open] { display: flex; flex-direction: column; max-height: 90dvh; overflow: hidden; }
+#source-dialog[open] > * { flex: none; }
+#source-dialog[open] > .source-dialog-body { flex: 1 1 auto; min-height: min(270px, 30dvh); overflow-y: auto; overscroll-behavior: contain; }
+#source-dialog .source-options { gap: 16px; }
+#source-dialog .source-thumb { height: auto; aspect-ratio: 16 / 9; }
+#source-dialog .source-choice .source-label { display: flex; align-items: center; gap: 9px; min-width: 0; padding: 12px 14px; font-size: 16px; font-weight: 550; line-height: 1.4; color: #25364b; }
+#source-dialog .source-window-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.source-app-icon { flex: none; display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; color: #7d90a3; }
+.source-app-icon img { display: block; width: 24px; height: 24px; object-fit: contain; }
+.source-app-icon svg { width: 22px; height: 22px; stroke-width: 1.6; }
+.source-item { position: relative; min-width: 0; }
+.source-item > .source-choice { width: 100%; }
+/* Exactly over the thumbnail: the card's width inside its 1 px border, at the thumbnail's 16:9 ratio. */
+.source-overlay { position: absolute; top: 1px; left: 1px; right: 1px; aspect-ratio: 16 / 9; pointer-events: none; }
+.source-state { position: absolute; top: 8px; left: 8px; max-width: calc(100% - 16px); background: #101b29d9; color: #fff; border-radius: 3px; padding: 2px 6px; font-size: 11px; line-height: 1.55; }
+.source-state[hidden], .source-retry[hidden] { display: none; }
+.source-retry { position: absolute; right: 8px; bottom: 8px; pointer-events: auto; display: inline-flex; align-items: center; gap: 4px; min-width: 0; min-height: 24px; padding: 0 8px; border-radius: 3px; font-size: 12px; color: #25364b; background: #fff; border: 1px solid #c3ced8; box-shadow: 0 1px 3px #1723301f; }
+.source-retry svg { width: 12px; height: 12px; stroke-width: 2; }
+/* Two columns until a card would be narrower than about 280 px. */
+@media (max-width: 680px) { #source-dialog .source-options { grid-template-columns: minmax(0, 1fr); } }
+/* end FRAME 0.6.1 window-preview addendum */
+</style>
 </head>
 <body>
 <svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden"><defs>
@@ -611,7 +821,6 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
 <header class="topbar">
   <span class="brand-icon"><svg aria-hidden="true"><use href="#i-frame"/></svg></span>
   <span class="brand">FRAME</span><span class="brand-subtitle">Console</span>
-  <span class="environment"><svg aria-hidden="true"><use href="#i-globe"/></svg>내부망</span>
 </header>
 <div class="app-layout">
   <aside class="sidebar">
@@ -802,6 +1011,13 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
   const $ = id => document.getElementById(id);
   const bridge = window.chrome && window.chrome.webview ? window.chrome.webview : null;
   const remote = !bridge;
+  if (bridge) document.documentElement.classList.add('frame-native');
+  if (window.visualViewport) {
+    const fitVisual = () => document.documentElement.style.setProperty('--frame-visual-height', Math.round(visualViewport.height * (visualViewport.scale || 1)) + 'px');
+    visualViewport.addEventListener('resize', fitVisual); fitVisual();
+  }
+  const volumeReadOnly = (() => { const v = document.createElement('video'); try { v.volume = 0.5; } catch { return true; } return Math.abs(v.volume - 0.5) > 0.01; })();
+  if (volumeReadOnly) document.documentElement.classList.add('volume-readonly');
   const native = message => { if (bridge) bridge.postMessage(JSON.stringify(message)); };
   const state = { running: false, starting: false, stopping: false, connected: false, connecting: false, paused: false, source: null, sourceTitle: '', selected: null, windows: [], startedAt: 0, logs: [], viewerEdited: false, playbackQuality: 'auto', stream: null, session: null, video: null, attempt: 0, infoAt: 0, statsTimer: 0, lastBytes: 0, lastBytesAt: 0, failed: '' };
   const fields = ['server-host', 'stream-path', 'resolution', 'fps', 'custom-fps', 'quality', 'audio-source', 'bitrate-auto', 'publish-port', 'viewer-port'];
@@ -887,7 +1103,7 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
     $('settings-lock').hidden = !state.running && !state.starting;
     $('sender-fullscreen').disabled = !state.source;
   }
-  function updateAddress() { const c = config(); $('viewer-address').textContent = 'http://' + c.host + ':' + c.viewerPort + '/' + c.path; $('preview-resolution').textContent = c.resolution.split('x')[1] + 'p / ' + (Number.isFinite(c.fps) ? c.fps : '—') + ' fps'; }
+  function updateAddress() { const c = config(); $('viewer-address').textContent = (state.publicUrl || 'http://' + c.host + ':' + c.viewerPort) + '/' + c.path; $('preview-resolution').textContent = c.resolution.split('x')[1] + 'p / ' + (Number.isFinite(c.fps) ? c.fps : '—') + ' fps'; }
   function renderLog() {
     $('log-list').replaceChildren();
     for (const item of state.logs) { const row = document.createElement('tr'); for (const key of ['time', 'kind', 'message']) { const cell = document.createElement('td'); cell.textContent = item[key]; row.append(cell); } $('log-list').append(row); }
@@ -937,47 +1153,162 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
       previewContext.drawImage(previewImage, Math.round((fw - w) / 2), Math.round((fh - h) / 2), w, h);
     } catch {} finally { native({ cmd: 'previewAck' }); }
   }
-  const measure = document.createElement('canvas').getContext('2d');
-  function fitLabel(text, width) {
-    measure.font = '15px Pretendard, sans-serif';
-    if (measure.measureText(text).width <= width) return text;
-    let low = 0, high = text.length;
-    while (low < high) { const mid = Math.ceil((low + high) / 2); if (measure.measureText(text.slice(0, mid) + '…').width <= width) low = mid; else high = mid - 1; }
-    return text.slice(0, low) + '…';
-  }
   function markSelected() { document.querySelectorAll('[data-source]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.source === state.selected))); $('confirm-source').disabled = !state.selected; }
-  function renderWindows(items) {
-    state.windows = items;
+  // Window thumbnails arrive after the names, with a state per window (native WindowThumbnails). Each card keeps its
+  // size; a short status and, after the automatic attempts, a small retry button sit inside the thumbnail area. Events
+  // carry the list generation and a request id, so a late image never lands on another window or a newer list.
+  const thumbLabels = { queued: '대기 중', loading: '불러오는 중', timeout: '응답이 늦습니다', failed: '미리보기를 가져오지 못했습니다', minimized: '최소화된 창', closed: '창이 닫혔습니다', excluded: '캡처가 제외된 창' };
+  const thumbReasons = {
+    'first-frame-timeout': '창이 제한 시간 안에 화면을 보내지 않았습니다.', 'dwm-timeout': '창의 화면을 제한 시간 안에 받지 못했습니다.', 'dwm-empty': '창의 화면이 아직 그려지지 않았습니다.',
+    'capture-start': '이 창의 캡처를 시작하지 못했습니다.', 'dwm-register': '이 창의 화면을 가져오지 못했습니다.', 'dwm-update': '이 창의 화면을 가져오지 못했습니다.', 'dwm-size': '창의 크기를 확인하지 못했습니다.',
+    'dwm-capture-start': '이 창의 화면을 가져오지 못했습니다.', convert: '화면을 이미지로 바꾸지 못했습니다.', jpeg: '화면을 이미지로 바꾸지 못했습니다.', decode: '미리보기 이미지를 표시하지 못했습니다.',
+    gpu: '그래픽 장치를 사용할 수 없어 미리보기를 만들 수 없습니다.', excluded: '이 앱이 창을 화면 캡처에서 제외했습니다.', 'minimized-empty': '최소화된 창에 표시할 화면이 남아 있지 않습니다.'
+  };
+  const thumbTimeouts = ['first-frame-timeout', 'dwm-timeout', 'dwm-empty'];
+  let thumbObserver = null, thumbPriorityTimer = 0;
+  const sourceCard = id => document.querySelector('.source-options [data-source="' + CSS.escape(id) + '"]');
+  // Shown until the window's own icon arrives, and when it has none: a plain application window, same size.
+  const defaultAppIcon = '<svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><path d="M3.5 9h17M6.5 6.8h.01M9 6.8h.01"/></svg>';
+  // Device-pixel sizes of a card's 16:9 thumbnail and of its 24 px icon, so native images are not stretched up.
+  function sourceSizes() {
+    const box = document.querySelector('.source-options'), style = getComputedStyle(box);
+    const columns = style.gridTemplateColumns.split(' ').filter(Boolean).length || 1, gap = parseFloat(style.columnGap) || 0;
+    const width = (box.clientWidth - gap * (columns - 1)) / columns - 2;
+    return { thumbWidth: Math.round(width * devicePixelRatio), iconSize: Math.round(24 * devicePixelRatio) };
+  }
+  const thumbAge = image => Math.max(1, Math.round((image.ageMs + Date.now() - image.at) / 1000)) + '초 전에 가져온 화면입니다.';
+  function thumbDetail(t) {
+    const reason = thumbReasons[t.stage] || '';
+    if (t.state === 'minimized') return t.image ? (t.image.source === 'cache' ? thumbAge(t.image) : '최소화되기 전에 마지막으로 그려진 화면입니다.') + ' 창을 다시 표시하면 현재 화면으로 바뀝니다.' : (reason ? reason + ' ' : '') + '창을 다시 표시하면 미리보기를 가져옵니다.';
+    if (t.state === 'closed') return t.stage === 'hidden' ? '창이 화면에서 숨겨졌습니다. 다시 표시되면 미리보기를 가져옵니다.' : '창이 닫혀 선택할 수 없습니다.';
+    if (t.state === 'timeout' || t.state === 'failed') return (reason || '미리보기를 가져오지 못했습니다.') + (t.attempt ? ' ' + t.attempt + '번 시도했습니다.' : '') + (t.image ? ' 보이는 화면은 이전에 가져온 것입니다.' : '');
+    if (t.state === 'retrying') return reason + ' 다시 시도하고 있습니다.';
+    if (t.state === 'excluded') return thumbReasons.excluded;
+    if (t.image && !t.image.fresh) return thumbAge(t.image) + ' 현재 화면을 불러오고 있습니다.';
+    return '';
+  }
+  function applyThumb(id) {
+    const t = state.thumbs[id], button = sourceCard(id);
+    if (!t || !button) return;
+    const item = button.parentElement, chip = item.querySelector('.source-state'), retry = item.querySelector('.source-retry');
+    let label = '';
+    if (t.state === 'queued' || t.state === 'loading') {
+      // Most windows finish within a few tens of ms: the wait label appears only when the wait lasts (no flicker).
+      const waited = performance.now() - t.since;
+      if (t.image && !t.image.fresh) label = '이전 화면';
+      else if (t.manual || waited >= 400) label = thumbLabels[t.state];
+      else setTimeout(() => applyThumb(id), 420 - waited);
+    } else if (t.state === 'retrying') label = thumbTimeouts.includes(t.stage) ? '응답이 늦습니다' : '다시 시도하는 중';
+    else if (t.state === 'closed') label = t.stage === 'hidden' ? '창이 숨겨졌습니다' : thumbLabels.closed;
+    else if (t.state !== 'ready') label = thumbLabels[t.state] || '';
+    const detail = thumbDetail(t);
+    chip.textContent = label; chip.hidden = !label; chip.title = detail;
+    button.title = t.name + (detail ? '\n' + detail : '');
+    button.dataset.thumbState = t.state;
+    if (t.image) button.dataset.thumbFresh = String(t.image.fresh); else delete button.dataset.thumbFresh;
+    retry.hidden = !(t.state === 'timeout' || t.state === 'failed') || t.stage === 'gpu';
+    retry.disabled = false;
+    // A closed window cannot be shared; a window without a thumbnail still can (the capture itself reports its result).
+    button.disabled = t.state === 'closed';
+    if (button.disabled && state.selected === id) { state.selected = null; markSelected(); }
+  }
+  function thumbPriority() {
+    clearTimeout(thumbPriorityTimer);
+    thumbPriorityTimer = setTimeout(() => {
+      if (state.windowGen == null) return;
+      const ids = [...document.querySelectorAll('.source-options [data-source]')].map(button => button.dataset.source).filter(id => state.visibleSources.has(id));
+      native({ cmd: 'thumbPriority', gen: state.windowGen, ids, selected: state.selected || '' });
+    }, 120);
+  }
+  function retryThumb(id) {
+    const t = state.thumbs[id];
+    if (!t || state.windowGen == null || !(t.state === 'timeout' || t.state === 'failed')) return;
+    t.state = 'queued'; t.manual = true; t.since = performance.now(); applyThumb(id);
+    native({ cmd: 'thumbRetry', gen: state.windowGen, id });
+  }
+  function closeThumbs() {
+    if (state.windowGen == null) return;
+    state.windowGen = null; thumbObserver?.disconnect(); native({ cmd: 'thumbCancel' });
+  }
+  function renderWindows(items, gen) {
+    state.windows = items; state.windowGen = gen ?? null; state.thumbs = {}; state.visibleSources = new Set();
+    thumbObserver?.disconnect(); thumbObserver = null;
     const box = document.querySelector('.source-options'), counts = {};
     items.forEach(item => counts[item.title] = (counts[item.title] || 0) + 1);
     box.replaceChildren();
-    const width = Math.max(120, (box.clientWidth - 14) / 2 - 32);
-    for (const item of items) {
+    if (items.length) thumbObserver = new IntersectionObserver(entries => {
+      for (const entry of entries) state.visibleSources[entry.isIntersecting ? 'add' : 'delete'](entry.target.dataset.source);
+      thumbPriority();
+    });
+    items.forEach((item, index) => {
       const button = document.createElement('button'); button.type = 'button'; button.className = 'source-choice'; button.dataset.source = item.id;
-      const name = counts[item.title] > 1 && item.exe ? item.title + ' (' + item.exe + ')' : item.title;
-      button.title = name + (item.minimized ? ' (최소화됨)' : '');
+      // Same title: the program name; same title and program: also its number, the least that tells the cards apart.
+      const twins = items.filter(other => other.title === item.title && other.exe === item.exe), number = twins.indexOf(item) + 1;
+      const name = counts[item.title] > 1 && item.exe ? item.title + ' (' + item.exe + (twins.length > 1 ? ' ' + number : '') + ')' : item.title;
+      button.title = name;
       const thumb = document.createElement('span'); thumb.className = 'source-thumb'; thumb.innerHTML = icon('monitor');
-      const label = document.createElement('span'); label.className = 'source-label'; label.textContent = fitLabel(name, width);
+      // Title row: app icon + window title on one line (CSS ellipsis; the full title is the button's name and tooltip).
+      const label = document.createElement('span'); label.className = 'source-label';
+      const appIcon = document.createElement('span'); appIcon.className = 'source-app-icon'; appIcon.innerHTML = defaultAppIcon;
+      const text = document.createElement('span'); text.className = 'source-window-name'; text.textContent = name;
+      label.append(appIcon, text);
       button.append(thumb, label);
-      button.addEventListener('click', () => { state.selected = item.id; markSelected(); });
-      button.addEventListener('dblclick', () => { state.selected = item.id; confirmSource(); });
-      box.append(button);
-    }
+      button.addEventListener('click', () => { if (button.disabled) return; state.selected = item.id; markSelected(); thumbPriority(); });
+      button.addEventListener('dblclick', () => { if (button.disabled) return; state.selected = item.id; confirmSource(); });
+      // Status and retry sit over the thumbnail but outside the card button (no nested buttons; the card keeps its role).
+      const overlay = document.createElement('span'); overlay.className = 'source-overlay';
+      const chip = document.createElement('span'); chip.className = 'source-state'; chip.id = 'source-state-' + index; chip.hidden = true;
+      const retry = document.createElement('button'); retry.type = 'button'; retry.className = 'source-retry'; retry.hidden = true;
+      retry.innerHTML = icon('refresh') + '<span>다시 시도</span>'; retry.setAttribute('aria-label', name + ' 미리보기 다시 시도');
+      retry.addEventListener('click', () => { retry.disabled = true; retryThumb(item.id); });
+      overlay.append(chip, retry);
+      button.setAttribute('aria-describedby', chip.id);
+      const wrap = document.createElement('div'); wrap.className = 'source-item'; wrap.append(button, overlay);
+      box.append(wrap);
+      state.thumbs[item.id] = { name, req: 0, state: 'queued', stage: '', attempt: 0, image: null, since: performance.now(), manual: false };
+      applyThumb(item.id);
+      thumbObserver?.observe(button);
+    });
     if (!items.length) { const empty = document.createElement('p'); empty.textContent = '공유할 수 있는 창이 없습니다.'; box.append(empty); }
     if (!items.some(item => item.id === state.selected)) state.selected = null;
     markSelected();
   }
-  function showThumb(event) {
-    const thumb = document.querySelector('[data-source="' + CSS.escape(event.id) + '"] .source-thumb');
-    if (!thumb) return;
-    const image = document.createElement('img'); image.alt = ''; image.src = 'data:image/jpeg;base64,' + event.jpeg;
+  function onThumbState(event) {
+    const t = state.thumbs[event.id];
+    if (event.gen !== state.windowGen || !t || event.req < t.req) return;
+    if ((event.state === 'queued' || event.state === 'loading') && !(t.state === 'queued' || t.state === 'loading')) t.since = performance.now();
+    if (event.req > t.req && t.req && !t.manual) t.since = performance.now();
+    if (!(event.state === 'queued' || event.state === 'loading')) t.manual = false;
+    Object.assign(t, { req: event.req, state: event.state, stage: event.stage || '', attempt: event.attempt || 0 });
+    applyThumb(event.id);
+  }
+  async function showIcon(event) {
+    const box = event.gen === state.windowGen ? sourceCard(event.id)?.querySelector('.source-app-icon') : null;
+    if (!box) return;
+    const image = document.createElement('img'); image.alt = ''; image.src = 'data:image/png;base64,' + event.png;
+    try { await image.decode(); } catch { return; }  // the default icon stays
+    if (event.gen === state.windowGen && box.isConnected) box.replaceChildren(image);
+  }
+  async function showThumb(event) {
+    const current = () => event.gen === state.windowGen && state.thumbs[event.id] && (event.source === 'cache' ? !state.thumbs[event.id].image : event.req >= state.thumbs[event.id].req);
+    if (!current()) return;
+    const image = document.createElement('img'), started = performance.now(); image.alt = ''; image.src = 'data:image/jpeg;base64,' + event.jpeg;
+    let ok = true;
+    try { await image.decode(); } catch { ok = false; }
+    if (!current()) return;
+    const t = state.thumbs[event.id];
+    // The UI side of the result goes to the native log: a native success that never reached the card is visible there.
+    if (event.source !== 'cache') native({ cmd: 'thumbShown', gen: event.gen, id: event.id, req: event.req, ok, ms: event.ms, decodeMs: Math.round(performance.now() - started) });
+    if (!ok) { if (event.source !== 'cache') { t.state = 'failed'; t.stage = 'decode'; applyThumb(event.id); } return; }
     image.style.cssText = 'display:block;width:100%;height:100%;object-fit:contain';
-    thumb.replaceChildren(image);
+    sourceCard(event.id)?.querySelector('.source-thumb').replaceChildren(image);
+    t.image = { fresh: event.fresh !== false, source: event.source, ageMs: event.ageMs || 0, at: Date.now() };
+    applyThumb(event.id);
   }
   function chooseSource() {
     if (remote) return;
     state.selected = state.source; renderWindows([]); document.querySelector('.source-options').replaceChildren();
-    $('confirm-source').disabled = true; $('source-dialog').showModal(); native({ cmd: 'listWindows' });
+    $('confirm-source').disabled = true; $('source-dialog').showModal(); native({ cmd: 'listWindows', ...sourceSizes() });
   }
   function confirmSource() { if (!state.selected) return; native({ cmd: 'selectWindow', id: state.selected }); $('source-dialog').close(); }
   function onSource(event) {
@@ -1020,7 +1351,8 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
     if (status && Number.isFinite(status.bitrate)) $('quality').value = status.bitrate;
     if (status?.encoder) state.encoder = status.encoder;
     $('metric-fps').textContent = status?.fps || config().fps; $('metric-bitrate').textContent = '—'; senderUI();
-    if (status?.broadcastId && state.viewerServerPort) chatOpen('sender', 'http://127.0.0.1:' + state.viewerServerPort, status.path || config().path, status.broadcastId);
+    // With an internet relay the broadcast's chat room lives on the relay, where its internet viewers are.
+    if (status?.broadcastId && (state.relayChat || state.viewerServerPort)) chatOpen('sender', state.relayChat || 'http://127.0.0.1:' + state.viewerServerPort, status.path || config().path, status.broadcastId);
   }
   function stoppedUI() {
     state.running = false; state.starting = false; state.stopping = false; lockSettings(false);
@@ -1049,6 +1381,8 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
     $('metric-viewers').textContent = String(event.viewers || 0);
   }
   function applySettings(s) {
+    // Internet viewing address (relay or this PC behind a public name) and whether chat runs on a relay.
+    state.publicUrl = s.publicUrl || ''; state.relayChat = s.relayPublishUrl ? s.relayApiUrl || s.publicUrl || '' : '';
     $('server-host').value = s.serverHost; $('stream-path').value = s.streamPath; $('resolution').value = s.resolution;
     if (fpsPresets.includes(s.fps)) $('fps').value = String(s.fps); else { $('fps').value = 'custom'; $('custom-fps').value = s.fps; }
     $('bitrate-auto').checked = s.bitrateAuto; $('quality').value = s.bitrateMbps; $('audio-source').value = s.audio;
@@ -1077,8 +1411,10 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
     return video;
   }
   const isLocalStream = () => !remote && state.stream && state.stream.host.toLowerCase() === config().host.toLowerCase() && state.stream.path === config().path;
+  function busyError(response) { const error = new Error('busy'); error.retryAfter = Math.min(30, Math.max(1, Number(response.headers.get('Retry-After')) || 2)); return error; }
   async function fetchInfo(base, path) {
     const response = await fetch(base + '/' + encodeURIComponent(path) + '/info', { cache: 'no-store', signal: AbortSignal.timeout(5000) });
+    if (response.status === 503) throw busyError(response);
     if (!response.ok) throw new Error('info ' + response.status);
     return response.json();
   }
@@ -1095,6 +1431,7 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
       await pc.setLocalDescription(await pc.createOffer());
       await gathered(pc, 2000);
       const response = await fetch(base + '/' + path + '/whep', { method: 'POST', headers: { 'Content-Type': 'application/sdp' }, body: pc.localDescription.sdp });
+      if (response.status === 503) throw busyError(response);
       if (response.status !== 201) throw new Error(response.status === 404 ? 'not-running' : 'whep ' + response.status);
       const resource = response.headers.get('Location');
       await pc.setRemoteDescription({ type: 'answer', sdp: await response.text() });
@@ -1118,29 +1455,69 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
       document.addEventListener('visibilitychange', check);
     });
   }
+  // The browser refused sound without a user gesture (mobile autoplay policy): play muted, say so, and keep the volume
+  // control in view until the viewer turns the sound on. Playing muted is not reported as playing with sound.
+  function mutedByBrowser(video) {
+    video.muted = true; $('player-volume').value = 0; volumeUI('player'); video.play().catch(() => {});
+    state.mutedByBrowser = true; noteEvent('muted-by-browser'); toast('소리 없이 재생 중입니다. 음량 버튼을 눌러 소리를 켜세요.'); log('수신', '브라우저 정책으로 음소거 재생'); controlsActive();
+  }
   function applyPlayerVolume(video) { const amount = Number($('player-volume').value); video.volume = amount / 100; video.muted = amount === 0; }
   const renditionPath = (path, quality) => quality === 'auto' || quality === sourceQuality() ? path : path + '/' + resolutions.find(item => item.value === quality).label;
   const sourceQuality = () => state.stream ? state.stream.info.width + 'x' + state.stream.info.height : config().resolution;
+  // The quality to (re)open live: the manual choice, or in automatic mode the one that was last playing.
+  const liveQuality = () => state.playbackQuality === 'auto' ? state.playing || 'auto' : state.playbackQuality;
   // Starts a WHEP session and swaps it into the player once its first frame is decoded; the old session keeps playing until then.
   async function attach(quality) {
     const stream = state.stream, session = await openSession(stream.base, renditionPath(stream.path, quality), stream.info.iceServers);
     // Muted until it replaces the current picture, so a quality switch never plays two soundtracks.
     const video = makeVideo(); video.srcObject = session.media; video.muted = true;
-    try { await video.play().catch(() => {}); await waitFrames(video, 15000); }
+    // play() of a live stream settles only with its first frame: not awaited, so the 15 s limit always applies (a
+    // switch that never gets a frame used to hang here and stop automatic quality; tools/netem measured 219 s).
+    try { video.play().catch(() => {}); await waitFrames(video, 15000); }
     catch (error) { closeSession(session); throw error; }
     if (state.stream !== stream) { closeSession(session); return false; }
     const previous = state.session, oldVideo = state.video, oldHistory = state.history;
-    state.session = session; state.video = video; state.history = null; state.playbackQuality = quality; state.lastBytes = 0;
+    state.session = session; state.video = video; state.history = null; state.playing = quality === 'auto' ? sourceQuality() : quality; state.lastBytes = 0; abrReset();
     if (oldVideo && document.pictureInPictureElement === oldVideo) document.exitPictureInPicture().catch(() => {});
     if (oldVideo) oldVideo.replaceWith(video); else viewerCanvas.after(video);
     closeSession(previous); closeHistory(oldHistory);
     applyPlayerVolume(video);
-    if (!video.muted) await video.play().catch(error => { if (error.name !== 'NotAllowedError') return; video.muted = true; $('player-volume').value = 0; volumeUI('player'); video.play().catch(() => {}); toast('브라우저 설정으로 음소거 상태로 재생합니다.'); });
+    if (!video.muted) await video.play().catch(error => { if (error.name !== 'NotAllowedError') return; mutedByBrowser(video); });
     if (state.paused) video.pause();
     document.dispatchEvent(new CustomEvent('frame:media')); 
     session.pc.addEventListener('connectionstatechange', () => { if (state.session === session && ['failed', 'closed'].includes(session.pc.connectionState)) lost(); else if (state.session === session && session.pc.connectionState === 'disconnected') setTimeout(() => { if (state.session === session && session.pc.connectionState === 'disconnected') lost(); }, 3000); });
     return true;
   }
+  // Fallback when this browser or network cannot use WebRTC: the server's low-latency HLS of the original stream, played
+  // by the browser itself (Safari and other browsers with native HLS). Longer delay than WebRTC, one quality, and no
+  // rewind bar where Media Source Extensions are missing. Chosen per connection and kept for its reconnects.
+  const nativeHls = () => !!document.createElement('video').canPlayType('application/vnd.apple.mpegurl');
+  async function attachHls() {
+    const stream = state.stream, video = makeVideo(); video.muted = true;
+    // Native HLS players only load a video that is in the document: it waits in the player, invisible, until its first frame.
+    const stop = () => { video.removeAttribute('src'); video.load(); video.remove(); };
+    video.style.position = 'absolute'; video.style.inset = '0'; video.style.opacity = '0'; viewerCanvas.after(video);
+    const variants = stream.info.hlsVariants || {}, safe = v => typeof v === 'string' && /^[a-z0-9_-]+(\/[a-z0-9_-]+)*\/index\.m3u8$/i.test(v) ? v : '';
+    const needsAac = stream.info.audio && stream.info.audio !== 'none' && !video.canPlayType('audio/mp4; codecs="opus"');
+    video.src = stream.base + '/' + encodeURIComponent(stream.path) + '/' + ((needsAac && safe(variants.aac)) || safe(variants.opus) || 'hls/index.m3u8');
+    try { video.play().catch(() => {}); await waitFrames(video, 20000); }
+    catch (error) { stop(); throw error; }
+    if (state.stream !== stream) { stop(); return false; }
+    const previous = state.session, oldVideo = state.video, oldHistory = state.history;
+    state.session = null; state.video = video; state.history = null; state.playing = sourceQuality(); state.lastBytes = 0;
+    if (oldVideo && document.pictureInPictureElement === oldVideo) document.exitPictureInPicture().catch(() => {});
+    video.style.position = video.style.inset = video.style.opacity = '';
+    if (oldVideo) oldVideo.remove();
+    closeSession(previous); closeHistory(oldHistory);
+    applyPlayerVolume(video);
+    if (!video.muted) await video.play().catch(error => { if (error.name === 'NotAllowedError') mutedByBrowser(video); });
+    if (state.paused) video.pause();
+    video.addEventListener('error', () => { if (state.video === video) lost(); });
+    document.dispatchEvent(new CustomEvent('frame:media'));
+    return true;
+  }
+  // Opens live playback for the current connection with the transport it settled on.
+  const openLive = quality => state.useHls ? attachHls() : attach(quality);
   function infoText() {
     const info = state.stream?.info;
     if (!info) return;
@@ -1148,7 +1525,7 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
     if (!$('info-bitrate').dataset.measured) $('info-bitrate').textContent = Number(info.bitrate).toFixed(1) + ' Mbps';
   }
   function qualityLabel() {
-    const height = state.video?.videoHeight || Number((state.playbackQuality === 'auto' ? sourceQuality() : state.playbackQuality).split('x')[1]);
+    const height = state.video?.videoHeight || Number((state.playing || sourceQuality()).split('x')[1]);
     $('player-quality-label').textContent = height + 'p'; $('player-settings').title = '재생 화질: ' + (state.playbackQuality === 'auto' ? '자동 (' + height + 'p)' : height + 'p');
     $('info-resolution').textContent = height + 'p' + (state.playbackQuality === 'auto' ? ' (자동)' : '');
   }
@@ -1160,7 +1537,7 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
   const idle = { timer: 0, over: false, dragging: false, tapShown: false };
   function controlsPinned() {
     const focused = document.activeElement;
-    return !state.connected || state.paused || idle.over || idle.dragging || !$('player-quality-menu').hidden ||
+    return !state.connected || state.paused || state.mutedByBrowser || idle.over || idle.dragging || !$('player-quality-menu').hidden ||
       !!(focused && (playerControls.contains(focused) || $('player-quality-menu').contains(focused)) && focused.matches(':focus-visible'));
   }
   function hideControls() { clearTimeout(idle.timer); if (!controlsPinned()) playerBox.classList.add('controls-idle'); }
@@ -1209,8 +1586,9 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
     if (document.pictureInPictureElement) document.exitPictureInPicture().catch(() => {});
     state.stream = null; state.connecting = false; clearInterval(state.statsTimer);
     closeSession(state.session); state.session = null;
-    closeHistory(state.history); state.history = null; state.pausedLive = null; dvrStop();
-    if (state.video) { state.video.srcObject = null; state.video.remove(); state.video = null; }
+    closeHistory(state.history); state.history = null; state.pausedLive = null; dvrStop(); state.mutedByBrowser = false;
+    if (state.video) { state.video.srcObject = null; if (state.video.getAttribute('src')) { state.video.removeAttribute('src'); state.video.load(); } state.video.remove(); state.video = null; }
+    state.useHls = false;
     controlsActive();
     if (heading) receiver(false, heading, description, retry);
     return stream;
@@ -1235,11 +1613,30 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
     const base = manual ? (remote ? location.protocol : 'http:') + '//' + host + ':' + port : target.base;
     state.lastTarget = { base, host, port, path };
     try {
-      const info = await fetchInfo(base, path);
-      if (connectionVersion !== state.connectionVersion) return;
-      if (!info.running) throw new Error('not-running');
-      state.stream = { base, host, path, info, infoAt: Date.now() }; state.playbackQuality = 'auto';
-      await attach('auto');
+      let info = null;
+      for (let attempt = 0; ; attempt++) {
+        try {
+          info = await fetchInfo(base, path);
+          if (connectionVersion !== state.connectionVersion) return;
+          if (!info.running) throw new Error('not-running');
+          state.stream = { base, host, path, info, infoAt: Date.now() }; state.playbackQuality = 'auto'; state.playing = null; abr.holdUpMs = ABR.minHoldUpMs; abr.failed = {};
+          state.useHls = typeof RTCPeerConnection !== 'function';
+          if (state.useHls && !nativeHls()) throw new Error('unsupported');
+          try { await openLive('auto'); }
+          catch (error) {
+            // WebRTC could not deliver media (blocked UDP/TCP media ports, no TURN): try HTTP-delivered HLS where the browser plays it.
+            if (state.useHls || error.message === 'busy' || error.message === 'not-running' || !nativeHls()) throw error;
+            state.useHls = true; noteEvent('hls-fallback'); log('수신', 'WebRTC 연결 실패, HLS로 재생합니다'); await attachHls();
+          }
+          break;
+        } catch (error) {
+          if (error.message !== 'busy' || attempt >= 4 || connectionVersion !== state.connectionVersion) throw error;
+          const wait = error.retryAfter * 1000 * (attempt + 1) * (0.7 + Math.random() * 0.6);
+          noteEvent('busy-retry'); badge('viewer-status', '대기 중'); toast('접속자가 많아 ' + Math.ceil(wait / 1000) + '초 뒤 다시 연결합니다.'); log('수신', '서버 혼잡(503), ' + Math.ceil(wait / 1000) + '초 뒤 재시도');
+          await sleep(wait);
+          if (connectionVersion !== state.connectionVersion) return;
+        }
+      }
       if (connectionVersion !== state.connectionVersion) return;
       state.connecting = false; state.attempt = 0;
       receiver(true); log('수신', path + ' 연결'); dvrStart();
@@ -1249,8 +1646,8 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
     } catch (error) {
       if (connectionVersion !== state.connectionVersion) return;
       state.connecting = false; endPlayback();
-      const ended = error.message === 'not-running';
-      receiver(false, ended ? '연결할 수 없습니다' : '연결할 수 없습니다', ended ? '송출 상태와 주소를 확인한 뒤 다시 연결하세요.' : '서버 주소와 방화벽 설정을 확인한 뒤 다시 연결하세요.', true);
+      const ended = error.message === 'not-running', busy = error.message === 'busy', unsupported = error.message === 'unsupported';
+      receiver(false, busy ? '접속자가 많습니다' : '연결할 수 없습니다', ended ? '송출 상태와 주소를 확인한 뒤 다시 연결하세요.' : busy ? '잠시 후 다시 연결하세요.' : unsupported ? '이 브라우저는 실시간 재생 방식(WebRTC, HLS)을 지원하지 않습니다.' : '서버 주소와 방화벽 설정을 확인한 뒤 다시 연결하세요.', true);
       badge('viewer-status', '연결 안 됨'); log('수신', '연결 실패: ' + host + ' ' + path);
     }
   }
@@ -1272,20 +1669,28 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
   }
   async function lost() {
     if (!state.stream || state.connecting) return;
+    noteEvent('reconnect');
     const stream = state.stream;
     state.connecting = true; badge('viewer-status', '재연결 중');
     dvr.token++; closeHistory(dvr.pending); dvr.pending = null;
-    for (let attempt = 1; attempt <= 3 && state.stream === stream; attempt++) {
+    const giveUpAt = Date.now() + 45000;
+    for (let attempt = 1; state.stream === stream; attempt++) {
+      let wait = Math.min(8000, 1500 * attempt);
       try {
         const info = await fetchInfo(stream.base, stream.path);
         if (!info.running) break;
         const previousId = stream.info.broadcastId;
         stream.info = info; stream.infoAt = Date.now();
-        if (!(await attach(state.playbackQuality)) || state.stream !== stream) return;
+        if (info.mediaReady === false) { badge('viewer-status', '신호 대기'); throw new Error('media not ready'); }
+        if (!(await openLive(liveQuality())) || state.stream !== stream) return;
         state.connecting = false; badge('viewer-status', state.paused ? '일시정지' : '수신 중', !state.paused); log('수신', stream.path + ' 다시 연결');
         if (info.broadcastId !== previousId) { if (info.broadcastId) chatOpen('viewer', stream.base, stream.path, info.broadcastId); dvrStart(); }
         return;
-      } catch { await sleep(2000 * attempt); }
+      } catch (error) {
+        if (error && error.message === 'busy') { noteEvent('busy-retry'); wait = error.retryAfter * 1000 * (0.7 + Math.random() * 0.6); }
+      }
+      if (Date.now() + wait > giveUpAt) break;
+      await sleep(wait);
     }
     if (state.stream !== stream) return;
     let running = false;
@@ -1293,14 +1698,33 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
     endPlayback(running ? '연결이 끊어졌습니다' : '송출이 종료되었습니다', running ? '네트워크 상태를 확인한 뒤 다시 연결하세요.' : '송출을 다시 시작한 뒤 연결하세요.');
     log('수신', stream.path + (running ? ' 연결 끊김' : ' 송출 종료'));
   }
+  // Every 15 s the page reports how playback really goes (transport, quality, frame rate, loss, freezes, automatic quality
+  // switches, the last error) to the server it watches from, for operations. Anonymous: a random id per page load.
+  const statsSession = Math.random().toString(36).slice(2, 12);
+  function noteEvent(text) { state.lastEvent = text; }
+  function reportStats() {
+    const stream = state.stream, v = state.video, last = abr.samples.at(-1);
+    if (!stream || !v || !navigator.sendBeacon) return;
+    const d = abr.decisions.at(-1);
+    const body = { sid: statsSession, broadcast: stream.info.broadcastId || '', transport: state.history ? 'dvr' : state.useHls ? 'hls' : 'webrtc', mode: state.playbackQuality === 'auto' ? 'auto' : 'manual',
+      quality: (state.playing || '').split('x')[1] ? state.playing.split('x')[1] + 'p' : '', height: v.videoHeight || 0, fps: last ? +last.fps.toFixed(1) : undefined,
+      lossPct: last ? +(last.loss * 100).toFixed(2) : undefined, jitterMs: last && last.jitterMs != null ? Math.round(last.jitterMs) : undefined,
+      freezes: abr.samples.filter(x => x.freeze).length, mbps: Number($('info-bitrate').dataset.measured ? parseFloat($('info-bitrate').textContent) : 0) || undefined,
+      abrSwitches: abr.decisions.length, lastSwitch: d ? d.from + '>' + d.to + ' ' + d.reason : '', event: state.lastEvent || '',
+      device: matchMedia('(pointer: coarse)').matches ? 'touch' : 'desktop' };
+    try { navigator.sendBeacon(stream.base + '/' + encodeURIComponent(stream.path) + '/stats', JSON.stringify(body)); } catch {}
+    state.lastEvent = '';
+  }
   async function viewerStats() {
     const session = state.session, stream = state.stream, history = state.history;
-    if (!stream || (!session && !history)) return;
+    if (!stream || (!session && !history && !state.useHls)) return;
+    if ((state.statsTick = (state.statsTick || 0) + 1) % 15 === 0) reportStats();
     $('viewer-clock').textContent = clock((stream.info.elapsedMs || 0) + Date.now() - stream.infoAt);
     if (Date.now() - stream.infoAt > 5000 && !state.connecting) {
-      try { const info = await fetchInfo(stream.base, stream.path); state.infoFailures = 0; if (!info.running) { lost(); return; } if (info.elapsedMs < stream.info.elapsedMs) { lost(); return; } stream.info = info; stream.infoAt = Date.now(); infoText(); }
+      try { const info = await fetchInfo(stream.base, stream.path); state.infoFailures = 0; if (!info.running || info.mediaReady === false) { lost(); return; } if (info.elapsedMs < stream.info.elapsedMs) { lost(); return; } stream.info = info; stream.infoAt = Date.now(); infoText(); }
       catch { if (history && ++state.infoFailures >= 3) { state.infoFailures = 0; lost(); return; } }
     }
+    if (!session && !history) { qualityLabel(); return; }  // HLS: the browser's own player has no WebRTC statistics
     if (!session) {
       // Recorded playback: the average bitrate of the recording actually loaded, not a WebRTC measurement.
       if (history && history.mediaMs > 1000) { $('info-bitrate').textContent = (history.bytes * 8 / (history.mediaMs / 1000) / 1e6).toFixed(1) + ' Mbps'; $('info-bitrate').dataset.measured = '1'; }
@@ -1316,8 +1740,105 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
       if (state.lastBytes && sample.bytes >= state.lastBytes) { const mbps = (sample.bytes - state.lastBytes) * 8 / ((now - state.lastBytesAt) / 1000) / 1e6; $('info-bitrate').textContent = mbps.toFixed(1) + ' Mbps'; $('info-bitrate').dataset.measured = '1'; sample.mbps = mbps; }
       state.lastBytes = sample.bytes; state.lastBytesAt = now;
       qualityLabel();
+      abrStep(report, session);
       native({ cmd: 'viewerStats', stats: sample });
     } catch {}
+  }
+  // ---- Automatic playback quality, per viewer ----------------------------------------------------------------------
+  // Chooses among the qualities the server really encodes (the original and its shared lower renditions) from this
+  // viewer's own session: freezes, packet loss, jitter-buffer growth, decoded frame rate against the stream's, frames the
+  // device drops while the network is fine (decoding limit), and the size the picture is shown at. It steps down quickly
+  // when playback suffers and up one step only after a calm period; an up-step that fails soon doubles the wait before the
+  // next try, so a line near a quality boundary does not flip back and forth. The received bitrate is not taken as the
+  // line's capacity (it is only what the current quality uses). Every switch and its reason goes to the event log.
+  const ABR = { downWindow: 3, upWindow: 12, lossDown: 0.04, lossUp: 0.005, jitterDownMs: 450, jitterUpMs: 180, fpsDown: 0.72, fpsUp: 0.92,
+    stallMs: 1200, minDownGapMs: 3000, minHoldUpMs: 12000, maxHoldUpMs: 120000, failWindowMs: 12000, sizeSlack: 0.9, sizeDownMs: 8000 };
+  const abr = { samples: [], last: null, lastSwitchAt: 0, holdUpMs: ABR.minHoldUpMs, upAt: 0, upFrom: null, failed: {}, sizeSince: 0, sizeLimited: false, decisions: [] };
+  function abrReset() { abr.samples = []; abr.last = null; abr.lastSwitchAt = performance.now(); }
+  // Qualities from the highest (the original) down, as the server announced them.
+  function abrLadder() {
+    const info = state.stream?.info; if (!info) return [];
+    const source = { value: sourceQuality(), label: info.height + 'p', height: info.height, mbps: Number(info.bitrate) || 0, original: true };
+    const lower = (info.renditions || []).map(r => ({ value: resolutions.find(item => item.label === r.name)?.value, label: r.name, height: r.height, mbps: r.mbps || 0 })).filter(r => r.value && r.height < info.height);
+    return [source, ...lower.sort((a, b) => b.height - a.height)];
+  }
+  // Height the picture really occupies on screen, in device pixels (the player frame keeps its layout; the video is contained).
+  function shownHeight() {
+    const v = state.video; if (!v || !v.videoWidth) return 0;
+    const box = v.getBoundingClientRect(), scale = Math.min(box.width / v.videoWidth, box.height / v.videoHeight);
+    return v.videoHeight * scale * (window.devicePixelRatio || 1);
+  }
+  function abrStep(report, session) {
+    const now = performance.now(), v = state.video;
+    let r = null; report.forEach(item => { if (item.type === 'inbound-rtp' && item.kind === 'video') r = item; });
+    if (!r || !v) return;
+    const cur = { t: now, lost: r.packetsLost || 0, recv: r.packetsReceived || 0, decoded: r.framesDecoded || 0, dropped: r.framesDropped || 0,
+      freezes: r.freezeCount, jbDelay: r.jitterBufferDelay || 0, jbCount: r.jitterBufferEmittedCount || 0, shownDropped: v.getVideoPlaybackQuality ? v.getVideoPlaybackQuality().droppedVideoFrames : 0 };
+    const prev = abr.last; abr.last = cur;
+    if (!prev || state.paused || document.hidden) return;  // pauses and hidden tabs are not network trouble
+    const dt = (now - prev.t) / 1000, packets = cur.recv - prev.recv + Math.max(0, cur.lost - prev.lost);
+    const sample = { t: now, loss: packets > 0 ? Math.max(0, cur.lost - prev.lost) / packets : 0, fps: (cur.decoded - prev.decoded) / dt,
+      jitterMs: cur.jbCount > prev.jbCount ? (cur.jbDelay - prev.jbDelay) / (cur.jbCount - prev.jbCount) * 1000 : null,
+      freeze: cur.freezes != null && prev.freezes != null ? cur.freezes > prev.freezes : cur.decoded === prev.decoded && dt * 1000 >= ABR.stallMs,
+      decodeDrop: (cur.dropped - prev.dropped) + (cur.shownDropped - prev.shownDropped) };
+    abr.samples.push(sample); if (abr.samples.length > 60) abr.samples.shift();
+    if (state.playbackQuality !== 'auto' || state.switching || state.history) return;
+    const ladder = abrLadder(); if (ladder.length < 2) return;
+    let index = Math.max(0, ladder.findIndex(level => level.value === (state.playing || sourceQuality())));
+    const target = Number(state.stream.info.fps) || 60, recent = abr.samples.slice(-ABR.downWindow), calm = abr.samples.slice(-ABR.upWindow);
+    const avg = (list, key) => { const xs = list.map(x => x[key]).filter(x => x != null); return xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : 0; };
+    const lossNow = avg(recent, 'loss'), fpsNow = avg(recent, 'fps'), jitterNow = avg(recent, 'jitterMs'), freezeNow = recent.some(x => x.freeze);
+    // Largest quality worth sending to the size the picture is shown at.
+    const shown = shownHeight();
+    let sizeCap = 0;
+    if (shown > 0) { sizeCap = ladder.length - 1; for (let i = ladder.length - 1; i >= 0; i--) { sizeCap = i; if (ladder[i].height >= shown * ABR.sizeSlack) break; } }
+    let next = index, reason = '';
+    if (recent.length >= ABR.downWindow && now - abr.lastSwitchAt >= ABR.minDownGapMs && index < ladder.length - 1) {
+      const decodeLimited = lossNow < ABR.lossUp && fpsNow < target * ABR.fpsDown && recent.every(x => x.decodeDrop > 0);
+      if (freezeNow) reason = '재생 끊김';
+      else if (lossNow > ABR.lossDown) reason = '패킷 손실 ' + (lossNow * 100).toFixed(1) + '%';
+      else if (jitterNow > ABR.jitterDownMs) reason = '수신 지연 증가 ' + Math.round(jitterNow) + 'ms';
+      else if (decodeLimited) reason = '기기 디코딩 한계 ' + fpsNow.toFixed(0) + 'fps';
+      else if (fpsNow < target * ABR.fpsDown && lossNow > ABR.lossUp) reason = '수신 프레임 부족 ' + fpsNow.toFixed(0) + 'fps';
+      if (reason) { next = Math.min(ladder.length - 1, index + (freezeNow && lossNow > 0.15 ? 2 : 1)); abr.sizeLimited = false; }
+    }
+    if (!reason && index < sizeCap) {
+      // Shown smaller than this quality for a while (player shrank or rotated): no need to receive the larger picture.
+      if (!abr.sizeSince) abr.sizeSince = now;
+      if (now - abr.sizeSince >= ABR.sizeDownMs) { next = sizeCap; reason = '표시 크기 ' + Math.round(shown) + 'px'; abr.sizeLimited = true; }
+    } else abr.sizeSince = 0;
+    // Lowered only because the picture was shown small: once it is shown larger and playback is calm, go straight to the size it needs.
+    if (!reason && abr.sizeLimited && index > sizeCap && recent.length >= ABR.downWindow && recent.every(x => !x.freeze && x.loss <= ABR.lossUp) && now - abr.lastSwitchAt >= ABR.minDownGapMs) {
+      next = sizeCap; reason = '표시 크기 ' + Math.round(shown) + 'px'; abr.sizeLimited = sizeCap > 0;
+    }
+    if (!reason && next === index && index > 0 && index - 1 >= sizeCap && calm.length >= ABR.upWindow && now - abr.lastSwitchAt >= abr.holdUpMs &&
+        !(abr.failed[ladder[index - 1].value] > now)) {
+      const steady = calm.every(x => !x.freeze && x.loss <= ABR.lossUp && (x.jitterMs == null || x.jitterMs <= ABR.jitterUpMs) && x.fps >= target * ABR.fpsUp);
+      if (steady) { next = index - 1; reason = '안정 ' + Math.round(calm.length) + '초'; }
+    }
+    // An up-step that runs into trouble soon after is a failed probe: wait twice as long before trying that quality again.
+    if (next > index && abr.upFrom !== null && now - abr.upAt < ABR.failWindowMs) {
+      abr.holdUpMs = Math.min(ABR.maxHoldUpMs, abr.holdUpMs * 2); abr.failed[ladder[index].value] = now + abr.holdUpMs; abr.upFrom = null;
+    } else if (next === index && abr.upFrom !== null && now - abr.upAt > 60000) { abr.upFrom = null; abr.holdUpMs = ABR.minHoldUpMs; }
+    if (next !== index) abrSwitch(ladder[index], ladder[next], reason, next < index);
+  }
+  async function abrSwitch(from, to, reason, up) {
+    if (state.switching) return;
+    state.switching = true; abr.lastSwitchAt = performance.now();
+    const at = performance.now();
+    try {
+      await attach(to.value);
+      if (up) { abr.upFrom = from.value; abr.upAt = performance.now(); }
+      const ms = Math.round(performance.now() - at);
+      abr.decisions.push({ at: Date.now(), from: from.label, to: to.label, reason, ms }); if (abr.decisions.length > 50) abr.decisions.shift();
+      log('화질', '자동 ' + from.label + ' → ' + to.label + ' (' + reason + ', 전환 ' + (ms / 1000).toFixed(1) + '초)');
+      qualityLabel(); if (!$('player-quality-menu').hidden) renderPlayerQuality();
+    } catch {
+      // The quality could not start (e.g. its encoder failed): keep playing the current one and do not retry it soon.
+      abr.failed[to.value] = performance.now() + ABR.maxHoldUpMs;
+      abr.decisions.push({ at: Date.now(), from: from.label, to: to.label, reason: reason + ', 시작 실패', ms: Math.round(performance.now() - at) });
+      log('화질', '자동 ' + to.label + ' 전환 실패, ' + from.label + ' 유지');
+    } finally { state.switching = false; abr.lastSwitchAt = performance.now(); }
   }
   function pause() {
     if (!state.connected) return;
@@ -1335,7 +1856,16 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
     const label = state.paused ? '재생' : '일시정지'; $('player-pause').innerHTML = icon(state.paused ? 'play' : 'pause') + '<span class="control-label">' + label + '</span>'; $('player-pause').setAttribute('aria-label', label); $('player-pause').title = label + ' (Space)'; badge('viewer-status', state.paused ? '일시정지' : '수신 중', !state.paused);
   }
   function wide() { if (!state.connected) return; const active = $('viewer-view').classList.toggle('is-wide'); const label = active ? '기본 보기' : '확대 보기'; $('viewer-wide').setAttribute('aria-pressed', String(active)); $('viewer-wide').setAttribute('aria-label', label); $('viewer-wide').innerHTML = icon('layout') + '<span class="control-label">' + label + '</span>'; $('viewer-wide').title = label + ' (T)'; }
-  async function fullscreen(name) { try { if (document.fullscreenElement) await document.exitFullscreen(); else await $(name + '-preview').requestFullscreen(); } catch { toast('전체 화면을 열 수 없습니다.'); } }
+  async function fullscreen(name) {
+    // iPhone Safari has no element full screen: there only the video itself can go full screen (with the system's controls).
+    const box = $(name + '-preview'), video = name === 'viewer' ? state.video : null;
+    if (document.fullscreenElement) { await document.exitFullscreen().catch(() => {}); return; }
+    try { if (box.requestFullscreen && document.fullscreenEnabled !== false) { await box.requestFullscreen(); return; } } catch {}
+    try { if (video && video.webkitEnterFullscreen) { video.webkitEnterFullscreen(); return; } } catch {}
+    toast('이 브라우저에서는 전체 화면을 열 수 없습니다.');
+  }
+  // Hidden where neither element nor video full screen exists, instead of a button that can only fail.
+  if (!(document.fullscreenEnabled || document.webkitFullscreenEnabled) && !('webkitEnterFullscreen' in HTMLVideoElement.prototype)) $('viewer-fullscreen').hidden = true;
 
   // ---- DVR: the whole broadcast from the server's recording, and the return to live -------------------------------
   // Each viewer plays its own position: recorded fMP4 chunks of a few seconds (aligned to the keyframe grid of the
@@ -1512,7 +2042,7 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
     closeSession(oldSession); closeHistory(oldHistory);
     applyPlayerVolume(h.video);
     if (state.paused) h.video.pause();
-    else if (!h.video.muted) await h.video.play().catch(error => { if (error.name !== 'NotAllowedError') return; h.video.muted = true; $('player-volume').value = 0; volumeUI('player'); h.video.play().catch(() => {}); toast('브라우저 설정으로 음소거 상태로 재생합니다.'); });
+    else if (!h.video.muted) await h.video.play().catch(error => { if (error.name !== 'NotAllowedError') return; mutedByBrowser(h.video); });
     document.dispatchEvent(new CustomEvent('frame:media'));
     qualityLabel(); showTimeline(); log('수신', '지난 구간 재생 ' + clock(target - ranges[0].startMs));
     return true;
@@ -1527,7 +2057,7 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
     dvr.token++; closeHistory(dvr.pending); dvr.pending = null; state.switching = true;
     const resume = state.paused;
     let failed = false;
-    try { await attach(state.playbackQuality); state.pausedLive = null; if (resume && state.paused) pause(); log('수신', '실시간으로 복귀'); }
+    try { await openLive(liveQuality()); state.pausedLive = null; if (resume && state.paused) pause(); log('수신', '실시간으로 복귀'); }
     catch { failed = true; if (!afterFailure) toast('실시간 영상으로 돌아갈 수 없습니다.'); }
     finally { state.switching = false; qualityLabel(); showTimeline(); }
     if (failed && afterFailure) lost();
@@ -1621,6 +2151,7 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
   $('sender-form').addEventListener('submit', event => { event.preventDefault(); if ($('sender-settings-dialog').open || state.starting || state.stopping || remote) return; if (state.running) $('stop-dialog').showModal(); else begin(); });
   $('confirm-stop').addEventListener('click', () => { $('stop-dialog').close(); stop(); });
   document.querySelectorAll('[data-close]').forEach(button => button.addEventListener('click', () => $(button.dataset.close).close()));
+  $('source-dialog').addEventListener('close', closeThumbs);
   // The sender tab only works inside FrameConsole.exe on the broadcasting PC.
   const openSender = () => { if (remote) { toast('송출은 송출 PC의 FRAME Console에서 시작합니다.'); return false; } view('sender'); return true; };
   $('tab-sender').addEventListener('click', openSender); $('tab-viewer').addEventListener('click', () => view('viewer'));
@@ -1653,6 +2184,7 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
     if (amount > 0) lastVolumes[channel] = amount;
     range.style.setProperty('--fill', amount + '%'); range.setAttribute('aria-valuetext', amount + '%');
     const button = $(channel + '-mute'); button.innerHTML = icon(muted ? 'volume-off' : 'volume'); button.setAttribute('aria-pressed', String(muted));
+    if (channel === 'player' && amount > 0 && state.mutedByBrowser) { state.mutedByBrowser = false; controlsActive(); }
     if (channel === 'player') { button.setAttribute('aria-label', muted ? '음소거 해제' : '음소거'); button.title = (muted ? '음소거 해제' : '음소거') + ' (M)'; if (state.video) applyPlayerVolume(state.video); }
     else { $(channel + '-volume-value').textContent = amount + '%'; button.setAttribute('aria-label', (channel === 'system' ? '시스템 오디오' : '마이크') + (muted ? ' 음소거 해제' : ' 음소거')); if (notify) native({ cmd: 'setVolume', channel, value: amount }); }
   }
@@ -1663,7 +2195,9 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
   function renderPlayerQuality() {
     const source = sourceQuality(), sourceHeight = Number(source.split('x')[1]), names = (state.stream?.info.renditions || []).map(item => item.name);
     // The recording keeps the original stream only, so past parts play in the original quality.
-    const choices = [{ value: 'auto', label: '자동', detail: sourceHeight + 'p 원본' }].concat(resolutions.filter(item => item.value === source || (!state.history && names.includes(item.label))).reverse());
+    const playingHeight = state.video?.videoHeight || Number((state.playing || source).split('x')[1]);
+    const detail = state.history ? sourceHeight + 'p 원본 (녹화)' : '현재 ' + playingHeight + 'p' + ((state.playing || source) === source ? ' 원본' : '');
+    const choices = [{ value: 'auto', label: '자동', detail }].concat(resolutions.filter(item => item.value === source || (!state.history && !state.useHls && names.includes(item.label))).reverse());
     $('player-quality-options').replaceChildren();
     for (const choice of choices) {
       const button = document.createElement('button'); button.type = 'button'; button.className = 'quality-menu-option'; button.setAttribute('role', 'menuitemradio'); button.setAttribute('aria-checked', String(state.playbackQuality === choice.value));
@@ -1675,10 +2209,15 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
   }
   async function applyPlaybackQuality(value) {
     if (!state.connected || value === state.playbackQuality || state.switching) return;
-    if (state.history) { state.playbackQuality = value; qualityLabel(); return; }
+    if (state.history || state.useHls || value === 'auto') {
+      // Automatic mode starts from what is playing now; recorded playback is the original only (live keeps the choice).
+      state.playbackQuality = value; abr.holdUpMs = ABR.minHoldUpMs; abr.lastSwitchAt = performance.now(); qualityLabel(); renderPlayerQuality();
+      if (!state.history) log('화질', '재생 화질 자동');
+      return;
+    }
     dvr.token++; closeHistory(dvr.pending); dvr.pending = null;
     state.switching = true;
-    try { await attach(value); qualityLabel(); renderPlayerQuality(); log('수신', '재생 화질 ' + (value === 'auto' ? '자동' : resolutions.find(item => item.value === value).label)); }
+    try { await attach(value); state.playbackQuality = value; qualityLabel(); renderPlayerQuality(); log('화질', '재생 화질 ' + resolutions.find(item => item.value === value).label + ' (수동)'); }
     catch { toast('선택한 화질로 바꿀 수 없습니다.'); }
     finally { state.switching = false; }
   }
@@ -1703,8 +2242,10 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
       else if (event.type === 'log') log(event.kind, event.message);
       else if (event.type === 'state') onState(event);
       else if (event.type === 'source') onSource(event);
-      else if (event.type === 'windows') renderWindows(event.items || []);
+      else if (event.type === 'windows') { if ($('source-dialog').open) renderWindows(event.items || [], event.gen); else native({ cmd: 'thumbCancel' }); }
       else if (event.type === 'thumb') showThumb(event);
+      else if (event.type === 'thumbState') onThumbState(event);
+      else if (event.type === 'icon') showIcon(event);
       else if (event.type === 'copied') copied();
       else if (event.type === 'monitors') onMonitors(event.items || []);
       else if (event.type === 'encoders') { state.encoder = state.encoderSetting && state.encoderSetting !== 'auto' ? state.encoderSetting : (event.available || [])[0]; if (!state.running && !state.starting) syncEncodingOptions(); }
@@ -1724,6 +2265,7 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
     get remote() { return remote; }, get running() { return state.running; },
     get video() { return state.video; }, get stream() { return state.stream; },
     // Playback position source for measurements: the recording's time axis while history plays.
+    get abr() { return { mode: state.playbackQuality, playing: state.playing, holdUpMs: abr.holdUpMs, decisions: abr.decisions.slice(-20), last: abr.samples.at(-1) || null }; },
     get playback() { return { mode: state.history ? 'history' : 'live', base: state.history ? state.history.base : null, ranges: dvr.index ? dvr.index.ranges : null }; },
     prepareManual,
     get catalogBase() { return remote ? '' : state.viewerServerPort ? 'http://127.0.0.1:' + state.viewerServerPort : null; }
@@ -1883,9 +2425,10 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
   $('player-seek').addEventListener('input',()=>{if(!model.timeline)return; const position=Number($('player-seek').value); $('player-position').textContent=time(position-model.timeline.startMs); $('player-seek').style.setProperty('--fill',(position-model.timeline.startMs)/(model.timeline.endMs-model.timeline.startMs)*100+'%');});
   $('player-seek').addEventListener('change',()=>{if(model.timeline)document.dispatchEvent(new CustomEvent('frame:seek',{detail:{positionMs:Number($('player-seek').value)}}));});
   $('player-live').addEventListener('click',()=>document.dispatchEvent(new CustomEvent('frame:live')));
-  function updatePip(){const video=runtime.video; $('player-pip').disabled=!(video&&document.pictureInPictureEnabled&&video.requestPictureInPicture);}
+  const webkitPip=video=>!!(video&&video.webkitSupportsPresentationMode&&video.webkitSupportsPresentationMode('picture-in-picture'));
+  function updatePip(){const video=runtime.video; $('player-pip').disabled=!(video&&((document.pictureInPictureEnabled&&video.requestPictureInPicture)||webkitPip(video)));}
   document.addEventListener('frame:media',updatePip);
-  $('player-pip').addEventListener('click',async()=>{try{if(document.pictureInPictureElement)await document.exitPictureInPicture();else if(runtime.video)await runtime.video.requestPictureInPicture();}catch{runtime.notify('이 환경에서는 화면 속 화면을 사용할 수 없습니다.');}});
+  $('player-pip').addEventListener('click',async()=>{const video=runtime.video;try{if(document.pictureInPictureElement)await document.exitPictureInPicture();else if(video&&document.pictureInPictureEnabled&&video.requestPictureInPicture)await video.requestPictureInPicture();else if(webkitPip(video))video.webkitSetPresentationMode(video.webkitPresentationMode==='picture-in-picture'?'inline':'picture-in-picture');else throw new Error('unsupported');}catch{runtime.notify('이 환경에서는 화면 속 화면을 사용할 수 없습니다.');}});
   $('viewer-info-button').addEventListener('click',()=>$('viewer-info-dialog').showModal());
   function renderChatState() {
     const enabled=chat.connected&&chat.canSend;
@@ -1910,7 +2453,7 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
     model.viewerChatOpen=open;
     if(chatContext==='viewer')$('chat-panel').hidden=!open;
     $('chat-toggle').setAttribute('aria-expanded',String(open));$('viewer-stage').classList.toggle('is-chat-open',open);
-    if(open&&chatContext==='viewer'&&chat.canSend)$('chat-message').focus();
+    if(open&&chatContext==='viewer'&&chat.canSend&&!matchMedia('(pointer: coarse)').matches)$('chat-message').focus();
   }
   $('chat-toggle').addEventListener('click',()=>toggleChat(!model.viewerChatOpen));
   $('chat-close').addEventListener('click',()=>{toggleChat(false);$('chat-toggle').focus();});

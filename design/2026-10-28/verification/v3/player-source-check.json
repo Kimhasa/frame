@@ -1,0 +1,50 @@
+[
+  {
+    "file": "work/console-template.html",
+    "matched": true,
+    "baseline": "1a08f17bf2db19494b8d133dfac9f17c6f680b9311cdb2e5d4e453f612fe7440",
+    "actual": "1a08f17bf2db19494b8d133dfac9f17c6f680b9311cdb2e5d4e453f612fe7440"
+  },
+  {
+    "file": "work/console.css",
+    "matched": true,
+    "baseline": "69e0040248a0e78b383139a6594abdc268e9b287c06c03baee6e6b808f2172b1",
+    "actual": "69e0040248a0e78b383139a6594abdc268e9b287c06c03baee6e6b808f2172b1"
+  },
+  {
+    "file": "work/ux.css",
+    "matched": true,
+    "baseline": "43f39d06e5f4e8648b50cb99dc3526ac08bf70568e500807e60ee6baf98a00ff",
+    "actual": "43f39d06e5f4e8648b50cb99dc3526ac08bf70568e500807e60ee6baf98a00ff"
+  },
+  {
+    "file": "work/components.css",
+    "matched": true,
+    "baseline": "0e8426438eb314f068be39d55b006ef632f4b121ff863b7db554ef0c2eac3949",
+    "actual": "0e8426438eb314f068be39d55b006ef632f4b121ff863b7db554ef0c2eac3949"
+  },
+  {
+    "file": "work/console-ui.css",
+    "matched": true,
+    "baseline": "2fb66685531f6536786bfd24fa2ae7dcbb4c2bb1f7f9375f8dcde2bc133fa76a",
+    "actual": "2fb66685531f6536786bfd24fa2ae7dcbb4c2bb1f7f9375f8dcde2bc133fa76a"
+  },
+  {
+    "file": "work/player-ui.css",
+    "matched": true,
+    "baseline": "fd4e7214fd0cecb4e9fc97b2984e7b311e77ae41ee821b9dfba792d34ccd967b",
+    "actual": "fd4e7214fd0cecb4e9fc97b2984e7b311e77ae41ee821b9dfba792d34ccd967b"
+  },
+  {
+    "file": "work/mobile-ui.css",
+    "matched": true,
+    "baseline": "142bd1853973c47d43347e17660a1969ac6777882d18f385a55c56c4506d3166",
+    "actual": "142bd1853973c47d43347e17660a1969ac6777882d18f385a55c56c4506d3166"
+  },
+  {
+    "file": "work/console-ux.js",
+    "matched": true,
+    "baseline": "03acbcb67b51fd541e9e78b13277555a4e27995f138f9ff179259fe0fe876ac6",
+    "actual": "03acbcb67b51fd541e9e78b13277555a4e27995f138f9ff179259fe0fe876ac6"
+  }
+]

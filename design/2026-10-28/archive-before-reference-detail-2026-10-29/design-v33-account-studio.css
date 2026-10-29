@@ -1,0 +1,23 @@
+.v33-account-field-error{display:block;margin-top:7px;color:#b73e4b;font-size:14px;line-height:1.65}
+.v33-account-invalid>input,.v33-account-invalid>textarea,.v33-account-invalid .v3-url-field{border-color:#c44d59!important}
+.v33-account-login .v33-account-consent{display:flex;align-items:flex-start;gap:10px;font-size:14px;line-height:1.75;margin:23px 0 0;color:#5e6e79}
+.v33-account-login .v33-account-consent input{width:18px;height:18px;min-height:18px;flex:none;margin:4px 0 0;accent-color:#12855d}
+.v33-account-login .v3-provider-button:disabled{background:#f6f8f7;border-color:#e7ece9;color:#a2ada7;cursor:default}
+.v33-account-reauth{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.v33-account-reauth .v3-btn{min-height:44px;margin:0;flex:none}
+.v33-account-source .source-card:disabled{cursor:default;opacity:.65}
+.v33-account-source .source-card:disabled:hover{border-color:#dfe6eb;box-shadow:none}
+.v33-account-source .source-tabs button:focus-visible{outline:2px solid #1c865f;outline-offset:-5px;border-radius:4px}
+.v33-account-source .source-tabs button,.v33-account-source .modal-footer>button{min-height:44px}
+.v33-account-modal .v33-account-connection .field{margin-bottom:22px}
+.v33-account-modal .v33-account-connection .field>label{display:block;font-size:14px;font-weight:600;line-height:1.6}
+.v33-account-modal .v33-account-connection .row.help[role=status]{font-size:14px;line-height:1.7;color:#667581;align-items:center}
+.v33-account-modal .modal-footer{flex-wrap:wrap;gap:10px}
+.v33-account-modal .modal-footer>button{min-height:44px}
+.v33-account-modal .v33-account-broadcast-title{font-size:17px;line-height:1.7;font-weight:650;margin:0 0 14px;color:#25333d;overflow-wrap:anywhere}
+.v33-account-modal input[aria-invalid=true]{border-color:#c44d59!important}
+/* Broadcast form icons only; do not select player/audio controls or quality choices. */
+#product-dialog:has([name="bitrate"]) .audio-head{display:flex;align-items:center;gap:8px;min-height:24px;line-height:1.5;white-space:nowrap}
+#product-dialog:has([name="bitrate"]) .audio-head>svg{display:block;width:20px;height:20px;min-width:20px;max-width:20px;flex:0 0 20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+#product-dialog:has([name="bitrate"]) .audio-head>span{margin-left:auto;white-space:nowrap;font-variant-numeric:tabular-nums}
+@media(max-width:520px){.v33-account-reauth{gap:12px}.v33-account-modal .modal-footer>button{min-height:44px}.v33-account-modal .v33-account-connection .field-pair{grid-template-columns:1fr;gap:0}.v33-account-login .v33-account-consent{font-size:14px}}

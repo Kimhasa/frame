@@ -1,0 +1,145 @@
+[
+  {
+    "file": "engagement-retest/rewards__0__desktop.jpg",
+    "screenId": "rewards",
+    "state": "기본",
+    "inspection": {
+      "dialogDisplay": "block",
+      "heading": "포인트 보상",
+      "outline": [],
+      "text": "포인트 보상내 포인트3,400 P다음 작업 제안1,000 P화면 테마 선택2,000 P응원 보내기500 P포인트 기록닫기"
+    }
+  },
+  {
+    "file": "engagement-retest/rewards__1__desktop.jpg",
+    "screenId": "rewards",
+    "state": "포인트 부족",
+    "inspection": {
+      "dialogDisplay": "block",
+      "heading": "포인트 보상",
+      "outline": [],
+      "text": "포인트 보상내 포인트200 P다음 작업 제안1,000 P800 P 부족화면 테마 선택2,000 P1,800 P 부족응원 보내기500 P300 P 부족포인트 기록닫기"
+    }
+  },
+  {
+    "file": "engagement-retest/rewards__2__desktop.jpg",
+    "screenId": "rewards",
+    "state": "교환 완료",
+    "inspection": {
+      "dialogDisplay": "block",
+      "heading": "포인트 보상",
+      "outline": [
+        "none"
+      ],
+      "text": "포인트 보상보상을 신청했어요.다음 작업 제안사용 포인트1,000 P남은 포인트2,400 P포인트 기록닫기"
+    }
+  },
+  {
+    "file": "engagement-retest/poll__1__desktop.jpg",
+    "screenId": "poll",
+    "state": "투표 완료",
+    "inspection": {
+      "dialogDisplay": "block",
+      "heading": "투표 및 질문",
+      "outline": [
+        "none"
+      ],
+      "text": "투표 및 질문투표질문다음 작업은 무엇으로 할까요?플레이어 개선내 선택58%채팅 기능29%모바일 화면13%128명 참여투표 완료닫기"
+    }
+  },
+  {
+    "file": "engagement-retest/donate__2__desktop.jpg",
+    "screenId": "donate",
+    "state": "완료",
+    "inspection": {
+      "dialogDisplay": "block",
+      "heading": "후원하기",
+      "outline": [
+        "none"
+      ],
+      "text": "후원하기후원을 완료했어요.개발하는 봄 · 5,000원닫기"
+    }
+  },
+  {
+    "file": "engagement-retest/mission__3__desktop.jpg",
+    "screenId": "mission",
+    "state": "실패",
+    "inspection": {
+      "dialogDisplay": "block",
+      "heading": "미션",
+      "outline": [
+        "none"
+      ],
+      "text": "미션미션을 완료하지 못했어요.오늘의 기능 완성하기닫기"
+    }
+  },
+  {
+    "file": "engagement-retest/devices__1__desktop.jpg",
+    "screenId": "devices",
+    "state": "기기 없음",
+    "inspection": {
+      "dialogDisplay": "block",
+      "heading": "다른 기기에서 보기",
+      "outline": [
+        "none"
+      ],
+      "text": "다른 기기에서 보기연결할 기기가 없어요.기기의 전원과 연결 상태를 확인하세요.닫기다시 찾기"
+    }
+  },
+  {
+    "file": "engagement-retest/poll__0__mobile.jpg",
+    "screenId": "poll",
+    "state": "기본",
+    "inspection": [
+      {
+        "cls": "v33-engage-title",
+        "left": 32.57143020629883,
+        "width": 325.14288330078125
+      },
+      {
+        "cls": "v33-engage-poll-options",
+        "left": 32.57143020629883,
+        "width": 325.14288330078125
+      },
+      {
+        "cls": "v33-engage-poll-meta",
+        "left": 32.57143020629883,
+        "width": 325.14288330078125
+      }
+    ]
+  },
+  {
+    "file": "engagement-retest/poll__2__mobile.jpg",
+    "screenId": "poll",
+    "state": "마감",
+    "inspection": [
+      {
+        "cls": "v33-engage-title",
+        "left": 32.57143020629883,
+        "width": 325.14288330078125
+      },
+      {
+        "cls": "v33-engage-poll-options",
+        "left": 32.57143020629883,
+        "width": 325.14288330078125
+      },
+      {
+        "cls": "v33-engage-poll-meta",
+        "left": 32.57143020629883,
+        "width": 325.14288330078125
+      }
+    ]
+  },
+  {
+    "file": "engagement-retest/rewards__0__mobile.jpg",
+    "screenId": "rewards",
+    "state": "기본",
+    "inspection": [
+      {
+        "cls": "v33-engage-reward-grid",
+        "left": 32.57143020629883,
+        "width": 325.14288330078125
+      }
+    ]
+  }
+]

@@ -1,0 +1,8 @@
+label,seconds,set_down_mbps,set_loss_pct,set_jitter_ms,set_outage,proxy_offered_mbps,proxy_forwarded_mbps,proxy_drop_pct,proxy_drop_queue,proxy_drop_loss,proxy_drop_outage,proxy_queue_ms_avg,proxy_queue_ms_max,proxy_late_ms_max,host_cpu_pct,browser_video_mbps,browser_loss_pct,browser_jitter_ms,browser_fps,browser_decode_ms_per_frame,browser_frames_dropped,browser_freezes,browser_freeze_sec,browser_pauses,browser_zero_fps_sec,browser_nacks,browser_plis,browser_rtt_ms,resolution,switches,connection_states,remote_candidates
+clean,5,30,0,0,false,8.34,8.38,-0.55,0,0,0,2.5,13.3,0.8,78.8,8.02,0,8.3,59.7,5.56,0,0,0,0,0,0,0,51,1920x1080,0,connected,127.0.0.1:22300/udp/host
+loss0.5-j5,5,30,0.5,5,false,8.34,8.35,-0.1,0,12,0,2.4,13.2,1.3,83.8,8.01,0,9,59.6,5.59,0,0,0,0,0,8,0,48,1920x1080,0,connected,127.0.0.1:22300/udp/host
+loss2-j15,5,30,2,15,false,8.42,8.2,2.83,0,71,0,2.4,13.4,0.9,76.5,7.88,0.11,7.5,59.7,5.25,0,0,0,0,0,40,0,65,1920x1080,0,connected,127.0.0.1:22300/udp/host
+loss5-burst3-j30,5,30,5,30,false,8.68,8.28,4.32,0,132,0,2.4,18.2,0.5,77.4,7.92,0,8,55.3,5.28,5,1,0.24,0,0,32,0,60,1920x1080,0,connected,127.0.0.1:22300/udp/host
+loss10-j10,5,30,10,10,false,9.16,8.29,9.59,0,338,0,2.1,12.1,0.6,77.5,7.99,0.16,8.5,51,5.44,6,1,0.21,0,0,186,0,46,1920x1080,0,connected,127.0.0.1:22300/udp/host
+packet-jitter20,5,30,0,20,false,15.18,15.19,-0.06,0,0,0,3,18.3,1.2,78.6,8.1,0.21,10.5,59.6,5.58,0,0,0,0,0,264,0,34,1920x1080,0,connected,127.0.0.1:22300/udp/host
+clean-again,5,30,0,0,false,8.33,8.33,0,0,0,0,2.9,13,1.1,91.1,7.94,0,15,60.3,5.6,0,0,0,0,0,0,0,52,1920x1080,0,connected,127.0.0.1:22300/udp/host

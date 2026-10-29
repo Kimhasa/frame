@@ -1,0 +1,155 @@
+{
+  "version": "3.6",
+  "date": "2026-10-29",
+  "research": {
+    "chzzkCaptures": 16,
+    "twitchCaptures": 24,
+    "broadcasterAccess": "Accessible actual logged-in offline consoles; no live broadcasting/remote settings changes performed."
+  },
+  "layouts": {
+    "states": 150,
+    "widths": [
+      320,
+      390,
+      820,
+      1440,
+      1920
+    ],
+    "checks": 750,
+    "issues": []
+  },
+  "browserFlows": [
+    {
+      "file": "source-flows.json",
+      "count": 21
+    },
+    {
+      "file": "settings-flows.json",
+      "count": 15
+    },
+    {
+      "file": "info-flows.json",
+      "count": 15
+    }
+  ],
+  "flowChecks": 51,
+  "protectedFiles": [
+    {
+      "file": "work/console-template.html",
+      "unchanged": true
+    },
+    {
+      "file": "work/console.css",
+      "unchanged": true
+    },
+    {
+      "file": "work/ux.css",
+      "unchanged": true
+    },
+    {
+      "file": "work/components.css",
+      "unchanged": true
+    },
+    {
+      "file": "work/console-ui.css",
+      "unchanged": true
+    },
+    {
+      "file": "work/player-ui.css",
+      "unchanged": true
+    },
+    {
+      "file": "work/mobile-ui.css",
+      "unchanged": true
+    },
+    {
+      "file": "work/console-ux.js",
+      "unchanged": true
+    },
+    {
+      "file": "dist/preserved-player.js",
+      "unchanged": true
+    },
+    {
+      "file": "dist/preserved-player.css",
+      "unchanged": true
+    },
+    {
+      "file": "dist/preserved-player-data.js",
+      "unchanged": true
+    },
+    {
+      "file": "dist/design-data.js",
+      "unchanged": true
+    }
+  ],
+  "sourceHashes": [
+    {
+      "file": "design-v36-broadcast-info.css",
+      "sha256": "783c985557fc739845c0267c5012b4efccbee85b11e0462d21ecb967394615a1"
+    },
+    {
+      "file": "design-v36-broadcast-info.js",
+      "sha256": "8283fe73a75f9e704abd154f8211eb916c491e9561a7b4ab743307d91cba4916"
+    },
+    {
+      "file": "design-v36-settings-flow.js",
+      "sha256": "0d9a5b2a658b1d22907e9bba82e040e1ab543a9fa35efa09dba5c394da829268"
+    },
+    {
+      "file": "design-v36-source-flow.css",
+      "sha256": "ba1fd11c23e5c3d1a1aa4be91300976ac4094c8b5b655cec5e9a2753cb63ed11"
+    },
+    {
+      "file": "design-v36-source-flow.js",
+      "sha256": "a52f56fce86fa2ab82a5203ce9f2eb202d9bf917ae52a178aec2debdd15ca644"
+    }
+  ],
+  "limits": [
+    "Local UI fixtures only.",
+    "No native capture, encoder, remote delivery or real live-stream verification.",
+    "Private account/credential research excluded from dist."
+  ],
+  "http": [
+    {
+      "path": "broadcaster-review.html",
+      "status": 200
+    },
+    {
+      "path": "assets/broadcaster-review/studio-desktop.jpg",
+      "status": 200
+    },
+    {
+      "path": "assets/broadcaster-review/studio-mobile.jpg",
+      "status": 200
+    },
+    {
+      "path": "assets/broadcaster-review/info-dirty-desktop.jpg",
+      "status": 200
+    },
+    {
+      "path": "assets/broadcaster-review/source-live-confirm.png",
+      "status": 200
+    },
+    {
+      "path": "assets/broadcaster-review/source-start-blocked.png",
+      "status": 200
+    },
+    {
+      "path": "assets/broadcaster-review/settings-video-desktop.jpg",
+      "status": 200
+    },
+    {
+      "path": "assets/broadcaster-review/settings-audio-mobile.jpg",
+      "status": 200
+    },
+    {
+      "path": "assets/broadcaster-review/twitch-11-stream-alerts-empty.png",
+      "status": 200
+    },
+    {
+      "path": "assets/broadcaster-review/twitch-22-broadcast-tools.png",
+      "status": 200
+    }
+  ]
+}

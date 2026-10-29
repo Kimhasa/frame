@@ -148,9 +148,10 @@
   $('player-seek').addEventListener('input',()=>{if(!model.timeline)return; const position=Number($('player-seek').value); $('player-position').textContent=time(position-model.timeline.startMs); $('player-seek').style.setProperty('--fill',(position-model.timeline.startMs)/(model.timeline.endMs-model.timeline.startMs)*100+'%');});
   $('player-seek').addEventListener('change',()=>{if(model.timeline)document.dispatchEvent(new CustomEvent('frame:seek',{detail:{positionMs:Number($('player-seek').value)}}));});
   $('player-live').addEventListener('click',()=>document.dispatchEvent(new CustomEvent('frame:live')));
-  function updatePip(){const video=runtime.video; $('player-pip').disabled=!(video&&document.pictureInPictureEnabled&&video.requestPictureInPicture);}
+  const webkitPip=video=>!!(video&&video.webkitSupportsPresentationMode&&video.webkitSupportsPresentationMode('picture-in-picture'));
+  function updatePip(){const video=runtime.video; $('player-pip').disabled=!(video&&((document.pictureInPictureEnabled&&video.requestPictureInPicture)||webkitPip(video)));}
   document.addEventListener('frame:media',updatePip);
-  $('player-pip').addEventListener('click',async()=>{try{if(document.pictureInPictureElement)await document.exitPictureInPicture();else if(runtime.video)await runtime.video.requestPictureInPicture();}catch{runtime.notify('이 환경에서는 화면 속 화면을 사용할 수 없습니다.');}});
+  $('player-pip').addEventListener('click',async()=>{const video=runtime.video;try{if(document.pictureInPictureElement)await document.exitPictureInPicture();else if(video&&document.pictureInPictureEnabled&&video.requestPictureInPicture)await video.requestPictureInPicture();else if(webkitPip(video))video.webkitSetPresentationMode(video.webkitPresentationMode==='picture-in-picture'?'inline':'picture-in-picture');else throw new Error('unsupported');}catch{runtime.notify('이 환경에서는 화면 속 화면을 사용할 수 없습니다.');}});
   $('viewer-info-button').addEventListener('click',()=>$('viewer-info-dialog').showModal());
   function renderChatState() {
     const enabled=chat.connected&&chat.canSend;
@@ -175,7 +176,7 @@
     model.viewerChatOpen=open;
     if(chatContext==='viewer')$('chat-panel').hidden=!open;
     $('chat-toggle').setAttribute('aria-expanded',String(open));$('viewer-stage').classList.toggle('is-chat-open',open);
-    if(open&&chatContext==='viewer'&&chat.canSend)$('chat-message').focus();
+    if(open&&chatContext==='viewer'&&chat.canSend&&!matchMedia('(pointer: coarse)').matches)$('chat-message').focus();
   }
   $('chat-toggle').addEventListener('click',()=>toggleChat(!model.viewerChatOpen));
   $('chat-close').addEventListener('click',()=>{toggleChat(false);$('chat-toggle').focus();});

@@ -1,0 +1,8 @@
+INVALID (2026-10-28 check): do not use these numbers.
+- First media / reconnects judged from the zero-year online placeholder (defect A).
+- 720p / 480p viewers were counted as full-rate without any rate check (defect D); only source viewers were judged.
+- Churn re-joins could start after the hold ended, leaving target sessions behind at cleanup (defect F); pending churn joins
+  were counted as first-media timeouts (defect H).
+- The browser data came from the old sampler (decoded FPS of connections made inside the window divided from their creation, defect C).
+- The 10-viewer stage ran with host CPU at 99.5% from other programs (generator 2.4%, target 17.9%).
+- Re-run with the fixed runner (plans/mixed-local.json).

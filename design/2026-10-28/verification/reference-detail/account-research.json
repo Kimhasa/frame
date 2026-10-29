@@ -1,0 +1,83 @@
+{
+  "date": "2026-10-29",
+  "scope": "FRAME standalone design prototype: account, channel and broadcast settings detail pass",
+  "ownedSourceFiles": ["dist/design-v33-account-studio.js", "dist/design-v33-account-studio.css"],
+  "archiveDirectory": "archive-before-reference-detail-2026-10-29",
+  "existingResearchRead": [
+    "dist/account-research.html",
+    "research/account-2026-10-29/ACCOUNT_CREATOR_UX_AUDIT.txt"
+  ],
+  "sources": [
+    {
+      "service": "YouTube",
+      "title": "Manage live stream settings",
+      "url": "https://support.google.com/youtube/answer/9854503?hl=en",
+      "evidence": "official_help_page_opened",
+      "verified": ["방송 메타데이터·공개 범위와 스트림 설정을 구분한다.", "스트림 키·URL, 지연, DVR, 자동 시작·종료를 관리한다."],
+      "notVerified": "이번 작업에서 로그인한 관제실을 조작하거나 방송을 시작하지 않았다. 앞선 조사에서 확인한 실제 로그인 화면의 범위는 기존 감사 문서를 따른다."
+    },
+    {
+      "service": "YouTube",
+      "title": "Choose live encoder settings, bitrates, and resolutions",
+      "url": "https://support.google.com/youtube/answer/2853702?hl=en",
+      "evidence": "official_help_page_opened",
+      "verified": ["해상도·프레임률·비트레이트는 인코더에서 지정하고 YouTube가 감지한다.", "권장 비트레이트는 입력 코덱·해상도·프레임률에 따라 구분한다.", "현재 문서의 프레임률 표기는 최대 60fps다."],
+      "boundary": "FRAME의 기존 90~165fps 선택지를 YouTube 지원값으로 설명하지 않는다. 이번 작업은 해당 옵션이나 실제 지원 범위를 변경·검증하지 않는다."
+    },
+    {
+      "service": "Twitch",
+      "title": "Creator Dashboard",
+      "url": "https://help.twitch.tv/s/article/creator-dashboard?language=en_US",
+      "evidence": "official_help_search_index_content",
+      "verified": ["Stream Manager는 방송 운영 공간이며 미리보기·채팅·빠른 작업 등을 다룬다.", "Settings의 Stream과 Channel은 스트림 키·VOD 및 채널 프로필·배너 등의 역할을 구분한다."],
+      "notVerified": "Twitch 로그인 후 실제 대시보드는 이번에도 확인하지 않았다. 공식 가이드가 현재 화면의 정확한 픽셀·배치와 같다고 간주하지 않는다."
+    },
+    {
+      "service": "Twitch",
+      "title": "Broadcasting Guidelines",
+      "url": "https://help.twitch.tv/s/article/broadcasting-guidelines?language=en_US",
+      "evidence": "official_help_search_index_content",
+      "verified": ["인코딩·비트레이트·해상도·프레임률을 컴퓨터와 네트워크 조건에 맞추는 송출 측 설정으로 설명한다."],
+      "retrievalLimitation": "공식 검색 인덱스의 본문은 확인했으나 직접 열기는 Help Portal CSS Error 화면을 반환했다. 로그인한 설정 UI의 시각 검증 근거가 아니다."
+    },
+    {
+      "service": "CHZZK",
+      "title": "방송 정보 편집 방법",
+      "url": "https://help.naver.com/service/30044/contents/22588?lang=ko&osType=COMMONOS",
+      "evidence": "official_help_page_opened",
+      "verified": ["방송 제목·카테고리·태그·미리보기 이미지·연령 제한·유료 프로모션·채팅 이용 권한을 방송 정보로 묶는다.", "편집 후 업데이트 동작이 필요하다고 안내한다."],
+      "notVerified": "실제 로그인 스튜디오와 송출 앱 UI를 직접 조작하지 않았다."
+    },
+    {
+      "service": "SOOP",
+      "title": "Streamer Guide / 프릭샷 플러스",
+      "url": "https://bjguide.sooplive.com/tech.php",
+      "evidence": "existing_official_guide_capture_in_research/account-2026-10-29",
+      "verified": ["앞선 공식 가이드 캡처에서 방송 정보·장면 소스·오디오 믹서·비디오·녹화의 구분을 확인했다."],
+      "retrievalLimitation": "이번 텍스트 열기는 Skip Menu만 반환했다. 실제 로그인 또는 앱 실행으로 다시 확인했다고 주장하지 않는다."
+    }
+  ],
+  "designInterpretation": {
+    "confirmedBoundary": "서비스의 웹 관제실·방송 정보 편집과 송출 앱의 영상·오디오 출력 설정은 서로 다른 작업 영역이다.",
+    "frameSpecificInference": "FRAME은 송출 앱을 포함하므로 방송 설정에 영상·오디오·녹화를 두되 방송 제목·공개 범위는 방송 정보 편집에 남긴다. 가로 탭과 간격·정렬 수치는 FRAME에 맞춘 설계 판단이며 특정 서비스의 화면을 그대로 복제한 결과가 아니다.",
+    "notAdded": ["지연·DVR·송출 장치 탐지·트랜스코딩 등 검증하지 않은 기능을 새 작동 옵션처럼 추가하지 않음", "인코더 값·코덱 목록·해상도/FPS 목록·슬라이더 값과 실제 동작을 변경하지 않음", "OAuth·서버 권한·캡처·보안·결제의 실제 연동을 추가하지 않음"]
+  },
+  "implemented": [
+    "기존 방송 설정 제어 노드를 영상·오디오·녹화 탭으로 이동하고 DOM 재렌더 없이 전환",
+    "탭 aria-selected/controls, 방향키·Home·End, 숨김 패널 포커스 경계",
+    "지원 범위 오류 상태는 영상 탭에 배치; 다른 탭에서 비트레이트 검증 실패 시 영상·고급 영역을 열고 오류 입력에 초점",
+    "설정 모달은 header/footer와 body 스크롤을 분리해 긴 내용에서도 닫기·저장을 유지",
+    "영상·오디오 제목 어긋남과 중복 설명을 줄이고 필드·단위·오류·음량 행 간격을 정리",
+    "채널 관리 폼 입력/주소 prefix/도움말·미리보기와 브랜딩·권한행 정렬 개선",
+    "채널 미리보기의 중복 채널 보기 링크와 멤버 행 반복 상태 문구 제거",
+    "채널 읽기 전용 이유와 오류 문구는 짧게 유지; 개인 설정 v32 구성은 유지"
+  ],
+  "verification": {
+    "syntax": "node --check dist/design-v33-account-studio.js passed",
+    "cssBraceBalance": {"open": 156, "close": 156},
+    "archiveDiffReviewed": true,
+    "sourcePreservation": "수정 파일은 두 소유 JS/CSS와 이 조사 기록에 한정. 기존 design-modals.js 및 preserved-player 파일은 편집하지 않았다.",
+    "browser": "부모 에이전트의 통합 검증 예정. 이 문서 작성 시점에 새 탭 레이아웃의 브라우저 실행·실제 미디어 적용을 검증했다고 주장하지 않음.",
+    "requestedBrowserChecks": ["방송 설정 3개 정의 상태", "영상/오디오/녹화 탭과 키보드 전환", "수동 비트레이트 초안을 탭 왕복 후 유지", "오디오/녹화 탭에서 잘못된 수동 값 저장 시 영상 탭 이동·오류 포커스", "자동 비트레이트 및 기존 선택 메뉴 동작", "고급 영역 접힘·펼침", "320/390/820/1440px에서 모달 내부 스크롤과 footer", "채널 관리 기본/브랜딩/권한/저장 오류/권한 없음", "기존 방송 미리보기·화질 메뉴·슬라이더 보존"]
+  }
+}

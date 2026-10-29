@@ -1,0 +1,168 @@
+{
+  "date": "2026-10-29",
+  "scope": "Chat nickname entry, local composer behavior, preserving reading position, and an explicit return-to-latest control. No protected player, media values, backend, or actual app files were changed.",
+  "researchStatus": {
+    "webSearch": "completed",
+    "capacityFailure": false,
+    "authenticatedPlatformInteraction": false,
+    "platformVisualScreenshotsObserved": false,
+    "soopDedicatedHelpArticle": "No indexed nickname/chat article was found from targeted help.sooplive.co.kr and help.sooplive.com searches. Official public player HTML was used as the SOOP evidence instead of claiming a help article had been read."
+  },
+  "sources": [
+    {
+      "platform": "CHZZK",
+      "title": "치지직 활동 닉네임 안내",
+      "url": "https://help.naver.com/service/23946/contents/22772?lang=ko&osType=COMMONOS",
+      "kind": "official-guide",
+      "access": "Web search followed by direct page open/find",
+      "facts": [
+        "CHZZK activity names are managed through the Naver Game profile.",
+        "The guide describes name duplication rules and a 30-day change interval after the first immediate change."
+      ],
+      "applied": "Use a clearly named nickname-change entry and a distinct input/validation/save/cancel flow.",
+      "notApplied": "FRAME does not claim CHZZK account integration, nickname availability checks, or a 30-day change restriction."
+    },
+    {
+      "platform": "CHZZK",
+      "title": "라이브 채팅 이용 안내",
+      "url": "https://help.naver.com/service/30044/contents/22589?lang=ko&osType=COMMONOS",
+      "kind": "official-guide",
+      "access": "Web search followed by direct page open",
+      "facts": [
+        "The guide separates participation/login requirements from viewing the chat.",
+        "Chat collapse, chat modes and chat rules are separate controls with different user/manager purposes."
+      ],
+      "applied": "Retain the prototype's existing login participation UI and chat-collapse flow. Improve only the local participant name and composer/read-position controls.",
+      "notApplied": "No moderator permissions, chat restrictions, login guarantees, rule agreement policy or cooldown policy were added."
+    },
+    {
+      "platform": "SOOP",
+      "title": "SOOP official public player",
+      "url": "https://play-origin.sooplive.com/soop/direct?fromApi=1",
+      "kind": "official-product-html-text",
+      "access": "Direct web page open after official-domain search. The retrieved response was in English; Korean menu strings also appeared in search-indexed official player responses.",
+      "facts": [
+        "The public player response includes personal chat settings and a Change Nickname entry.",
+        "The response includes a separate Scroll down in chat button.",
+        "The name-change template has an input and separate cancel/change actions."
+      ],
+      "directlyObservedLabels": [
+        "Change Nickname",
+        "Scroll down in chat"
+      ],
+      "applied": "Provide an explicit name-change action and an explicit latest-message return control while preserving the existing chat layout.",
+      "notVerified": [
+        "No logged-in SOOP nickname change was submitted.",
+        "The exact live behavior while scrolling away from the bottom was not interactively observed.",
+        "A public HTML template does not establish which controls are enabled for a specific account or broadcast."
+      ]
+    },
+    {
+      "platform": "SOOP",
+      "title": "SOOP official public player, Korean indexed response",
+      "url": "https://play.sooplive.co.kr/superrace/null",
+      "kind": "official-product-html-text",
+      "access": "Web search and direct open of an offline official player page",
+      "facts": [
+        "The official player text separates personal settings, nickname change, chat display settings and the composer."
+      ],
+      "notVerified": "The offline template was not treated as a live authenticated UI test or as evidence of server behavior."
+    }
+  ],
+  "existingImplementationObservedInSource": [
+    {
+      "file": "dist/design-core.js",
+      "finding": "F.chat renders the name-change entry twice and maps every session message to the current F.nickname whenever the view is rebuilt."
+    },
+    {
+      "file": "dist/design-events.js",
+      "finding": "The old chat submit handler appends a local string message and always sets scrollTop to scrollHeight, even when the user was reading earlier messages."
+    },
+    {
+      "file": "dist/design-v33-viewer.js",
+      "finding": "Logged-out participation is already replaced with a login entry; this behavior is retained."
+    },
+    {
+      "file": "dist/design-v33-account-studio.js",
+      "finding": "Existing nickname validation and modal navigation are local prototype behavior, separate from actual account/session APIs."
+    }
+  ],
+  "designDecisionsAndAssumptions": [
+    {
+      "type": "local-design-decision",
+      "decision": "The visible action combines the current local nickname with a concise 변경 action, and the modal is called 채팅 닉네임 변경.",
+      "reason": "This makes the action explicit without claiming that the account profile nickname is being edited."
+    },
+    {
+      "type": "local-design-decision",
+      "decision": "Keep 1–20-character validation and show no nickname-availability or change-cooldown claim.",
+      "reason": "The existing prototype can validate local input but has no authoritative account/name registry."
+    },
+    {
+      "type": "local-design-decision-not-observed-platform-behavior",
+      "decision": "When more than 24px above the chat bottom, keep the reading position and display 최신 메시지로. Follow new appended messages only while already following the bottom.",
+      "reason": "This preserves the user's reading intent. The SOOP source establishes a return-to-bottom control, while the exact follow/threshold implementation is a FRAME design choice."
+    },
+    {
+      "type": "local-design-decision",
+      "decision": "Snapshot the display name at actual local submission; changing the local chat name affects later submissions and does not rewrite prior authors.",
+      "reason": "A visual change must not make earlier messages appear to have a different author. This is display metadata, not an authenticated identity guarantee."
+    }
+  ],
+  "implementation": {
+    "files": [
+      "dist/design-v34-chat.js",
+      "dist/design-v34-chat.css"
+    ],
+    "loadOrder": "After foundation and before the root reference/detail wrapper; before design-events.js is suitable.",
+    "state": "F.v34Chat",
+    "stateFields": {
+      "rooms": "Map of per-view/channel scroll state {top, follow, lastHeight}",
+      "authors": "Display-name snapshots aligned with the existing local session message array",
+      "name": "Local modal draft, inline error, editing flag and first-open selection flag",
+      "composing": "Local IME composition guard",
+      "channels": "Map of local per-broadcast message arrays and original author names; channel 0 is shared by its sender and viewer views",
+      "activeChannel": "Local broadcast currently bound to F.sessionMessages"
+    },
+    "actions": [
+      "v34-chat-name-open",
+      "v34-chat-latest"
+    ],
+    "preserved": [
+      "Existing chat fixtures, chat-collapse controls and participant login UI",
+      "Existing session-message text array compatibility",
+      "Enter to send, Shift+Enter for a line break, and IME composition protection",
+      "Existing 1,000-character input limit without adding a visible fixed counter",
+      "All player, quality, source video, media settings, backend and actual application files"
+    ],
+    "changed": [
+      "One clear current-name/change entry instead of a duplicate bare pencil action",
+      "A draft-based nickname modal with unchanged-value disabling, validation, cancel and explicit change submission",
+      "Input autosizing without a resize handle; disabled empty send action and inline over-limit feedback only when necessary",
+      "Per-view scroll restoration on re-render, contained chat scrolling and return-to-latest control",
+      "Mutation observation of real appended chat-line elements; no fabricated incoming message or participant-count events",
+      "Stable nickname-trigger ID restores focus after a successful rename",
+      "Chat-log keyboard focus prevents Space/k/m/t/f from activating player shortcuts",
+      "Local messages and author snapshots are isolated per broadcast; sender/viewer of channel 0 share the same local history"
+    ]
+  },
+  "validation": {
+    "syntax": "node --check passed",
+    "browserQA": "Integrated root browser checks completed; see browser-summary.json. Physical devices and real network delivery remain untested.",
+    "scenarios": [
+      "Open the current-nickname 변경 action, submit an empty value, correct the error, cancel and verify the committed name is unchanged.",
+      "Submit a local message, change the name, submit another message, re-render and verify both original author names remain.",
+      "Submit enough real local test messages to create overflow; scroll upward, send/append another real message and verify the reading position remains stable.",
+      "Use 최신 메시지로, verify the bottom is reached and the control disappears.",
+      "Toggle a surrounding view or open/close a modal while reading old chat and verify the scroll position is restored.",
+      "Verify empty send disabling, Shift+Enter, IME Enter behavior, long-name truncation and mobile composer/button bounds."
+    ]
+  },
+  "remainingLimitations": [
+    "Nickname state, message text, author snapshots and scroll positions exist only in the local prototype memory.",
+    "There is no server name-availability check, authenticated identity mapping, moderation policy or account-profile synchronization.",
+    "The local per-broadcast Map is not a server-backed chat store and does not survive a reload.",
+    "Real message delivery, acknowledgement, reconnection, deduplication and production incoming-event integration remain unimplemented.",
+    "No competitor account was logged into and no nickname/account setting was changed on CHZZK or SOOP."
+  ]
+}

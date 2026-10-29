@@ -73,6 +73,8 @@ for (let i = 0; i < 30 && (await player(v)).src !== 'mse'; i++) await sleep(300)
 await sleep(2000);
 out('v1 live resume', await player(v));
 out('v1 log', await v.evaluate(`[...document.querySelectorAll('#log-list tr')].slice(0, 6).map(r => r.innerText.split('\\t').join(' | '))`));
+await v.send('Performance.enable').catch(() => {});
 const memory = await v.send('Performance.getMetrics').catch(() => null);
-out('v1 heap MB', memory ? Math.round(memory.metrics.find(m => m.name === 'JSHeapUsedSize').value / 1048576) : null);
+const heap = memory && memory.metrics && memory.metrics.find(m => m.name === 'JSHeapUsedSize');
+out('v1 heap MB', heap ? Math.round(heap.value / 1048576) : null);
 a.close(); v.close();

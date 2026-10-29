@@ -1,0 +1,128 @@
+{
+  "version": "3.0",
+  "date": "2026-10-29",
+  "screenshots": 17,
+  "coreArtboards": 15,
+  "syntaxChecked": [
+    "design-v3-account.js",
+    "design-v3-components.js",
+    "design-v3-core.js",
+    "design-v3-runtime.js",
+    "design-v3-studio.js"
+  ],
+  "originalChecks": [
+    {
+      "file": "work/console-template.html",
+      "matched": true
+    },
+    {
+      "file": "work/console.css",
+      "matched": true
+    },
+    {
+      "file": "work/ux.css",
+      "matched": true
+    },
+    {
+      "file": "work/components.css",
+      "matched": true
+    },
+    {
+      "file": "work/console-ui.css",
+      "matched": true
+    },
+    {
+      "file": "work/player-ui.css",
+      "matched": true
+    },
+    {
+      "file": "work/mobile-ui.css",
+      "matched": true
+    },
+    {
+      "file": "work/console-ux.js",
+      "matched": true
+    }
+  ],
+  "protectedChecks": [
+    {
+      "file": "preserved-player.js",
+      "unchanged": true
+    },
+    {
+      "file": "preserved-player.css",
+      "unchanged": true
+    },
+    {
+      "file": "preserved-player-data.js",
+      "unchanged": true
+    }
+  ],
+  "responsiveChecks": 55,
+  "responsiveIssues": [],
+  "stateChecks": 450,
+  "stateIssues": [],
+  "functionalChecks": [
+    {
+      "name": "검색어 유지",
+      "ok": true
+    },
+    {
+      "name": "채널 검색 필터",
+      "ok": true
+    },
+    {
+      "name": "빈 검색어 안내",
+      "ok": true
+    },
+    {
+      "name": "정렬 후 포커스",
+      "ok": true
+    },
+    {
+      "name": "계정 메뉴 Escape",
+      "ok": true
+    },
+    {
+      "name": "기존 재생 제어",
+      "ok": true
+    },
+    {
+      "name": "기존 화질 메뉴",
+      "ok": true
+    },
+    {
+      "name": "채팅 닫기·버튼 이동",
+      "ok": true
+    },
+    {
+      "name": "채팅 열기·사이드바 유지",
+      "ok": true
+    },
+    {
+      "name": "확대 보기 사이드바 축소",
+      "ok": true
+    },
+    {
+      "name": "기본 보기 복원",
+      "ok": true
+    },
+    {
+      "name": "로그인 후 방송 준비 복귀",
+      "ok": true
+    },
+    {
+      "name": "브랜딩 탭 직접 진입",
+      "ok": true
+    },
+    {
+      "name": "저장된 채널 정보 공개 화면 연결",
+      "ok": true
+    },
+    {
+      "name": "추가 채널 주소 표시",
+      "ok": true
+    }
+  ],
+  "scope": "Local design prototype only. No authentication, payment, streaming, capture, encoder or production application changes."
+}

@@ -1,0 +1,54 @@
+{
+  "originalChecks": [
+    {
+      "file": "work/console-template.html",
+      "unchanged": true
+    },
+    {
+      "file": "work/console.css",
+      "unchanged": true
+    },
+    {
+      "file": "work/ux.css",
+      "unchanged": true
+    },
+    {
+      "file": "work/components.css",
+      "unchanged": true
+    },
+    {
+      "file": "work/console-ui.css",
+      "unchanged": true
+    },
+    {
+      "file": "work/player-ui.css",
+      "unchanged": true
+    },
+    {
+      "file": "work/mobile-ui.css",
+      "unchanged": true
+    },
+    {
+      "file": "work/console-ux.js",
+      "unchanged": true
+    }
+  ],
+  "protectedChecks": [
+    {
+      "file": "preserved-player.js",
+      "unchanged": true
+    },
+    {
+      "file": "preserved-player.css",
+      "unchanged": true
+    },
+    {
+      "file": "preserved-player-data.js",
+      "unchanged": true
+    },
+    {
+      "file": "design-data.js",
+      "unchanged": true
+    }
+  ]
+}

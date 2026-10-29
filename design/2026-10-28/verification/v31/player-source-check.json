@@ -1,0 +1,34 @@
+[
+  {
+    "file": "work/console-template.html",
+    "matched": true
+  },
+  {
+    "file": "work/console.css",
+    "matched": true
+  },
+  {
+    "file": "work/ux.css",
+    "matched": true
+  },
+  {
+    "file": "work/components.css",
+    "matched": true
+  },
+  {
+    "file": "work/console-ui.css",
+    "matched": true
+  },
+  {
+    "file": "work/player-ui.css",
+    "matched": true
+  },
+  {
+    "file": "work/mobile-ui.css",
+    "matched": true
+  },
+  {
+    "file": "work/console-ux.js",
+    "matched": true
+  }
+]

@@ -1,0 +1,36 @@
+{
+ "phase": "fault",
+ "fault": "corrupt",
+ "measuredAt": "2026-10-28T08:16:06.501Z",
+ "passed": true,
+ "checks": [
+  {
+   "name": "native image the UI cannot decode: 미리보기를 가져오지 못했습니다 + retry",
+   "ok": true,
+   "data": {
+    "id": "wa40936-11832",
+    "state": "failed",
+    "chip": "미리보기를 가져오지 못했습니다",
+    "retry": true,
+    "retryDisabled": false,
+    "disabled": false,
+    "pressed": "false",
+    "describedBy": true,
+    "detail": "미리보기 이미지를 표시하지 못했습니다. 1번 시도했습니다.",
+    "image": null,
+    "h": 341.6,
+    "thumbH": 292.4,
+    "overlayH": 291.9,
+    "overlayTop": 0.4,
+    "waitedMs": 339
+   }
+  },
+  {
+   "name": "UI decode failure reaches the native log",
+   "ok": true,
+   "data": [
+    "2026-10-28 17:16:05.821 [thumb] gen 1 req 2 wa40936-11832: ui could not decode the image after 140 ms (decode 0 ms)"
+   ]
+  }
+ ]
+}

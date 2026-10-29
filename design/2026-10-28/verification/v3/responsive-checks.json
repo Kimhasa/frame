@@ -1,0 +1,442 @@
+[
+  {
+    "controls": [],
+    "dialog": false,
+    "id": "live",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 390
+  },
+  {
+    "controls": [],
+    "dialog": false,
+    "id": "login",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 390
+  },
+  {
+    "controls": [],
+    "dialog": false,
+    "id": "profile",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 390
+  },
+  {
+    "controls": [],
+    "dialog": false,
+    "id": "preferences",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 390
+  },
+  {
+    "controls": [],
+    "dialog": false,
+    "id": "security",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 390
+  },
+  {
+    "controls": [],
+    "dialog": false,
+    "id": "channel-edit",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 390
+  },
+  {
+    "controls": [],
+    "dialog": false,
+    "id": "studio",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 390
+  },
+  {
+    "controls": [],
+    "dialog": false,
+    "id": "watch",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 390
+  },
+  {
+    "controls": [],
+    "dialog": true,
+    "id": "donate",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 390
+  },
+  {
+    "controls": [],
+    "dialog": true,
+    "id": "sources",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 390
+  },
+  {
+    "controls": [],
+    "dialog": true,
+    "id": "broadcast-settings",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 390
+  },
+  {
+    "controls": [],
+    "dialog": false,
+    "id": "live",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 820
+  },
+  {
+    "controls": [],
+    "dialog": false,
+    "id": "login",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 820
+  },
+  {
+    "controls": [],
+    "dialog": false,
+    "id": "profile",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 820
+  },
+  {
+    "controls": [],
+    "dialog": false,
+    "id": "preferences",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 820
+  },
+  {
+    "controls": [],
+    "dialog": false,
+    "id": "security",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 820
+  },
+  {
+    "controls": [],
+    "dialog": false,
+    "id": "channel-edit",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 820
+  },
+  {
+    "controls": [],
+    "dialog": false,
+    "id": "studio",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 820
+  },
+  {
+    "controls": [],
+    "dialog": false,
+    "id": "watch",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 820
+  },
+  {
+    "controls": [],
+    "dialog": true,
+    "id": "donate",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 820
+  },
+  {
+    "controls": [],
+    "dialog": true,
+    "id": "sources",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 820
+  },
+  {
+    "controls": [],
+    "dialog": true,
+    "id": "broadcast-settings",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 820
+  },
+  {
+    "controls": [],
+    "dialog": false,
+    "id": "live",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 1440
+  },
+  {
+    "controls": [],
+    "dialog": false,
+    "id": "login",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 1440
+  },
+  {
+    "controls": [],
+    "dialog": false,
+    "id": "profile",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 1440
+  },
+  {
+    "controls": [],
+    "dialog": false,
+    "id": "preferences",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 1440
+  },
+  {
+    "controls": [],
+    "dialog": false,
+    "id": "security",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 1440
+  },
+  {
+    "controls": [],
+    "dialog": false,
+    "id": "channel-edit",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 1440
+  },
+  {
+    "controls": [],
+    "dialog": false,
+    "id": "studio",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 1440
+  },
+  {
+    "controls": [],
+    "dialog": false,
+    "id": "watch",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 1440
+  },
+  {
+    "controls": [],
+    "dialog": true,
+    "id": "donate",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 1440
+  },
+  {
+    "controls": [],
+    "dialog": true,
+    "id": "sources",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 1440
+  },
+  {
+    "controls": [],
+    "dialog": true,
+    "id": "broadcast-settings",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 1440
+  },
+  {
+    "controls": [],
+    "dialog": false,
+    "id": "live",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 1920
+  },
+  {
+    "controls": [],
+    "dialog": false,
+    "id": "login",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 1920
+  },
+  {
+    "controls": [],
+    "dialog": false,
+    "id": "profile",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 1920
+  },
+  {
+    "controls": [],
+    "dialog": false,
+    "id": "preferences",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 1920
+  },
+  {
+    "controls": [],
+    "dialog": false,
+    "id": "security",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 1920
+  },
+  {
+    "controls": [],
+    "dialog": false,
+    "id": "channel-edit",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 1920
+  },
+  {
+    "controls": [],
+    "dialog": false,
+    "id": "studio",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 1920
+  },
+  {
+    "controls": [],
+    "dialog": false,
+    "id": "watch",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 1920
+  },
+  {
+    "controls": [],
+    "dialog": true,
+    "id": "donate",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 1920
+  },
+  {
+    "controls": [],
+    "dialog": true,
+    "id": "sources",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 1920
+  },
+  {
+    "controls": [],
+    "dialog": true,
+    "id": "broadcast-settings",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 1920
+  },
+  {
+    "controls": [],
+    "dialog": false,
+    "id": "live",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 3787
+  },
+  {
+    "controls": [],
+    "dialog": false,
+    "id": "login",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 3787
+  },
+  {
+    "controls": [],
+    "dialog": false,
+    "id": "profile",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 3787
+  },
+  {
+    "controls": [],
+    "dialog": false,
+    "id": "preferences",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 3787
+  },
+  {
+    "controls": [],
+    "dialog": false,
+    "id": "security",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 3787
+  },
+  {
+    "controls": [],
+    "dialog": false,
+    "id": "channel-edit",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 3787
+  },
+  {
+    "controls": [],
+    "dialog": false,
+    "id": "studio",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 3787
+  },
+  {
+    "controls": [],
+    "dialog": false,
+    "id": "watch",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 3787
+  },
+  {
+    "controls": [],
+    "dialog": true,
+    "id": "donate",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 3787
+  },
+  {
+    "controls": [],
+    "dialog": true,
+    "id": "sources",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 3787
+  },
+  {
+    "controls": [],
+    "dialog": true,
+    "id": "broadcast-settings",
+    "rootOverflow": 0,
+    "scopeOverflow": 0,
+    "width": 3787
+  }
+]

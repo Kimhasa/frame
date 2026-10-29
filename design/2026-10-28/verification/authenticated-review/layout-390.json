@@ -1,0 +1,1352 @@
+[
+  {
+    "screen": "live",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "live",
+    "state": "불러오는 중",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "live",
+    "state": "방송 없음",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "live",
+    "state": "불러오기 실패",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "watch",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "watch",
+    "state": "일시정지",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "watch",
+    "state": "지난 구간",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "watch",
+    "state": "재연결 중",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "watch",
+    "state": "방송 종료",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "watch",
+    "state": "재생 실패",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "watch",
+    "state": "접속자 많음",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "watch",
+    "state": "소리 켜기",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "following",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "following",
+    "state": "팔로우 없음",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "following",
+    "state": "로그인 필요",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "search",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "search",
+    "state": "검색 결과 없음",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "channel",
+    "state": "방송 중",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "channel",
+    "state": "오프라인",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "channel",
+    "state": "접근 제한",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "vod",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "vod",
+    "state": "다시보기 없음",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "vod-watch",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "vod-watch",
+    "state": "재생 실패",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "vod-watch",
+    "state": "삭제된 영상",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "clips",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "clips",
+    "state": "클립 없음",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "clip-watch",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "clip-watch",
+    "state": "삭제된 영상",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "history",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "history",
+    "state": "기록 없음",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "notifications",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "notifications",
+    "state": "알림 없음",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "studio",
+    "state": "방송 전",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "studio",
+    "state": "방송 중",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "studio",
+    "state": "화면 연결 끊김",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "studio",
+    "state": "방송 연결 실패",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "sources",
+    "state": "프로그램 창",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "sources",
+    "state": "전체 화면",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "sources",
+    "state": "불러오는 중",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "sources",
+    "state": "응답 지연",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "sources",
+    "state": "창 닫힘",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "sources",
+    "state": "대상 없음",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "broadcast-settings",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "broadcast-settings",
+    "state": "수동 비트레이트",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "broadcast-settings",
+    "state": "지원 범위 오류",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "connection",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "connection",
+    "state": "연결 확인 중",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "connection",
+    "state": "연결 실패",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "broadcast-details",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "broadcast-details",
+    "state": "입력 오류",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "broadcast-end",
+    "state": "종료 확인",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "broadcast-end",
+    "state": "종료 요약",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "recordings",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "recordings",
+    "state": "저장 공간 부족",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "recordings",
+    "state": "녹화 없음",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "schedule",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "schedule",
+    "state": "예약 없음",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "scenes",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "scenes",
+    "state": "장면 없음",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "login",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "login",
+    "state": "연동 실패",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "login",
+    "state": "동의 필요",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "profile",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "profile",
+    "state": "닉네임 오류",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "security",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "security",
+    "state": "재인증 필요",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "preferences",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "preferences",
+    "state": "알림 차단",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "channel-edit",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "channel-edit",
+    "state": "저장 오류",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "moderation",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "moderation",
+    "state": "운영자 없음",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "reports",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "reports",
+    "state": "신고 없음",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "creator-stats",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "creator-stats",
+    "state": "데이터 없음",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "revenue",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "revenue",
+    "state": "정산 대기",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "transactions",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "transactions",
+    "state": "환불 요청",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "transactions",
+    "state": "내역 없음",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "integrations",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "integrations",
+    "state": "연결 없음",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "missions-manage",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "missions-manage",
+    "state": "미션 없음",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "polls-manage",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "polls-manage",
+    "state": "진행 중 없음",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "rewards-manage",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "rewards-manage",
+    "state": "보상 없음",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "members",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "members",
+    "state": "가입자 없음",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "donate",
+    "state": "금액 선택",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "donate",
+    "state": "처리 중",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "donate",
+    "state": "완료",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "donate",
+    "state": "결제 실패",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "membership",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "membership",
+    "state": "가입 완료",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "membership",
+    "state": "결제 실패",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "mission",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "mission",
+    "state": "진행 중",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "mission",
+    "state": "완료",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "mission",
+    "state": "실패",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "poll",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "poll",
+    "state": "투표 완료",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "poll",
+    "state": "마감",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "rewards",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "rewards",
+    "state": "포인트 부족",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "rewards",
+    "state": "교환 완료",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "share",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "share",
+    "state": "복사 완료",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "info",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "quality",
+    "state": "자동",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "quality",
+    "state": "수동",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "quality",
+    "state": "전환 중",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "nickname",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "nickname",
+    "state": "입력 오류",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "manual",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "manual",
+    "state": "연결 중",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "manual",
+    "state": "연결 실패",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "report-content",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "report-content",
+    "state": "접수 완료",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "clip-create",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "clip-create",
+    "state": "처리 중",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "clip-create",
+    "state": "생성 완료",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "service-health",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "service-health",
+    "state": "과부하",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "service-health",
+    "state": "장애",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "service-reports",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "service-reports",
+    "state": "신고 없음",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "audit",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "audit",
+    "state": "기록 없음",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "policy",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "update",
+    "state": "업데이트 있음",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "update",
+    "state": "다운로드 중",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "update",
+    "state": "최신 버전",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "devices",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "devices",
+    "state": "기기 없음",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "devices",
+    "state": "연결 실패",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "recommendations",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "recommendations",
+    "state": "추천 없음",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "raid",
+    "state": "방송 선택",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "raid",
+    "state": "이동 확인",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "raid",
+    "state": "완료",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "drop-rewards",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "drop-rewards",
+    "state": "수령 가능",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "drop-rewards",
+    "state": "수령 완료",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "developer",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "developer",
+    "state": "키 발급 확인",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  },
+  {
+    "screen": "verification",
+    "state": "기본",
+    "width": 390,
+    "overflow": 0,
+    "dialogOverflow": 0,
+    "outside": false,
+    "duplicateIds": []
+  }
+]

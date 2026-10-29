@@ -1,0 +1,761 @@
+{
+  "tool": "tools/netem/selftest.mjs",
+  "node": "v24.22.1",
+  "timer": "coarse",
+  "date": "2026-10-28T06:40:42.331Z",
+  "packetBytes": 1200,
+  "host": {
+    "cpu": "11th Gen Intel(R) Core(TM) i7-11800H @ 2.30GHz",
+    "logicalCpus": 16,
+    "busyPctDuringTest": 14.4,
+    "proxyCpuPctOfOneCore": 4.8,
+    "harnessCpuSeconds": 54.9,
+    "proxyLateMsMax": 15,
+    "proxyLateMsAvg": 0.958
+  },
+  "pass": true,
+  "failed": [],
+  "model": [
+    {
+      "label": "model-gilbert-limit",
+      "checks": [
+        {
+          "name": "rejects lossPct 90 / lossBurst 2 (max 66.7%)",
+          "value": 1,
+          "min": 1,
+          "max": 1,
+          "pass": true
+        },
+        {
+          "name": "accepts lossPct 60 / lossBurst 2",
+          "value": 0,
+          "min": 0,
+          "max": 0,
+          "pass": true
+        },
+        {
+          "name": "accepts lossPct 90 / lossBurst 1",
+          "value": 0,
+          "min": 0,
+          "max": 0,
+          "pass": true
+        }
+      ],
+      "pass": true
+    },
+    {
+      "label": "model-loss20-burst3",
+      "measured": {
+        "lossPct": 20.02,
+        "meanBurst": 3.01
+      },
+      "checks": [
+        {
+          "name": "loss %",
+          "value": 20.02,
+          "min": 19,
+          "max": 21,
+          "pass": true
+        },
+        {
+          "name": "mean loss run",
+          "value": 3.012,
+          "min": 2.79,
+          "max": 3.21,
+          "pass": true
+        }
+      ],
+      "pass": true
+    },
+    {
+      "label": "model-loss5-burst4",
+      "measured": {
+        "lossPct": 4.96,
+        "meanBurst": 3.99
+      },
+      "checks": [
+        {
+          "name": "loss %",
+          "value": 4.961,
+          "min": 4.75,
+          "max": 5.25,
+          "pass": true
+        },
+        {
+          "name": "mean loss run",
+          "value": 3.991,
+          "min": 3.72,
+          "max": 4.28,
+          "pass": true
+        }
+      ],
+      "pass": true
+    },
+    {
+      "label": "model-loss60-burst2",
+      "measured": {
+        "lossPct": 59.91,
+        "meanBurst": 1.99
+      },
+      "checks": [
+        {
+          "name": "loss %",
+          "value": 59.911,
+          "min": 57,
+          "max": 63,
+          "pass": true
+        },
+        {
+          "name": "mean loss run",
+          "value": 1.993,
+          "min": 1.86,
+          "max": 2.14,
+          "pass": true
+        }
+      ],
+      "pass": true
+    }
+  ],
+  "results": [
+    {
+      "label": "pass-through",
+      "settings": {
+        "down": {},
+        "up": {},
+        "outage": false
+      },
+      "offer": {
+        "mbps": 8,
+        "pattern": "cbr"
+      },
+      "upOffer": null,
+      "offeredMbps": 8.001,
+      "receivedMbps": 8.001,
+      "expectedPayloadMbps": 8.001,
+      "lossPct": 0,
+      "meanLossBurst": null,
+      "delayMs": {
+        "p50": 0.08,
+        "p95": 0.18,
+        "p99": 0.23,
+        "min": 0.04,
+        "max": 0.73
+      },
+      "upDelayMsP50": 0.09,
+      "reordered": 0,
+      "packets": 2667,
+      "up": null,
+      "checks": [
+        {
+          "name": "received / offered",
+          "value": 1,
+          "min": 0.995,
+          "max": 1.001,
+          "pass": true
+        },
+        {
+          "name": "delay p50 ms",
+          "value": 0.08,
+          "min": 0,
+          "max": 3,
+          "pass": true
+        }
+      ],
+      "pass": true
+    },
+    {
+      "label": "rate5-offer10",
+      "settings": {
+        "down": {
+          "rateMbps": 5
+        },
+        "up": {},
+        "outage": false
+      },
+      "offer": {
+        "mbps": 10,
+        "pattern": "cbr"
+      },
+      "upOffer": null,
+      "offeredMbps": 10,
+      "receivedMbps": 4.887,
+      "expectedPayloadMbps": 4.886,
+      "lossPct": 51.13,
+      "meanLossBurst": 1.05,
+      "delayMs": {
+        "p50": 198.79,
+        "p95": 198.89,
+        "p99": 198.95,
+        "min": 197.71,
+        "max": 199.06
+      },
+      "upDelayMsP50": 0.11,
+      "reordered": 0,
+      "packets": 4375,
+      "up": null,
+      "checks": [
+        {
+          "name": "received / expected",
+          "value": 1,
+          "min": 0.97,
+          "max": 1.03,
+          "pass": true
+        },
+        {
+          "name": "delay p50 ms",
+          "value": 198.79,
+          "min": 180,
+          "max": 210,
+          "pass": true
+        }
+      ],
+      "pass": true
+    },
+    {
+      "label": "rate3-offer2-video",
+      "settings": {
+        "down": {
+          "rateMbps": 3
+        },
+        "up": {},
+        "outage": false
+      },
+      "offer": {
+        "mbps": 2,
+        "pattern": "video"
+      },
+      "upOffer": null,
+      "offeredMbps": 2.313,
+      "receivedMbps": 2.313,
+      "expectedPayloadMbps": 2.313,
+      "lossPct": 0,
+      "meanLossBurst": null,
+      "delayMs": {
+        "p50": 13.95,
+        "p95": 27.78,
+        "p99": 64.44,
+        "min": 3.59,
+        "max": 70.56
+      },
+      "upDelayMsP50": 0.16,
+      "reordered": 0,
+      "packets": 1012,
+      "up": null,
+      "checks": [
+        {
+          "name": "received / offered",
+          "value": 1,
+          "min": 0.99,
+          "max": 1.001,
+          "pass": true
+        },
+        {
+          "name": "delay p95 ms",
+          "value": 27.78,
+          "min": 0,
+          "max": 30,
+          "pass": true
+        }
+      ],
+      "pass": true
+    },
+    {
+      "label": "rate1-offer8-video",
+      "settings": {
+        "down": {
+          "rateMbps": 1,
+          "maxQueueMs": 300
+        },
+        "up": {},
+        "outage": false
+      },
+      "offer": {
+        "mbps": 8,
+        "pattern": "video"
+      },
+      "upOffer": null,
+      "offeredMbps": 8.064,
+      "receivedMbps": 0.978,
+      "expectedPayloadMbps": 0.977,
+      "lossPct": 87.87,
+      "meanLossBurst": 12.25,
+      "delayMs": {
+        "p50": 290.35,
+        "p95": 300.21,
+        "p99": 300.32,
+        "min": 205.68,
+        "max": 300.39
+      },
+      "upDelayMsP50": 0.15,
+      "reordered": 0,
+      "packets": 3528,
+      "up": null,
+      "checks": [
+        {
+          "name": "received / expected",
+          "value": 1.001,
+          "min": 0.95,
+          "max": 1.05,
+          "pass": true
+        },
+        {
+          "name": "delay p50 ms",
+          "value": 290.35,
+          "min": 250,
+          "max": 320,
+          "pass": true
+        }
+      ],
+      "pass": true
+    },
+    {
+      "label": "up-rate2-offer4",
+      "settings": {
+        "down": {},
+        "up": {
+          "rateMbps": 2,
+          "maxQueueMs": 200
+        },
+        "outage": false
+      },
+      "offer": {
+        "mbps": 1,
+        "pattern": "cbr"
+      },
+      "upOffer": {
+        "mbps": 4
+      },
+      "offeredMbps": 1.001,
+      "receivedMbps": 1.001,
+      "expectedPayloadMbps": 1.001,
+      "lossPct": 0,
+      "meanLossBurst": null,
+      "delayMs": {
+        "p50": 0.1,
+        "p95": 0.19,
+        "p99": 0.24,
+        "min": 0.06,
+        "max": 0.35
+      },
+      "upDelayMsP50": 196.46,
+      "reordered": 0,
+      "packets": 438,
+      "up": {
+        "offeredMbps": 3.998,
+        "receivedMbps": 1.92,
+        "expectedPayloadMbps": 1.918,
+        "packets": 1749
+      },
+      "checks": [
+        {
+          "name": "received / offered",
+          "value": 1,
+          "min": 0.995,
+          "max": 1.001,
+          "pass": true
+        },
+        {
+          "name": "up received / expected",
+          "value": 1.001,
+          "min": 0.97,
+          "max": 1.03,
+          "pass": true
+        },
+        {
+          "name": "up delay p50 ms",
+          "value": 196.46,
+          "min": 170,
+          "max": 215,
+          "pass": true
+        }
+      ],
+      "pass": true
+    },
+    {
+      "label": "delay50",
+      "settings": {
+        "down": {
+          "delayMs": 50
+        },
+        "up": {
+          "delayMs": 30
+        },
+        "outage": false
+      },
+      "offer": {
+        "mbps": 4,
+        "pattern": "cbr"
+      },
+      "upOffer": null,
+      "offeredMbps": 4,
+      "receivedMbps": 4,
+      "expectedPayloadMbps": 4,
+      "lossPct": 0,
+      "meanLossBurst": null,
+      "delayMs": {
+        "p50": 50.49,
+        "p95": 50.59,
+        "p99": 50.66,
+        "min": 50.15,
+        "max": 52.37
+      },
+      "upDelayMsP50": 31.25,
+      "reordered": 0,
+      "packets": 1333,
+      "up": null,
+      "checks": [
+        {
+          "name": "delay p50 ms",
+          "value": 50.49,
+          "min": 49,
+          "max": 53,
+          "pass": true
+        },
+        {
+          "name": "reordered packets",
+          "value": 0,
+          "min": 0,
+          "max": 0,
+          "pass": true
+        },
+        {
+          "name": "up delay p50 ms",
+          "value": 31.25,
+          "min": 29,
+          "max": 33,
+          "pass": true
+        }
+      ],
+      "pass": true
+    },
+    {
+      "label": "delay50-jitter10",
+      "settings": {
+        "down": {
+          "delayMs": 50,
+          "jitterMs": 10
+        },
+        "up": {},
+        "outage": false
+      },
+      "offer": {
+        "mbps": 4,
+        "pattern": "cbr"
+      },
+      "upOffer": null,
+      "offeredMbps": 4,
+      "receivedMbps": 4,
+      "expectedPayloadMbps": 4,
+      "lossPct": 0,
+      "meanLossBurst": null,
+      "delayMs": {
+        "p50": 50.49,
+        "p95": 57.76,
+        "p99": 60.12,
+        "min": 40.87,
+        "max": 60.2
+      },
+      "upDelayMsP50": 0.12,
+      "reordered": 0,
+      "packets": 1750,
+      "up": null,
+      "checks": [
+        {
+          "name": "delay p95 ms",
+          "value": 57.76,
+          "min": 52,
+          "max": 63,
+          "pass": true
+        },
+        {
+          "name": "delay min ms",
+          "value": 40.87,
+          "min": 38,
+          "max": 52,
+          "pass": true
+        },
+        {
+          "name": "reordered packets",
+          "value": 0,
+          "min": 0,
+          "max": 0,
+          "pass": true
+        }
+      ],
+      "pass": true
+    },
+    {
+      "label": "delay50-jitter10-packet",
+      "settings": {
+        "down": {
+          "delayMs": 50,
+          "jitterMs": 10,
+          "jitterMode": "packet"
+        },
+        "up": {},
+        "outage": false
+      },
+      "offer": {
+        "mbps": 4,
+        "pattern": "cbr"
+      },
+      "upOffer": null,
+      "offeredMbps": 3.999,
+      "receivedMbps": 3.999,
+      "expectedPayloadMbps": 3.999,
+      "lossPct": 0,
+      "meanLossBurst": null,
+      "delayMs": {
+        "p50": 50.53,
+        "p95": 60.11,
+        "p99": 60.17,
+        "min": 40.32,
+        "max": 62.48
+      },
+      "upDelayMsP50": 0.11,
+      "reordered": 962,
+      "packets": 1750,
+      "up": null,
+      "checks": [
+        {
+          "name": "delay p50 ms",
+          "value": 50.53,
+          "min": 46,
+          "max": 55,
+          "pass": true
+        },
+        {
+          "name": "delay p95 ms",
+          "value": 60.11,
+          "min": 55,
+          "max": 63,
+          "pass": true
+        },
+        {
+          "name": "delay min ms",
+          "value": 40.32,
+          "min": 38,
+          "max": 45,
+          "pass": true
+        },
+        {
+          "name": "reordered % of received",
+          "value": 54.971,
+          "min": 5,
+          "max": 100,
+          "pass": true
+        }
+      ],
+      "pass": true
+    },
+    {
+      "label": "loss5",
+      "settings": {
+        "down": {
+          "lossPct": 5
+        },
+        "up": {},
+        "outage": false
+      },
+      "offer": {
+        "mbps": 8,
+        "pattern": "cbr"
+      },
+      "upOffer": null,
+      "offeredMbps": 7.999,
+      "receivedMbps": 7.601,
+      "expectedPayloadMbps": 7.599,
+      "lossPct": 4.97,
+      "meanLossBurst": 1.05,
+      "delayMs": {
+        "p50": 0.08,
+        "p95": 0.17,
+        "p99": 0.22,
+        "min": 0.03,
+        "max": 0.36
+      },
+      "upDelayMsP50": 0.09,
+      "reordered": 0,
+      "packets": 3499,
+      "up": null,
+      "checks": [
+        {
+          "name": "loss %",
+          "value": 4.97,
+          "min": 3.5,
+          "max": 6.5,
+          "pass": true
+        },
+        {
+          "name": "mean loss run",
+          "value": 1.05,
+          "min": 0.9,
+          "max": 1.3,
+          "pass": true
+        }
+      ],
+      "pass": true
+    },
+    {
+      "label": "loss5-burst4",
+      "settings": {
+        "down": {
+          "lossPct": 5,
+          "lossBurst": 4
+        },
+        "up": {},
+        "outage": false
+      },
+      "offer": {
+        "mbps": 8,
+        "pattern": "cbr"
+      },
+      "upOffer": null,
+      "offeredMbps": 7.999,
+      "receivedMbps": 7.695,
+      "expectedPayloadMbps": 7.6,
+      "lossPct": 3.8,
+      "meanLossBurst": 3.69,
+      "delayMs": {
+        "p50": 0.08,
+        "p95": 0.17,
+        "p99": 0.23,
+        "min": 0.05,
+        "max": 0.74
+      },
+      "upDelayMsP50": 0.09,
+      "reordered": 0,
+      "packets": 3499,
+      "up": null,
+      "checks": [
+        {
+          "name": "loss %",
+          "value": 3.8,
+          "min": 3,
+          "max": 7.5,
+          "pass": true
+        },
+        {
+          "name": "mean loss run",
+          "value": 3.69,
+          "min": 3,
+          "max": 5.5,
+          "pass": true
+        }
+      ],
+      "pass": true
+    },
+    {
+      "label": "outage",
+      "settings": {
+        "down": {},
+        "up": {},
+        "outage": true
+      },
+      "offer": {
+        "mbps": 4,
+        "pattern": "cbr"
+      },
+      "upOffer": {
+        "mbps": 1
+      },
+      "offeredMbps": 4,
+      "receivedMbps": 0,
+      "expectedPayloadMbps": 0,
+      "lossPct": 100,
+      "meanLossBurst": null,
+      "delayMs": {
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "min": null,
+        "max": null
+      },
+      "upDelayMsP50": null,
+      "reordered": 0,
+      "packets": 917,
+      "up": {
+        "offeredMbps": 0.999,
+        "receivedMbps": 0,
+        "expectedPayloadMbps": 0,
+        "packets": 229
+      },
+      "checks": [
+        {
+          "name": "packets received",
+          "value": 0,
+          "min": 0,
+          "max": 0,
+          "pass": true
+        },
+        {
+          "name": "up packets received",
+          "value": 0,
+          "min": 0,
+          "max": 0,
+          "pass": true
+        }
+      ],
+      "pass": true
+    },
+    {
+      "label": "recovered",
+      "settings": {
+        "down": {},
+        "up": {},
+        "outage": false
+      },
+      "offer": {
+        "mbps": 4,
+        "pattern": "cbr"
+      },
+      "upOffer": null,
+      "offeredMbps": 4.001,
+      "receivedMbps": 4.001,
+      "expectedPayloadMbps": 4.001,
+      "lossPct": 0,
+      "meanLossBurst": null,
+      "delayMs": {
+        "p50": 0.09,
+        "p95": 0.18,
+        "p99": 0.26,
+        "min": 0.06,
+        "max": 0.73
+      },
+      "upDelayMsP50": 0.1,
+      "reordered": 0,
+      "packets": 917,
+      "up": null,
+      "checks": [
+        {
+          "name": "received / offered",
+          "value": 1,
+          "min": 0.99,
+          "max": 1.001,
+          "pass": true
+        }
+      ],
+      "pass": true
+    }
+  ],
+  "timing": {
+    "label": "timing",
+    "checks": [
+      {
+        "name": "proxy late ms max",
+        "value": 15,
+        "min": 0,
+        "max": 40,
+        "pass": true
+      },
+      {
+        "name": "target host name resolved (localhost)",
+        "value": 1,
+        "min": 1,
+        "max": 1,
+        "pass": true
+      }
+    ],
+    "pass": true
+  }
+}

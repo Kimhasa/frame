@@ -1,0 +1,108 @@
+{
+  "date": "2026-10-29",
+  "version": "3.5",
+  "research": {
+    "chzzkCaptures": 53,
+    "twitchCaptures": 19,
+    "notAllMenusVerified": true,
+    "broadcasterAccess": "Both services blocked new account agreement; no agreement accepted."
+  },
+  "layouts": {
+    "states": 150,
+    "widths": [
+      320,
+      390,
+      820,
+      1440,
+      1920
+    ],
+    "checks": 750,
+    "issues": []
+  },
+  "flowChecks": 25,
+  "protectedFiles": [
+    {
+      "file": "work/console-template.html",
+      "unchanged": true
+    },
+    {
+      "file": "work/console.css",
+      "unchanged": true
+    },
+    {
+      "file": "work/ux.css",
+      "unchanged": true
+    },
+    {
+      "file": "work/components.css",
+      "unchanged": true
+    },
+    {
+      "file": "work/console-ui.css",
+      "unchanged": true
+    },
+    {
+      "file": "work/player-ui.css",
+      "unchanged": true
+    },
+    {
+      "file": "work/mobile-ui.css",
+      "unchanged": true
+    },
+    {
+      "file": "work/console-ux.js",
+      "unchanged": true
+    },
+    {
+      "file": "dist/preserved-player.js",
+      "unchanged": true
+    },
+    {
+      "file": "dist/preserved-player.css",
+      "unchanged": true
+    },
+    {
+      "file": "dist/preserved-player-data.js",
+      "unchanged": true
+    },
+    {
+      "file": "dist/design-data.js",
+      "unchanged": true
+    }
+  ],
+  "sources": [
+    {
+      "file": "dist/design-v35-channel.css",
+      "sha256": "e0cb3c3b1ad61b00b9fb66b27a32c4bdc2c7f0616d49cebcc7134755eaf5a046"
+    },
+    {
+      "file": "dist/design-v35-channel.js",
+      "sha256": "0f42f5a9a2c8eae3579f118a2ae71012ace46727a9e40dde4c5f2181c4b1cb2a"
+    },
+    {
+      "file": "dist/design-v35-content.css",
+      "sha256": "1022207f3d4f847c1dc71a04a22895bff61f0ec0474db46aac4d45e2cdfef946"
+    },
+    {
+      "file": "dist/design-v35-content.js",
+      "sha256": "041798b4a7b2e0c183db7b4aea07c496f2b4e0a66020bea1690f5cfc59718b98"
+    },
+    {
+      "file": "dist/design-v35-navigation.css",
+      "sha256": "ee72f66559dadf65d43af569ead84b9db1731f30a40b9b974b1ad8a7f71682d4"
+    },
+    {
+      "file": "dist/design-v35-navigation.js",
+      "sha256": "a6b9dbdb85a43ac0fc6144692e15721c3fae55c936feaf891a3166298d871a18"
+    },
+    {
+      "file": "dist/index.html",
+      "sha256": "99e7c1fcad14b3a1258b2adcc5cce4bc9ea7655dfab27913a843936ed14e4c0c"
+    }
+  ],
+  "limitations": [
+    "Actual account/stream/chat backend operations were not tested.",
+    "Competitor broadcaster dashboards were blocked by new agreement prompts; no agreement was accepted.",
+    "Viewport testing is distinct from physical-device testing."
+  ]
+}

@@ -1,0 +1,27 @@
+# /etc/systemd/system/frame-relay.service — 중계 웹 서비스 server/relay.mjs (deploy/README.md 참고)
+[Unit]
+Description=FRAME relay web service (viewer UI, WHEP/HLS/DVR proxy, chat)
+After=network-online.target mediamtx-relay.service
+Wants=network-online.target mediamtx-relay.service
+
+[Service]
+Type=simple
+User=frame-relay
+Group=frame-relay
+WorkingDirectory=/opt/frame-relay
+EnvironmentFile=/etc/frame-relay/relay.env
+ExecStart=/usr/bin/node /opt/frame-relay/server/relay.mjs
+Restart=on-failure
+RestartSec=2
+# 채팅 WebSocket과 시청 요청이 모두 소켓 하나씩이므로 기본 1024개 제한을 넘긴다.
+LimitNOFILE=65536
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+# 녹화 폴더는 읽기만 한다(DVR 키프레임 기준점). 쓰는 곳은 재생 통계 CSV 폴더(RELAY_STATS_DIR) 하나뿐이다.
+ReadOnlyPaths=/var/lib/frame-relay
+ReadWritePaths=-/var/lib/frame-relay/stats
+
+[Install]
+WantedBy=multi-user.target

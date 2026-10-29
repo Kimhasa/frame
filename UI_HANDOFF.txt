@@ -1,3 +1,6 @@
+2026-10-28 최신 변경 안내
+CLAUDE_PHASE1_INSTRUCTIONS.txt가 최신 구현 범위다. 데스크톱 UI를 보존하면서 모바일 반응형·터치·실제 자동 화질 표시와 제품 환경 문구 제거를 허용한다. 현재 0.5.1 검사는 tools/verify-ui-v051.mjs이고 새 허용 변경은 별도 기준으로 검증한다. 아래의 과거 작업 당시 미구현 설명은 현재 소스·verification/REPORT.md와 대조하고 완료 기능을 다시 만들지 않는다.
+
 FRAME Console UI 0.5 인계
 
 사용자 요청에 따라 UI는 Codex에서 수정했고 실제 캡처·송출·수신 서버 기능은 Claude가 이어서 구현한다. 이번에 변경한 UI가 새 기준이다. 기존 native/ C++ 소스, deps/, 실행 중인 영상 서버와 기존 배포 exe는 이 UI 작업에서 변경하지 않았다. 새 UI를 넣은 exe 빌드와 배포는 Claude의 남은 작업이다.

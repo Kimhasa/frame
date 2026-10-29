@@ -1,0 +1,46 @@
+{
+  "version": "0.6",
+  "base": "UI_V05_LOCK.json and UI_V051_ADDENDUM.json (both unchanged)",
+  "request": "CLAUDE_PHASE1_INSTRUCTIONS.txt (UI 보존과 허용 변경, 3. 모바일 시청 대응, 5. 환경 문구 정리); FEATURE_BACKLOG.csv NET-12, MOB-03, MOB-04, MOB-05, MOB-06, MOB-08, MOB-10",
+  "note": "Allowed UI exception for mobile and tablet viewing and the removed environment badge. UI_V05_LOCK.json and UI_V051_ADDENDUM.json are not modified; tools/verify-ui-v06.mjs proves the page equals the recorded 0.5.1 markup once the mobile stylesheet is removed and the template edits are reverted. tools/verify-ui-v051.mjs now fails by design (template and page differ from 0.5.1 by these recorded changes).",
+  "template": {
+    "path": "work/console-template.html",
+    "lockedSha256": "774be094c1037c286c7b29c14459ca9b92c995f852f85f52c8eb28e36863255b",
+    "sha256": "1a08f17bf2db19494b8d133dfac9f17c6f680b9311cdb2e5d4e453f612fe7440",
+    "edits": [
+      {
+        "reason": "Safe areas: env(safe-area-inset-*) needs viewport-fit=cover; width=device-width and initial-scale=1 are kept.",
+        "from": "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">",
+        "to": "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, viewport-fit=cover\">"
+      },
+      {
+        "reason": "NET-12: the header environment badge (globe icon + 내부망) is removed without leaving an empty badge, icon or divider.",
+        "from": "<span class=\"brand-subtitle\">Console</span>\n  <span class=\"environment\"><svg aria-hidden=\"true\"><use href=\"#i-globe\"/></svg>내부망</span>\n</header>",
+        "to": "<span class=\"brand-subtitle\">Console</span>\n</header>"
+      }
+    ]
+  },
+  "stylesheet": {
+    "path": "work/mobile-ui.css",
+    "sha256": "142bd1853973c47d43347e17660a1969ac6777882d18f385a55c56c4506d3166",
+    "scope": "Only these rules (checked by tools/verify-ui-v06.mjs): @media blocks for narrow windows, (max-width: N px) with N <= 800, any pointer (the FrameConsole app in a narrow window too); @media blocks with (pointer: coarse) in every query, where every selector (nested @container blocks included) starts with :root:not(.frame-native), so the app (WebView2, html.frame-native) on a Windows touch screen keeps the desktop UI; top-level rules for the html.volume-readonly script hook. A mouse window of 801 px or more matches nothing. Appended after work/player-ui.css by work/build-console.mjs; the 0.6.1 stylesheet follows it and is not part of this record (markupSha256 is the build with --without-0.6.1)."
+  },
+  "allowedDifferences": [
+    "Header: the environment badge (globe icon and 내부망) is removed without an empty badge, icon or divider (NET-12); the unused i-globe symbol stays in the icon definitions because UI_V05_LOCK.json lists it.",
+    "Viewport meta adds viewport-fit=cover so env(safe-area-inset-*) applies; width=device-width and initial-scale=1 are kept.",
+    "Touch screens (pointer: coarse, not the FrameConsole app): about 44 px hit boxes for navigation, toolbar, player buttons, sliders (a 44 px box around the unchanged track and thumb), quality options, chat and dialog buttons, with unchanged icons; 16 px text in fields (no iOS focus zoom); no double-tap zoom on the player; a disabled picture-in-picture button is hidden; the player bar adapts to the player width (labels at 600 px, the volume slider at 500 px, picture-in-picture at 340 px hide), so the fullscreen button stays inside the player.",
+    "Narrow windows (800 px or less, any pointer) and touch devices up to 1366 px: the info and chat buttons move from their own row into the right side of the top bar; dialogs keep header and buttons in the visible, safe-area height while the body scrolls; the v0.5 sidebar footer stays hidden in the phone tab bar; tab labels are no longer clipped; content and top bar respect safe-area insets.",
+    "Touch tablets (801 to 1366 px) and landscape phones: the 0.5 compact rail (72 px icon sidebar of the expanded view) replaces the 220 px sidebar.",
+    "Narrow windows and touch portrait: the player stacked over the chat in the visible height (--frame-visual-height from visualViewport, else 100dvh); the player is 16:9 from 427 px width and 240 px tall below it (picture letterboxed), and lower only where the chat would drop under its minimum height (short window, on-screen keyboard), so the message box and send button stay on screen. Touch landscape (landscape phones of 800 px or less included): the player fills the visible height beside a chat column, also in the expanded view. The picture is always fitted whole (object-fit: contain) and the frame does not move when the controls show or hide. Touch phones: send button beside the message box; landscape phones: 48 px top bar.",
+    "Touch screens with little visible height (on-screen keyboard): below 340 px of viewer workspace the chat minimum height drops to 150 px, below 200 px to 100 px and the chat header gives way (the top-bar chat button still closes the chat); the player controls give way where they no longer fit in the player (portrait below 290 px, landscape below 140 px of workspace) and return when the keyboard closes.",
+    "Script hooks (set by work/console-ux.js): html.volume-readonly hides the volume slider and keeps the mute button where video.volume cannot change (iOS); #viewer-fullscreen gets the hidden attribute where no fullscreen API exists.",
+    "Mouse windows of 801 px or more are unchanged: pixel-identical to the build without 0.6 apart from the removed badge (verification/mobile/results.json, desktopCompare: 801, 1000, 1100, 1440 px and the app on a touch screen)."
+  ],
+  "markupSha256": "7c5c8487e6cd1787d07eede99db2a0f850f7af6057341352b800540466e3ee44",
+  "changes": [
+    {
+      "date": "2026-10-28",
+      "note": "Checker defects 1-7 fixed: landscape phones of 800 px or less (667x375, 780x360) use the side-by-side touch-landscape viewer instead of the stacked one, so the expanded view with chat keeps its controls; the stacked viewer is a flex column whose player shrinks before the chat drops under its minimum (800x700 mouse, 320x568), with low-height rules for the on-screen keyboard; player bar thresholds 600/500/340 px; description of the 240 px minimum corrected; every touch rule scoped to :root:not(.frame-native); stylesheet scope recorded as the real rules (narrow = 800 px or less). Hashes re-recorded for work/mobile-ui.css and the markup of the build without 0.6.1. Template unchanged."
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "version": "3.2",
+  "date": "2026-10-29",
+  "settingsSections": 5,
+  "focusedArtboards": 10,
+  "captures": 13,
+  "syntaxModules": [
+    "design-v32-runtime.js",
+    "design-v32-settings.js"
+  ],
+  "responsiveChecks": 56,
+  "profileLayoutChecks": 3,
+  "functionalChecks": 14,
+  "stateRenderChecks": 150,
+  "issues": [],
+  "navigation": {
+    "back": {
+      "screen": "security",
+      "section": "보안 및 기기",
+      "selected": "보안 및 기기"
+    },
+    "forward": {
+      "screen": "preferences",
+      "section": "알림",
+      "selected": "알림"
+    }
+  },
+  "modalHistory": {
+    "contextCleared": true,
+    "dialogClosed": true,
+    "screen": "security",
+    "section": "보안 및 기기"
+  },
+  "browserEvents": [],
+  "originalChecks": [
+    {
+      "file": "work/console-template.html",
+      "unchanged": true
+    },
+    {
+      "file": "work/console.css",
+      "unchanged": true
+    },
+    {
+      "file": "work/ux.css",
+      "unchanged": true
+    },
+    {
+      "file": "work/components.css",
+      "unchanged": true
+    },
+    {
+      "file": "work/console-ui.css",
+      "unchanged": true
+    },
+    {
+      "file": "work/player-ui.css",
+      "unchanged": true
+    },
+    {
+      "file": "work/mobile-ui.css",
+      "unchanged": true
+    },
+    {
+      "file": "work/console-ux.js",
+      "unchanged": true
+    }
+  ],
+  "protectedChecks": [
+    {
+      "file": "preserved-player.js",
+      "unchanged": true
+    },
+    {
+      "file": "preserved-player.css",
+      "unchanged": true
+    },
+    {
+      "file": "preserved-player-data.js",
+      "unchanged": true
+    },
+    {
+      "file": "design-data.js",
+      "unchanged": true
+    }
+  ],
+  "scope": "Local UI prototype. No actual OAuth, email change, remote session revocation, browser permission request, streaming or media-quality changes. Viewport tests are browser-based."
+}

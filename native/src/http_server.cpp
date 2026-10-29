@@ -17,7 +17,13 @@ namespace fc {
 
 namespace {
 
-constexpr int kMaxConnections = 400;  // chat WebSockets stay open for the whole viewing session
+// Connection threads in total (each long-lived chat WebSocket keeps one) and concurrently handled ordinary requests
+// (pages, info, WHEP, DVR chunks). Past either limit a request gets 503 with Retry-After instead of a dropped socket;
+// the chat hub has its own limit. Threads use a small stack so a few thousand idle sockets stay cheap.
+constexpr int kMaxThreads = 2600;
+constexpr int kMaxRequests = 400;
+constexpr SIZE_T kThreadStack = 256 * 1024;
+constexpr size_t kMaxPath = 512;  // std::regex recursion depth grows with the input
 constexpr size_t kMaxHeader = 16 * 1024;
 constexpr size_t kMaxBody = 64 * 1024;
 
@@ -198,32 +204,104 @@ void HttpServer::AcceptLoop() {
       Sleep(10);
       continue;
     }
-    if (active_ >= kMaxConnections) {
+    DWORD timeout = 20000;
+    setsockopt(client, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<const char*>(&timeout), sizeof(timeout));
+    setsockopt(client, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<const char*>(&timeout), sizeof(timeout));
+    if (active_ >= kMaxThreads) {
+      ++refused_;
+      Respond(client, 503, "text/plain; charset=utf-8", "Busy", {{"Retry-After", "2"}, {"Cache-Control", "no-store"}});
+      shutdown(client, SD_BOTH);
       closesocket(client);
       continue;
     }
     char ip[INET_ADDRSTRLEN] = {};
     inet_ntop(AF_INET, &peer.sin_addr, ip, sizeof(ip));
-    DWORD timeout = 20000;
-    setsockopt(client, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<const char*>(&timeout), sizeof(timeout));
-    setsockopt(client, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<const char*>(&timeout), sizeof(timeout));
     ++active_;
-    std::thread([this, client, address = std::string(ip)] {
-      try {
-        Handle(client, address);
-      } catch (...) {
-      }
+    auto* job = new Connection{this, client, ip};
+    HANDLE thread = CreateThread(nullptr, kThreadStack, &HttpServer::ConnectionThread, job, STACK_SIZE_PARAM_IS_A_RESERVATION, nullptr);
+    if (thread) {
+      CloseHandle(thread);
+    } else {
+      delete job;
+      --active_;
+      Respond(client, 503, "text/plain; charset=utf-8", "Busy", {{"Retry-After", "2"}, {"Cache-Control", "no-store"}});
       shutdown(client, SD_BOTH);
       closesocket(client);
-      --active_;
-    }).detach();
+    }
   }
 }
 
+DWORD WINAPI HttpServer::ConnectionThread(void* param) {
+  std::unique_ptr<Connection> job(static_cast<Connection*>(param));
+  try {
+    job->server->Handle(job->socket, job->peer);
+  } catch (...) {
+  }
+  shutdown(job->socket, SD_BOTH);
+  closesocket(job->socket);
+  --job->server->active_;
+  return 0;
+}
+
+json HttpServer::Stats() const {
+  return {{"threads", active_.load()}, {"requests", requests_.load()}, {"refused", refused_.load()}};
+}
+
+// Playback quality reported by viewers (operations: which transport and quality they really get, frame rate, loss,
+// freezes, automatic quality switches and errors). One CSV line per report in data\logs\viewer-stats-<date>.csv; no IP
+// address or identity is stored (the session id is random per page load). At most one line per address every 4 s and
+// 50 MB per file, so a misbehaving client cannot fill the disk.
+void HttpServer::RecordViewerStats(const std::string& path, const std::string& body, const std::string& peer) {
+  json j = json::parse(body, nullptr, false);
+  if (!j.is_object()) return;
+  int64_t now = EpochMillis();
+  std::lock_guard<std::mutex> lock(statsMutex_);
+  int64_t& last = statsLast_[peer];
+  if (now - last < 4000) return;
+  last = now;
+  if (statsLast_.size() > 5000) statsLast_.clear();
+  auto text = [&](const char* key, size_t max) {
+    std::string v = j.contains(key) && j[key].is_string() ? j[key].get<std::string>() : std::string();
+    v.erase(std::remove_if(v.begin(), v.end(), [](char c) { return c == ',' || c == '\n' || c == '\r' || c == '"'; }), v.end());
+    return v.substr(0, max);
+  };
+  auto number = [&](const char* key) { return j.contains(key) && j[key].is_number() ? Printf("%.3f", j[key].get<double>()) : std::string(); };
+  SYSTEMTIME t;
+  GetLocalTime(&t);
+  fs::path file = LogDir() / Wide(Printf("viewer-stats-%04u%02u%02u.csv", t.wYear, t.wMonth, t.wDay));
+  std::error_code ec;
+  bool fresh = !fs::exists(file, ec);
+  if (!fresh && fs::file_size(file, ec) > 50ull * 1024 * 1024) return;
+  std::ofstream out(file, std::ios::binary | std::ios::app);
+  if (fresh) out << "time,path,session,broadcast,transport,mode,quality,height,fps,loss_pct,jitter_ms,freezes,mbps,abr_switches,last_switch,event,device\n";
+  out << ClockText() << "," << path << "," << text("sid", 16) << "," << text("broadcast", 32) << "," << text("transport", 8) << "," << text("mode", 8) << ","
+      << text("quality", 12) << "," << number("height") << "," << number("fps") << "," << number("lossPct") << "," << number("jitterMs") << ","
+      << number("freezes") << "," << number("mbps") << "," << number("abrSwitches") << "," << text("lastSwitch", 80) << "," << text("event", 80) << ","
+      << text("device", 8) << "\n";
+}
+
 void HttpServer::Handle(SOCKET client, std::string peer) {
+  // Ordinary requests are counted while they are handled; a chat WebSocket leaves this count when it upgrades.
+  struct RequestSlot {
+    std::atomic<int>& count;
+    bool held = true;
+    explicit RequestSlot(std::atomic<int>& c) : count(c) { ++count; }
+    void Release() { if (held) --count, held = false; }
+    ~RequestSlot() { Release(); }
+  } slot(requests_);
   Request req;
   if (!RecvRequest(client, req)) {
     Respond(client, 400, "text/plain; charset=utf-8", "Bad request");
+    return;
+  }
+  if (req.path.size() > kMaxPath) {
+    Respond(client, 404, "text/plain; charset=utf-8", "Not found");
+    return;
+  }
+  bool websocket = req.headers.count("upgrade") != 0;
+  if (!websocket && requests_ > kMaxRequests) {
+    ++refused_;
+    Respond(client, 503, "text/plain; charset=utf-8", "Busy", {{"Retry-After", "1"}, {"Cache-Control", "no-store"}});
     return;
   }
   // /<stream>[/<quality>]/whep[/<session>] and /<stream>[/<quality>]/info; nothing else reaches MediaMTX.
@@ -302,6 +380,25 @@ void HttpServer::Handle(SOCKET client, std::string peer) {
     else Respond(client, 204, "", "");
     return;
   }
+  if (req.path == "/api/stats" && (req.method == "GET" || head)) {
+    // Read-only load counters for operations and load tests: media server paths/readers/bytes, viewer-server threads and
+    // refusals, chat connections. Aggregates only; nothing here identifies a viewer or changes anything.
+    json out = streamer_.ServerStats();
+    out["http"] = Stats();
+    out["chat"] = chat_.Stats();
+    Respond(client, 200, "application/json; charset=utf-8", out.dump(), noStore, head);
+    return;
+  }
+  static const std::regex stats(R"(^/([a-zA-Z0-9][a-zA-Z0-9_-]{0,63})/stats$)");
+  if (std::regex_match(req.path, m, stats)) {
+    if (req.method != "POST" || req.body.size() > 2048) {
+      Respond(client, 405, "text/plain; charset=utf-8", "Method not allowed");
+      return;
+    }
+    RecordViewerStats(m[1].str(), req.body, peer);
+    Respond(client, 204, "", "");
+    return;
+  }
   if (req.method != "GET" && !head) {
     Respond(client, 405, "text/plain; charset=utf-8", "Method not allowed");
     return;
@@ -330,6 +427,7 @@ void HttpServer::Handle(SOCKET client, std::string peer) {
       Respond(client, 404, "text/plain; charset=utf-8", "Stream is not running", noStore);
       return;
     }
+    slot.Release();
     chat_.Serve(client, key->second, peer);
     return;
   }
@@ -361,6 +459,56 @@ void HttpServer::Handle(SOCKET client, std::string peer) {
   static const std::regex dvrMedia(R"(^/([a-zA-Z0-9][a-zA-Z0-9_-]{0,63})/dvr/media$)");
   if (std::regex_match(req.path, m, dvrIndex)) {
     Respond(client, 200, "application/json; charset=utf-8", streamer_.DvrIndex(m[1].str()).dump(), noStore, head);
+    return;
+  }
+  // Low-latency HLS of the running stream (or one of its qualities) from the loopback MediaMTX: the fallback for viewers
+  // whose browser or network cannot use WebRTC. Playlists and fMP4 parts only; blocking playlist reloads pass through.
+  static const std::regex hls(R"(^/([a-zA-Z0-9][a-zA-Z0-9_-]{0,63})(/(?:240|360|480|720|1080|1440)p)?/hls/([A-Za-z0-9_][A-Za-z0-9_.-]{0,79})$)");
+  if (std::regex_match(req.path, m, hls)) {
+    std::string stream = m[1].str() + m[2].str(), file = m[3].str();
+    int port = streamer_.HlsPort();
+    if (!port || !streamer_.KnownStreamPath(stream)) {
+      Respond(client, 404, "text/plain; charset=utf-8", "Stream is not running", noStore, head);
+      return;
+    }
+    // MediaMTX first redirects to ?cookieCheck=1 (a browser cookie test); the forwarded request carries that answer.
+    std::string query = "?cookieCheck=1";
+    for (const char* name : {"_HLS_msn", "_HLS_part", "_HLS_skip"}) {
+      std::string value = QueryValue(req.query, name);
+      if (!value.empty() && value.size() < 16 && value.find_first_not_of("0123456789YESvy") == std::string::npos) query += "&" + std::string(name) + "=" + value;
+    }
+    std::string session = QueryValue(req.query, "session");  // MediaMTX ties a reader to its HLS session id
+    if (!session.empty() && session.size() <= 64 && session.find_first_not_of("0123456789abcdefABCDEF-") == std::string::npos) query += "&session=" + session;
+    bool started = false, clientGone = false;
+    int upstreamStatus = 0;
+    std::string upstreamError;
+    bool ok = HttpStream(
+        port, "/" + stream + "/" + file + query, {},
+        [&](const HttpResponse& r) {
+          upstreamStatus = r.status;
+          if (r.status != 200) return false;
+          auto type = r.headers.find("content-type");
+          std::ostringstream out;
+          out << "HTTP/1.1 200 OK\r\nContent-Type: " << (type == r.headers.end() ? "application/octet-stream" : type->second)
+              << "\r\nCache-Control: no-store\r\nConnection: close\r\n" << (head ? "" : "Transfer-Encoding: chunked\r\n")
+              << "X-Content-Type-Options: nosniff\r\nAccess-Control-Allow-Origin: *\r\n\r\n";
+          started = true;
+          clientGone = !SendAll(client, out.str());
+          return !head && !clientGone;
+        },
+        [&](const char* data, size_t size) {
+          clientGone = !SendAll(client, Printf("%zx\r\n", size)) || !SendAll(client, data, size) || !SendAll(client, "\r\n", 2);
+          return !clientGone;
+        },
+        30000, &upstreamError);
+    if (started && !head && ok) {
+      SendAll(client, "0\r\n\r\n", 5);
+    } else if (started && !head) {
+      linger abort{1, 0};
+      setsockopt(client, SOL_SOCKET, SO_LINGER, reinterpret_cast<const char*>(&abort), sizeof(abort));
+    } else if (!started) {
+      Respond(client, upstreamStatus == 404 ? 404 : 502, "text/plain; charset=utf-8", upstreamStatus == 404 ? "Not found" : "Upstream error", noStore, head);
+    }
     return;
   }
   if (std::regex_match(req.path, m, dvrMedia)) {

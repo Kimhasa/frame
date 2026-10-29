@@ -1,0 +1,29 @@
+{
+  "prototype": [
+    "metadata-desktop.jpg",
+    "navigation-desktop.jpg",
+    "navigation-mobile.jpg",
+    "channel-editor-desktop.jpg",
+    "channel-editor-mobile-bottom.jpg",
+    "channel-public-desktop.jpg",
+    "studio-desktop.jpg",
+    "broadcast-settings-desktop.jpg"
+  ],
+  "reference": [
+    "chzzk-01-live-list.jpg",
+    "chzzk-08-video-list.jpg",
+    "chzzk-34-categories-loaded.jpg",
+    "chzzk-36-popular-clips-loaded.jpg",
+    "chzzk-37-schedule-loaded.jpg",
+    "twitch-15-public-channel-videos-empty.png",
+    "twitch-16-public-channel-clips-empty.png",
+    "twitch-17-public-channel-clips-all-empty.png",
+    "twitch-18-public-channel-schedule.png",
+    "twitch-19-public-channel-about.png"
+  ],
+  "privateScreenshotsCopied": 0,
+  "captureCounts": {
+    "chzzk": 53,
+    "twitch": 19
+  }
+}

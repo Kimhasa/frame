@@ -1,0 +1,400 @@
+{
+  "version": "3.3",
+  "date": "2026-10-29",
+  "scope": "account_and_studio_design_only",
+  "screenCount": 13,
+  "definedStateCount": 36,
+  "ownedFiles": [
+    "dist/design-v33-account-studio.js",
+    "dist/design-v33-account-studio.css"
+  ],
+  "nodeChecks": [
+    "node --check design-v33-account-studio.js",
+    "Media function identities unchanged",
+    "Manual viewer-port validation and local loading flow",
+    "Cancellation token prevents delayed navigation",
+    "Stylesheet brace balance"
+  ],
+  "browserVerification": "13 representative screen flows verified through a dedicated Chrome CUA tab; see account-studio-browser-flows.json. Root full state/width scan is separate.",
+  "protectedBoundaries": [
+    "F.watch unchanged",
+    "F.wirePlayer unchanged",
+    "Preserved player/source preview content unchanged",
+    "Broadcast resolution/FPS/bitrate UI options and values not redesigned",
+    "Actual app, authentication, security, network and capture untouched"
+  ],
+  "screens": [
+    {
+      "screen": "login",
+      "internalViews": [
+        "로그인 방법",
+        "이메일",
+        "제공자 계정 확인"
+      ],
+      "issuesFixed": [
+        "동의 필요 상태에 체크박스와 미동의 버튼 비활성화 추가",
+        "이메일·비밀번호 오류를 입력값을 지우지 않고 인라인 표시하고 첫 오류로 초점 이동",
+        "이메일 초안을 재렌더링 시 유지하고 비밀번호는 별도 상태에 저장하지 않음"
+      ],
+      "meaningfulFlows": [
+        "필수 동의 → 로그인 방법 선택",
+        "이메일 누락/형식 오류 → 수정 → 기존 로컬 로그인 흐름",
+        "로그인 후 authReturn 목적지 복귀"
+      ],
+      "remainingLimitations": [
+        "실제 OAuth·비밀번호 인증·서버 동의 기록 없음",
+        "제공자 계정 확인은 기존 로컬 시안 흐름"
+      ],
+      "states": [
+        "기본",
+        "연동 실패",
+        "동의 필요"
+      ],
+      "reviewMethod": "source_review_and_node_handler_smoke",
+      "browserVerification": "representative_flow_passed"
+    },
+    {
+      "screen": "profile",
+      "internalViews": [
+        "프로필"
+      ],
+      "issuesFixed": [
+        "기존 v32 입력·저장/취소·사용자 ID aria 오류·초점 복원 구조를 유지하고 회귀 범위로 검토"
+      ],
+      "meaningfulFlows": [
+        "닉네임 오류 → 입력 수정 → 저장",
+        "사용자 ID 제약 안내 → 오류 수정",
+        "사진 변경/취소와 프로필 초안 유지"
+      ],
+      "remainingLimitations": [
+        "중복 닉네임 확인·이미지 검증·서버 프로필 저장 없음"
+      ],
+      "states": [
+        "기본",
+        "닉네임 오류"
+      ],
+      "reviewMethod": "source_review_and_node_handler_smoke",
+      "browserVerification": "representative_flow_passed"
+    },
+    {
+      "screen": "security",
+      "internalViews": [
+        "계정 연결",
+        "보안 및 기기"
+      ],
+      "issuesFixed": [
+        "재인증 필요 안내에 다시 로그인 CTA 추가",
+        "잘못된 새 이메일을 확인 모달 안에서 설명하고 초점 이동",
+        "v32 현재 기기/다른 기기 없음/일괄 로그아웃 disabled 상태 유지"
+      ],
+      "meaningfulFlows": [
+        "재인증 필요 → 로그인 → 보안 화면 복귀",
+        "이메일 입력 오류 → 수정 → 기존 확인 모달 종료",
+        "다른 기기 제거 → 현재 기기만 남을 때 일괄 동작 비활성화"
+      ],
+      "remainingLimitations": [
+        "실제 재인증·2단계 인증·세션 폐기 없음",
+        "네이버 연결 확인 후 provider 연결 상태는 저장되지 않음",
+        "이메일 변경은 확인까지만 수행하며 이메일 상태를 저장하지 않음"
+      ],
+      "states": [
+        "기본",
+        "재인증 필요"
+      ],
+      "reviewMethod": "source_review_and_node_handler_smoke",
+      "browserVerification": "representative_flow_passed"
+    },
+    {
+      "screen": "preferences",
+      "internalViews": [
+        "알림",
+        "재생",
+        "접근성"
+      ],
+      "issuesFixed": [
+        "기존 v32 알림 차단 안내와 즉시 반영 토글/44px 터치 영역을 유지하고 상태별 회귀 범위로 검토"
+      ],
+      "meaningfulFlows": [
+        "알림 차단 → 설정 방법 안내 → 원래 알림 상태 복귀",
+        "즉시 적용 토글 및 행 클릭",
+        "가로 설정 메뉴 키보드/선택 초점 유지"
+      ],
+      "remainingLimitations": [
+        "OS 알림 권한 요청·브라우저 실제 권한 변경·사용자 설정 API 없음"
+      ],
+      "states": [
+        "기본",
+        "알림 차단"
+      ],
+      "reviewMethod": "source_review_and_node_handler_smoke",
+      "browserVerification": "representative_flow_passed"
+    },
+    {
+      "screen": "channel-edit",
+      "internalViews": [
+        "기본 정보",
+        "브랜딩",
+        "권한",
+        "읽기 전용 역할"
+      ],
+      "issuesFixed": [
+        "저장 오류 프리셋에서 기존 초안을 재시도할 수 있게 저장 상태 활성화",
+        "채널 주소 오류에 aria-invalid/오류 연결 추가",
+        "브랜딩 저장 시 숨은 기본 정보가 잘못되면 기본 정보 탭으로 안내하고 초점 이동",
+        "입력 수정 시 남은 오류 표시 제거",
+        "저장/취소 후 안정적인 제목 초점 복원",
+        "실제 브라우저 재검수: 빈 멤버 입력 인라인 오류·초점 및 수정 시 오류 제거"
+      ],
+      "meaningfulFlows": [
+        "기본 정보/브랜딩 초안 → 저장 또는 취소",
+        "채널 이름/주소 누락 → 기본 정보 탭 수정",
+        "소유자·관리자·채팅 운영자 역할별 수정 가능/읽기 전용",
+        "멤버 추가·역할 선택·제거의 기존 로컬 흐름"
+      ],
+      "remainingLimitations": [
+        "실제 채널 API·서버 권한 검사·멤버 초대 전송 없음"
+      ],
+      "states": [
+        "기본",
+        "저장 오류"
+      ],
+      "reviewMethod": "source_review_and_node_handler_smoke",
+      "browserVerification": "representative_flow_passed"
+    },
+    {
+      "screen": "studio",
+      "internalViews": [
+        "방송 준비",
+        "방송 중",
+        "채팅 열림/닫힘"
+      ],
+      "issuesFixed": [
+        "방송 전/방송 중 명시 상태와 로컬 broadcasting 플래그를 맞춰 이전 상태가 새 화면에 남는 문제 보완",
+        "기존 제목 검증·선택 화면·채팅 동작을 유지하며 재검토",
+        "실제 브라우저 재검수: 오류 설명이 붙어도 방송 제목 접근가능 이름을 고정"
+      ],
+      "meaningfulFlows": [
+        "제목 누락 → 제목 입력 → 기존 방송 시작 흐름",
+        "방송 중 정보 수정 → 저장/취소",
+        "화면 연결 끊김 → 공유 화면 선택",
+        "방송 연결 실패 → 연결 설정"
+      ],
+      "remainingLimitations": [
+        "실제 캡처·송출 시작/종료·채팅 서버 없음",
+        "방송 상태의 프레임·비트레이트는 시안 예시이며 실측값이 아님"
+      ],
+      "states": [
+        "방송 전",
+        "방송 중",
+        "화면 연결 끊김",
+        "방송 연결 실패"
+      ],
+      "reviewMethod": "source_review_and_node_handler_smoke",
+      "browserVerification": "representative_flow_passed"
+    },
+    {
+      "screen": "sources",
+      "internalViews": [
+        "프로그램 창",
+        "전체 화면"
+      ],
+      "issuesFixed": [
+        "창 닫힘 상태의 대상 선택을 비활성화",
+        "현재 탭에 유효한 선택이 없으면 선택 확정 비활성화",
+        "로딩 미리보기의 aria-busy/status 추가",
+        "가로 소스 탭 키보드 전환 후 모달 안에서 초점 복원"
+      ],
+      "meaningfulFlows": [
+        "프로그램 창 ↔ 전체 화면 → 유효한 대상 선택 → 확정",
+        "닫힌 대상에서 다른 대상 선택",
+        "로딩/응답 지연 → 기존 다시 시도 또는 새로고침",
+        "대상 없음 → 새로고침/취소"
+      ],
+      "remainingLimitations": [
+        "실제 창·모니터 열거·미리보기 캡처가 아닌 예시 SVG",
+        "미리보기 응답 지연만으로 창을 무조건 비활성화하지 않음",
+        "원본 미리보기 영상 내용은 변경하지 않음"
+      ],
+      "states": [
+        "프로그램 창",
+        "전체 화면",
+        "불러오는 중",
+        "응답 지연",
+        "창 닫힘",
+        "대상 없음"
+      ],
+      "reviewMethod": "source_review_and_node_handler_smoke",
+      "browserVerification": "representative_flow_passed"
+    },
+    {
+      "screen": "broadcast-settings",
+      "internalViews": [
+        "영상",
+        "오디오",
+        "고급 설정",
+        "녹화"
+      ],
+      "issuesFixed": [
+        "익명 토글에 비트레이트 자동 설정/방송 녹화의 접근성 이름 추가",
+        "지원 범위 오류의 기존 설명을 aria-invalid/aria-describedby와 연결",
+        "수동 비트레이트의 빈 값·NaN이 기존 범위 검사를 통과하지 않도록 제출 전 보완"
+      ],
+      "meaningfulFlows": [
+        "기본/수동/지원 범위 오류 상태의 기존 UI 유지",
+        "수동 비트레이트 잘못된 입력 → 기존 필드에서 수정",
+        "녹화·자동 설정 토글의 접근성 이름 확인"
+      ],
+      "remainingLimitations": [
+        "해상도/FPS/비트레이트 옵션·값·기존 자동 계산 및 원본 동작 모델은 변경하지 않음",
+        "실제 인코더 적용·성능·지원 장비 검사 없음"
+      ],
+      "states": [
+        "기본",
+        "수동 비트레이트",
+        "지원 범위 오류"
+      ],
+      "reviewMethod": "source_review_and_node_handler_smoke",
+      "browserVerification": "representative_flow_passed"
+    },
+    {
+      "screen": "connection",
+      "internalViews": [
+        "기본",
+        "형식 확인 중",
+        "실패"
+      ],
+      "issuesFixed": [
+        "서버 주소·정수 포트·스트림 ID의 인라인 검증 추가",
+        "상태 재렌더링 시 입력 초안 유지",
+        "형식 확인 중 중복 확인/저장 비활성화와 aria 상태 추가",
+        "유효한 입력의 로컬 확인 흐름 및 닫기 후 타이머 가드",
+        "저장 시 로컬 초안 유지, 취소 시 마지막 저장 값으로 복원"
+      ],
+      "meaningfulFlows": [
+        "잘못된 주소/포트 → 첫 오류 초점 → 수정",
+        "연결 확인 → 로컬 로딩 → 입력 형식 확인",
+        "저장/취소 → 원래 스튜디오 문맥 복귀",
+        "확인 중 닫기 → 이후 자동 이동 없음"
+      ],
+      "remainingLimitations": [
+        "650ms 전환은 로컬 시안이며 서버 연결 시험이 아님",
+        "실제 DNS·포트·인증·네트워크 연결 없음"
+      ],
+      "states": [
+        "기본",
+        "연결 확인 중",
+        "연결 실패"
+      ],
+      "reviewMethod": "source_review_and_node_handler_smoke",
+      "browserVerification": "representative_flow_passed"
+    },
+    {
+      "screen": "broadcast-details",
+      "internalViews": [
+        "수정",
+        "제목 오류"
+      ],
+      "issuesFixed": [
+        "입력 오류 프리셋을 빈 제목의 별도 모달 초안으로 실제 표현",
+        "X/취소/배경 닫기에서 모달 초안을 폐기하여 재진입 시 취소 내용이 남지 않게 보완",
+        "오류 후에도 방송 제목·태그 입력의 접근가능 이름 고정"
+      ],
+      "meaningfulFlows": [
+        "방송 정보 열기 → 제목 수정 → 저장",
+        "제목 오류 → 수정 → 저장",
+        "수정 후 X/취소 → 다시 열면 저장된 방송 정보"
+      ],
+      "remainingLimitations": [
+        "방송 정보 서버 저장 없음",
+        "실제 송출 미디어는 변경하지 않음"
+      ],
+      "states": [
+        "기본",
+        "입력 오류"
+      ],
+      "reviewMethod": "source_review_and_node_handler_smoke",
+      "browserVerification": "representative_flow_passed"
+    },
+    {
+      "screen": "broadcast-end",
+      "internalViews": [
+        "종료 확인",
+        "종료 요약"
+      ],
+      "issuesFixed": [
+        "종료 확인에 대상 방송 제목을 명시",
+        "녹화 보관 체크의 로컬 선택을 유지하고 미보관 시 요약의 녹화 이동 안내 제거"
+      ],
+      "meaningfulFlows": [
+        "종료 확인 → 취소",
+        "보관 선택 → 기존 종료 요약",
+        "미보관 선택 → 녹화 파일이 있다고 오해시키는 CTA 생략"
+      ],
+      "remainingLimitations": [
+        "실제 방송 종료·녹화 파일 보관/삭제 없음",
+        "요약 수치는 디자인 예시"
+      ],
+      "states": [
+        "종료 확인",
+        "종료 요약"
+      ],
+      "reviewMethod": "source_review_and_node_handler_smoke",
+      "browserVerification": "representative_flow_passed"
+    },
+    {
+      "screen": "nickname",
+      "internalViews": [
+        "기본",
+        "입력 오류"
+      ],
+      "issuesFixed": [
+        "입력 오류 상태의 aria-invalid/오류 설명 연결",
+        "1~20자 검증 실패 시 값 보존과 첫 오류 초점 이동",
+        "입력 수정 시 추가 오류 설명 정리"
+      ],
+      "meaningfulFlows": [
+        "빈 닉네임 → 오류 → 수정 → 기존 저장/닫기",
+        "취소 → 기존 닉네임 유지"
+      ],
+      "remainingLimitations": [
+        "서버 닉네임 정책·금칙어·중복 검사 없음"
+      ],
+      "states": [
+        "기본",
+        "입력 오류"
+      ],
+      "reviewMethod": "source_review_and_node_handler_smoke",
+      "browserVerification": "representative_flow_passed"
+    },
+    {
+      "screen": "manual",
+      "internalViews": [
+        "기본",
+        "연결 중",
+        "연결 실패"
+      ],
+      "issuesFixed": [
+        "서버 주소·viewer-port·스트림 ID 인라인 검증",
+        "입력 초안 및 오류 재시도 상태 유지",
+        "연결 중 중복 연결 비활성화/aria 상태와 로컬 로딩 흐름 추가",
+        "닫기 시 지연 콜백이 시청 화면으로 보내지 않도록 가드"
+      ],
+      "meaningfulFlows": [
+        "직접 주소 입력 → 형식 검증 → 로컬 로딩 → 시청 화면",
+        "연결 실패 → 입력 수정 → 재시도",
+        "연결 중 취소 → 원래 화면 유지"
+      ],
+      "remainingLimitations": [
+        "실제 다른 IP·네트워크 접속 시험 없음",
+        "시청 화면 이동은 로컬 시안 동작"
+      ],
+      "states": [
+        "기본",
+        "연결 중",
+        "연결 실패"
+      ],
+      "reviewMethod": "source_review_and_node_handler_smoke",
+      "browserVerification": "representative_flow_passed"
+    }
+  ]
+}

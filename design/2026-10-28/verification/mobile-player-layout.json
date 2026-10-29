@@ -1,0 +1,146 @@
+[
+  {
+    "screen": "watch",
+    "state": "기본",
+    "sendBottom": 831.3333740234375,
+    "viewport": 844,
+    "visible": true,
+    "playerWidth": 390,
+    "playerHeight": 219.375
+  },
+  {
+    "screen": "watch",
+    "state": "일시정지",
+    "sendBottom": 831.3333740234375,
+    "viewport": 844,
+    "visible": true,
+    "playerWidth": 390,
+    "playerHeight": 219.375
+  },
+  {
+    "screen": "watch",
+    "state": "지난 구간",
+    "sendBottom": 831.3333740234375,
+    "viewport": 844,
+    "visible": true,
+    "playerWidth": 390,
+    "playerHeight": 219.375
+  },
+  {
+    "screen": "watch",
+    "state": "재연결 중",
+    "sendBottom": 831.3333740234375,
+    "viewport": 844,
+    "visible": true,
+    "playerWidth": 390,
+    "playerHeight": 219.375
+  },
+  {
+    "screen": "watch",
+    "state": "방송 종료",
+    "sendBottom": 831.3333740234375,
+    "viewport": 844,
+    "visible": true,
+    "playerWidth": 390,
+    "playerHeight": 219.375
+  },
+  {
+    "screen": "watch",
+    "state": "재생 실패",
+    "sendBottom": 831.3333740234375,
+    "viewport": 844,
+    "visible": true,
+    "playerWidth": 390,
+    "playerHeight": 219.375
+  },
+  {
+    "screen": "watch",
+    "state": "접속자 많음",
+    "sendBottom": 831.3333740234375,
+    "viewport": 844,
+    "visible": true,
+    "playerWidth": 390,
+    "playerHeight": 219.375
+  },
+  {
+    "screen": "watch",
+    "state": "소리 켜기",
+    "sendBottom": 831.3333740234375,
+    "viewport": 844,
+    "visible": true,
+    "playerWidth": 390,
+    "playerHeight": 219.375
+  },
+  {
+    "screen": "vod-watch",
+    "state": "기본",
+    "sendBottom": 831.3333740234375,
+    "viewport": 844,
+    "visible": true,
+    "playerWidth": 390,
+    "playerHeight": 219.375
+  },
+  {
+    "screen": "vod-watch",
+    "state": "재생 실패",
+    "sendBottom": 831.3333740234375,
+    "viewport": 844,
+    "visible": true,
+    "playerWidth": 390,
+    "playerHeight": 219.375
+  },
+  {
+    "screen": "vod-watch",
+    "state": "삭제된 영상",
+    "sendBottom": 831.3333740234375,
+    "viewport": 844,
+    "visible": true,
+    "playerWidth": 390,
+    "playerHeight": 219.375
+  },
+  {
+    "screen": "clip-watch",
+    "state": "기본",
+    "sendBottom": 831.3333740234375,
+    "viewport": 844,
+    "visible": true,
+    "playerWidth": 390,
+    "playerHeight": 219.375
+  },
+  {
+    "screen": "clip-watch",
+    "state": "삭제된 영상",
+    "sendBottom": 831.3333740234375,
+    "viewport": 844,
+    "visible": true,
+    "playerWidth": 390,
+    "playerHeight": 219.375
+  },
+  {
+    "screen": "quality",
+    "state": "자동",
+    "sendBottom": 831.3333740234375,
+    "viewport": 844,
+    "visible": true,
+    "playerWidth": 390,
+    "playerHeight": 219.375
+  },
+  {
+    "screen": "quality",
+    "state": "수동",
+    "sendBottom": 831.3333740234375,
+    "viewport": 844,
+    "visible": true,
+    "playerWidth": 390,
+    "playerHeight": 219.375
+  },
+  {
+    "screen": "quality",
+    "state": "전환 중",
+    "sendBottom": 831.3333740234375,
+    "viewport": 844,
+    "visible": true,
+    "playerWidth": 390,
+    "playerHeight": 219.375
+  }
+]

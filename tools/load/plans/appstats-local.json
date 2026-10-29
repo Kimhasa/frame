@@ -1,0 +1,10 @@
+{
+  "name": "appstats-local",
+  "_comment": "The real-app code path on the standalone target: WHEP through the shim's app-like proxy (like http://<host>:8889/{stream}/whep), the shim's /api/stats (app statistics contract v 1) as the ONLY target statistics (MediaMTX API not used), quality mix source/720p. Reference rates, target session count, cleanup and the degraded-quality stop all come from /api/stats. Stage 75 is meant to exceed this PC's same-host target (~400 Mbit/s) so the degraded-below-min stop is exercised.",
+  "target": { "whep": "http://127.0.0.1:21888/{stream}/whep", "base": "http://127.0.0.1:21888", "useApi": false, "appStats": "http://127.0.0.1:21888/api/stats", "requireAppStats": true },
+  "stages": [1, 10, 25, 75],
+  "holdSec": 30,
+  "rampPerSec": 10,
+  "qualities": { "source": 0.7, "720p": 0.3 },
+  "limits": { "maxTrafficGB": 100, "abortOnDegraded": true, "minFullRate": 0.9 }
+}

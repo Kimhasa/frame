@@ -1,0 +1,9 @@
+{
+  "name": "chat-1000-local",
+  "_comment": "Standalone target (start it with --chat-limit 1000 --http-limit 1200 to check the client side, or with the default 300/400 to see the limit behaviour). Chat only, no media.",
+  "media": false,
+  "stages": [100, 300, 500, 1000],
+  "holdSec": 30,
+  "rampPerSec": 50,
+  "chat": { "fraction": 1, "senderFraction": 0.02, "messagesPerMinute": 6 }
+}

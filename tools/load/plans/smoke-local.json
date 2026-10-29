@@ -1,0 +1,12 @@
+{
+  "name": "smoke-local",
+  "_comment": "Standalone target (tools/load/target.mjs --record --renditions 720p,480p) on this PC: pass --target-state <dir>/state.json. Short holds, every feature on once: chat, DVR, a mid-session quality change of 20% of the viewers, and a separate browser phase with one desktop and one mobile-like page at stage 10.",
+  "stages": [1, 10],
+  "holdSec": 20,
+  "rampPerSec": 5,
+  "chat": { "fraction": 1, "senderFraction": 0.2, "messagesPerMinute": 12 },
+  "dvr": { "fraction": 0.2, "chunkMs": 4000, "intervalMs": 4000 },
+  "qualitySwitch": { "fraction": 0.2, "atSec": 6 },
+  "browser": { "count": 2, "profiles": ["desktop", "mobile"], "seconds": 10, "stages": [10], "mode": "separate" },
+  "limits": { "maxTrafficGB": 5 }
+}

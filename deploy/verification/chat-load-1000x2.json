@@ -1,0 +1,38 @@
+{
+  "at": "2026-10-28T02:54:12.367Z",
+  "node": "v24.22.1",
+  "definition": "one room, Node built-in WebSocket clients in one process on the same PC as the relay (loopback); no media",
+  "clients": 1000,
+  "joined": 1000,
+  "rampSeconds": 5.9,
+  "connectErrors": 0,
+  "joinRefused": 0,
+  "messages": {
+    "senders": 2,
+    "perSender": 5,
+    "sent": 10,
+    "expectedDeliveries": 10000,
+    "delivered": 10000,
+    "durationS": 12.7
+  },
+  "deliveryMs": {
+    "p50": 55.4,
+    "p95": 232.8,
+    "p99": 289.9,
+    "max": 352.6
+  },
+  "relayProcess": {
+    "before": {
+      "cpuS": 0.36,
+      "rssMB": 56.2
+    },
+    "afterJoin": {
+      "cpuS": 1.7,
+      "rssMB": 73.6
+    },
+    "afterMessages": {
+      "cpuS": 2.11,
+      "rssMB": 63.1
+    }
+  }
+}

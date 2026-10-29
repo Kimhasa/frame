@@ -1,0 +1,9 @@
+/* Outer dialog chrome only. Frozen video and quality surfaces are excluded. */
+body:not([data-design-review="true"]) #v2-review-launcher{display:none}
+#product-dialog.v33-shared-dialog .modal-head h2{font-size:23px;line-height:1.45;letter-spacing:-.035em;overflow-wrap:anywhere}
+#product-dialog.v33-shared-dialog .modal-head>.icon{height:44px;width:44px;min-height:44px;min-width:44px;padding:11px;border-radius:9px;flex:none}
+#product-dialog.v33-shared-dialog .modal-footer{gap:10px;flex-wrap:wrap}
+#product-dialog.v33-shared-dialog .modal-footer>button{min-height:44px;font-size:15px;line-height:1.5}
+#product-dialog.v33-shared-dialog .modal-body{scrollbar-width:thin;scrollbar-color:#cbd5ce transparent;overscroll-behavior:contain}
+.v33-shared-dialog .v33-confirm-copy{margin:0;line-height:1.8}
+@media(max-width:600px){#product-dialog.v33-shared-dialog .modal-head h2{font-size:21px}#product-dialog.v33-shared-dialog .modal-footer>button{min-height:46px}#product-dialog.v33-shared-dialog .modal-footer{padding-bottom:max(18px,env(safe-area-inset-bottom))}}

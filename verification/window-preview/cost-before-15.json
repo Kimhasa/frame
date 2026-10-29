@@ -1,0 +1,230 @@
+﻿{
+    "label":  "before-15",
+    "measuredAt":  "2026-10-28T16:45:24.8343390+09:00",
+    "cycles":  15,
+    "openMs":  1200,
+    "windows":  null,
+    "cpuMsPerOpen":  90,
+    "samples":  [
+                    {
+                        "tag":  "before",
+                        "cpuMs":  812,
+                        "privateMB":  211.6,
+                        "handles":  551,
+                        "gdi":  13,
+                        "user":  21,
+                        "threads":  30
+                    },
+                    {
+                        "tag":  "cycle 1",
+                        "cpuMs":  891,
+                        "privateMB":  211.6,
+                        "handles":  563,
+                        "gdi":  13,
+                        "user":  21,
+                        "threads":  30
+                    },
+                    {
+                        "tag":  "cycle 2",
+                        "cpuMs":  984,
+                        "privateMB":  211.6,
+                        "handles":  575,
+                        "gdi":  13,
+                        "user":  21,
+                        "threads":  30
+                    },
+                    {
+                        "tag":  "cycle 3",
+                        "cpuMs":  1047,
+                        "privateMB":  212.1,
+                        "handles":  587,
+                        "gdi":  13,
+                        "user":  21,
+                        "threads":  30
+                    },
+                    {
+                        "tag":  "cycle 4",
+                        "cpuMs":  1125,
+                        "privateMB":  210.6,
+                        "handles":  599,
+                        "gdi":  13,
+                        "user":  21,
+                        "threads":  29
+                    },
+                    {
+                        "tag":  "cycle 5",
+                        "cpuMs":  1281,
+                        "privateMB":  211.5,
+                        "handles":  611,
+                        "gdi":  13,
+                        "user":  21,
+                        "threads":  29
+                    },
+                    {
+                        "tag":  "cycle 6",
+                        "cpuMs":  1344,
+                        "privateMB":  212.1,
+                        "handles":  616,
+                        "gdi":  13,
+                        "user":  21,
+                        "threads":  29
+                    },
+                    {
+                        "tag":  "cycle 7",
+                        "cpuMs":  1469,
+                        "privateMB":  212.1,
+                        "handles":  628,
+                        "gdi":  13,
+                        "user":  21,
+                        "threads":  29
+                    },
+                    {
+                        "tag":  "cycle 8",
+                        "cpuMs":  1547,
+                        "privateMB":  212.4,
+                        "handles":  640,
+                        "gdi":  13,
+                        "user":  21,
+                        "threads":  29
+                    },
+                    {
+                        "tag":  "cycle 9",
+                        "cpuMs":  1625,
+                        "privateMB":  212.4,
+                        "handles":  652,
+                        "gdi":  13,
+                        "user":  21,
+                        "threads":  29
+                    },
+                    {
+                        "tag":  "cycle 10",
+                        "cpuMs":  1703,
+                        "privateMB":  212.4,
+                        "handles":  663,
+                        "gdi":  13,
+                        "user":  21,
+                        "threads":  29
+                    },
+                    {
+                        "tag":  "cycle 11",
+                        "cpuMs":  1734,
+                        "privateMB":  212.6,
+                        "handles":  674,
+                        "gdi":  13,
+                        "user":  21,
+                        "threads":  29
+                    },
+                    {
+                        "tag":  "cycle 12",
+                        "cpuMs":  1766,
+                        "privateMB":  212.3,
+                        "handles":  685,
+                        "gdi":  13,
+                        "user":  21,
+                        "threads":  29
+                    },
+                    {
+                        "tag":  "cycle 13",
+                        "cpuMs":  1859,
+                        "privateMB":  212.7,
+                        "handles":  696,
+                        "gdi":  13,
+                        "user":  21,
+                        "threads":  29
+                    },
+                    {
+                        "tag":  "cycle 14",
+                        "cpuMs":  2031,
+                        "privateMB":  213.4,
+                        "handles":  707,
+                        "gdi":  13,
+                        "user":  21,
+                        "threads":  29
+                    },
+                    {
+                        "tag":  "cycle 15",
+                        "cpuMs":  2156,
+                        "privateMB":  213.4,
+                        "handles":  718,
+                        "gdi":  13,
+                        "user":  21,
+                        "threads":  29
+                    },
+                    {
+                        "tag":  "after 3 s",
+                        "cpuMs":  2156,
+                        "privateMB":  213.4,
+                        "handles":  718,
+                        "gdi":  13,
+                        "user":  21,
+                        "threads":  29
+                    }
+                ],
+    "gpuEngines":  [
+                       {
+                           "engine":  "3d",
+                           "max":  0.7,
+                           "mean":  0.31
+                       },
+                       {
+                           "engine":  "cuda",
+                           "max":  0,
+                           "mean":  0
+                       },
+                       {
+                           "engine":  "compute_1",
+                           "max":  0,
+                           "mean":  0
+                       },
+                       {
+                           "engine":  "vr",
+                           "max":  0,
+                           "mean":  0
+                       },
+                       {
+                           "engine":  "copy",
+                           "max":  0,
+                           "mean":  0
+                       },
+                       {
+                           "engine":  "security_1",
+                           "max":  0,
+                           "mean":  0
+                       },
+                       {
+                           "engine":  "compute_0",
+                           "max":  0,
+                           "mean":  0
+                       },
+                       {
+                           "engine":  "legacyoverlay",
+                           "max":  0,
+                           "mean":  0
+                       },
+                       {
+                           "engine":  "videodecode",
+                           "max":  0,
+                           "mean":  0
+                       },
+                       {
+                           "engine":  "security",
+                           "max":  0,
+                           "mean":  0
+                       },
+                       {
+                           "engine":  "videoencode",
+                           "max":  0,
+                           "mean":  0
+                       },
+                       {
+                           "engine":  "ofa_0",
+                           "max":  0,
+                           "mean":  0
+                       },
+                       {
+                           "engine":  "graphics_1",
+                           "max":  0,
+                           "mean":  0
+                       }
+                   ]
+}

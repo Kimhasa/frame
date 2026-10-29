@@ -1,0 +1,17 @@
+{
+  "name": "perf01-live",
+  "_comment": "PERF-01 single-viewer baseline on one clock: start the target with --source live (wall-clock barcode in every frame). 1 protocol viewer plus 2 real-browser viewers; first media, rate, loss, browser first frame / FPS / freezes / capture->display latency and both sides' resources. The browser pages run inline (together with the protocol viewer), as PERF-01 measures one viewer next to the browsers.",
+  "stages": [
+    1
+  ],
+  "holdSec": 45,
+  "browser": {
+    "count": 2,
+    "seconds": 30,
+    "startDelaySec": 3,
+    "mode": "inline"
+  },
+  "limits": {
+    "maxTrafficGB": 5
+  }
+}

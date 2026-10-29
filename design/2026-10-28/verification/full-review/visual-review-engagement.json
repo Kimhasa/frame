@@ -1,0 +1,577 @@
+{
+  "date": "2026-10-29",
+  "method": "Each listed original JPEG was opened with view_image and inspected visually at desktop capture size.",
+  "reviewedImages": [
+    {
+      "file": "screens/donate__0__desktop.jpg",
+      "sha256": "d6e9dd90047bbdf6308d6a289302c307cb555a0f39fca732033dace4a6796c38",
+      "modified": "2026-10-29T06:19:04.154Z",
+      "screenId": "donate",
+      "note": "금액 프리셋·필드·동의·버튼 정렬과 최소금액 안내 확인. 선택 탭 포커스링은 키보드 접근 표시로 유지."
+    },
+    {
+      "file": "screens/membership__0__desktop.jpg",
+      "sha256": "9778714a80722e2cf0e38da00b552a85d75ced4071a30e1842abfb8658ec0beb",
+      "modified": "2026-10-29T06:19:05.472Z",
+      "screenId": "membership",
+      "note": "월 금액과 동의문구, 혜택 아이콘 3개와 단일 결제 선택 영역 정렬 확인."
+    },
+    {
+      "file": "screens/mission__0__desktop.jpg",
+      "sha256": "10075988c89f67e19ffa50d03f3a75593aa983b764b5b7baeecec7fa21932d89",
+      "modified": "2026-10-29T06:19:06.311Z",
+      "screenId": "mission",
+      "note": "무료 유형·제목·완료조건·시간 순서와 필드 폭 정렬 확인."
+    },
+    {
+      "file": "screens/poll__0__desktop.jpg",
+      "sha256": "0582e8cc483a5b5f01a46aa11b29904d86000562da46290f70550302a405e91a",
+      "modified": "2026-10-29T06:19:07.422Z",
+      "screenId": "poll",
+      "note": "투표 선택지/진행 메타/비활성 투표 버튼 및 마감 결과 비율 정렬 확인. 내부/외부 클래스 중복은 소스 수정."
+    },
+    {
+      "file": "screens/rewards__0__desktop.jpg",
+      "sha256": "dcac0fccefe6b629120c17a84559acc29d8dd4bd7811344d7acc6099a135de51",
+      "modified": "2026-10-29T06:19:08.369Z",
+      "screenId": "rewards",
+      "note": "외곽 dialog에도 내부 3열 grid 규칙이 적용되는 심각한 시각 붕괴 발견. 기본/부족 상태 모두 소스 수정 후 재캡처 대기."
+    },
+    {
+      "file": "screens/report-content__0__desktop.jpg",
+      "sha256": "35f6611c78bc51492856905ced002813c5028cc80a499bfe5876020c2a04ebd5",
+      "modified": "2026-10-29T06:19:17.126Z",
+      "screenId": "report-content",
+      "note": "신고 사유와 선택 상세 구분, 입력 상하 간격과 하단 작업 버튼 정렬 확인."
+    },
+    {
+      "file": "screens/clip-create__0__desktop.jpg",
+      "sha256": "e19dbefd1b01f11bc8db8ff456d20f8d742a8450ec05dceeb41c389b1351393b",
+      "modified": "2026-10-29T06:19:19.873Z",
+      "screenId": "clip-create",
+      "note": "기존 코드 미리보기 보존, 시작/종료 입력과 길이 슬라이더, 제한조건과 제목 배치 확인."
+    },
+    {
+      "file": "screens/devices__0__desktop.jpg",
+      "sha256": "491bdad1b1240fc37044f5ca03a8c43615e111aca9164e41367af2ea38b16078",
+      "modified": "2026-10-29T06:19:32.489Z",
+      "screenId": "devices",
+      "note": "짧은 두 기기 목록과 연결 버튼, 닫기 배치 확인. 반복 설명/구분선 없음."
+    },
+    {
+      "file": "screens/raid__0__desktop.jpg",
+      "sha256": "1386851f53182cd830f1c92384948ca5d085abcffd910d3ab3ea376efccbdfd2",
+      "modified": "2026-10-29T06:19:38.239Z",
+      "screenId": "raid",
+      "note": "검색·선택용 채널 카드·비활성 다음 버튼이 모달 안에서 일관되게 정렬됨."
+    },
+    {
+      "file": "screens/drop-rewards__0__desktop.jpg",
+      "sha256": "0d6b8a11f473eac609d49eafba8f5039d1e611fc50ad0ae47e4cd067dbaed57e",
+      "modified": "2026-10-29T06:19:41.219Z",
+      "screenId": "drop-rewards",
+      "note": "캠페인 제목/30분 조건/현재18분과 남은12분/수령 비활성 상태가 간결하게 배치됨."
+    },
+    {
+      "file": "screens/donate__2__desktop.jpg",
+      "sha256": "13841073f1ba7c8966e4c72e73c638f779699402d49b2e13209da1324ea42704",
+      "modified": "2026-10-29T06:19:04.720Z",
+      "screenId": "donate",
+      "note": "금액 프리셋·필드·동의·버튼 정렬과 최소금액 안내 확인. 선택 탭 포커스링은 키보드 접근 표시로 유지."
+    },
+    {
+      "file": "screens/poll__2__desktop.jpg",
+      "sha256": "cbd775ee2a2167afd6cc8bf6e35f4a1ebfa901fd783e31185e2e28f4081f98a6",
+      "modified": "2026-10-29T06:19:08.039Z",
+      "screenId": "poll",
+      "note": "투표 선택지/진행 메타/비활성 투표 버튼 및 마감 결과 비율 정렬 확인. 내부/외부 클래스 중복은 소스 수정."
+    },
+    {
+      "file": "screens/rewards__1__desktop.jpg",
+      "sha256": "1608ca767dcdd30bfc58473cb6d29d47421ea045abe7fbd0e737a0cac0c81b9f",
+      "modified": "2026-10-29T06:19:08.669Z",
+      "screenId": "rewards",
+      "note": "외곽 dialog에도 내부 3열 grid 규칙이 적용되는 심각한 시각 붕괴 발견. 기본/부족 상태 모두 소스 수정 후 재캡처 대기."
+    },
+    {
+      "file": "screens/clip-create__1__desktop.jpg",
+      "sha256": "28a25c16b5fc21b07a3748bdb6efaacf884098f3c6735455eb35534bb03aa521",
+      "modified": "2026-10-29T06:19:21.192Z",
+      "screenId": "clip-create",
+      "note": "추가 정의 상태 실제 이미지 검수: 처리/완료/실패/마감/수령 단계의 문구, 결과색, 작업 버튼 및 여백 확인. 해당 수정 사항은 issues 참조."
+    },
+    {
+      "file": "screens/clip-create__2__desktop.jpg",
+      "sha256": "65a09683f3839af76cbb5f38c6b1cb8533fe0f6167e588d355d6c30fb72c6d6c",
+      "modified": "2026-10-29T06:19:22.556Z",
+      "screenId": "clip-create",
+      "note": "추가 정의 상태 실제 이미지 검수: 처리/완료/실패/마감/수령 단계의 문구, 결과색, 작업 버튼 및 여백 확인. 해당 수정 사항은 issues 참조."
+    },
+    {
+      "file": "screens/devices__1__desktop.jpg",
+      "sha256": "de866d80d187fef229eb67766372c2e917f7575fe1579865afa89e5a5f1a7fda",
+      "modified": "2026-10-29T06:19:33.826Z",
+      "screenId": "devices",
+      "note": "추가 정의 상태 실제 이미지 검수: 처리/완료/실패/마감/수령 단계의 문구, 결과색, 작업 버튼 및 여백 확인. 해당 수정 사항은 issues 참조."
+    },
+    {
+      "file": "screens/devices__2__desktop.jpg",
+      "sha256": "5a2ba13527a9008856e47b03719d4c776a96dbcaa5f46c634e4bfed4e065e8de",
+      "modified": "2026-10-29T06:19:35.104Z",
+      "screenId": "devices",
+      "note": "추가 정의 상태 실제 이미지 검수: 처리/완료/실패/마감/수령 단계의 문구, 결과색, 작업 버튼 및 여백 확인. 해당 수정 사항은 issues 참조."
+    },
+    {
+      "file": "screens/donate__1__desktop.jpg",
+      "sha256": "9e2c502717da6e0eb4cd3cffd1c554d981dd1fe7c754dd65ec155c094e7161de",
+      "modified": "2026-10-29T06:19:04.421Z",
+      "screenId": "donate",
+      "note": "추가 정의 상태 실제 이미지 검수: 처리/완료/실패/마감/수령 단계의 문구, 결과색, 작업 버튼 및 여백 확인. 해당 수정 사항은 issues 참조."
+    },
+    {
+      "file": "screens/donate__3__desktop.jpg",
+      "sha256": "74996aa40d147cb477c3f03cd7fe70c1208b4be377b48b4e1c4ef2e76026fd53",
+      "modified": "2026-10-29T06:19:05.051Z",
+      "screenId": "donate",
+      "note": "추가 정의 상태 실제 이미지 검수: 처리/완료/실패/마감/수령 단계의 문구, 결과색, 작업 버튼 및 여백 확인. 해당 수정 사항은 issues 참조."
+    },
+    {
+      "file": "screens/donate__3__desktop__bottom.jpg",
+      "sha256": "f06d573382e669f0e5addb8c46554b4e90927ebf3460f4f86794cf06f85369c3",
+      "modified": "2026-10-29T06:19:05.186Z",
+      "screenId": "donate",
+      "note": "추가 정의 상태 실제 이미지 검수: 처리/완료/실패/마감/수령 단계의 문구, 결과색, 작업 버튼 및 여백 확인. 해당 수정 사항은 issues 참조."
+    },
+    {
+      "file": "screens/drop-rewards__1__desktop.jpg",
+      "sha256": "95b2c9a164cb522f4ed70dc81f157f3c3f91f4564c815725dbf84f6ba37e90e0",
+      "modified": "2026-10-29T06:19:41.487Z",
+      "screenId": "drop-rewards",
+      "note": "추가 정의 상태 실제 이미지 검수: 처리/완료/실패/마감/수령 단계의 문구, 결과색, 작업 버튼 및 여백 확인. 해당 수정 사항은 issues 참조."
+    },
+    {
+      "file": "screens/drop-rewards__2__desktop.jpg",
+      "sha256": "b656aae917ebc73e3ec1cda0b5ff17d6d54f5e675121a498c77bf742c0893d24",
+      "modified": "2026-10-29T06:19:41.752Z",
+      "screenId": "drop-rewards",
+      "note": "추가 정의 상태 실제 이미지 검수: 처리/완료/실패/마감/수령 단계의 문구, 결과색, 작업 버튼 및 여백 확인. 해당 수정 사항은 issues 참조."
+    },
+    {
+      "file": "screens/membership__1__desktop.jpg",
+      "sha256": "9d872686a77e9146ed495ae7610821b6f7c4c13452d9db16ac188b02e20d09fc",
+      "modified": "2026-10-29T06:19:05.735Z",
+      "screenId": "membership",
+      "note": "추가 정의 상태 실제 이미지 검수: 처리/완료/실패/마감/수령 단계의 문구, 결과색, 작업 버튼 및 여백 확인. 해당 수정 사항은 issues 참조."
+    },
+    {
+      "file": "screens/membership__2__desktop.jpg",
+      "sha256": "50770516d60ee252dc77341704a6e24b9c83870a32d28aff3bc9f539cf4d16c0",
+      "modified": "2026-10-29T06:19:06.041Z",
+      "screenId": "membership",
+      "note": "추가 정의 상태 실제 이미지 검수: 처리/완료/실패/마감/수령 단계의 문구, 결과색, 작업 버튼 및 여백 확인. 해당 수정 사항은 issues 참조."
+    },
+    {
+      "file": "screens/mission__1__desktop.jpg",
+      "sha256": "403c0331eb9299b6778724fd8c21d2c364609896384888c960b3010a669534d3",
+      "modified": "2026-10-29T06:19:06.593Z",
+      "screenId": "mission",
+      "note": "추가 정의 상태 실제 이미지 검수: 처리/완료/실패/마감/수령 단계의 문구, 결과색, 작업 버튼 및 여백 확인. 해당 수정 사항은 issues 참조."
+    },
+    {
+      "file": "screens/mission__2__desktop.jpg",
+      "sha256": "8b3725d398f5e3792240c8bd90006def05e62dd8cf2049c9166bcded997cc880",
+      "modified": "2026-10-29T06:19:06.876Z",
+      "screenId": "mission",
+      "note": "추가 정의 상태 실제 이미지 검수: 처리/완료/실패/마감/수령 단계의 문구, 결과색, 작업 버튼 및 여백 확인. 해당 수정 사항은 issues 참조."
+    },
+    {
+      "file": "screens/mission__3__desktop.jpg",
+      "sha256": "d6f2244a5d7ed974ae54915b3d7132b9336a5b1c69305a93dd09254d58325f1e",
+      "modified": "2026-10-29T06:19:07.153Z",
+      "screenId": "mission",
+      "note": "추가 정의 상태 실제 이미지 검수: 처리/완료/실패/마감/수령 단계의 문구, 결과색, 작업 버튼 및 여백 확인. 해당 수정 사항은 issues 참조."
+    },
+    {
+      "file": "screens/poll__1__desktop.jpg",
+      "sha256": "94ea7aa8484ced23bd5ffcd19ca15828d6cfb4e21283a75de3f50562001ce927",
+      "modified": "2026-10-29T06:19:07.739Z",
+      "screenId": "poll",
+      "note": "추가 정의 상태 실제 이미지 검수: 처리/완료/실패/마감/수령 단계의 문구, 결과색, 작업 버튼 및 여백 확인. 해당 수정 사항은 issues 참조."
+    },
+    {
+      "file": "screens/raid__1__desktop.jpg",
+      "sha256": "da39b0998c0094fe063ba6ef47a216890a0dc6b8fdfa63da7544ee78216759f0",
+      "modified": "2026-10-29T06:19:39.556Z",
+      "screenId": "raid",
+      "note": "추가 정의 상태 실제 이미지 검수: 처리/완료/실패/마감/수령 단계의 문구, 결과색, 작업 버튼 및 여백 확인. 해당 수정 사항은 issues 참조."
+    },
+    {
+      "file": "screens/raid__2__desktop.jpg",
+      "sha256": "655cd4964c3547d0abf07076f940730ce14f4ee72aa4e09958e337664eca9495",
+      "modified": "2026-10-29T06:19:40.905Z",
+      "screenId": "raid",
+      "note": "추가 정의 상태 실제 이미지 검수: 처리/완료/실패/마감/수령 단계의 문구, 결과색, 작업 버튼 및 여백 확인. 해당 수정 사항은 issues 참조."
+    },
+    {
+      "file": "screens/report-content__1__desktop.jpg",
+      "sha256": "d0e5c239bc7ef5cd9277516973c3eedf3536f4ce99dcf85b039d9b1afc1a7762",
+      "modified": "2026-10-29T06:19:18.494Z",
+      "screenId": "report-content",
+      "note": "추가 정의 상태 실제 이미지 검수: 처리/완료/실패/마감/수령 단계의 문구, 결과색, 작업 버튼 및 여백 확인. 해당 수정 사항은 issues 참조."
+    },
+    {
+      "file": "screens/rewards__2__desktop.jpg",
+      "sha256": "2a91f42e438073f76bcb705eb76ca0f5260c14c311c63a45dc07566517b13943",
+      "modified": "2026-10-29T06:19:08.952Z",
+      "screenId": "rewards",
+      "note": "추가 정의 상태 실제 이미지 검수: 처리/완료/실패/마감/수령 단계의 문구, 결과색, 작업 버튼 및 여백 확인. 해당 수정 사항은 issues 참조."
+    }
+  ],
+  "issues": [
+    {
+      "id": "ENGAGE-VIS-01",
+      "severity": "high",
+      "screens": [
+        "rewards"
+      ],
+      "evidence": [
+        "screens/rewards__0__desktop.jpg",
+        "screens/rewards__1__desktop.jpg"
+      ],
+      "finding": "Modal class v33-engage-rewards collided with the identically named inner reward grid. Header, body, footer became 3 columns; text stacked vertically.",
+      "fix": "Renamed inner grid v33-engage-reward-grid and scoped its desktop/mobile selectors. Renamed inner poll container v33-engage-poll-options to remove analogous latent collision.",
+      "status": "fixed-and-visually-retested",
+      "files": [
+        "dist/design-v33-engagement.js",
+        "dist/design-v33-engagement.css"
+      ],
+      "retestEvidence": [
+        "engagement-retest/rewards__0__desktop.jpg",
+        "engagement-retest/rewards__1__desktop.jpg",
+        "engagement-retest/rewards__2__desktop.jpg",
+        "engagement-retest/poll__0__mobile.jpg",
+        "engagement-retest/poll__2__mobile.jpg"
+      ]
+    },
+    {
+      "id": "ENGAGE-VIS-02",
+      "severity": "medium",
+      "screens": [
+        "donate",
+        "membership",
+        "mission",
+        "poll",
+        "rewards",
+        "report-content",
+        "clip-create",
+        "devices",
+        "raid"
+      ],
+      "evidence": [
+        "screens/donate__2__desktop.jpg"
+      ],
+      "finding": "Programmatically focused static result heading displayed browser default black rectangular outline around its words.",
+      "fix": "Removed outline only from focused static engagement result/title h3. Interactive control focus rings remain.",
+      "status": "fixed-and-visually-retested",
+      "files": [
+        "dist/design-v33-engagement.css"
+      ],
+      "retestEvidence": [
+        "engagement-retest/donate__2__desktop.jpg",
+        "engagement-retest/mission__3__desktop.jpg"
+      ]
+    },
+    {
+      "id": "ENGAGE-VIS-03",
+      "severity": "low",
+      "screens": [
+        "mission"
+      ],
+      "evidence": [
+        "screens/mission__2__desktop.jpg",
+        "screens/mission__3__desktop.jpg"
+      ],
+      "finding": "Completion/failure result was repeated in both a heading and a separate result row.",
+      "fix": "Removed the duplicate row. Failure heading now clearly says 미션을 완료하지 못했어요.",
+      "status": "fixed-and-visually-retested",
+      "files": [
+        "dist/design-v33-engagement.js"
+      ],
+      "retestEvidence": [
+        "engagement-retest/mission__3__desktop.jpg"
+      ]
+    },
+    {
+      "id": "ENGAGE-VIS-04",
+      "severity": "medium",
+      "screens": [
+        "rewards"
+      ],
+      "evidence": [
+        "screens/rewards__2__desktop.jpg"
+      ],
+      "finding": "Direct completed-state fixture showed 1000 P spent but retained the base 3400 P balance.",
+      "fix": "Direct state fixture displays base balance minus selected cost; real local redemption continues to display its actual updated balance.",
+      "status": "fixed-and-visually-retested",
+      "files": [
+        "dist/design-v33-engagement.js"
+      ],
+      "retestEvidence": [
+        "engagement-retest/rewards__2__desktop.jpg"
+      ]
+    },
+    {
+      "id": "ENGAGE-VIS-05",
+      "severity": "low",
+      "screens": [
+        "devices"
+      ],
+      "evidence": [
+        "screens/devices__1__desktop.jpg"
+      ],
+      "finding": "Empty-state primary retry action was left of the close button, inconsistent with the other dialog actions.",
+      "fix": "Placed close first and primary 다시 찾기 last.",
+      "status": "fixed-and-visually-retested",
+      "files": [
+        "dist/design-v33-engagement.js"
+      ],
+      "retestEvidence": [
+        "engagement-retest/devices__1__desktop.jpg"
+      ]
+    },
+    {
+      "id": "ENGAGE-VIS-06",
+      "severity": "low",
+      "screens": [
+        "poll"
+      ],
+      "evidence": [
+        "screens/poll__1__desktop.jpg"
+      ],
+      "finding": "Direct vote-completed fixture displayed results without indicating the viewer selection.",
+      "fix": "Displays a sample selection only when previewing the completed state without an actual local vote; actual selected value always takes precedence.",
+      "status": "fixed-and-visually-retested",
+      "files": [
+        "dist/design-v33-engagement.js"
+      ],
+      "retestEvidence": [
+        "engagement-retest/poll__1__desktop.jpg"
+      ]
+    }
+  ],
+  "generalFindings": [
+    "Bright theme and green actions align with the settings/account surface.",
+    "Form labels, input widths, primary/secondary button placement and retained required guidance are coherent in the reviewed images.",
+    "Modal body/form surfaces have no decorative section rules. Tab underline and field boundaries retain their interaction role.",
+    "No player, source video or quality controls were redesigned."
+  ],
+  "syntax": "node --check passed after corrections",
+  "mobileReview": "14 saved mobile captures visually inspected; mobile poll and rewards were additionally re-captured from the corrected fresh source and inspected. Expanded/error form browser layout checks remain in engagement-browser-flows.json.",
+  "summary": {
+    "desktopDefinedStates": 31,
+    "desktopImagesReviewed": 32,
+    "mobileImagesReviewed": 14,
+    "freshSourceRetestImages": 10,
+    "totalImagesViewed": 56,
+    "issues": 6,
+    "unresolvedVisualIssues": 0,
+    "sourceCorrectionsComplete": true,
+    "visualRecapturePending": false
+  },
+  "mobileImages": [
+    {
+      "file": "screens/donate__0__mobile.jpg",
+      "sha256": "2548dbbd50a89e15297e6108c10775180911381034311d3275b6ff655f82b36d",
+      "modified": "2026-10-29T06:28:24.128Z",
+      "screenId": "donate",
+      "note": "실제 모바일 캡처 검수. 긴 후원 폼의 상단/스크롤 끝/고정 footer, 2열 금액, 필드·텍스트·버튼 정렬, 보상 1열 및 선택/부족 상태 확인. 기존 poll 제목/메타 들여쓰기 문제는 새 소스 재캡처에서 해결됨."
+    },
+    {
+      "file": "screens/donate__0__mobile__bottom.jpg",
+      "sha256": "599c1973a96905ef59d40b28a4de4e920c232bfa5637f19c26935ba05fd12945",
+      "modified": "2026-10-29T06:28:24.259Z",
+      "screenId": "donate",
+      "note": "실제 모바일 캡처 검수. 긴 후원 폼의 상단/스크롤 끝/고정 footer, 2열 금액, 필드·텍스트·버튼 정렬, 보상 1열 및 선택/부족 상태 확인. 기존 poll 제목/메타 들여쓰기 문제는 새 소스 재캡처에서 해결됨."
+    },
+    {
+      "file": "screens/membership__0__mobile.jpg",
+      "sha256": "2c6e93040ac5aeba5f438abc8f69943e11058c2d0c2e0e72a4a73bf37e5ff885",
+      "modified": "2026-10-29T06:28:25.751Z",
+      "screenId": "membership",
+      "note": "실제 모바일 캡처 검수. 긴 후원 폼의 상단/스크롤 끝/고정 footer, 2열 금액, 필드·텍스트·버튼 정렬, 보상 1열 및 선택/부족 상태 확인. 기존 poll 제목/메타 들여쓰기 문제는 새 소스 재캡처에서 해결됨."
+    },
+    {
+      "file": "screens/mission__0__mobile.jpg",
+      "sha256": "cf19748e9e4fdb773961058c1a88bb33cbb92d0316005f702cedaec72469008b",
+      "modified": "2026-10-29T06:28:26.701Z",
+      "screenId": "mission",
+      "note": "실제 모바일 캡처 검수. 긴 후원 폼의 상단/스크롤 끝/고정 footer, 2열 금액, 필드·텍스트·버튼 정렬, 보상 1열 및 선택/부족 상태 확인. 기존 poll 제목/메타 들여쓰기 문제는 새 소스 재캡처에서 해결됨."
+    },
+    {
+      "file": "screens/poll__0__mobile.jpg",
+      "sha256": "d9b12de43cda811c0ced324eb7a80b4a26736dba8016f43864b18d491cdda58b",
+      "modified": "2026-10-29T06:28:28.036Z",
+      "screenId": "poll",
+      "note": "실제 모바일 캡처 검수. 긴 후원 폼의 상단/스크롤 끝/고정 footer, 2열 금액, 필드·텍스트·버튼 정렬, 보상 1열 및 선택/부족 상태 확인. 기존 poll 제목/메타 들여쓰기 문제는 새 소스 재캡처에서 해결됨."
+    },
+    {
+      "file": "screens/rewards__0__mobile.jpg",
+      "sha256": "13cf11dc53abb5e5b20a54213d93ef499a68c0cdfd9208acc583f5e4c5897d22",
+      "modified": "2026-10-29T06:28:29.041Z",
+      "screenId": "rewards",
+      "note": "실제 모바일 캡처 검수. 긴 후원 폼의 상단/스크롤 끝/고정 footer, 2열 금액, 필드·텍스트·버튼 정렬, 보상 1열 및 선택/부족 상태 확인. 기존 poll 제목/메타 들여쓰기 문제는 새 소스 재캡처에서 해결됨."
+    },
+    {
+      "file": "screens/report-content__0__mobile.jpg",
+      "sha256": "1dda98a279e9abea6cfce5fbebc1aa7a22f0a884a2cad90e2a1bda15076d4313",
+      "modified": "2026-10-29T06:28:36.444Z",
+      "screenId": "report-content",
+      "note": "실제 모바일 캡처 검수. 긴 후원 폼의 상단/스크롤 끝/고정 footer, 2열 금액, 필드·텍스트·버튼 정렬, 보상 1열 및 선택/부족 상태 확인. 기존 poll 제목/메타 들여쓰기 문제는 새 소스 재캡처에서 해결됨."
+    },
+    {
+      "file": "screens/clip-create__0__mobile.jpg",
+      "sha256": "84f7459e1f90dff0bab99999923ce2fe5e56daf2f1a315ce4c51648944b25ec4",
+      "modified": "2026-10-29T06:28:37.125Z",
+      "screenId": "clip-create",
+      "note": "실제 모바일 캡처 검수. 긴 후원 폼의 상단/스크롤 끝/고정 footer, 2열 금액, 필드·텍스트·버튼 정렬, 보상 1열 및 선택/부족 상태 확인. 기존 poll 제목/메타 들여쓰기 문제는 새 소스 재캡처에서 해결됨."
+    },
+    {
+      "file": "screens/devices__0__mobile.jpg",
+      "sha256": "581c744dd537136c9b6b87854f121f2ab78ac0e8e8b9a3692e439dd62144b5c7",
+      "modified": "2026-10-29T06:28:49.573Z",
+      "screenId": "devices",
+      "note": "실제 모바일 캡처 검수. 긴 후원 폼의 상단/스크롤 끝/고정 footer, 2열 금액, 필드·텍스트·버튼 정렬, 보상 1열 및 선택/부족 상태 확인. 기존 poll 제목/메타 들여쓰기 문제는 새 소스 재캡처에서 해결됨."
+    },
+    {
+      "file": "screens/raid__0__mobile.jpg",
+      "sha256": "eb92c9522ee0d5478b0182d1c10dfc5e6ed026055523c85f59083a7a595257e9",
+      "modified": "2026-10-29T06:28:53.110Z",
+      "screenId": "raid",
+      "note": "실제 모바일 캡처 검수. 긴 후원 폼의 상단/스크롤 끝/고정 footer, 2열 금액, 필드·텍스트·버튼 정렬, 보상 1열 및 선택/부족 상태 확인. 기존 poll 제목/메타 들여쓰기 문제는 새 소스 재캡처에서 해결됨."
+    },
+    {
+      "file": "screens/drop-rewards__0__mobile.jpg",
+      "sha256": "e2210f5c707ae8d66badeaac1c765e1f6d26d782fae9e1886bf5dea8ea1591d8",
+      "modified": "2026-10-29T06:28:54.942Z",
+      "screenId": "drop-rewards",
+      "note": "실제 모바일 캡처 검수. 긴 후원 폼의 상단/스크롤 끝/고정 footer, 2열 금액, 필드·텍스트·버튼 정렬, 보상 1열 및 선택/부족 상태 확인. 기존 poll 제목/메타 들여쓰기 문제는 새 소스 재캡처에서 해결됨."
+    },
+    {
+      "file": "screens/rewards__1__mobile.jpg",
+      "sha256": "872da07dfc8f4bc5d9a3e104e496f38f232ef56bdecb478fa823a7759e8aee32",
+      "modified": "2026-10-29T06:28:29.350Z",
+      "screenId": "rewards",
+      "note": "실제 모바일 캡처 검수. 긴 후원 폼의 상단/스크롤 끝/고정 footer, 2열 금액, 필드·텍스트·버튼 정렬, 보상 1열 및 선택/부족 상태 확인. 기존 poll 제목/메타 들여쓰기 문제는 새 소스 재캡처에서 해결됨."
+    },
+    {
+      "file": "screens/donate__2__mobile.jpg",
+      "sha256": "9e4ae24032190f9c7de7ded14fcaa22b4434f99e006fc4f304f14b96ae37754b",
+      "modified": "2026-10-29T06:28:24.871Z",
+      "screenId": "donate",
+      "note": "실제 모바일 캡처 검수. 긴 후원 폼의 상단/스크롤 끝/고정 footer, 2열 금액, 필드·텍스트·버튼 정렬, 보상 1열 및 선택/부족 상태 확인. 기존 poll 제목/메타 들여쓰기 문제는 새 소스 재캡처에서 해결됨."
+    },
+    {
+      "file": "screens/poll__2__mobile.jpg",
+      "sha256": "2faa05add16088a88481de1bdd3591145a516ec80cfbf140b85eb02fc0f15c08",
+      "modified": "2026-10-29T06:28:28.683Z",
+      "screenId": "poll",
+      "note": "실제 모바일 캡처 검수. 긴 후원 폼의 상단/스크롤 끝/고정 footer, 2열 금액, 필드·텍스트·버튼 정렬, 보상 1열 및 선택/부족 상태 확인. 기존 poll 제목/메타 들여쓰기 문제는 새 소스 재캡처에서 해결됨."
+    }
+  ],
+  "retestImages": [
+    {
+      "file": "engagement-retest/devices__1__desktop.jpg",
+      "sha256": "99789e55d4209784a52228a70e89553ab99456983ad97c8a5fda7dfdfaa49a10",
+      "modified": "2026-10-29T06:33:43.585Z",
+      "screenId": "devices",
+      "note": "수정된 소스를 fresh load한 별도 Chrome QA탭에서 재캡처 후 view_image로 실제 시각 재검수 완료."
+    },
+    {
+      "file": "engagement-retest/donate__2__desktop.jpg",
+      "sha256": "71fc0cc7ba852411d80b175190a8697573e87a068583cb98a7d311db2e4182e8",
+      "modified": "2026-10-29T06:33:43.294Z",
+      "screenId": "donate",
+      "note": "수정된 소스를 fresh load한 별도 Chrome QA탭에서 재캡처 후 view_image로 실제 시각 재검수 완료."
+    },
+    {
+      "file": "engagement-retest/mission__3__desktop.jpg",
+      "sha256": "3223f2ec858ae3fa4bed1c7c1014cd54e0ee1e6977c853fc2f1bd35b4ca9975b",
+      "modified": "2026-10-29T06:33:43.418Z",
+      "screenId": "mission",
+      "note": "수정된 소스를 fresh load한 별도 Chrome QA탭에서 재캡처 후 view_image로 실제 시각 재검수 완료."
+    },
+    {
+      "file": "engagement-retest/poll__0__mobile.jpg",
+      "sha256": "18f250f050cac33d15e9dc6487ba4f1fcf645f23e8a94b2c12a56a745906a7bd",
+      "modified": "2026-10-29T06:34:10.642Z",
+      "screenId": "poll",
+      "note": "수정된 소스를 fresh load한 별도 Chrome QA탭에서 재캡처 후 view_image로 실제 시각 재검수 완료."
+    },
+    {
+      "file": "engagement-retest/poll__1__desktop.jpg",
+      "sha256": "c798a9d9172eeb635ba41c9d89c89259da856673d47329caff0cea37a000c078",
+      "modified": "2026-10-29T06:33:41.436Z",
+      "screenId": "poll",
+      "note": "수정된 소스를 fresh load한 별도 Chrome QA탭에서 재캡처 후 view_image로 실제 시각 재검수 완료."
+    },
+    {
+      "file": "engagement-retest/poll__2__mobile.jpg",
+      "sha256": "e1023acf5679ee6a42875899c76c9e20972b38444a17c50b24bdbe9da626cd42",
+      "modified": "2026-10-29T06:34:10.825Z",
+      "screenId": "poll",
+      "note": "수정된 소스를 fresh load한 별도 Chrome QA탭에서 재캡처 후 view_image로 실제 시각 재검수 완료."
+    },
+    {
+      "file": "engagement-retest/rewards__0__desktop.jpg",
+      "sha256": "1832ea478aab2353ce9e397a9fae8f62b38e6d42f328c3ebd59c5145a5b24df3",
+      "modified": "2026-10-29T06:33:38.232Z",
+      "screenId": "rewards",
+      "note": "수정된 소스를 fresh load한 별도 Chrome QA탭에서 재캡처 후 view_image로 실제 시각 재검수 완료."
+    },
+    {
+      "file": "engagement-retest/rewards__0__mobile.jpg",
+      "sha256": "4addf87e959b54a65acb3a60ce53cce96939e3cbd68508939e70f97e2b7a9aa5",
+      "modified": "2026-10-29T06:34:10.975Z",
+      "screenId": "rewards",
+      "note": "수정된 소스를 fresh load한 별도 Chrome QA탭에서 재캡처 후 view_image로 실제 시각 재검수 완료."
+    },
+    {
+      "file": "engagement-retest/rewards__1__desktop.jpg",
+      "sha256": "0c854ca4f9b0c048b0704302e285df0b05f66814651a1f6d6f797a035341ed4f",
+      "modified": "2026-10-29T06:33:38.386Z",
+      "screenId": "rewards",
+      "note": "수정된 소스를 fresh load한 별도 Chrome QA탭에서 재캡처 후 view_image로 실제 시각 재검수 완료."
+    },
+    {
+      "file": "engagement-retest/rewards__2__desktop.jpg",
+      "sha256": "71f0dd9a824b17b2920cfeeb3e2a7b94744c6002f3f548fcc433dcc99cbe07b3",
+      "modified": "2026-10-29T06:33:41.295Z",
+      "screenId": "rewards",
+      "note": "수정된 소스를 fresh load한 별도 Chrome QA탭에서 재캡처 후 view_image로 실제 시각 재검수 완료."
+    }
+  ],
+  "pendingDeliveryCaptureRefresh": [
+    "rewards__0__desktop.jpg",
+    "rewards__1__desktop.jpg",
+    "rewards__2__desktop.jpg",
+    "poll__0__desktop.jpg",
+    "poll__1__desktop.jpg",
+    "poll__2__desktop.jpg",
+    "donate__1__desktop.jpg",
+    "donate__2__desktop.jpg",
+    "membership__1__desktop.jpg",
+    "mission__1__desktop.jpg",
+    "mission__2__desktop.jpg",
+    "mission__3__desktop.jpg",
+    "report-content__1__desktop.jpg",
+    "clip-create__1__desktop.jpg",
+    "clip-create__2__desktop.jpg",
+    "devices__1__desktop.jpg",
+    "raid__2__desktop.jpg"
+  ],
+  "cleanup": {
+    "retestDeviceMetricsReset": true,
+    "retestTabClosed": true,
+    "deliverableMarked": false
+  }
+}

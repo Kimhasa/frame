@@ -1,0 +1,278 @@
+[
+  {
+    "name": "home",
+    "screen": "live",
+    "state": "기본",
+    "width": 1920,
+    "height": 1383,
+    "measured": {
+      "height": 1383,
+      "inner": 1920,
+      "overflow": 0
+    }
+  },
+  {
+    "name": "login",
+    "screen": "login",
+    "state": "기본",
+    "width": 1440,
+    "height": 1000,
+    "measured": {
+      "height": 1000,
+      "inner": 1440,
+      "overflow": 0
+    }
+  },
+  {
+    "name": "settings-profile",
+    "screen": "profile",
+    "state": "기본",
+    "width": 1440,
+    "height": 1000,
+    "measured": {
+      "height": 1000,
+      "inner": 1440,
+      "overflow": 0
+    }
+  },
+  {
+    "name": "settings-notifications",
+    "screen": "preferences",
+    "state": "기본",
+    "width": 1440,
+    "height": 1000,
+    "measured": {
+      "height": 1000,
+      "inner": 1440,
+      "overflow": 0
+    }
+  },
+  {
+    "name": "channel-management",
+    "screen": "channel-edit",
+    "state": "기본",
+    "width": 1440,
+    "height": 1071,
+    "measured": {
+      "height": 1071,
+      "inner": 1440,
+      "overflow": 0
+    }
+  },
+  {
+    "name": "channel-branding",
+    "screen": "channel-edit",
+    "state": "기본",
+    "width": 1440,
+    "height": 1070,
+    "measured": {
+      "height": 1070,
+      "inner": 1440,
+      "overflow": 0
+    }
+  },
+  {
+    "name": "studio-ready",
+    "screen": "studio",
+    "state": "방송 전",
+    "width": 1440,
+    "height": 1216,
+    "measured": {
+      "height": 1216,
+      "inner": 1440,
+      "overflow": 0
+    }
+  },
+  {
+    "name": "studio-live",
+    "screen": "studio",
+    "state": "방송 중",
+    "width": 1440,
+    "height": 1148,
+    "measured": {
+      "height": 1148,
+      "inner": 1440,
+      "overflow": 0
+    }
+  },
+  {
+    "name": "watch",
+    "screen": "watch",
+    "state": "기본",
+    "width": 1440,
+    "height": 1000,
+    "measured": {
+      "height": 1000,
+      "inner": 1440,
+      "overflow": 0
+    }
+  },
+  {
+    "name": "donation",
+    "screen": "donate",
+    "state": "금액 선택",
+    "width": 1440,
+    "height": 1000,
+    "measured": {
+      "height": 1000,
+      "inner": 1440,
+      "overflow": 0
+    }
+  },
+  {
+    "name": "home-mobile",
+    "screen": "live",
+    "state": "기본",
+    "width": 390,
+    "height": 844,
+    "measured": {
+      "height": 1650,
+      "inner": 390,
+      "overflow": 0
+    }
+  },
+  {
+    "name": "login-mobile",
+    "screen": "login",
+    "state": "기본",
+    "width": 390,
+    "height": 844,
+    "measured": {
+      "height": 844,
+      "inner": 390,
+      "overflow": 0
+    }
+  },
+  {
+    "name": "channel-mobile",
+    "screen": "channel-edit",
+    "state": "기본",
+    "width": 390,
+    "height": 844,
+    "measured": {
+      "height": 1397,
+      "inner": 390,
+      "overflow": 0
+    }
+  },
+  {
+    "name": "studio-mobile",
+    "screen": "studio",
+    "state": "방송 전",
+    "width": 390,
+    "height": 844,
+    "measured": {
+      "height": 1440,
+      "inner": 390,
+      "overflow": 0
+    }
+  },
+  {
+    "name": "watch-mobile",
+    "screen": "watch",
+    "state": "기본",
+    "width": 390,
+    "height": 844,
+    "measured": {
+      "height": 962,
+      "inner": 390,
+      "overflow": 0
+    }
+  },
+  {
+    "name": "search-empty-mobile",
+    "screen": "search",
+    "state": "검색 결과 없음",
+    "width": 390,
+    "height": 844,
+    "measured": {
+      "height": 846,
+      "inner": 390,
+      "overflow": 0
+    }
+  },
+  {
+    "name": "viewer-info-mobile",
+    "screen": "info",
+    "state": "기본",
+    "width": 390,
+    "height": 844,
+    "measured": {
+      "height": 962,
+      "inner": 390,
+      "overflow": 0
+    }
+  },
+  {
+    "name": "search-empty",
+    "screen": "search",
+    "state": "검색 결과 없음",
+    "width": 1440,
+    "height": 900,
+    "measured": {
+      "height": 900,
+      "inner": 1440,
+      "overflow": 0
+    }
+  },
+  {
+    "name": "live-loading",
+    "screen": "live",
+    "state": "불러오는 중",
+    "width": 1440,
+    "height": 900,
+    "measured": {
+      "height": 900,
+      "inner": 1440,
+      "overflow": 0
+    }
+  },
+  {
+    "name": "live-error",
+    "screen": "live",
+    "state": "불러오기 실패",
+    "width": 1440,
+    "height": 900,
+    "measured": {
+      "height": 900,
+      "inner": 1440,
+      "overflow": 0
+    }
+  },
+  {
+    "name": "following-empty",
+    "screen": "following",
+    "state": "팔로우 없음",
+    "width": 1440,
+    "height": 900,
+    "measured": {
+      "height": 900,
+      "inner": 1440,
+      "overflow": 0
+    }
+  },
+  {
+    "name": "channel-tabs",
+    "screen": "channel",
+    "state": "방송 중",
+    "width": 1440,
+    "height": 1000,
+    "measured": {
+      "height": 1484,
+      "inner": 1440,
+      "overflow": 0
+    }
+  },
+  {
+    "name": "viewer-info",
+    "screen": "info",
+    "state": "기본",
+    "width": 1440,
+    "height": 1000,
+    "measured": {
+      "height": 1000,
+      "inner": 1440,
+      "overflow": 0
+    }
+  }
+]

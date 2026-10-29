@@ -1,0 +1,35 @@
+{
+  "date": "2026-10-28",
+  "checks": 750,
+  "desktop": {
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "states": 150,
+    "checks": 450,
+    "errors": [],
+    "layout": []
+  },
+  "mobile": {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "states": 150,
+    "checks": 150,
+    "errors": [],
+    "layout": []
+  },
+  "tablet": {
+    "viewport": {
+      "width": 820,
+      "height": 1180
+    },
+    "states": 150,
+    "checks": 150,
+    "errors": [],
+    "layout": []
+  },
+  "scope": "Chromium layout checks only; not real mobile media, backend, financial, or concurrency validation"
+}

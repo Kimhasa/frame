@@ -1,0 +1,193 @@
+{
+ "phase": "live",
+ "measuredAt": "2026-10-28T08:16:25.606Z",
+ "passed": true,
+ "checks": [
+  {
+   "name": "shown window: current image, no status text",
+   "ok": true,
+   "data": {
+    "id": "w520824-21452",
+    "state": "ready",
+    "fresh": "true",
+    "chip": "",
+    "retry": false,
+    "retryDisabled": false,
+    "disabled": false,
+    "pressed": "false",
+    "describedBy": true,
+    "detail": "",
+    "image": "35047:RRXt5LShUlPnintuZVG1sf/Z",
+    "h": 341.6,
+    "thumbH": 292.4,
+    "overlayH": 291.9,
+    "overlayTop": 0.4,
+    "waitedMs": 2
+   }
+  },
+  {
+   "name": "window excluded from capture by its app: own state, no retry, still selectable",
+   "ok": true,
+   "data": {
+    "id": "w8a090a-25416",
+    "state": "excluded",
+    "chip": "캡처가 제외된 창",
+    "retry": false,
+    "retryDisabled": false,
+    "disabled": false,
+    "pressed": "false",
+    "describedBy": true,
+    "detail": "이 앱이 창을 화면 캡처에서 제외했습니다.",
+    "image": null,
+    "h": 341.6,
+    "thumbH": 292.4,
+    "overlayH": 291.9,
+    "overlayTop": 0.4
+   }
+  },
+  {
+   "name": "window that draws nothing (transparent): an image like any frame, not a failure",
+   "ok": true,
+   "data": {
+    "id": "w9a0ab0-23648",
+    "state": "ready",
+    "fresh": "true",
+    "chip": "",
+    "retry": false,
+    "retryDisabled": false,
+    "disabled": false,
+    "pressed": "false",
+    "describedBy": true,
+    "detail": "",
+    "image": "11199:2jtrVVjjkzux1P40UUUAf//Z",
+    "h": 341.6,
+    "thumbH": 292.4,
+    "overlayH": 291.9,
+    "overlayTop": 0.4
+   }
+  },
+  {
+   "name": "cards keep one height; 16:9 thumbnail; overlay = thumbnail area (< 1 px); card fills its grid cell",
+   "ok": true,
+   "data": [
+    [
+     341.6,
+     292.4,
+     0.4,
+     -0.5,
+     0,
+     519.9
+    ],
+    [
+     341.6,
+     292.4,
+     0.4,
+     -0.5,
+     0,
+     519.9
+    ],
+    [
+     341.6,
+     292.4,
+     0.4,
+     -0.5,
+     0,
+     519.9
+    ]
+   ]
+  },
+  {
+   "name": "minimized while open: keeps the image, shows 최소화된 창",
+   "ok": true,
+   "data": {
+    "id": "w520824-21452",
+    "state": "minimized",
+    "fresh": "true",
+    "chip": "최소화된 창",
+    "retry": false,
+    "retryDisabled": false,
+    "disabled": false,
+    "pressed": "false",
+    "describedBy": true,
+    "detail": "최소화되기 전에 마지막으로 그려진 화면입니다. 창을 다시 표시하면 현재 화면으로 바뀝니다.",
+    "image": "35047:RRXt5LShUlPnintuZVG1sf/Z",
+    "h": 341.6,
+    "thumbH": 292.4,
+    "overlayH": 291.9,
+    "overlayTop": 0.4,
+    "waitedMs": 3
+   }
+  },
+  {
+   "name": "restored while open: new current image, status cleared",
+   "ok": true,
+   "data": {
+    "id": "w520824-21452",
+    "state": "ready",
+    "fresh": "true",
+    "chip": "",
+    "retry": false,
+    "retryDisabled": false,
+    "disabled": false,
+    "pressed": "false",
+    "describedBy": true,
+    "detail": "",
+    "image": "34327:vbyWlCpKfPFPbcyqNrY//9k=",
+    "h": 341.6,
+    "thumbH": 292.4,
+    "overlayH": 291.9,
+    "overlayTop": 0.4,
+    "waitedMs": 2
+   }
+  },
+  {
+   "name": "selected window closed: 창이 닫혔습니다, disabled, deselected",
+   "ok": true,
+   "data": {
+    "closed": {
+     "id": "wa40936-11832",
+     "state": "closed",
+     "fresh": "true",
+     "chip": "창이 닫혔습니다",
+     "retry": false,
+     "retryDisabled": false,
+     "disabled": true,
+     "pressed": "false",
+     "describedBy": true,
+     "detail": "창이 닫혀 선택할 수 없습니다.",
+     "image": "23487:r9LwVKH1eHurZdDz5t8zP//Z",
+     "h": 341.6,
+     "thumbH": 292.4,
+     "overlayH": 291.9,
+     "overlayTop": 0.4,
+     "waitedMs": 115
+    },
+    "confirmDisabled": true
+   }
+  },
+  {
+   "name": "close then reopen within 40 ms: earlier list ended, newest list fills the cards",
+   "ok": true,
+   "data": {
+    "gens": [
+     2,
+     3
+    ],
+    "ended": [
+     "[thumb] gen 2 closed after 62 ms: ready 0, minimized 0, timeout 0, failed 0, closed 0,"
+    ],
+    "cards": 23
+   }
+  },
+  {
+   "name": "selection sets the source and does not start a broadcast",
+   "ok": true,
+   "data": {
+    "source": "FRAME 미리보기 시험 A",
+    "open": false,
+    "running": false,
+    "start": "송출 시작"
+   }
+  }
+ ]
+}

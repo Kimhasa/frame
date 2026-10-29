@@ -1,0 +1,169 @@
+[
+ {
+  "exe": "MapleStory.exe",
+  "icon": true,
+  "natural": [
+   42,
+   42
+  ]
+ },
+ {
+  "exe": "KakaoTalkUI.exe",
+  "icon": true,
+  "natural": [
+   42,
+   42
+  ]
+ },
+ {
+  "exe": "KakaoTalkUI.exe",
+  "icon": true,
+  "natural": [
+   42,
+   42
+  ]
+ },
+ {
+  "exe": "KakaoTalkUI.exe",
+  "icon": true,
+  "natural": [
+   42,
+   42
+  ]
+ },
+ {
+  "exe": "KakaoTalkUI.exe",
+  "icon": true,
+  "natural": [
+   42,
+   42
+  ]
+ },
+ {
+  "exe": "chrome.exe",
+  "icon": true,
+  "natural": [
+   42,
+   42
+  ]
+ },
+ {
+  "exe": "probe.exe",
+  "icon": false,
+  "natural": null
+ },
+ {
+  "exe": "probe.exe",
+  "icon": false,
+  "natural": null
+ },
+ {
+  "exe": "probe.exe",
+  "icon": false,
+  "natural": null
+ },
+ {
+  "exe": "probe.exe",
+  "icon": true,
+  "natural": [
+   42,
+   42
+  ]
+ },
+ {
+  "exe": "probe.exe",
+  "icon": false,
+  "natural": null
+ },
+ {
+  "exe": "probe.exe",
+  "icon": false,
+  "natural": null
+ },
+ {
+  "exe": "probe.exe",
+  "icon": false,
+  "natural": null
+ },
+ {
+  "exe": "probe.exe",
+  "icon": false,
+  "natural": null
+ },
+ {
+  "exe": "probe.exe",
+  "icon": false,
+  "natural": null
+ },
+ {
+  "exe": "probe.exe",
+  "icon": false,
+  "natural": null
+ },
+ {
+  "exe": "probe.exe",
+  "icon": false,
+  "natural": null
+ },
+ {
+  "exe": "probe.exe",
+  "icon": false,
+  "natural": null
+ },
+ {
+  "exe": "claude.exe",
+  "icon": true,
+  "natural": [
+   42,
+   42
+  ]
+ },
+ {
+  "exe": "ChatGPT.exe",
+  "icon": true,
+  "natural": [
+   42,
+   42
+  ]
+ },
+ {
+  "exe": "Discord.exe",
+  "icon": true,
+  "natural": [
+   42,
+   42
+  ]
+ },
+ {
+  "exe": "msedge.exe",
+  "icon": true,
+  "natural": [
+   42,
+   42
+  ]
+ },
+ {
+  "exe": "msedge.exe",
+  "icon": true,
+  "natural": [
+   42,
+   42
+  ]
+ },
+ {
+  "exe": "NexonPlug.exe",
+  "icon": true,
+  "natural": [
+   42,
+   42
+  ]
+ },
+ {
+  "exe": "msedge.exe",
+  "icon": true,
+  "natural": [
+   42,
+   42
+  ]
+ }
+]

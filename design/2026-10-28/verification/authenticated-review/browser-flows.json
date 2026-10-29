@@ -1,0 +1,115 @@
+{
+  "date": "2026-10-29",
+  "checks": [
+    {
+      "id": "nav:one-current",
+      "ok": true
+    },
+    {
+      "id": "nav:parent-group",
+      "ok": true
+    },
+    {
+      "id": "nav:indent",
+      "ok": true
+    },
+    {
+      "id": "nav:distinct-background",
+      "ok": true
+    },
+    {
+      "id": "nav:collapse",
+      "ok": true
+    },
+    {
+      "id": "nav:expand",
+      "ok": true
+    },
+    {
+      "id": "nav:independent-groups",
+      "ok": true
+    },
+    {
+      "id": "nav:no-preview-recreate",
+      "ok": true
+    },
+    {
+      "id": "metadata:label",
+      "ok": true
+    },
+    {
+      "id": "metadata:separator",
+      "ok": true
+    },
+    {
+      "id": "metadata:exact",
+      "ok": true
+    },
+    {
+      "id": "metadata:formatter",
+      "ok": true
+    },
+    {
+      "id": "metadata:sort-not-live-count",
+      "ok": true
+    },
+    {
+      "id": "channel:initial-save-disabled",
+      "ok": true
+    },
+    {
+      "id": "channel:url-error",
+      "ok": true,
+      "extra": {
+        "noValidate": true
+      }
+    },
+    {
+      "id": "channel:save-model",
+      "ok": true
+    },
+    {
+      "id": "channel:saved-disabled",
+      "ok": true
+    },
+    {
+      "id": "channel:public-link",
+      "ok": true
+    },
+    {
+      "id": "channel:public-bio",
+      "ok": true
+    },
+    {
+      "id": "channel:cancel",
+      "ok": true
+    },
+    {
+      "id": "channel:limit",
+      "ok": true
+    },
+    {
+      "id": "channel:readonly",
+      "ok": true
+    },
+    {
+      "id": "mobile:group-navigation",
+      "ok": true
+    },
+    {
+      "id": "mobile:selector-focus",
+      "ok": true
+    },
+    {
+      "id": "mobile:no-overflow",
+      "ok": true
+    }
+  ],
+  "passed": true,
+  "scope": "Local prototype metadata, navigation disclosure, mobile group switching, channel links, validation and public-model consistency.",
+  "limitations": [
+    "Actual account/stream/chat backend operations were not tested.",
+    "Competitor broadcaster dashboards were blocked by new agreement prompts; no agreement was accepted.",
+    "Viewport testing is distinct from physical-device testing."
+  ]
+}

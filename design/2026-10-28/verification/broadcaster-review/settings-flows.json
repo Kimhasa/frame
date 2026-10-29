@@ -1,0 +1,66 @@
+{
+  "date": "2026-10-29",
+  "scope": "local-prototype-browser-interactions",
+  "checks": [
+    {
+      "name": "해상도 초안은 선택값 표시",
+      "passed": true
+    },
+    {
+      "name": "취소하면 해상도 복원",
+      "passed": true
+    },
+    {
+      "name": "X 닫기도 프레임 복원",
+      "passed": true
+    },
+    {
+      "name": "음량 수치 즉시 표시",
+      "passed": true
+    },
+    {
+      "name": "저장 후 음량 유지",
+      "passed": true
+    },
+    {
+      "name": "저장 후 녹화 유지",
+      "passed": true
+    },
+    {
+      "name": "녹화 초안 취소 복원",
+      "passed": true
+    },
+    {
+      "name": "지원범위 오류는 저장 막음",
+      "passed": true
+    },
+    {
+      "name": "수동값 저장 적용",
+      "passed": true
+    },
+    {
+      "name": "수동 설정 다시 열면 유지",
+      "passed": true
+    },
+    {
+      "name": "연결 취소는 외부 도구로 복귀",
+      "passed": true
+    },
+    {
+      "name": "연결 저장도 외부 도구로 복귀",
+      "passed": true
+    },
+    {
+      "name": "녹화 관리에서 연 설정은 원래 화면 복귀",
+      "passed": true
+    },
+    {
+      "name": "ESC는 설정 초안 폐기",
+      "passed": true
+    },
+    {
+      "name": "브라우저 뒤로가기는 설정 초안 폐기",
+      "passed": true
+    }
+  ]
+}

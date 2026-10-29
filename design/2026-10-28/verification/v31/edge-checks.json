@@ -1,0 +1,13 @@
+{
+  "longChannel": {
+    "overflow": 0
+  },
+  "longSearch": {
+    "headingLines": 2,
+    "overflow": 0
+  },
+  "narrowNavigation": {
+    "selected": "재생",
+    "visible": true
+  }
+}

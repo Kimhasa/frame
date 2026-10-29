@@ -1,0 +1,393 @@
+FRAME 화면 설계 목록 v1
+작성일: 2026-10-28
+
+범위: 기능 백로그 150개를 화면·모달·공통 상태·화면 없는 검증 항목으로 연결한 시안. 실제 캡처·송출·인증·결제 구현이 아니다. 기존 기능 우선순위는 보존하고 시안 작성 순서를 별도로 관리한다.
+
+시안 수준: 상세 = 시청·방송 핵심 화면과 모달의 배치·입력·상태를 상세 설계. 기본 구조 = 후속 기능의 화면 흐름과 필드·표·확인 상태를 정리한 1차 시안. 검증 항목 = 일반 사용자 메뉴에 노출하지 않는 기술 검증.
+
+화면 수: 58 / 기능 연결: 150 / 용어 규칙: 42
+
+live | 시청 | 라이브 | P0 | 상세
+상태: 기본 / 불러오는 중 / 방송 없음 / 불러오기 실패
+기능: NET-06, NET-07, NET-12, CHANNEL-07, MOB-03, MOB-04, MOB-05
+
+watch | 시청 | 방송 시청 | P0 | 상세
+상태: 기본 / 일시정지 / 지난 구간 / 재연결 중 / 방송 종료 / 재생 실패 / 접속자 많음 / 소리 켜기
+기능: PLAYER-01, PLAYER-02, PLAYER-03, PLAYER-04, PLAYER-05, PLAYER-06, PLAYER-07, PLAYER-08, PLAYER-09, PLAYER-10, ABR-01, ABR-02, ABR-03, ABR-04, ABR-05, ABR-06, ABR-07, ABR-08, ABR-09, ABR-10, ABR-11, ABR-12, MOB-01, MOB-02, MOB-03, MOB-04, MOB-05, MOB-06, MOB-07, MOB-08, MOB-09, MOB-10, MOB-11, MOB-12, CONTENT-01, CONTENT-07, CONTENT-08, CHAT-01, CHAT-03, CHAT-10, CHAT-12, CAST-11
+
+following | 시청 | 팔로잉 | P1 | 기본 구조
+상태: 기본 / 팔로우 없음 / 로그인 필요
+기능: CHANNEL-03, CHANNEL-04
+
+search | 시청 | 검색 결과 | P2 | 기본 구조
+상태: 기본 / 검색 결과 없음
+기능: CHANNEL-07
+
+channel | 시청 | 채널 | P1 | 기본 구조
+상태: 방송 중 / 오프라인 / 접근 제한
+기능: CHANNEL-01, CHANNEL-02, CHANNEL-03, CHANNEL-06, CHANNEL-09, AUTH-08
+
+vod | 시청 | 다시보기 목록 | P2 | 기본 구조
+상태: 기본 / 다시보기 없음
+기능: CONTENT-04, CONTENT-09, CONTENT-10
+
+vod-watch | 시청 | 다시보기 재생 | P2 | 기본 구조
+상태: 기본 / 재생 실패 / 삭제된 영상
+기능: CONTENT-04, CONTENT-06, CONTENT-07, CONTENT-08, CONTENT-10, PLAYER-09, PLAYER-10
+
+clips | 시청 | 클립 목록 | P2 | 기본 구조
+상태: 기본 / 클립 없음
+기능: CONTENT-05
+
+clip-watch | 시청 | 클립 재생 | P2 | 기본 구조
+상태: 기본 / 삭제된 영상
+기능: CONTENT-05, EXT-05
+
+history | 시청 | 시청 기록 | P2 | 기본 구조
+상태: 기본 / 기록 없음
+기능: CHANNEL-10, AUTH-10
+
+notifications | 시청 | 알림 | P1 | 기본 구조
+상태: 기본 / 알림 없음
+기능: CHANNEL-04
+
+studio | 방송 | 방송하기 | P0 | 상세
+상태: 방송 전 / 방송 중 / 화면 연결 끊김 / 방송 연결 실패
+기능: CAST-04, CAST-06, CAST-07, CAST-08, CAST-09, CAST-10, CAST-11, CHAT-01, CHAT-03, NET-02, NET-08
+
+sources | 방송 | 공유할 화면 | P0 | 상세
+상태: 프로그램 창 / 전체 화면 / 불러오는 중 / 응답 지연 / 창 닫힘 / 대상 없음
+기능: CAST-01, CAST-02, CAST-03, CAST-05
+
+broadcast-settings | 방송 | 방송 설정 | P0 | 상세
+상태: 기본 / 수동 비트레이트 / 지원 범위 오류
+기능: CAST-06, CAST-07, CAST-08, CAST-09, CAST-10
+
+connection | 방송 | 연결 설정 | P0 | 상세
+상태: 기본 / 연결 확인 중 / 연결 실패
+기능: NET-01, NET-02, NET-05, NET-08, NET-11, EXT-01
+
+broadcast-details | 방송 | 방송 정보 수정 | P1 | 기본 구조
+상태: 기본 / 입력 오류
+기능: CHANNEL-05
+
+broadcast-end | 방송 | 방송 종료 | P0 | 상세
+상태: 종료 확인 / 종료 요약
+기능: CONTENT-02, CONTENT-03, OPS-05
+
+recordings | 방송 | 녹화 관리 | P1 | 기본 구조
+상태: 기본 / 저장 공간 부족 / 녹화 없음
+기능: CONTENT-02, CONTENT-03, CONTENT-09
+
+schedule | 방송 | 방송 예약 | P2 | 기본 구조
+상태: 기본 / 예약 없음
+기능: CHANNEL-06
+
+scenes | 방송 | 장면 관리 | P2 | 기본 구조
+상태: 기본 / 장면 없음
+기능: CAST-12, EXT-02
+
+login | 계정 | 로그인 | P1 | 기본 구조
+상태: 기본 / 연동 실패 / 동의 필요
+기능: AUTH-01, AUTH-03, AUTH-04, AUTH-06
+
+profile | 계정 | 내 프로필 | P1 | 기본 구조
+상태: 기본 / 닉네임 오류
+기능: AUTH-02, AUTH-05
+
+security | 계정 | 계정 및 보안 | P1 | 기본 구조
+상태: 기본 / 재인증 필요
+기능: AUTH-03, AUTH-04, AUTH-05, AUTH-06, AUTH-09, AUTH-10
+
+preferences | 계정 | 설정 | P1 | 기본 구조
+상태: 기본 / 알림 차단
+기능: CHANNEL-04, EXT-07, AUTH-10
+
+channel-edit | 관리 | 채널 관리 | P1 | 기본 구조
+상태: 기본 / 저장 오류
+기능: CHANNEL-01, CHANNEL-02, CHANNEL-05, CHANNEL-09, AUTH-07, AUTH-08
+
+moderation | 관리 | 채팅 관리 | P1 | 기본 구조
+상태: 기본 / 운영자 없음
+기능: CHAT-04, CHAT-05, CHAT-06, CHAT-07, CHAT-08, CHAT-10, CHAT-11, CHAT-12, AUTH-07
+
+reports | 관리 | 신고 관리 | P1 | 기본 구조
+상태: 기본 / 신고 없음
+기능: CHAT-09
+
+creator-stats | 관리 | 방송 통계 | P2 | 기본 구조
+상태: 기본 / 데이터 없음
+기능: OPS-05, OPS-06
+
+revenue | 관리 | 수익 및 정산 | P2 | 기본 구조
+상태: 기본 / 정산 대기
+기능: PAY-04, PAY-11, PAY-12, OPS-07
+
+transactions | 계정 | 결제 내역 | P2 | 기본 구조
+상태: 기본 / 환불 요청 / 내역 없음
+기능: PAY-02, PAY-03
+
+integrations | 관리 | 외부 도구 연결 | P2 | 기본 구조
+상태: 기본 / 연결 없음
+기능: EXT-01, EXT-02, EXT-03, EXT-04
+
+missions-manage | 관리 | 미션 관리 | P2 | 기본 구조
+상태: 기본 / 미션 없음
+기능: ENGAGE-03, PAY-09, PAY-10, ENGAGE-08
+
+polls-manage | 관리 | 투표 및 질문 관리 | P2 | 기본 구조
+상태: 기본 / 진행 중 없음
+기능: ENGAGE-01, ENGAGE-02, ENGAGE-06
+
+rewards-manage | 관리 | 포인트 및 보상 관리 | P2 | 기본 구조
+상태: 기본 / 보상 없음
+기능: ENGAGE-04, ENGAGE-05, ENGAGE-07, ENGAGE-10
+
+members | 관리 | 멤버십 관리 | P2 | 기본 구조
+상태: 기본 / 가입자 없음
+기능: PAY-07, PAY-08
+
+donate | 참여 | 후원하기 | P2 | 기본 구조
+상태: 금액 선택 / 처리 중 / 완료 / 결제 실패
+기능: PAY-01, PAY-02, PAY-03, PAY-05, PAY-06, PAY-11
+
+membership | 참여 | 멤버십 가입 | P2 | 기본 구조
+상태: 기본 / 가입 완료 / 결제 실패
+기능: PAY-07, PAY-08
+
+mission | 참여 | 미션 제안 | P3 | 기본 구조
+상태: 기본 / 진행 중 / 완료 / 실패
+기능: PAY-09, PAY-10, ENGAGE-03
+
+poll | 참여 | 투표 및 질문 | P2 | 기본 구조
+상태: 기본 / 투표 완료 / 마감
+기능: ENGAGE-01, ENGAGE-02, ENGAGE-06
+
+rewards | 참여 | 포인트 보상 | P2 | 기본 구조
+상태: 기본 / 포인트 부족 / 교환 완료
+기능: ENGAGE-04, ENGAGE-05, ENGAGE-07, ENGAGE-08, ENGAGE-10
+
+share | 공통 | 방송 링크 공유 | P0 | 상세
+상태: 기본 / 복사 완료
+기능: NET-01, NET-07, EXT-05
+
+info | 공통 | 방송 정보 | P0 | 상세
+상태: 기본
+기능: PLAYER-07, OPS-01
+
+quality | 공통 | 화질 선택 | P0 | 기존 유지
+상태: 자동 / 수동 / 전환 중
+기능: ABR-01, ABR-02, ABR-03, ABR-04, ABR-05, ABR-06, ABR-07, ABR-08, ABR-09, ABR-10, ABR-11, ABR-12, MOB-12
+
+nickname | 공통 | 닉네임 설정 | P0 | 상세
+상태: 기본 / 입력 오류
+기능: CHAT-02, AUTH-02
+
+manual | 공통 | 직접 연결 | P0 | 상세
+상태: 기본 / 연결 중 / 연결 실패
+기능: NET-01, NET-04, NET-05, NET-07
+
+report-content | 공통 | 신고하기 | P1 | 기본 구조
+상태: 기본 / 접수 완료
+기능: CHAT-09, OPS-08, OPS-10
+
+clip-create | 공통 | 클립 만들기 | P2 | 기본 구조
+상태: 기본 / 처리 중 / 생성 완료
+기능: CONTENT-05, CONTENT-06
+
+service-health | 운영 | 서비스 상태 | P0 | 기본 구조
+상태: 기본 / 과부하 / 장애
+기능: OPS-01, OPS-02, PERF-01, PERF-03, PERF-09, NET-09, NET-10
+
+service-reports | 운영 | 서비스 신고 관리 | P1 | 기본 구조
+상태: 기본 / 신고 없음
+기능: OPS-08, OPS-10, CHAT-09
+
+audit | 운영 | 활동 기록 | P1 | 기본 구조
+상태: 기본 / 기록 없음
+기능: OPS-09, OPS-03, AUTH-10
+
+policy | 공통 | 이용 및 콘텐츠 정책 | P2 | 기본 구조
+상태: 기본
+기능: OPS-10, AUTH-10
+
+update | 공통 | 앱 업데이트 | P1 | 기본 구조
+상태: 업데이트 있음 / 다운로드 중 / 최신 버전
+기능: EXT-06
+
+devices | 공통 | 다른 기기에서 보기 | P3 | 기본 구조
+상태: 기본 / 기기 없음 / 연결 실패
+기능: EXT-08
+
+recommendations | 시청 | 추천 방송 | P3 | 기본 구조
+상태: 기본 / 추천 없음
+기능: CHANNEL-08
+
+raid | 참여 | 다른 방송으로 연결 | P3 | 기본 구조
+상태: 방송 선택 / 이동 확인 / 완료
+기능: ENGAGE-09
+
+drop-rewards | 참여 | 시청 보상 | P3 | 기본 구조
+상태: 기본 / 수령 가능 / 수령 완료
+기능: ENGAGE-10
+
+developer | 관리 | 개발자 설정 | P2 | 기본 구조
+상태: 기본 / 키 발급 확인
+기능: EXT-04, OPS-03
+
+verification | 검증 | 화면 없는 기능 검증 | P0 | 검증 항목
+상태: 기본
+기능: PERF-01, PERF-02, PERF-03, PERF-04, PERF-05, PERF-06, PERF-07, PERF-08, PERF-09, PERF-10, NET-02, NET-03, NET-04, NET-05, NET-09, NET-10, NET-11, OPS-03, OPS-04, CAST-07
+
+기능별 역추적
+
+PERF-01 | P0 | 단일 시청 기준 성능 계측 → service-health, verification
+PERF-02 | P0 | 실제 미디어 수신 부하 발생기 → verification
+PERF-03 | P0 | 단일 방송 1000명 단계 부하 → service-health, verification
+PERF-04 | P1 | 여러 방송 합산 부하 → verification
+PERF-05 | P0 | 동시 입장과 이탈·교체 부하 → verification
+PERF-06 | P0 | 영상·채팅·DVR 혼합 부하 → verification
+PERF-07 | P0 | 장시간 안정성과 누수 → verification
+PERF-08 | P0 | 부하 발생기 자체 한계 측정 → verification
+PERF-09 | P0 | 수용 상한과 과부하 복구 → service-health, verification
+PERF-10 | P0 | 재현 가능한 성능 보고서 → verification
+ABR-01 | P0 | 화질별 공유 인코딩 단계 → watch, quality
+ABR-02 | P0 | 시청자별 자동 화질 선택 → watch, quality
+ABR-03 | P0 | 빠른 하향과 보수적 상향 → watch, quality
+ABR-04 | P0 | 화질 왕복 전환 억제 → watch, quality
+ABR-05 | P0 | 수동 화질 선택 유지 → watch, quality
+ABR-06 | P0 | 전환 중 영상·음성 연속성 → watch, quality
+ABR-07 | P0 | 다른 시청자 화질 독립성 → watch, quality
+ABR-08 | P0 | 회선 상태별 자동 전환 시험 → watch, quality
+ABR-09 | P0 | 자동 상태와 실제 화질 표시 → watch, quality
+ABR-10 | P0 | 화질 인코더 예열과 공유 수명 → watch, quality
+ABR-11 | P0 | 단말 디코딩 한계 대응 → watch, quality
+ABR-12 | P0 | DVR와 자동 화질 정책 → watch, quality
+MOB-01 | P0 | iPhone Safari 실제 재생 → watch
+MOB-02 | P0 | Android Chrome 실제 재생 → watch
+MOB-03 | P0 | 휴대폰 세로·가로 반응형 → live, watch
+MOB-04 | P0 | 태블릿 배치 → live, watch
+MOB-05 | P0 | 모바일 탐색·채팅 배치 → live, watch
+MOB-06 | P0 | 터치 컨트롤과 탐색 → watch
+MOB-07 | P0 | 자동 재생·소리 켜기 → watch
+MOB-08 | P0 | 인라인·전체 화면·PiP 지원 감지 → watch
+MOB-09 | P0 | 모바일 DVR·실시간 복귀 → watch
+MOB-10 | P0 | 키보드·안전 영역·모달 → watch
+MOB-11 | P0 | 백그라운드·통신망 전환 복구 → watch
+MOB-12 | P0 | 네이티브 HLS·MSE/MMS 호환 → watch, quality
+NET-01 | P0 | 공개 시청 URL과 주소 역할 분리 → connection, share, manual
+NET-02 | P0 | 외부 중계 서버로 실제 송출 → studio, connection, verification
+NET-03 | P0 | HTTPS·WSS·역방향 프록시 → verification
+NET-04 | P0 | WebRTC·HLS 배포 방식 결정 → manual, verification
+NET-05 | P0 | NAT·STUN/TURN·연결 대체 경로 → connection, manual, verification
+NET-06 | P0 | 공개 방송 목록 등록 → live
+NET-07 | P0 | 공개 썸네일·채팅·DVR URL → live, share, manual
+NET-08 | P0 | 최소 송출 인증·관리 권한 분리 → studio, connection
+NET-09 | P1 | 복제 서버·CDN 확장 경로 → service-health, verification
+NET-10 | P0 | 무료 자원·트래픽 예산 → service-health, verification
+NET-11 | P0 | 배포·재시작·진단 절차 → connection, verification
+NET-12 | P0 | 환경 배지와 과거 전제 정리 → live
+CAST-01 | P1 | 프로그램 창 선택과 미리보기 → sources
+CAST-02 | P1 | 모니터 선택과 미리보기 → sources
+CAST-03 | P1 | 제목 표시줄·테두리 제외 → sources
+CAST-04 | P1 | 고정 출력 화면과 비율 보존 → studio
+CAST-05 | P1 | DPI·모니터 이동·분리 → sources
+CAST-06 | P1 | 해상도·목표 FPS 설정 → studio, broadcast-settings
+CAST-07 | P1 | 144·165fps 실제 성능 → studio, broadcast-settings, verification
+CAST-08 | P1 | GPU 인코더와 실패 대체 → studio, broadcast-settings
+CAST-09 | P1 | 송출 비트레이트 자동·수동 → studio, broadcast-settings
+CAST-10 | P1 | 시스템·마이크 혼합과 음량 → studio, broadcast-settings
+CAST-11 | P0 | 오디오·비디오 동기화 → watch, studio
+CAST-12 | P2 | 장면 전환·오버레이 합성 → scenes
+PLAYER-01 | P0 | 영상 클릭 재생·일시정지 → watch
+PLAYER-02 | P0 | 음소거·음량 조절 → watch
+PLAYER-03 | P0 | 하단 컨트롤 자동 숨김 → watch
+PLAYER-04 | P0 | 확대 보기·전체 화면 → watch
+PLAYER-05 | P0 | PiP와 재생 요소 수명 → watch
+PLAYER-06 | P0 | 재생바·시간·라이브 복귀 → watch
+PLAYER-07 | P0 | 재접속·취소·오류 복구 → watch, info
+PLAYER-08 | P1 | 키보드·초점·접근성 → watch
+PLAYER-09 | P2 | 재생 속도·구간 반복 → watch, vod-watch
+PLAYER-10 | P2 | 실시간 자막·자막 선택 → watch, vod-watch
+CONTENT-01 | P0 | 방송 처음부터 DVR → watch
+CONTENT-02 | P1 | 분할 녹화와 저장 한도 → broadcast-end, recordings
+CONTENT-03 | P1 | 디스크 부족·중단 구간 처리 → broadcast-end, recordings
+CONTENT-04 | P2 | 방송 종료 후 다시보기 서비스 → vod, vod-watch
+CONTENT-05 | P2 | 클립 생성과 공유 → clips, clip-watch, clip-create
+CONTENT-06 | P2 | 하이라이트·챕터·북마크 → vod-watch, clip-create
+CONTENT-07 | P2 | 시간축 썸네일 미리보기 → watch, vod-watch
+CONTENT-08 | P2 | 채팅 다시보기 동기화 → watch, vod-watch
+CONTENT-09 | P2 | 영상 다운로드·보관 정책 → vod, recordings
+CONTENT-10 | P2 | 다시보기 다중 화질 → vod, vod-watch
+CHAT-01 | P0 | 송출자·시청자 양방향 채팅 → watch, studio
+CHAT-02 | P1 | 닉네임 설정·입력 검증 → nickname
+CHAT-03 | P0 | 전송 확인·재연결·중복 제거 → watch, studio
+CHAT-04 | P2 | 채팅 영속 저장·검색 → moderation
+CHAT-05 | P1 | 메시지 삭제·고정 → moderation
+CHAT-06 | P1 | 일시 제한·차단·해제 → moderation
+CHAT-07 | P1 | 채팅 운영자 지정 → moderation
+CHAT-08 | P1 | 금칙어·링크·스팸 필터 → moderation
+CHAT-09 | P1 | 신고·검토·제재 이력 → reports, report-content, service-reports
+CHAT-10 | P2 | 멘션·답글·이모티콘·배지 → watch, moderation
+CHAT-11 | P2 | 느린 채팅·팔로워 전용 모드 → moderation
+CHAT-12 | P1 | 참여자 목록·읽기 전용 상태 → watch, moderation
+AUTH-01 | P1 | 소셜로그인 OAuth/OIDC → login
+AUTH-02 | P1 | 고정 사용자 ID·프로필 → profile, nickname
+AUTH-03 | P1 | 로그인 유지·세션 회수 → login, security
+AUTH-04 | P2 | 계정 연동·중복 계정 처리 → login, security
+AUTH-05 | P1 | 회원 탈퇴·정보 관리 → profile, security
+AUTH-06 | P2 | 비밀번호·메일·OTP 로그인 → login, security
+AUTH-07 | P1 | 소유자·운영자·시청자 역할 → channel-edit, moderation
+AUTH-08 | P1 | 채널별 접근 권한 → channel, channel-edit
+AUTH-09 | P2 | 2단계 인증·중요 작업 재확인 → security
+AUTH-10 | P2 | 동의·활동 이력·차단 관리 → history, security, preferences, audit, policy
+CHANNEL-01 | P1 | 고정 채널 페이지·주소 → channel, channel-edit
+CHANNEL-02 | P2 | 프로필·배너·소개·링크 → channel, channel-edit
+CHANNEL-03 | P1 | 팔로우·팔로우 목록 → following, channel
+CHANNEL-04 | P1 | 방송 시작 알림·설정 → following, notifications, preferences
+CHANNEL-05 | P1 | 제목·카테고리·태그 관리 → broadcast-details, channel-edit
+CHANNEL-06 | P2 | 방송 예약·일정·예고 → channel, schedule
+CHANNEL-07 | P2 | 검색·정렬·카테고리 탐색 → live, search
+CHANNEL-08 | P3 | 추천·개인화 피드 → recommendations
+CHANNEL-09 | P2 | 공지·게시글·댓글 → channel, channel-edit
+CHANNEL-10 | P2 | 시청 기록·이어보기·즐겨찾기 → history
+PAY-01 | P2 | 일반 금액·메시지 후원 → donate
+PAY-02 | P2 | 결제 검증·중복 처리 방지 → transactions, donate
+PAY-03 | P2 | 취소·환불·분쟁 처리 → transactions, donate
+PAY-04 | P2 | 정산·수익 내역 → revenue
+PAY-05 | P2 | TTS·음성 후원 → donate
+PAY-06 | P2 | 영상 후원 → donate
+PAY-07 | P2 | 유료 멤버십·구독 → members, membership
+PAY-08 | P3 | 멤버십·구독 선물 → members, membership
+PAY-09 | P3 | 유료 미션 후원 → missions-manage, mission
+PAY-10 | P3 | 공동 목표·누적 후원 → missions-manage, mission
+PAY-11 | P2 | 후원 랭킹·알림 위젯 → revenue, donate
+PAY-12 | P3 | 광고·스폰서 수익화 → revenue
+ENGAGE-01 | P2 | 실시간 투표 → polls-manage, poll
+ENGAGE-02 | P2 | 질문 수집·Q&A → polls-manage, poll
+ENGAGE-03 | P2 | 무료 미션·도전 과제 → missions-manage, mission
+ENGAGE-04 | P2 | 시청 포인트 적립·사용 → rewards-manage, rewards
+ENGAGE-05 | P2 | 포인트 보상 교환 → rewards-manage, rewards
+ENGAGE-06 | P3 | 포인트 예측·참여 결과 → polls-manage, poll
+ENGAGE-07 | P2 | 출석·연속 시청·배지 → rewards-manage, rewards
+ENGAGE-08 | P2 | 리액션·응원·커뮤니티 목표 → missions-manage, rewards
+ENGAGE-09 | P3 | 채널 간 시청자 연결·레이드 → raid
+ENGAGE-10 | P3 | 시청 보상·드롭스 연동 → rewards-manage, rewards, drop-rewards
+OPS-01 | P0 | 미디어 관측·성능 대시보드 → info, service-health
+OPS-02 | P0 | 장애 로그·오류 추적·알림 → service-health
+OPS-03 | P0 | 설정·비밀 관리 → audit, developer, verification
+OPS-04 | P1 | 일관된 배포·복구·백업 → verification
+OPS-05 | P2 | 시청 시간·유입·재방문 분석 → broadcast-end, creator-stats
+OPS-06 | P2 | 채널·콘텐츠 성과 분석 → creator-stats
+OPS-07 | P2 | 수익·후원·멤버십 분석 → revenue
+OPS-08 | P1 | 서비스 관리자·신고 운영 → report-content, service-reports
+OPS-09 | P1 | 감사 기록·보관·데이터 삭제 → audit
+OPS-10 | P2 | 방송 콘텐츠 권리·이용 정책 → report-content, service-reports, policy
+EXT-01 | P2 | OBS 등 외부 송출 도구 입력 → connection, integrations
+EXT-02 | P2 | 브라우저 소스 오버레이 → scenes, integrations
+EXT-03 | P2 | 채팅봇·명령어·자동 응답 → integrations
+EXT-04 | P2 | 외부 API·웹훅 → integrations, developer
+EXT-05 | P2 | 임베드·공유 링크 → clip-watch, share
+EXT-06 | P1 | 업데이트·버전 배포 → update
+EXT-07 | P3 | 다국어·지역·시간대 → preferences
+EXT-08 | P3 | TV·캐스트·추가 기기 → devices

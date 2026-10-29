@@ -1,0 +1,499 @@
+{
+ "label": "after",
+ "scenario": "desktop",
+ "measuredAt": "2026-10-28T07:27:11.737Z",
+ "waitMs": 8000,
+ "env": {
+  "dpr": 1.75,
+  "ua": "Edg/155.0.0.0",
+  "viewport": "1441x1001",
+  "webview2": null,
+  "gpu": "NVIDIA GeForce RTX 3060 Laptop GPU"
+ },
+ "runs": [
+  {
+   "run": 0,
+   "listMs": 4,
+   "total": 11,
+   "withImage": 11,
+   "items": [
+    {
+     "key": "probe.exe#1",
+     "exe": "probe.exe",
+     "minimized": false,
+     "size": "780x490",
+     "firstThumbMs": 6,
+     "firstThumbFresh": false,
+     "firstShownMs": 6,
+     "states": [
+      "image@6",
+      "loading#1@8",
+      "image#1@65",
+      "ready#1@66"
+     ],
+     "final": "ready",
+     "chip": "",
+     "retry": false,
+     "disabled": false,
+     "cardH": 163.1,
+     "thumbH": 112
+    },
+    {
+     "key": "msedge.exe#1",
+     "exe": "msedge.exe",
+     "testTitle": "FRAME 검은 화면 시험",
+     "minimized": false,
+     "size": "1680x1090",
+     "firstThumbMs": 6,
+     "firstThumbFresh": false,
+     "firstShownMs": 6,
+     "states": [
+      "image@6",
+      "loading#1@49",
+      "image#1@94",
+      "ready#1@94"
+     ],
+     "final": "ready",
+     "chip": "",
+     "retry": false,
+     "disabled": false,
+     "cardH": 163.1,
+     "thumbH": 112
+    },
+    {
+     "key": "msedge.exe#2",
+     "exe": "msedge.exe",
+     "testTitle": "FRAME 미리보기 시험 A",
+     "minimized": false,
+     "size": "1555x970",
+     "firstThumbMs": 6,
+     "firstThumbFresh": false,
+     "firstShownMs": 6,
+     "states": [
+      "image@6",
+      "loading#1@66",
+      "image#1@109",
+      "ready#1@109"
+     ],
+     "final": "ready",
+     "chip": "",
+     "retry": false,
+     "disabled": false,
+     "cardH": 163.1,
+     "thumbH": 112
+    },
+    {
+     "key": "claude.exe#1",
+     "exe": "claude.exe",
+     "minimized": false,
+     "size": "3161x1644",
+     "firstThumbMs": 6,
+     "firstThumbFresh": false,
+     "firstShownMs": 7,
+     "states": [
+      "image@6",
+      "loading#1@95",
+      "image#1@133",
+      "ready#1@133"
+     ],
+     "final": "ready",
+     "chip": "",
+     "retry": false,
+     "disabled": false,
+     "cardH": 163.1,
+     "thumbH": 112
+    },
+    {
+     "key": "ChatGPT.exe#1",
+     "exe": "ChatGPT.exe",
+     "minimized": false,
+     "size": "3840x2088",
+     "firstThumbMs": 7,
+     "firstThumbFresh": false,
+     "firstShownMs": 7,
+     "states": [
+      "image@7",
+      "loading#1@109",
+      "image#1@145",
+      "ready#1@145"
+     ],
+     "final": "ready",
+     "chip": "",
+     "retry": false,
+     "disabled": false,
+     "cardH": 163.1,
+     "thumbH": 112
+    },
+    {
+     "key": "chrome.exe#1",
+     "exe": "chrome.exe",
+     "minimized": false,
+     "size": "3840x2088",
+     "firstThumbMs": 8,
+     "firstThumbFresh": false,
+     "firstShownMs": 8,
+     "states": [
+      "image@8",
+      "loading#1@147",
+      "image#1@217",
+      "ready#1@217"
+     ],
+     "final": "ready",
+     "chip": "",
+     "retry": false,
+     "disabled": false,
+     "cardH": 163.1,
+     "thumbH": 112
+    },
+    {
+     "key": "MapleStory.exe#1",
+     "exe": "MapleStory.exe",
+     "minimized": true,
+     "size": "256x45",
+     "firstThumbMs": 237,
+     "firstThumbFresh": false,
+     "firstShownMs": 237,
+     "states": [
+      "loading#1@185",
+      "image#1@237",
+      "minimized#1@237"
+     ],
+     "final": "minimized",
+     "chip": "최소화된 창",
+     "retry": false,
+     "disabled": false,
+     "detail": "최소화되기 전에 마지막으로 그려진 화면입니다. 창을 다시 표시하면 현재 화면으로 바뀝니다.",
+     "cardH": 163.1,
+     "thumbH": 112
+    },
+    {
+     "key": "NexonPlug.exe#1",
+     "exe": "NexonPlug.exe",
+     "minimized": false,
+     "size": "1080x700",
+     "firstThumbMs": 8,
+     "firstThumbFresh": false,
+     "firstShownMs": 8,
+     "states": [
+      "image@8",
+      "loading#1@217",
+      "image#1@265",
+      "ready#1@265"
+     ],
+     "final": "ready",
+     "chip": "",
+     "retry": false,
+     "disabled": false,
+     "cardH": 163.1,
+     "thumbH": 112
+    },
+    {
+     "key": "msedge.exe#3",
+     "exe": "msedge.exe",
+     "testTitle": "FRAME 모션 테스트",
+     "minimized": true,
+     "size": "256x35",
+     "firstThumbMs": 298,
+     "firstThumbFresh": false,
+     "firstShownMs": 299,
+     "states": [
+      "loading#1@237",
+      "image#1@298",
+      "minimized#1@298"
+     ],
+     "final": "minimized",
+     "chip": "최소화된 창",
+     "retry": false,
+     "disabled": false,
+     "detail": "최소화되기 전에 마지막으로 그려진 화면입니다. 창을 다시 표시하면 현재 화면으로 바뀝니다.",
+     "cardH": 163.1,
+     "thumbH": 112
+    },
+    {
+     "key": "Discord.exe#1",
+     "exe": "Discord.exe",
+     "minimized": true,
+     "size": "256x35",
+     "firstThumbMs": 337,
+     "firstThumbFresh": false,
+     "firstShownMs": 337,
+     "states": [
+      "loading#1@266",
+      "image#1@337",
+      "minimized#1@337"
+     ],
+     "final": "minimized",
+     "chip": "최소화된 창",
+     "retry": false,
+     "disabled": false,
+     "detail": "최소화되기 전에 마지막으로 그려진 화면입니다. 창을 다시 표시하면 현재 화면으로 바뀝니다.",
+     "cardH": 163.1,
+     "thumbH": 112
+    },
+    {
+     "key": "KakaoTalkUI.exe#1",
+     "exe": "KakaoTalkUI.exe",
+     "minimized": true,
+     "size": "256x45",
+     "firstThumbMs": 342,
+     "firstThumbFresh": false,
+     "firstShownMs": 342,
+     "states": [
+      "loading#1@299",
+      "image#1@342",
+      "minimized#1@342"
+     ],
+     "final": "minimized",
+     "chip": "최소화된 창",
+     "retry": false,
+     "disabled": false,
+     "detail": "최소화되기 전에 마지막으로 그려진 화면입니다. 창을 다시 표시하면 현재 화면으로 바뀝니다.",
+     "cardH": 163.1,
+     "thumbH": 112
+    }
+   ]
+  },
+  {
+   "run": 1,
+   "listMs": 4,
+   "total": 11,
+   "withImage": 11,
+   "items": [
+    {
+     "key": "probe.exe#1",
+     "exe": "probe.exe",
+     "minimized": false,
+     "size": "780x490",
+     "firstThumbMs": 4,
+     "firstThumbFresh": false,
+     "firstShownMs": 4,
+     "states": [
+      "image@4",
+      "loading#1@6",
+      "image#1@74",
+      "ready#1@75"
+     ],
+     "final": "ready",
+     "chip": "",
+     "retry": false,
+     "disabled": false,
+     "cardH": 163.1,
+     "thumbH": 112
+    },
+    {
+     "key": "msedge.exe#1",
+     "exe": "msedge.exe",
+     "testTitle": "FRAME 검은 화면 시험",
+     "minimized": false,
+     "size": "1680x1090",
+     "firstThumbMs": 4,
+     "firstThumbFresh": false,
+     "firstShownMs": 4,
+     "states": [
+      "image@4",
+      "loading#1@45",
+      "image#1@89",
+      "ready#1@89"
+     ],
+     "final": "ready",
+     "chip": "",
+     "retry": false,
+     "disabled": false,
+     "cardH": 163.1,
+     "thumbH": 112
+    },
+    {
+     "key": "msedge.exe#2",
+     "exe": "msedge.exe",
+     "testTitle": "FRAME 미리보기 시험 A",
+     "minimized": false,
+     "size": "1555x970",
+     "firstThumbMs": 4,
+     "firstThumbFresh": false,
+     "firstShownMs": 4,
+     "states": [
+      "image@4",
+      "loading#1@75",
+      "image#1@125",
+      "ready#1@125"
+     ],
+     "final": "ready",
+     "chip": "",
+     "retry": false,
+     "disabled": false,
+     "cardH": 163.1,
+     "thumbH": 112
+    },
+    {
+     "key": "claude.exe#1",
+     "exe": "claude.exe",
+     "minimized": false,
+     "size": "3161x1644",
+     "firstThumbMs": 4,
+     "firstThumbFresh": false,
+     "firstShownMs": 5,
+     "states": [
+      "image@4",
+      "loading#1@90",
+      "image#1@140",
+      "ready#1@140"
+     ],
+     "final": "ready",
+     "chip": "",
+     "retry": false,
+     "disabled": false,
+     "cardH": 163.1,
+     "thumbH": 112
+    },
+    {
+     "key": "ChatGPT.exe#1",
+     "exe": "ChatGPT.exe",
+     "minimized": false,
+     "size": "3840x2088",
+     "firstThumbMs": 5,
+     "firstThumbFresh": false,
+     "firstShownMs": 5,
+     "states": [
+      "image@5",
+      "loading#1@126",
+      "image#1@160",
+      "ready#1@160"
+     ],
+     "final": "ready",
+     "chip": "",
+     "retry": false,
+     "disabled": false,
+     "cardH": 163.1,
+     "thumbH": 112
+    },
+    {
+     "key": "chrome.exe#1",
+     "exe": "chrome.exe",
+     "minimized": false,
+     "size": "3840x2088",
+     "firstThumbMs": 5,
+     "firstThumbFresh": false,
+     "firstShownMs": 5,
+     "states": [
+      "image@5",
+      "loading#1@140",
+      "image#1@193",
+      "ready#1@193"
+     ],
+     "final": "ready",
+     "chip": "",
+     "retry": false,
+     "disabled": false,
+     "cardH": 163.1,
+     "thumbH": 112
+    },
+    {
+     "key": "MapleStory.exe#1",
+     "exe": "MapleStory.exe",
+     "minimized": true,
+     "size": "256x45",
+     "firstThumbMs": 206,
+     "firstThumbFresh": false,
+     "firstShownMs": 207,
+     "states": [
+      "loading#1@161",
+      "image#1@206",
+      "minimized#1@207"
+     ],
+     "final": "minimized",
+     "chip": "최소화된 창",
+     "retry": false,
+     "disabled": false,
+     "detail": "최소화되기 전에 마지막으로 그려진 화면입니다. 창을 다시 표시하면 현재 화면으로 바뀝니다.",
+     "cardH": 163.1,
+     "thumbH": 112
+    },
+    {
+     "key": "NexonPlug.exe#1",
+     "exe": "NexonPlug.exe",
+     "minimized": false,
+     "size": "1080x700",
+     "firstThumbMs": 5,
+     "firstThumbFresh": false,
+     "firstShownMs": 6,
+     "states": [
+      "image@5",
+      "loading#1@193",
+      "image#1@225",
+      "ready#1@225"
+     ],
+     "final": "ready",
+     "chip": "",
+     "retry": false,
+     "disabled": false,
+     "cardH": 163.1,
+     "thumbH": 112
+    },
+    {
+     "key": "msedge.exe#3",
+     "exe": "msedge.exe",
+     "testTitle": "FRAME 모션 테스트",
+     "minimized": true,
+     "size": "256x35",
+     "firstThumbMs": 259,
+     "firstThumbFresh": false,
+     "firstShownMs": 259,
+     "states": [
+      "loading#1@207",
+      "image#1@259",
+      "minimized#1@259"
+     ],
+     "final": "minimized",
+     "chip": "최소화된 창",
+     "retry": false,
+     "disabled": false,
+     "detail": "최소화되기 전에 마지막으로 그려진 화면입니다. 창을 다시 표시하면 현재 화면으로 바뀝니다.",
+     "cardH": 163.1,
+     "thumbH": 112
+    },
+    {
+     "key": "Discord.exe#1",
+     "exe": "Discord.exe",
+     "minimized": true,
+     "size": "256x35",
+     "firstThumbMs": 296,
+     "firstThumbFresh": false,
+     "firstShownMs": 297,
+     "states": [
+      "loading#1@226",
+      "image#1@296",
+      "minimized#1@297"
+     ],
+     "final": "minimized",
+     "chip": "최소화된 창",
+     "retry": false,
+     "disabled": false,
+     "detail": "최소화되기 전에 마지막으로 그려진 화면입니다. 창을 다시 표시하면 현재 화면으로 바뀝니다.",
+     "cardH": 163.1,
+     "thumbH": 112
+    },
+    {
+     "key": "KakaoTalkUI.exe#1",
+     "exe": "KakaoTalkUI.exe",
+     "minimized": true,
+     "size": "256x45",
+     "firstThumbMs": 316,
+     "firstThumbFresh": false,
+     "firstShownMs": 317,
+     "states": [
+      "loading#1@260",
+      "image#1@316",
+      "minimized#1@316"
+     ],
+     "final": "minimized",
+     "chip": "최소화된 창",
+     "retry": false,
+     "disabled": false,
+     "detail": "최소화되기 전에 마지막으로 그려진 화면입니다. 창을 다시 표시하면 현재 화면으로 바뀝니다.",
+     "cardH": 163.1,
+     "thumbH": 112
+    }
+   ]
+  }
+ ]
+}

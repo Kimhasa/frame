@@ -1,0 +1,286 @@
+{
+ "label": "before",
+ "scenario": "desktop",
+ "measuredAt": "2026-10-28T07:08:01.513Z",
+ "waitMs": 8000,
+ "env": {
+  "dpr": 1.75,
+  "ua": "Edg/155.0.0.0",
+  "viewport": "1441x1001",
+  "gpu": null
+ },
+ "runs": [
+  {
+   "run": 0,
+   "listMs": 58,
+   "total": 7,
+   "withImage": 4,
+   "items": [
+    {
+     "key": "claude.exe#1",
+     "exe": "claude.exe",
+     "minimized": false,
+     "size": "3161x1644",
+     "firstThumbMs": 96,
+     "firstThumbFresh": true,
+     "firstShownMs": 99,
+     "states": [
+      "image@96"
+     ],
+     "final": "image",
+     "chip": "",
+     "retry": false,
+     "disabled": false,
+     "detail": "Claude",
+     "cardH": 163.1,
+     "thumbH": 112
+    },
+    {
+     "key": "ChatGPT.exe#1",
+     "exe": "ChatGPT.exe",
+     "minimized": false,
+     "size": "3840x2088",
+     "firstThumbMs": 167,
+     "firstThumbFresh": true,
+     "firstShownMs": 168,
+     "states": [
+      "image@167"
+     ],
+     "final": "image",
+     "chip": "",
+     "retry": false,
+     "disabled": false,
+     "detail": "ChatGPT",
+     "cardH": 163.1,
+     "thumbH": 112
+    },
+    {
+     "key": "chrome.exe#1",
+     "exe": "chrome.exe",
+     "minimized": false,
+     "size": "3840x2088",
+     "firstThumbMs": 208,
+     "firstThumbFresh": true,
+     "firstShownMs": 209,
+     "states": [
+      "image@208"
+     ],
+     "final": "image",
+     "chip": "",
+     "retry": false,
+     "disabled": false,
+     "detail": "경손실@베라 엔젤릭버스터 Lv.295 캐릭터 정보 | 메애기 - Chrome",
+     "cardH": 163.1,
+     "thumbH": 112
+    },
+    {
+     "key": "MapleStory.exe#1",
+     "exe": "MapleStory.exe",
+     "minimized": true,
+     "size": "256x45",
+     "firstThumbMs": null,
+     "firstThumbFresh": null,
+     "firstShownMs": null,
+     "states": [],
+     "final": "icon",
+     "chip": "",
+     "retry": false,
+     "disabled": false,
+     "detail": "MapleStory (최소화됨)",
+     "cardH": 163.1,
+     "thumbH": 112
+    },
+    {
+     "key": "NexonPlug.exe#1",
+     "exe": "NexonPlug.exe",
+     "minimized": false,
+     "size": "1080x700",
+     "firstThumbMs": 254,
+     "firstThumbFresh": true,
+     "firstShownMs": 255,
+     "states": [
+      "image@254"
+     ],
+     "final": "image",
+     "chip": "",
+     "retry": false,
+     "disabled": false,
+     "detail": "https://assets-nxplug.nexon.com/login/",
+     "cardH": 163.1,
+     "thumbH": 112
+    },
+    {
+     "key": "msedge.exe#1",
+     "exe": "msedge.exe",
+     "testTitle": "FRAME 모션 테스트",
+     "minimized": true,
+     "size": "256x35",
+     "firstThumbMs": null,
+     "firstThumbFresh": null,
+     "firstShownMs": null,
+     "states": [],
+     "final": "icon",
+     "chip": "",
+     "retry": false,
+     "disabled": false,
+     "detail": "FRAME 모션 테스트 (최소화됨)",
+     "cardH": 163.1,
+     "thumbH": 112
+    },
+    {
+     "key": "Discord.exe#1",
+     "exe": "Discord.exe",
+     "minimized": true,
+     "size": "256x35",
+     "firstThumbMs": null,
+     "firstThumbFresh": null,
+     "firstShownMs": null,
+     "states": [],
+     "final": "icon",
+     "chip": "",
+     "retry": false,
+     "disabled": false,
+     "detail": "@체레 - Discord (최소화됨)",
+     "cardH": 163.1,
+     "thumbH": 112
+    }
+   ]
+  },
+  {
+   "run": 1,
+   "listMs": 5,
+   "total": 7,
+   "withImage": 4,
+   "items": [
+    {
+     "key": "claude.exe#1",
+     "exe": "claude.exe",
+     "minimized": false,
+     "size": "3161x1644",
+     "firstThumbMs": 36,
+     "firstThumbFresh": true,
+     "firstShownMs": 37,
+     "states": [
+      "image@36"
+     ],
+     "final": "image",
+     "chip": "",
+     "retry": false,
+     "disabled": false,
+     "detail": "Claude",
+     "cardH": 163.1,
+     "thumbH": 112
+    },
+    {
+     "key": "ChatGPT.exe#1",
+     "exe": "ChatGPT.exe",
+     "minimized": false,
+     "size": "3840x2088",
+     "firstThumbMs": 112,
+     "firstThumbFresh": true,
+     "firstShownMs": 112,
+     "states": [
+      "image@112"
+     ],
+     "final": "image",
+     "chip": "",
+     "retry": false,
+     "disabled": false,
+     "detail": "ChatGPT",
+     "cardH": 163.1,
+     "thumbH": 112
+    },
+    {
+     "key": "chrome.exe#1",
+     "exe": "chrome.exe",
+     "minimized": false,
+     "size": "3840x2088",
+     "firstThumbMs": 160,
+     "firstThumbFresh": true,
+     "firstShownMs": 161,
+     "states": [
+      "image@160"
+     ],
+     "final": "image",
+     "chip": "",
+     "retry": false,
+     "disabled": false,
+     "detail": "경손실@베라 엔젤릭버스터 Lv.295 캐릭터 정보 | 메애기 - Chrome",
+     "cardH": 163.1,
+     "thumbH": 112
+    },
+    {
+     "key": "MapleStory.exe#1",
+     "exe": "MapleStory.exe",
+     "minimized": true,
+     "size": "256x45",
+     "firstThumbMs": null,
+     "firstThumbFresh": null,
+     "firstShownMs": null,
+     "states": [],
+     "final": "icon",
+     "chip": "",
+     "retry": false,
+     "disabled": false,
+     "detail": "MapleStory (최소화됨)",
+     "cardH": 163.1,
+     "thumbH": 112
+    },
+    {
+     "key": "NexonPlug.exe#1",
+     "exe": "NexonPlug.exe",
+     "minimized": false,
+     "size": "1080x700",
+     "firstThumbMs": 206,
+     "firstThumbFresh": true,
+     "firstShownMs": 207,
+     "states": [
+      "image@206"
+     ],
+     "final": "image",
+     "chip": "",
+     "retry": false,
+     "disabled": false,
+     "detail": "https://assets-nxplug.nexon.com/login/",
+     "cardH": 163.1,
+     "thumbH": 112
+    },
+    {
+     "key": "msedge.exe#1",
+     "exe": "msedge.exe",
+     "testTitle": "FRAME 모션 테스트",
+     "minimized": true,
+     "size": "256x35",
+     "firstThumbMs": null,
+     "firstThumbFresh": null,
+     "firstShownMs": null,
+     "states": [],
+     "final": "icon",
+     "chip": "",
+     "retry": false,
+     "disabled": false,
+     "detail": "FRAME 모션 테스트 (최소화됨)",
+     "cardH": 163.1,
+     "thumbH": 112
+    },
+    {
+     "key": "Discord.exe#1",
+     "exe": "Discord.exe",
+     "minimized": true,
+     "size": "256x35",
+     "firstThumbMs": null,
+     "firstThumbFresh": null,
+     "firstShownMs": null,
+     "states": [],
+     "final": "icon",
+     "chip": "",
+     "retry": false,
+     "disabled": false,
+     "detail": "@체레 - Discord (최소화됨)",
+     "cardH": 163.1,
+     "thumbH": 112
+    }
+   ]
+  }
+ ]
+}

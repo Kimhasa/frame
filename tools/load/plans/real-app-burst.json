@@ -1,0 +1,12 @@
+{
+  "name": "real-app-burst",
+  "_comment": "Join storm on FrameConsole (--host <sender IP>): every stage starts from zero (the runner waits until /api/stats reports the sessions of before the run), all viewers of the stage are requested at once and sent with 32 add requests in flight; first media counts from the burst start, so the queue behind the 32 is included. Hold 30 s. Traffic cap 30 GB covers the planned stages (~11 GB at 8.6 Mbit/s); the stop rules end the run past this PC's limit.",
+  "target": { "whep": "http://{host}:8889/{stream}/whep", "base": "http://{host}:8889", "path": "screen-01", "appStats": "http://{host}:8889/api/stats", "requireAppStats": true, "useApi": false, "tree": ["FrameConsole"] },
+  "stages": [25, 50, 75, 100],
+  "holdSec": 30,
+  "burst": true,
+  "burstConcurrency": 32,
+  "keepBetweenStages": false,
+  "firstMediaTimeoutMs": 15000,
+  "limits": { "maxTrafficGB": 30, "abortOnDegraded": true, "minFullRate": 0.9 }
+}

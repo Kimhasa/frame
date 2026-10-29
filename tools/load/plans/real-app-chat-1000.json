@@ -1,0 +1,11 @@
+{
+  "name": "real-app-chat-1000",
+  "_comment": "Chat capacity without media on FrameConsole (CHAT-01, --host <sender IP>): up to 1000 chat sockets, 2% of them send 6 messages/min; connected, joined and refused counts come from the client side and from /api/stats chat {clients, joined, refused} and http {threads, refused}. The current app source allows 2000 chat clients / 2600 HTTP threads (c54c07d had 300 / 400); refusals above the build's limits are the measurement and end the run via success-below-min. Hold 45 s per stage (fast iteration).",
+  "target": { "whep": "http://{host}:8889/{stream}/whep", "base": "http://{host}:8889", "path": "screen-01", "appStats": "http://{host}:8889/api/stats", "requireAppStats": true, "useApi": false, "tree": ["FrameConsole"] },
+  "media": false,
+  "stages": [100, 300, 500, 1000],
+  "holdSec": 45,
+  "rampPerSec": 50,
+  "chat": { "fraction": 1, "senderFraction": 0.02, "messagesPerMinute": 6 },
+  "limits": { "minSuccess": 0.9 }
+}

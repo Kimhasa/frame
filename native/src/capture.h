@@ -44,7 +44,7 @@ struct ClientInsets;  // capture.cpp: frame-to-client insets of a captured windo
 
 class WindowCapture {
  public:
-  explicit WindowCapture(Gpu& gpu) : gpu_(gpu) {}
+  explicit WindowCapture(Gpu& gpu) : gpu_(gpu), frameEvent_(CreateEventW(nullptr, FALSE, FALSE, nullptr)) {}
   ~WindowCapture() { Stop(); }
   WindowCapture(const WindowCapture&) = delete;
   WindowCapture& operator=(const WindowCapture&) = delete;
@@ -64,6 +64,10 @@ class WindowCapture {
   SIZE ContentSize() const;  // for a window: its client area (title bar and borders removed), in physical pixels
   // Runs fn with the newest frame while the GPU lock is held. Returns false until the first frame arrives.
   bool WithLatest(const std::function<void(ID3D11Texture2D*, UINT, UINT, uint64_t)>& fn);
+  // Auto-reset event signalled for every delivered frame and when the source closes (waiters need no polling).
+  HANDLE FrameEvent() const { return frameEvent_.Get(); }
+  // Off: keep the whole captured surface (a borderless helper window), no title bar or border removal. Set before Start.
+  void SetClientCrop(bool on) { clientCrop_ = on; }
   std::function<void()> onClosed;
 
  private:
@@ -95,6 +99,8 @@ class WindowCapture {
   LONG captionRows_ = 0;
   std::string lastGeometry_;
   int64_t lastGeometryQpc_ = 0;
+  ScopedHandle frameEvent_;
+  bool clientCrop_ = true;
 };
 
 // GPU video processor (BGRA -> NV12 or BGRA, scaled and letterboxed) with a CPU fallback.
@@ -136,6 +142,7 @@ struct SourceWindow {
   DWORD pid = 0;
   std::wstring title;
   std::wstring exe;
+  std::wstring exePath;  // full path of the program file (empty when the process cannot be opened)
   RECT rect{};
   bool minimized = false;
 };

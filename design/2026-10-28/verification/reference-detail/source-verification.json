@@ -1,0 +1,89 @@
+{
+  "date": "2026-10-29",
+  "protectedFiles": [
+    {
+      "file": "work/console-template.html",
+      "unchanged": true
+    },
+    {
+      "file": "work/console.css",
+      "unchanged": true
+    },
+    {
+      "file": "work/ux.css",
+      "unchanged": true
+    },
+    {
+      "file": "work/components.css",
+      "unchanged": true
+    },
+    {
+      "file": "work/console-ui.css",
+      "unchanged": true
+    },
+    {
+      "file": "work/player-ui.css",
+      "unchanged": true
+    },
+    {
+      "file": "work/mobile-ui.css",
+      "unchanged": true
+    },
+    {
+      "file": "work/console-ux.js",
+      "unchanged": true
+    },
+    {
+      "file": "dist/preserved-player.js",
+      "unchanged": true
+    },
+    {
+      "file": "dist/preserved-player.css",
+      "unchanged": true
+    },
+    {
+      "file": "dist/preserved-player-data.js",
+      "unchanged": true
+    },
+    {
+      "file": "dist/design-data.js",
+      "unchanged": true
+    }
+  ],
+  "sources": [
+    {
+      "file": "dist/design-v33-account-studio.js",
+      "sha256": "a466db6105351723befe6a9f48a599dde7ea1745d3c04d84068cd06392f72b28"
+    },
+    {
+      "file": "dist/design-v33-account-studio.css",
+      "sha256": "62fc218b167f68a0845888008039cf65e330325f629e5197306b4d58e0a76b3b"
+    },
+    {
+      "file": "dist/design-v34-chat.js",
+      "sha256": "a734025ffa234c383013e94c331a8e3f7950b828ffd50acc9e89acada4b19815"
+    },
+    {
+      "file": "dist/design-v34-chat.css",
+      "sha256": "0e557ad112cb02d792d3f2864353b89059eda359a1abdec579c760e03182458d"
+    },
+    {
+      "file": "dist/design-v34-reference.js",
+      "sha256": "f65349d205402f7672fc2394e80dd20687b2e0c7b23194ba62edbfa27503c6d7"
+    },
+    {
+      "file": "dist/design-v34-reference.css",
+      "sha256": "1665bd3d4447f0481c8ad0ba27ce207892e0eafd79f757e99a3da8ffcd48d29e"
+    },
+    {
+      "file": "dist/index.html",
+      "sha256": "33f5ef6d8233a6d11e4a074084eb843bc0269b5c3bf90d8c25c8f3199c0b7289"
+    }
+  ],
+  "references": [
+    "account-research.json",
+    "chat-research.json",
+    "public-research.json"
+  ],
+  "browser": "browser-summary.json"
+}

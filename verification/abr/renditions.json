@@ -1,0 +1,47 @@
+{
+  "at": "2026-10-28T02:49:33.028Z",
+  "url": "http://192.168.1.27:8889/screen-01",
+  "source": {
+    "size": "1920x1080",
+    "mbps": 8.5,
+    "fps": 60
+  },
+  "rows": [
+    {
+      "quality": "720p",
+      "size": "1280x720",
+      "mbps": 4,
+      "fps": 60,
+      "coldSwitchMs": 1819,
+      "warmSwitchMs": 1224,
+      "renditionEncodersRunning": 0
+    },
+    {
+      "quality": "480p",
+      "size": "852x480",
+      "mbps": 1.5,
+      "fps": 60,
+      "coldSwitchMs": 3796,
+      "warmSwitchMs": 1261,
+      "renditionEncodersRunning": 0
+    },
+    {
+      "quality": "360p",
+      "size": "640x360",
+      "mbps": 1,
+      "fps": 60,
+      "coldSwitchMs": 3809,
+      "warmSwitchMs": 1207,
+      "renditionEncodersRunning": 0
+    },
+    {
+      "quality": "240p",
+      "size": "426x240",
+      "mbps": 0.5,
+      "fps": 60,
+      "coldSwitchMs": 4730,
+      "warmSwitchMs": 1351,
+      "renditionEncodersRunning": 0
+    }
+  ]
+}

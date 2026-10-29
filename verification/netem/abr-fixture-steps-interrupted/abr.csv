@@ -1,0 +1,6 @@
+label,down_mbps,loss_pct,jitter_ms,best_fit,playing_at_start,playing_at_end,played_sec,switches,downs,ups,failed_starts,drop_first_down_decision_sec,drop_first_down_playing_sec,drop_fit_playing_sec,drop_target,up_holds,freezes,freeze_sec,zero_fps_sec,picture_stalled_sec,reasons,switch_attempts,attempts_stuck,switch_in_progress_sec
+15M,15,0,2,1080p,1080p,1080p,"{""1080p"":40}",0,0,0,0,,,,,,0,0,0,0,,,0,0
+8M,8,0,2,720p,1080p,480p,"{""1080p"":32,""720p"":9,""480p"":7}",2,2,0,0,4.3,33.2,33.2,720p,,9,5.38,28,28.7,"freeze loss","720p:shown@29.4s!STUCK 480p:shown@7.2s",1,35.4
+3M,3,0,2,480p,480p,480p,"{""480p"":48}",0,0,0,0,,,,,,13,27.11,23,23.4,,null:open-without-frames-at-end(102.5s)!STUCK,1,41.4
+1M,1,0,2,none,480p,480p,"{""480p"":45}",0,0,0,0,,,,,,0,0,45,44.5,,,0,44.5
+0.5M,0.5,0,2,none,480p,480p,"{""480p"":15}",0,0,0,0,,,,,,0,0,15,14.1,,,0,14.1

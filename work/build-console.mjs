@@ -33,12 +33,20 @@ const css = (await readFile(new URL('work/console.css', base), 'utf8')) + '\n' +
 const presentationCss = await readFile(new URL('work/console-ui.css', base), 'utf8');
 // 0.5.1 addendum styles (player controls auto-hide, picture-shaped boxes), appended after the 0.5 styles; see UI_V051_ADDENDUM.json.
 const addendumCss = await readFile(new URL('work/player-ui.css', base), 'utf8');
+// 0.6 mobile and tablet addendum (responsive viewer, touch targets, safe areas), appended last so the desktop rules above
+// stay untouched; see UI_V06_ADDENDUM.json.
+const mobileCss = await readFile(new URL('work/mobile-ui.css', base), 'utf8');
+// 0.6.1 window-preview addendum (status and retry inside the program-window thumbnails), appended after 0.6; it styles
+// only elements new in 0.6.1; see UI_V061_ADDENDUM.json.
+// --without-0.6.1 leaves it out (tools/verify-ui-v061.mjs compares against that build); --out writes elsewhere.
+const option = name => { const i = process.argv.indexOf(name); return i > 0 ? process.argv[i + 1] : null; };
+const previewCss = process.argv.includes('--without-0.6.1') ? null : await readFile(new URL('work/source-preview.css', base), 'utf8');
 const js = (await readFile(new URL('work/components.js', base), 'utf8')) + '\n' + (await readFile(new URL('work/console-ux.js', base), 'utf8'));
 const presentationJs = await readFile(new URL('work/console-ui.js', base), 'utf8');
 new vm.Script(js); new vm.Script(presentationJs);
 const template = await readFile(new URL('work/console-template.html', base), 'utf8');
-const html = template.replace('__STYLES__', () => css + '\n' + presentationCss + '\n' + addendumCss).replace('__ICONS__', () => icons).replace('__SCRIPT__', () => js + '\n' + presentationJs);
+const html = template.replace('__STYLES__', () => css + '\n' + presentationCss + '\n' + addendumCss + '\n' + mobileCss + (previewCss === null ? '' : '\n' + previewCss)).replace('__ICONS__', () => icons).replace('__SCRIPT__', () => js + '\n' + presentationJs);
 if (/__STYLES__|__ICONS__|__SCRIPT__/.test(html)) throw new Error('Unresolved template marker');
 if (/<(?:ul|li)\b|\bDEMO\b|시연|디자인 예시|SYNTHETIC|[•·]/i.test(html)) throw new Error('Unexpected label or bullet remains');
-await writeFile(new URL('outputs/index.html', base), html, 'utf8');
+await writeFile(option('--out') || new URL('outputs/index.html', base), html, 'utf8');
 console.log('FRAME Console updated; JavaScript syntax and removed labels verified.');

@@ -1,0 +1,408 @@
+{
+ "tag": "emulated-1920x1080-at-1.25",
+ "emulated": "1920x1080@1.25",
+ "measuredAt": "2026-10-28T08:13:24.748Z",
+ "viewport": {
+  "w": 1920,
+  "h": 1080,
+  "dpr": 1.2499999701976776,
+  "scrollbar": 0
+ },
+ "dialog": {
+  "x": 400,
+  "y": 54,
+  "w": 1120,
+  "h": 972
+ },
+ "passed": true,
+ "checks": [
+  {
+   "name": "player frames unchanged by the 0.6.1 styles",
+   "ok": true,
+   "data": [
+    [
+     "sender-preview",
+     1336.7,
+     486
+    ],
+    [
+     "viewer-stage",
+     0,
+     0
+    ],
+    [
+     "viewer-preview",
+     0,
+     0
+    ]
+   ]
+  },
+  {
+   "name": "dialog width min(1120, visible width - 48) and centred",
+   "ok": true,
+   "data": {
+    "dialog": {
+     "x": 400,
+     "y": 54,
+     "w": 1120,
+     "h": 972
+    },
+    "viewport": {
+     "w": 1920,
+     "h": 1080,
+     "dpr": 1.2499999701976776,
+     "scrollbar": 0
+    }
+   }
+  },
+  {
+   "name": "dialog height at most 90 % of the viewport; buttons inside the window",
+   "ok": true,
+   "data": {
+    "dialogH": 972,
+    "maxH": 972,
+    "confirmBottom": 1010.3
+   }
+  },
+  {
+   "name": "no sideways scroll (page or dialog); the list scrolls by itself when longer",
+   "ok": true,
+   "data": {
+    "content": 4320,
+    "visible": 759,
+    "pageX": false,
+    "dialogX": false
+   }
+  },
+  {
+   "name": "two columns unless a card would be under ~280 px",
+   "ok": true,
+   "data": {
+    "columns": 2,
+    "cardW": 520.7
+   }
+  },
+  {
+   "name": "thumbnail box 16:9 at the card width; overlay on it (< 1 px)",
+   "ok": true,
+   "data": [
+    [
+     {
+      "x": 424.3,
+      "y": 219.7,
+      "w": 519.3,
+      "h": 292.1
+     },
+     {
+      "x": 424.7,
+      "y": 220,
+      "w": 518.7,
+      "h": 291.8
+     }
+    ],
+    [
+     {
+      "x": 961,
+      "y": 219.7,
+      "w": 519.3,
+      "h": 292.1
+     },
+     {
+      "x": 961.3,
+      "y": 220,
+      "w": 518.7,
+      "h": 291.8
+     }
+    ]
+   ]
+  },
+  {
+   "name": "title rows: one height on every card, 24 px icon, 16 px title, inside the card",
+   "ok": true,
+   "data": {
+    "labelH": 48,
+    "font": "16px 550"
+   }
+  },
+  {
+   "name": "long Korean title: one line with ellipsis, full title in tooltip and accessible name",
+   "ok": true,
+   "data": {
+    "ellipsis": true,
+    "labelH": 48
+   }
+  },
+  {
+   "name": "same title and program: the cards still differ by the least needed",
+   "ok": true,
+   "data": [
+    "FRAME 같은 제목 시험 (probe.exe 1)",
+    "FRAME 같은 제목 시험 (probe.exe 2)"
+   ]
+  },
+  {
+   "name": "windows without an icon keep the default icon (same 24 px box); the list is not held up by a hung window",
+   "ok": true,
+   "data": [
+    [
+     "빈 창 시험",
+     false
+    ],
+    [
+     "캡처 제외 시험",
+     false
+    ],
+    [
+     "응답 없음 시험",
+     false
+    ],
+    [
+     "비율 울트라와이드",
+     false
+    ],
+    [
+     "비율 정사각",
+     false
+    ],
+    [
+     "비율 세로",
+     false
+    ],
+    [
+     "비율 4x3",
+     false
+    ],
+    [
+     "비율 16x9",
+     false
+    ]
+   ]
+  },
+  {
+   "name": "edge bands 16x9 (1280x720): all four edges in the image, aspect kept, contain fit",
+   "ok": true,
+   "data": {
+    "size": [
+     658,
+     370
+    ],
+    "top": [
+     230,
+     9,
+     8
+    ],
+    "bottom": [
+     4,
+     3,
+     227
+    ],
+    "left": [
+     234,
+     12,
+     235
+    ],
+    "right": [
+     14,
+     190,
+     14
+    ],
+    "centre": [
+     216,
+     218,
+     220
+    ],
+    "shown": [
+     518.3,
+     291.5
+    ],
+    "box": [
+     519.3,
+     291.5
+    ]
+   }
+  },
+  {
+   "name": "edge bands 4x3 (1024x768): all four edges in the image, aspect kept, contain fit",
+   "ok": true,
+   "data": {
+    "size": [
+     492,
+     370
+    ],
+    "top": [
+     230,
+     9,
+     8
+    ],
+    "bottom": [
+     4,
+     3,
+     227
+    ],
+    "left": [
+     234,
+     12,
+     235
+    ],
+    "right": [
+     11,
+     193,
+     20
+    ],
+    "centre": [
+     213,
+     215,
+     218
+    ],
+    "shown": [
+     387.6,
+     291.5
+    ],
+    "box": [
+     519.3,
+     291.5
+    ]
+   }
+  },
+  {
+   "name": "edge bands 세로 (600x1000): all four edges in the image, aspect kept, contain fit",
+   "ok": true,
+   "data": {
+    "size": [
+     222,
+     370
+    ],
+    "top": [
+     209,
+     20,
+     16
+    ],
+    "bottom": [
+     7,
+     7,
+     198
+    ],
+    "left": [
+     218,
+     24,
+     216
+    ],
+    "right": [
+     29,
+     180,
+     31
+    ],
+    "centre": [
+     230,
+     231,
+     234
+    ],
+    "shown": [
+     174.9,
+     291.5
+    ],
+    "box": [
+     519.3,
+     291.5
+    ]
+   }
+  },
+  {
+   "name": "edge bands 정사각 (800x800): all four edges in the image, aspect kept, contain fit",
+   "ok": true,
+   "data": {
+    "size": [
+     370,
+     370
+    ],
+    "top": [
+     230,
+     9,
+     8
+    ],
+    "bottom": [
+     4,
+     3,
+     227
+    ],
+    "left": [
+     234,
+     12,
+     235
+    ],
+    "right": [
+     14,
+     190,
+     14
+    ],
+    "centre": [
+     228,
+     229,
+     230
+    ],
+    "shown": [
+     291.5,
+     291.5
+    ],
+    "box": [
+     519.3,
+     291.5
+    ]
+   }
+  },
+  {
+   "name": "edge bands 울트라와이드 (1720x720): all four edges in the image, aspect kept, contain fit",
+   "ok": true,
+   "data": {
+    "size": [
+     658,
+     274
+    ],
+    "top": [
+     209,
+     20,
+     16
+    ],
+    "bottom": [
+     7,
+     7,
+     198
+    ],
+    "left": [
+     218,
+     24,
+     216
+    ],
+    "right": [
+     29,
+     179,
+     29
+    ],
+    "centre": [
+     209,
+     211,
+     214
+    ],
+    "shown": [
+     519.3,
+     216.3
+    ],
+    "box": [
+     519.3,
+     291.5
+    ]
+   }
+  },
+  {
+   "name": "keyboard: Tab moves between cards, the focused card is scrolled into view; Escape closes",
+   "ok": true,
+   "data": {
+    "focused": {
+     "cls": "source-choice",
+     "visible": true
+    },
+    "closed": true
+   }
+  }
+ ]
+}

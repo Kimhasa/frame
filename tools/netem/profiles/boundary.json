@@ -1,0 +1,16 @@
+{
+  "name": "boundary",
+  "description": "1080p 원본(약 8.5 Mbps + 전송 오버헤드) 경계에서 하향 대역폭이 7.5↔10 Mbps로 6초마다 오르내리고 지터 10 ms가 섞인다. 화질이 계속 왕복하지 않고 한쪽에 머무는지 시험한다. 다른 화질 경계는 --rate-scale로 옮긴다(예: 0.45 → 3.4↔4.5 Mbps).",
+  "defaults": {
+    "down": { "rateMbps": 15, "maxQueueMs": 250, "delayMs": 20, "jitterMs": 10 },
+    "up": { "rateMbps": 5, "maxQueueMs": 250, "delayMs": 20 }
+  },
+  "steps": [
+    { "label": "warm-15M", "duration": 20 },
+    { "repeat": 10, "steps": [
+      { "label": "low-7.5M", "duration": 6, "down": { "rateMbps": 7.5 } },
+      { "label": "high-10M", "duration": 6, "down": { "rateMbps": 10 } }
+    ] },
+    { "label": "settle-15M", "duration": 20 }
+  ]
+}

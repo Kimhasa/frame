@@ -1,0 +1,33 @@
+{
+ "title": "FRAME 미리보기 시험 A",
+ "measuredAt": "2026-10-28T07:49:50.835Z",
+ "pickerLockedWhileBroadcasting": true,
+ "baseline": {
+  "fpsMean": 60,
+  "fpsMin": 60,
+  "samples": 20,
+  "sourceMbps": 0.38
+ },
+ "forcedPickerThreeTimes": {
+  "fpsMean": 60,
+  "fpsMin": 60,
+  "samples": 20,
+  "sourceMbps": 0.38
+ },
+ "after": {
+  "fpsMean": 60,
+  "fpsMin": 60,
+  "samples": 12,
+  "sourceMbps": 0.38
+ },
+ "senderPreview": {
+  "size": "1280x720",
+  "mean": 115.7,
+  "sd": 69.6
+ },
+ "receivedVideo": {
+  "size": "1920x1080",
+  "t": 0.6,
+  "frames": 39
+ }
+}

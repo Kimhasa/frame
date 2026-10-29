@@ -1,0 +1,27 @@
+/* FRAME 0.6.1 window-preview addendum (CLAUDE_WINDOW_PREVIEW_ADDENDUM.txt): the 송출 대상 선택 dialog only. A wider
+   dialog (up to 1120 px, 24 px from each side of the visible area, at most 90 % of the height, list scrolls between the tabs and the
+   buttons), 16:9 thumbnails sized by the card width, an app icon + window title row, and a short status and small retry
+   button inside the thumbnail area. Every rule is scoped to #source-dialog or to elements new in 0.6.1; the 2-column
+   cards, selection outline, colours and fonts of 0.6 stay. */
+#source-dialog { width: min(1120px, calc(100% - 48px)); max-width: none; }
+#source-dialog[open] { display: flex; flex-direction: column; max-height: 90dvh; overflow: hidden; }
+#source-dialog[open] > * { flex: none; }
+#source-dialog[open] > .source-dialog-body { flex: 1 1 auto; min-height: min(270px, 30dvh); overflow-y: auto; overscroll-behavior: contain; }
+#source-dialog .source-options { gap: 16px; }
+#source-dialog .source-thumb { height: auto; aspect-ratio: 16 / 9; }
+#source-dialog .source-choice .source-label { display: flex; align-items: center; gap: 9px; min-width: 0; padding: 12px 14px; font-size: 16px; font-weight: 550; line-height: 1.4; color: #25364b; }
+#source-dialog .source-window-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.source-app-icon { flex: none; display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; color: #7d90a3; }
+.source-app-icon img { display: block; width: 24px; height: 24px; object-fit: contain; }
+.source-app-icon svg { width: 22px; height: 22px; stroke-width: 1.6; }
+.source-item { position: relative; min-width: 0; }
+.source-item > .source-choice { width: 100%; }
+/* Exactly over the thumbnail: the card's width inside its 1 px border, at the thumbnail's 16:9 ratio. */
+.source-overlay { position: absolute; top: 1px; left: 1px; right: 1px; aspect-ratio: 16 / 9; pointer-events: none; }
+.source-state { position: absolute; top: 8px; left: 8px; max-width: calc(100% - 16px); background: #101b29d9; color: #fff; border-radius: 3px; padding: 2px 6px; font-size: 11px; line-height: 1.55; }
+.source-state[hidden], .source-retry[hidden] { display: none; }
+.source-retry { position: absolute; right: 8px; bottom: 8px; pointer-events: auto; display: inline-flex; align-items: center; gap: 4px; min-width: 0; min-height: 24px; padding: 0 8px; border-radius: 3px; font-size: 12px; color: #25364b; background: #fff; border: 1px solid #c3ced8; box-shadow: 0 1px 3px #1723301f; }
+.source-retry svg { width: 12px; height: 12px; stroke-width: 2; }
+/* Two columns until a card would be narrower than about 280 px. */
+@media (max-width: 680px) { #source-dialog .source-options { grid-template-columns: minmax(0, 1fr); } }
+/* end FRAME 0.6.1 window-preview addendum */

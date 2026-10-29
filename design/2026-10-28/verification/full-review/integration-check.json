@@ -1,0 +1,1052 @@
+[
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "live",
+    "state": "기본",
+    "title": "전체게임개발·작업그림·디자인일상·이야기지식지금 라이브추천순workspace.tsEXPLORERsrccomponentsLivePlayer.tsxB"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "live",
+    "state": "불러오는 중",
+    "title": "방송 목록을 불러오는 중입니다.전체게임개발·작업그림·디자인일상·이야기지식지금 라이브추천순"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "live",
+    "state": "방송 없음",
+    "title": "전체게임개발·작업그림·디자인일상·이야기지식지금 라이브추천순지금은 방송 중인 채널이 없어요다시 확인"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "live",
+    "state": "불러오기 실패",
+    "title": "전체게임개발·작업그림·디자인일상·이야기지식지금 라이브추천순방송 목록을 불러오지 못했어요연결 상태를 확인한 뒤 다시 시도해 주세요.다시 시도"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "watch",
+    "state": "기본",
+    "title": "workspace.tsEXPLORERsrccomponentsLivePlayer.tsxBroadcastCard.tsxChatPanel.tsxsty"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "watch",
+    "state": "일시정지",
+    "title": "workspace.tsEXPLORERsrccomponentsLivePlayer.tsxBroadcastCard.tsxChatPanel.tsxsty"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "watch",
+    "state": "지난 구간",
+    "title": "workspace.tsEXPLORERsrccomponentsLivePlayer.tsxBroadcastCard.tsxChatPanel.tsxsty"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "watch",
+    "state": "재연결 중",
+    "title": "workspace.tsEXPLORERsrccomponentsLivePlayer.tsxBroadcastCard.tsxChatPanel.tsxsty"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "watch",
+    "state": "방송 종료",
+    "title": "workspace.tsEXPLORERsrccomponentsLivePlayer.tsxBroadcastCard.tsxChatPanel.tsxsty"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "watch",
+    "state": "재생 실패",
+    "title": "workspace.tsEXPLORERsrccomponentsLivePlayer.tsxBroadcastCard.tsxChatPanel.tsxsty"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "watch",
+    "state": "접속자 많음",
+    "title": "workspace.tsEXPLORERsrccomponentsLivePlayer.tsxBroadcastCard.tsxChatPanel.tsxsty"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "watch",
+    "state": "소리 켜기",
+    "title": "workspace.tsEXPLORERsrccomponentsLivePlayer.tsxBroadcastCard.tsxChatPanel.tsxsty"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "following",
+    "state": "기본",
+    "title": "팔로잉추천순workspace.tsEXPLORERsrccomponentsLivePlayer.tsxBroadcastCard.tsxChatPanel."
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "following",
+    "state": "팔로우 없음",
+    "title": "팔로잉추천순아직 팔로우한 채널이 없어요마음에 드는 채널을 팔로우하고 새 방송을 만나보세요.라이브 둘러보기"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "following",
+    "state": "로그인 필요",
+    "title": "팔로잉추천순팔로잉을 보려면 로그인하세요팔로우한 채널의 방송을 한곳에서 볼 수 있어요.로그인"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "search",
+    "state": "기본",
+    "title": "검색어떤 방송을 찾고 있나요?방송 제목이나 채널 이름으로 검색해 보세요.검색하기추천 검색어개발게임그림"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "search",
+    "state": "검색 결과 없음",
+    "title": "‘123’ 검색 결과전체라이브채널다시보기클립검색 결과가 없어요검색어의 철자를 확인하거나 다른 단어로 검색해 보세요.검색어 수정"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "channel",
+    "state": "방송 중",
+    "title": "작은 진전을, 함께.개발하는 봄@spring팔로워 1,284명만들고 배우는 시간을 나누는 작은 작업실. 편하게 들렀다 가세요.팔로잉멤버십후원하기"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "channel",
+    "state": "오프라인",
+    "title": "작은 진전을, 함께.개발하는 봄@spring팔로워 1,284명만들고 배우는 시간을 나누는 작은 작업실. 편하게 들렀다 가세요.팔로잉멤버십후원하기"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "channel",
+    "state": "접근 제한",
+    "title": "작은 진전을, 함께.개발하는 봄@spring팔로워 1,284명만들고 배우는 시간을 나누는 작은 작업실. 편하게 들렀다 가세요.팔로잉멤버십후원하기"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "vod",
+    "state": "기본",
+    "title": "다시보기최신순workspace.tsEXPLORERsrccomponentsLivePlayer.tsxBroadcastCard.tsxChatPanel"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "vod",
+    "state": "다시보기 없음",
+    "title": "다시보기최신순아직 공개된 다시보기가 없어요라이브 둘러보기"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "vod-watch",
+    "state": "기본",
+    "title": "workspace.tsEXPLORERsrccomponentsLivePlayer.tsxBroadcastCard.tsxChatPanel.tsxsty"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "vod-watch",
+    "state": "재생 실패",
+    "title": "workspace.tsEXPLORERsrccomponentsLivePlayer.tsxBroadcastCard.tsxChatPanel.tsxsty"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "vod-watch",
+    "state": "삭제된 영상",
+    "title": "workspace.tsEXPLORERsrccomponentsLivePlayer.tsxBroadcastCard.tsxChatPanel.tsxsty"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "clips",
+    "state": "기본",
+    "title": "클립최신순workspace.tsEXPLORERsrccomponentsLivePlayer.tsxBroadcastCard.tsxChatPanel.t"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "clips",
+    "state": "클립 없음",
+    "title": "클립최신순아직 공개된 클립이 없어요라이브 둘러보기"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "clip-watch",
+    "state": "기본",
+    "title": "workspace.tsEXPLORERsrccomponentsLivePlayer.tsxBroadcastCard.tsxChatPanel.tsxsty"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "clip-watch",
+    "state": "삭제된 영상",
+    "title": "workspace.tsEXPLORERsrccomponentsLivePlayer.tsxBroadcastCard.tsxChatPanel.tsxsty"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "history",
+    "state": "기본",
+    "title": "시청 기록기록 삭제workspace.tsEXPLORERsrccomponentsLivePlayer.tsxBroadcastCard.tsxChatPa"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "history",
+    "state": "기록 없음",
+    "title": "시청 기록기록 삭제아직 시청한 방송이 없어요라이브 둘러보기"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "notifications",
+    "state": "기본",
+    "title": "알림모두 읽음개발하는 봄 님이 방송을 시작했어요.조용히 개발해요. 오늘은 플레이어 마무리하는 날지금서재 님이 다시보기를 공개했어요.그림 그리면서"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "notifications",
+    "state": "알림 없음",
+    "title": "알림모두 읽음새로운 알림이 없어요"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "studio",
+    "state": "방송 전",
+    "title": "방송 준비방송 설정방송 시작\n  \n  \n   미리보기1080p60 fpsworkspace.tsEXPLORERsrccomponentsLivePla"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "studio",
+    "state": "방송 중",
+    "title": "방송 중방송 링크방송 설정방송 종료\n  \n  \n   미리보기1080p60 fpsworkspace.tsEXPLORERsrccomponentsLiv"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "studio",
+    "state": "화면 연결 끊김",
+    "title": "방송 중방송 링크방송 설정방송 종료\n  공유하던 창이 닫혔어요. 방송할 화면을 다시 선택해 주세요.화면 선택\n  \n   미리보기1080p60 f"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "studio",
+    "state": "방송 연결 실패",
+    "title": "방송 중방송 링크방송 설정방송 종료\n  방송 서버에 연결하지 못했어요. 연결 설정을 확인해 주세요.연결 설정\n  \n   미리보기1080p60 f"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "sources",
+    "state": "프로그램 창",
+    "title": "공유할 화면프로그램 창전체 화면workspace.tsEXPLORERsrccomponentsLivePlayer.tsxBroadcastCard.ts"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "sources",
+    "state": "전체 화면",
+    "title": "공유할 화면프로그램 창전체 화면workspace.tsEXPLORERsrccomponentsLivePlayer.tsxBroadcastCard.ts"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "sources",
+    "state": "불러오는 중",
+    "title": "공유할 화면프로그램 창전체 화면workspace.tsEXPLORERsrccomponentsLivePlayer.tsxBroadcastCard.ts"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "sources",
+    "state": "응답 지연",
+    "title": "공유할 화면프로그램 창전체 화면workspace.tsEXPLORERsrccomponentsLivePlayer.tsxBroadcastCard.ts"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "sources",
+    "state": "창 닫힘",
+    "title": "공유할 화면프로그램 창전체 화면workspace.tsEXPLORERsrccomponentsLivePlayer.tsxBroadcastCard.ts"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "sources",
+    "state": "대상 없음",
+    "title": "공유할 화면프로그램 창전체 화면공유할 수 있는 창이 없어요프로그램을 연 뒤 목록을 새로고침해 주세요.새로고침새로고침취소선택"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "broadcast-settings",
+    "state": "기본",
+    "title": "방송 설정영상해상도1080p프레임률60 fps고급 설정비트레이트자동Mbps송출 해상도와 프레임률을 기준으로 계산해요.코덱H.264오디오시스템 소"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "broadcast-settings",
+    "state": "수동 비트레이트",
+    "title": "방송 설정영상해상도1080p프레임률60 fps고급 설정비트레이트자동Mbps직접 입력한 값을 유지해요.코덱H.264오디오시스템 소리80%마이크60"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "broadcast-settings",
+    "state": "지원 범위 오류",
+    "title": "방송 설정영상해상도1080p프레임률60 fps이 장치에서 선택한 설정을 적용할 수 없어요.고급 설정비트레이트자동Mbps송출 해상도와 프레임률을 "
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "connection",
+    "state": "기본",
+    "title": "연결 설정서버 주소송출 포트시청 포트스트림 ID스트림 키시청 연결HTTPS연결 확인취소저장"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "connection",
+    "state": "연결 확인 중",
+    "title": "연결 설정서버 주소송출 포트시청 포트스트림 ID스트림 키시청 연결HTTPS서버 연결을 확인하고 있어요.연결 확인취소저장"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "connection",
+    "state": "연결 실패",
+    "title": "연결 설정서버 주소송출 포트시청 포트스트림 ID스트림 키시청 연결HTTPS서버에 연결하지 못했어요. 주소와 포트를 확인해 주세요.연결 확인취소저"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "broadcast-details",
+    "state": "기본",
+    "title": "방송 정보 수정\n  방송 제목 *\n  카테고리개발·작업공개 설정전체 공개\n  태그\n 취소저장"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "broadcast-details",
+    "state": "입력 오류",
+    "title": "방송 정보 수정\n  방송 제목 *방송 제목을 입력해 주세요.\n  카테고리개발·작업공개 설정전체 공개\n  태그\n 취소저장"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "broadcast-end",
+    "state": "종료 확인",
+    "title": "방송을 종료할까요?조용히 개발해요. 오늘은 플레이어 마무리하는 날방송을 종료하면 시청자에게 종료 화면이 표시돼요.방송 종료 후 녹화 파일 보관취"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "broadcast-end",
+    "state": "종료 요약",
+    "title": "방송이 종료되었어요방송 시간1시간 24분최고 시청자 수216명평균 시청자 수128명새 팔로워12명녹화 파일은 녹화 관리에서 확인할 수 있어요.녹"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "recordings",
+    "state": "기본",
+    "title": "녹화 관리저장 위치녹화 관리파일길이크기보관관리2026-10-28_개발작업실.mp402:14:367.8 GB로컬 파일파일 정보2026-10-27_"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "recordings",
+    "state": "저장 공간 부족",
+    "title": "녹화 관리저장 위치저장 공간이 부족해 녹화를 멈췄어요.저장 설정녹화 관리파일길이크기보관관리2026-10-28_개발작업실.mp402:14:367."
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "recordings",
+    "state": "녹화 없음",
+    "title": "녹화 관리저장 위치저장된 녹화 파일이 없어요방송 설정에서 녹화를 켤 수 있어요.방송 설정저장 공간사용 14 GB / 한도 100 GB14%"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "schedule",
+    "state": "기본",
+    "title": "방송 예약예약 추가예정된 방송지난 예약방송 예약방송 제목시작 예정알림관리함께 만드는 작은 기능2026-10-29 20:00켜짐수정삭제한 주의 작"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "schedule",
+    "state": "예약 없음",
+    "title": "방송 예약예약 추가예정된 방송지난 예약예약된 방송이 없어요예약 추가"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "scenes",
+    "state": "기본",
+    "title": "장면 관리장면 추가기본 화면workspace.tsEXPLORERsrccomponentsLivePlayer.tsxBroadcastCard.tsxC"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "scenes",
+    "state": "장면 없음",
+    "title": "장면 관리장면 추가등록된 장면이 없어요장면 추가"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "login",
+    "state": "기본",
+    "title": "FRAME좋아하는 순간을,함께 나누세요.LIVEFRAME에 로그인GGoogle로 계속하기N네이버로 계속하기또는이메일로 로그인계속하면 이용약관과개"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "login",
+    "state": "연동 실패",
+    "title": "FRAME좋아하는 순간을,함께 나누세요.LIVEFRAME에 로그인연결을 완료하지 못했어요. 다시 시도해 주세요.GGoogle로 계속하기N네이버로"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "login",
+    "state": "동의 필요",
+    "title": "FRAME좋아하는 순간을,함께 나누세요.LIVEFRAME에 로그인GGoogle로 계속하기N네이버로 계속하기또는이메일로 로그인이용약관과 개인정보 "
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "profile",
+    "state": "기본",
+    "title": "내 설정프로필계정 연결보안 및 기기알림재생프로필내 채널 보기프로필 사진사진 변경닉네임1~20자 이내로 입력하세요.자기소개좋아하는 것을 만들고, "
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "profile",
+    "state": "닉네임 오류",
+    "title": "내 설정프로필계정 연결보안 및 기기알림재생프로필내 채널 보기프로필 사진사진 변경닉네임다른 닉네임을 입력해 주세요.자기소개좋아하는 것을 만들고, "
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "security",
+    "state": "기본",
+    "title": "내 설정프로필계정 연결보안 및 기기알림재생계정 연결GGoogle연결됨spring@example.test관리N네이버연결알림 이메일spring@ex"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "security",
+    "state": "재인증 필요",
+    "title": "내 설정프로필계정 연결보안 및 기기알림재생보안 및 기기계속하려면 본인 확인이 필요해요.다시 로그인로그인 보안비밀번호와 추가 인증은 연결한 계정에"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "preferences",
+    "state": "기본",
+    "title": "내 설정프로필계정 연결보안 및 기기알림재생알림방송 시작 알림팔로우한 채널멘션 알림채팅에서 내 이름이 언급될 때댓글 및 답글업데이트 소식채널별 알"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "preferences",
+    "state": "알림 차단",
+    "title": "내 설정프로필계정 연결보안 및 기기알림재생알림브라우저 알림이 차단되어 있어요.알림을 받으려면 사이트 설정에서 허용하세요.설정 방법방송 시작 알림"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "channel-edit",
+    "state": "기본",
+    "title": "방송 스튜디오채널 관리내 채널 보기기본 정보브랜딩권한채널 이름채널 소개만들고 배우는 시간을 나누는 작은 작업실. 편하게 들렀다 가세요.채널 주소"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "channel-edit",
+    "state": "저장 오류",
+    "title": "방송 스튜디오채널 관리내 채널 보기기본 정보브랜딩권한변경사항을 저장하지 못했어요. 잠시 후 다시 시도해 주세요.채널 이름채널 소개만들고 배우는 "
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "moderation",
+    "state": "기본",
+    "title": "채팅 관리설정운영자차단 목록메시지 기록채팅 설정느린 채팅전송 간격 (초)팔로워 전용링크 차단금칙어저장"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "moderation",
+    "state": "운영자 없음",
+    "title": "채팅 관리설정운영자차단 목록메시지 기록채팅 설정느린 채팅전송 간격 (초)팔로워 전용링크 차단금칙어저장"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "reports",
+    "state": "기본",
+    "title": "신고 관리신고 관리접수일대상사유상태관리10.28 14:25사용자 012도배 및 광고검토 대기검토10.27 18:42사용자 008부적절한 표현처리"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "reports",
+    "state": "신고 없음",
+    "title": "신고 관리검토할 신고가 없어요"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "creator-stats",
+    "state": "기본",
+    "title": "방송 통계최근 7일누적 시청 시간284시간이전 기간 대비 +12.4%평균 시청자 수86명이전 기간 대비 +8명최고 시청자 수216명10월 27일"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "creator-stats",
+    "state": "데이터 없음",
+    "title": "방송 통계최근 7일아직 통계가 없어요첫 방송이 끝나면 통계를 확인할 수 있어요.방송하기"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "revenue",
+    "state": "기본",
+    "title": "수익 및 정산내역 다운로드수익 내역정산광고·스폰서이번 달 수익184,000원10월 1일 ~ 28일후원126,000원메시지·미션 포함멤버십58,0"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "revenue",
+    "state": "정산 대기",
+    "title": "수익 및 정산내역 다운로드수익 내역정산광고·스폰서이번 달 수익184,000원10월 1일 ~ 28일후원126,000원메시지·미션 포함멤버십58,0"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "transactions",
+    "state": "기본",
+    "title": "결제 내역결제 내역일시내용금액상태관리10.28 14:32개발하는 봄 · 후원5,000원완료상세10.20 18:10개발하는 봄 · 멤버십4,900"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "transactions",
+    "state": "환불 요청",
+    "title": "결제 내역결제 내역일시내용금액상태관리10.28 14:32개발하는 봄 · 후원5,000원완료상세10.20 18:10개발하는 봄 · 멤버십4,900"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "transactions",
+    "state": "내역 없음",
+    "title": "결제 내역결제 내역이 없어요"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "integrations",
+    "state": "기본",
+    "title": "외부 도구 연결방송 도구OBS 등 외부 방송 도구를 연결해요.연결 정보브라우저 오버레이방송 도구에 추가할 위젯 주소예요.주소 보기채팅봇명령어와 "
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "integrations",
+    "state": "연결 없음",
+    "title": "외부 도구 연결방송 도구OBS 등 외부 방송 도구를 연결해요.연결 정보브라우저 오버레이방송 도구에 추가할 위젯 주소예요.주소 보기채팅봇명령어와 "
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "missions-manage",
+    "state": "기본",
+    "title": "미션 관리접수진행 중완료미션 관리미션제안자유형기한관리오늘의 기능 완성하기모아무료 미션오늘 방송 종료 전상세제한 시간 안에 레벨 완료초록미션 후원"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "missions-manage",
+    "state": "미션 없음",
+    "title": "미션 관리접수진행 중완료접수된 미션이 없어요접수 설정미션 접수미션 후원결제가 포함된 제안을 받아요."
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "polls-manage",
+    "state": "기본",
+    "title": "투표 및 질문 관리투표 만들기투표질문예측다음 작업은 무엇으로 할까요?화면 개선48%새 기능32%오류 수정20%진행 중투표 마감"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "polls-manage",
+    "state": "진행 중 없음",
+    "title": "투표 및 질문 관리투표 만들기투표질문예측진행 중인 투표가 없어요투표 만들기"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "rewards-manage",
+    "state": "기본",
+    "title": "포인트 및 보상보상 추가오늘 적립12,400 P오늘 사용4,200 P포인트 및 보상보상필요 포인트교환 제한관리다음 작업 제안1,000 P방송당 "
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "rewards-manage",
+    "state": "보상 없음",
+    "title": "포인트 및 보상보상 추가오늘 적립12,400 P오늘 사용4,200 P등록된 보상이 없어요보상 추가적립 설정시청 포인트 적립출석 보상"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "members",
+    "state": "기본",
+    "title": "멤버십 관리현재 가입자24명선물 가입 포함이번 달 신규8명직전 달 대비 +3명갱신 예정18명최근 30일월 멤버십4,900원월 정기 결제멤버십 관"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "members",
+    "state": "가입자 없음",
+    "title": "멤버십 관리멤버십 가입자가 없어요멤버십 설정가입 화면 확인혜택 수정"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "donate",
+    "state": "금액 선택",
+    "title": "후원하기개발하는 봄메시지음성영상1,000원5,000원10,000원직접 입력금액1,000원부터메시지 (선택)결제 방법결제 방법 선택결제 내용과 취"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "donate",
+    "state": "처리 중",
+    "title": "후원하기결제를 확인하고 있어요.닫기"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "donate",
+    "state": "완료",
+    "title": "후원하기후원을 완료했어요.개발하는 봄 · 5,000원닫기"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "donate",
+    "state": "결제 실패",
+    "title": "후원하기개발하는 봄메시지음성영상1,000원5,000원10,000원직접 입력금액1,000원부터메시지 (선택)결제 방법결제 방법 선택결제를 완료하지"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "membership",
+    "state": "기본",
+    "title": "멤버십 가입개발하는 봄월 4,900원멤버십 배지전용 이모티콘멤버십 방송결제 방법결제 방법 선택매월 4,900원 정기 결제와 해지 기준을 확인했어"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "membership",
+    "state": "가입 완료",
+    "title": "멤버십멤버십에 가입했어요.개발하는 봄 · 월 4,900원닫기"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "membership",
+    "state": "결제 실패",
+    "title": "멤버십 가입개발하는 봄월 4,900원멤버십 배지전용 이모티콘멤버십 방송결제 방법결제 방법 선택결제를 완료하지 못했어요. 결제 방법을 확인하세요."
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "mission",
+    "state": "기본",
+    "title": "미션 제안미션 유형무료 미션미션 제목완료 조건제한 시간방송 종료 전취소제안하기"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "mission",
+    "state": "진행 중",
+    "title": "진행 중인 미션오늘의 기능 완성하기유형무료 미션상태진행 중남은 시간24분 32초닫기"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "mission",
+    "state": "완료",
+    "title": "미션미션을 완료했어요.오늘의 기능 완성하기결과완료닫기"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "mission",
+    "state": "실패",
+    "title": "미션미션이 종료됐어요.오늘의 기능 완성하기결과실패닫기"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "poll",
+    "state": "기본",
+    "title": "투표 및 질문투표질문다음 작업은 무엇으로 할까요?플레이어 개선채팅 기능모바일 화면128명 참여2분 남음취소투표하기"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "poll",
+    "state": "투표 완료",
+    "title": "투표 및 질문투표질문다음 작업은 무엇으로 할까요?플레이어 개선58%채팅 기능29%모바일 화면13%128명 참여투표 완료닫기"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "poll",
+    "state": "마감",
+    "title": "투표 및 질문투표질문다음 작업은 무엇으로 할까요?플레이어 개선58%채팅 기능29%모바일 화면13%128명 참여마감됨닫기"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "rewards",
+    "state": "기본",
+    "title": "포인트 보상내 포인트3,400 P다음 작업 제안1,000 P화면 테마 선택2,000 P응원 보내기500 P포인트 기록닫기"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "rewards",
+    "state": "포인트 부족",
+    "title": "포인트 보상내 포인트200 P다음 작업 제안1,000 P800 P 부족화면 테마 선택2,000 P1,800 P 부족응원 보내기500 P300 P"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "rewards",
+    "state": "교환 완료",
+    "title": "포인트 보상보상을 신청했어요.다음 작업 제안사용 포인트1,000 P남은 포인트3,400 P포인트 기록닫기"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "share",
+    "state": "기본",
+    "title": "공유조용히 개발해요. 오늘은 플레이어 마무리하는 날개발하는 봄시청 주소복사공유할 위치현재 방송닫기"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "share",
+    "state": "복사 완료",
+    "title": "공유조용히 개발해요. 오늘은 플레이어 마무리하는 날개발하는 봄시청 주소복사됨공유할 위치현재 방송닫기"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "info",
+    "state": "기본",
+    "title": "방송 정보조용히 개발해요. 오늘은 플레이어 마무리하는 날개발 · 작업개발하는 봄@spring작은 기능을 하나씩 완성하는 과정을 함께 나눠요. 궁"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "quality",
+    "state": "자동",
+    "title": "workspace.tsEXPLORERsrccomponentsLivePlayer.tsxBroadcastCard.tsxChatPanel.tsxsty"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "quality",
+    "state": "수동",
+    "title": "workspace.tsEXPLORERsrccomponentsLivePlayer.tsxBroadcastCard.tsxChatPanel.tsxsty"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "quality",
+    "state": "전환 중",
+    "title": "workspace.tsEXPLORERsrccomponentsLivePlayer.tsxBroadcastCard.tsxChatPanel.tsxsty"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "nickname",
+    "state": "기본",
+    "title": "닉네임 설정닉네임채팅에서 사용할 이름이에요.취소저장"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "nickname",
+    "state": "입력 오류",
+    "title": "닉네임 설정닉네임닉네임은 1~20자로 입력해 주세요.닉네임은 1~20자로 입력하세요.취소저장"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "manual",
+    "state": "기본",
+    "title": "직접 연결서버 주소시청 포트연결 방식HTTPS스트림 ID취소연결"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "manual",
+    "state": "연결 중",
+    "title": "직접 연결서버 주소시청 포트연결 방식HTTPS스트림 ID방송에 연결하고 있어요.취소연결"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "manual",
+    "state": "연결 실패",
+    "title": "직접 연결서버 주소시청 포트연결 방식HTTPS스트림 ID방송에 연결하지 못했어요. 입력한 주소를 확인해 주세요.취소연결"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "report-content",
+    "state": "기본",
+    "title": "신고하기신고 사유사유 선택상세 내용 (선택)취소신고 접수"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "report-content",
+    "state": "접수 완료",
+    "title": "신고하기신고가 접수됐어요.부적절한 콘텐츠닫기"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "clip-create",
+    "state": "기본",
+    "title": "클립 만들기workspace.tsEXPLORERsrccomponentsLivePlayer.tsxBroadcastCard.tsxChatPanel."
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "clip-create",
+    "state": "처리 중",
+    "title": "클립 만들기클립을 만들고 있어요.닫기"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "clip-create",
+    "state": "생성 완료",
+    "title": "클립 만들기클립이 만들어졌어요.작은 기능 완성하는 순간닫기클립 보기"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "service-health",
+    "state": "기본",
+    "title": "서비스 상태보고서동시 시청자 수128명현재 접속재생 시작 시간 p951.4초최근 5분전송 대역폭842 Mbps전체 화질 합산재생 오류율0.3%최"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "service-health",
+    "state": "과부하",
+    "title": "서비스 상태보고서응답 시간이 늘어나 신규 접속을 제한하고 있어요.동시 시청자 수128명현재 접속재생 시작 시간 p951.4초최근 5분전송 대역폭"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "service-health",
+    "state": "장애",
+    "title": "서비스 상태보고서영상 중계 서버와 연결이 끊겼어요.동시 시청자 수128명현재 접속재생 시작 시간 p951.4초최근 5분전송 대역폭842 Mbps"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "service-reports",
+    "state": "기본",
+    "title": "서비스 신고 관리서비스 신고 관리접수일대상사유상태관리10.28 14:25채널 004콘텐츠 신고검토 대기검토10.27 18:42사용자 008채팅 "
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "service-reports",
+    "state": "신고 없음",
+    "title": "서비스 신고 관리검토할 신고가 없어요"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "audit",
+    "state": "기본",
+    "title": "활동 기록전체 작업활동 기록일시작업자행동대상결과10.28 14:32:12운영자 A채팅 참여 제한사용자 012성공10.28 13:04:25서비스 "
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "audit",
+    "state": "기록 없음",
+    "title": "활동 기록전체 작업조건에 맞는 기록이 없어요조건 초기화"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "policy",
+    "state": "기본",
+    "title": "이용 및 콘텐츠 정책이용약관개인정보 처리방침콘텐츠 정책이용약관문서 준비 중서비스 운영 조건이 확정되면 게시됩니다."
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "update",
+    "state": "업데이트 있음",
+    "title": "앱 업데이트버전 0.7.0현재 버전 0.6.1업데이트 내용연결 복구와 창 선택의 안정성을 개선했습니다.설정과 녹화 파일은 유지됩니다.나중에업데이"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "update",
+    "state": "다운로드 중",
+    "title": "앱 업데이트버전 0.7.0다운로드 58%설치는 방송이 종료된 후 진행할 수 있습니다.닫기다운로드 취소"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "update",
+    "state": "최신 버전",
+    "title": "앱 업데이트최신 버전을 사용 중이에요.현재 버전 0.7.0닫기"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "devices",
+    "state": "기본",
+    "title": "다른 기기에서 보기거실 TV연결회의실 화면연결닫기"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "devices",
+    "state": "기기 없음",
+    "title": "다른 기기에서 보기연결할 기기가 없어요.기기의 전원과 연결 상태를 확인하세요.다시 찾기닫기"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "devices",
+    "state": "연결 실패",
+    "title": "다른 기기에서 보기기기에 연결하지 못했어요. 전원과 연결 상태를 확인하세요.거실 TV다시 연결회의실 화면연결닫기"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "recommendations",
+    "state": "기본",
+    "title": "추천 방송최신순workspace.tsEXPLORERsrccomponentsLivePlayer.tsxBroadcastCard.tsxChatPane"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "recommendations",
+    "state": "추천 없음",
+    "title": "추천 방송최신순추천할 방송을 찾고 있어요라이브 목록에서 먼저 마음에 드는 방송을 찾아보세요.라이브 둘러보기"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "raid",
+    "state": "방송 선택",
+    "title": "다른 방송으로 연결채널 검색서재그림 그리면서 이야기해요, 봄의 색을 담는 오후검색 결과가 없어요.취소이 방송 선택"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "raid",
+    "state": "이동 확인",
+    "title": "다음 방송을 안내할까요?서재그림 그리면서 이야기해요, 봄의 색을 담는 오후현재 채팅에 다음 방송 안내가 표시돼요. 시청자를 강제로 이동시키지 않"
+  },
+  {
+    "dialog": true,
+    "overflow": 0,
+    "screen": "raid",
+    "state": "완료",
+    "title": "다른 방송으로 연결다음 방송을 안내했어요.서재 · 이동은 시청자가 선택해요.닫기"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "drop-rewards",
+    "state": "기본",
+    "title": "시청 보상작업실 함께 보기30분 시청 · 기념 배지18 / 30분12분 남음보상 받기"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "drop-rewards",
+    "state": "수령 가능",
+    "title": "시청 보상작업실 함께 보기30분 시청 · 기념 배지30 / 30분수령 가능보상 받기"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "drop-rewards",
+    "state": "수령 완료",
+    "title": "시청 보상작업실 함께 보기30분 시청 · 기념 배지30 / 30분수령 완료수령 완료기념 배지를 받았어요."
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "developer",
+    "state": "기본",
+    "title": "개발자 설정API 키이름권한방송 정보 읽기채팅 관리통계 읽기발급된 키가 없어요.키 발급웹훅수신 주소이벤트방송 시작·종료후원 이벤트채팅 이벤트요청"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "developer",
+    "state": "키 발급 확인",
+    "title": "개발자 설정API 키이름권한방송 정보 읽기채팅 관리통계 읽기발급된 키가 없어요.키 발급웹훅수신 주소이벤트방송 시작·종료후원 이벤트채팅 이벤트요청"
+  },
+  {
+    "dialog": false,
+    "overflow": 0,
+    "screen": "verification",
+    "state": "기본",
+    "title": "설계 검증 자료이 페이지는 설계 검토 자료이며 일반 사용자 메뉴에는 포함하지 않아요.설계 검증 자료검증 영역대상확인할 기준동시 시청1 → 10 "
+  }
+]

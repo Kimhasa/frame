@@ -1,0 +1,37 @@
+/* Form surfaces only. Preserved media, player, audio and broadcast settings are excluded. */
+:is(#product-root,.product-dialog) :is(input,textarea,select,button,a[href]):not(.preserved-player *,.player *,.studio-preview *,[class*="locked-"],.product-dialog:has([name="bitrate"]) *){transition:background-color .15s ease,border-color .15s ease,color .15s ease,box-shadow .15s ease}
+:is(#product-root,.product-dialog) textarea:not(.preserved-player *,.player *,.studio-preview *,[class*="locked-"],.product-dialog:has([name="bitrate"]) *){resize:none;overflow:auto;line-height:1.6;scrollbar-width:thin;scrollbar-color:#cbd3db transparent}
+:is(#product-root,.product-dialog) input[type="number"]:not(.preserved-player *,.player *,.studio-preview *,[class*="locked-"],.product-dialog:has([name="bitrate"]) *){appearance:textfield;-moz-appearance:textfield}
+:is(#product-root,.product-dialog) input[type="number"]:not(.preserved-player *,.player *,.studio-preview *,[class*="locked-"],.product-dialog:has([name="bitrate"]) *)::-webkit-inner-spin-button,:is(#product-root,.product-dialog) input[type="number"]:not(.preserved-player *,.player *,.studio-preview *,[class*="locked-"],.product-dialog:has([name="bitrate"]) *)::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+:is(#product-root,.product-dialog) :is(input,textarea):not([type="range"],[type="checkbox"],[type="radio"],.preserved-player *,.player *,.studio-preview *,[class*="locked-"],.product-dialog:has([name="bitrate"]) *){border-color:#dfe4e9;border-radius:8px;color:#202a35;caret-color:#07865a}
+:is(#product-root,.product-dialog) :is(input,textarea):not([type="range"],[type="checkbox"],[type="radio"],.preserved-player *,.player *,.studio-preview *,[class*="locked-"],.product-dialog:has([name="bitrate"]) *)::placeholder{color:#929aa4;opacity:1;font-weight:400}
+:is(#product-root,.product-dialog) :is(input,textarea):not([type="range"],[type="checkbox"],[type="radio"],.preserved-player *,.player *,.studio-preview *,[class*="locked-"],.product-dialog:has([name="bitrate"]) *):hover:not(:disabled,:focus){border-color:#bdc7d0}
+:is(#product-root,.product-dialog) :is(input,textarea):not([type="range"],[type="checkbox"],[type="radio"],.preserved-player *,.player *,.studio-preview *,[class*="locked-"],.product-dialog:has([name="bitrate"]) *):focus{outline:none;border-color:#248866!important;box-shadow:0 0 0 3px #07865a0f}
+:is(#product-root,.product-dialog) :is(input,textarea):not([type="range"],[type="checkbox"],[type="radio"],.preserved-player *,.player *,.studio-preview *,[class*="locked-"],.product-dialog:has([name="bitrate"]) *)[aria-invalid="true"]{border-color:#c94654!important;box-shadow:none}
+:is(#product-root,.product-dialog) :is(button,a[href],select,input[type="checkbox"],input[type="radio"]):not(.preserved-player *,.player *,.studio-preview *,[class*="locked-"],.product-dialog:has([name="bitrate"]) *):focus-visible{outline:2px solid #148461;outline-offset:3px}
+:is(#product-root,.product-dialog) :is(button,a[href]):not(.preserved-player *,.player *,.studio-preview *,[class*="locked-"],.product-dialog:has([name="bitrate"]) *):focus:not(:focus-visible){outline:none}
+:is(#product-root,.product-dialog) :is(input[type="checkbox"],input[type="radio"]):not(.preserved-player *,.player *,.studio-preview *,[class*="locked-"],.product-dialog:has([name="bitrate"]) *){accent-color:#07865a;width:17px;height:17px;flex:none;cursor:pointer}
+:is(#product-root,.product-dialog) :is(input,textarea,select):disabled:not(.preserved-player *,.player *,.studio-preview *,[class*="locked-"],.product-dialog:has([name="bitrate"]) *){background:#f5f7f8;color:#8b949e;cursor:not-allowed}
+:is(#product-root,.product-dialog) select:not(.preserved-player *,.player *,.studio-preview *,[class*="locked-"],.product-dialog:has([name="bitrate"]) *){appearance:none;border:1px solid #dfe4e9;border-radius:8px;background-color:#fff;background-image:linear-gradient(45deg,transparent 50%,#64717f 50%),linear-gradient(135deg,#64717f 50%,transparent 50%);background-position:calc(100% - 19px) 50%,calc(100% - 14px) 50%;background-size:5px 5px;background-repeat:no-repeat;padding:11px 38px 11px 13px;min-height:44px;color:#202a35;font:inherit}
+:is(#product-root,.product-dialog) .choice-button:not(.preserved-player *,.player *,.studio-preview *,[class*="locked-"],.product-dialog:has([name="bitrate"]) *){border-color:#dfe4e9;border-radius:8px;gap:16px;min-width:0}
+:is(#product-root,.product-dialog) .choice-button:not(.preserved-player *,.player *,.studio-preview *,[class*="locked-"],.product-dialog:has([name="bitrate"]) *)>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+:is(#product-root,.product-dialog) .choice-button:not(.preserved-player *,.player *,.studio-preview *,[class*="locked-"],.product-dialog:has([name="bitrate"]) *)>svg{flex:none;transition:transform .15s ease}
+:is(#product-root,.product-dialog) .choice-button[aria-expanded="true"]:not(.preserved-player *,.player *,.studio-preview *,[class*="locked-"],.product-dialog:has([name="bitrate"]) *){border-color:#a3bbae;background:#fbfdfc}
+.choice-options.v3-component-choice{padding:6px;border:1px solid #e0e6eb;border-radius:11px;box-shadow:0 10px 35px #1c29351a;scrollbar-width:thin;scrollbar-color:#cbd3db transparent}
+.choice-options.v3-component-choice button{min-height:40px;padding:10px 12px;border-radius:6px;gap:18px;font-size:14px;line-height:1.4;color:#303b47;transition:background-color .12s ease,color .12s ease}
+.choice-options.v3-component-choice button:hover,.choice-options.v3-component-choice button:focus-visible{background:#f2f5f4;outline:none}
+.choice-options.v3-component-choice button[aria-selected="true"]{background:#ebf6f0;color:#087a50;font-weight:600}
+.choice-options.v3-component-choice button>svg{color:#0b8c5f;flex:none}
+.v3-donation-dialog .amount-options{gap:8px;margin-bottom:22px}
+.v3-donation-dialog .amount-options>button{border-radius:8px;font-size:14px;font-weight:550;min-height:44px;padding:8px 9px;border-color:#e0e5e9}
+.v3-donation-dialog .amount-options>button.selected{background:#edf7f1;border-color:#51a782;color:#087a50;box-shadow:none}
+.v3-donation-amount{position:relative;display:flex;align-items:center}
+.v3-donation-amount input{min-height:50px;padding-right:46px;font-size:20px;font-weight:650;letter-spacing:-.3px;font-variant-numeric:tabular-nums}
+.v3-donation-amount>span{position:absolute;right:16px;pointer-events:none;color:#626e7b;font-size:15px;font-weight:500}
+.v3-donation-dialog .v3-donation-error{color:#bd394a;font-size:12px;line-height:1.5;margin-top:7px}
+.v3-donation-dialog .check-row{align-items:flex-start;gap:9px;font-size:13px;line-height:1.65;margin-top:21px}
+.v3-donation-dialog .check-row>input{margin-top:2px}
+.v3-donation-dialog .modal-footer .primary{min-width:168px}
+@media(max-width:480px){.v3-donation-dialog .amount-options{grid-template-columns:repeat(2,minmax(0,1fr))}.v3-donation-dialog .modal-footer .primary{min-width:0}}
+body[data-device="mobile"] .v3-donation-dialog .amount-options{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(prefers-reduced-motion:reduce){.choice-options.v3-component-choice button,:is(#product-root,.product-dialog) :is(input,textarea,select,button,a[href]):not(.preserved-player *,.player *,.studio-preview *,[class*="locked-"],.product-dialog:has([name="bitrate"]) *){transition:none}}

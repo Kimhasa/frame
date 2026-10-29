@@ -1,0 +1,1303 @@
+{
+  "startedAt": "2026-10-29T10:05:59.793Z",
+  "host": {
+    "name": "KJY",
+    "logicalCpus": 16,
+    "cpuLoadPct": {
+      "samples": 17,
+      "min": 5,
+      "avg": 12,
+      "max": 26
+    }
+  },
+  "tools": {
+    "node": "v24.22.1",
+    "mediamtx": "v1.21.3",
+    "ffmpeg": "ffmpeg version 9.0.2-essentials_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers",
+    "edge": "156.0.4314.50"
+  },
+  "ports": {
+    "rtsp": 24554,
+    "rtsps": 24322,
+    "rtp": 24000,
+    "rtcp": 24001,
+    "webrtc": 24889,
+    "ice": 24189,
+    "hls": 24888,
+    "api": 24997,
+    "playback": 24996,
+    "metrics": 24998,
+    "relay": 24080,
+    "relayLimits": 24081,
+    "apiProxy": 24990,
+    "tls": 24443,
+    "edge": 24222,
+    "senderRtsp": 24654,
+    "senderApi": 24697
+  },
+  "checks": [
+    {
+      "name": "mediamtx starts with deploy yml",
+      "ok": true,
+      "log": [
+        "2026/10/29 19:06:01 INF MediaMTX v1.21.3, windows, amd64",
+        "2026/10/29 19:06:01 INF configuration loaded from C:\\Users\\wlsdu\\AppData\\Local\\Temp\\frame-relay-e2e-1793268359792\\mediamtx\\mediamtx.yml",
+        "2026/10/29 19:06:01 INF [metrics] started with listener on 127.0.0.1:24998 (TCP/HTTP)"
+      ]
+    },
+    {
+      "name": "relay /healthz ok",
+      "ok": true
+    },
+    {
+      "name": "publisher refuses an untrusted relay certificate",
+      "ok": true,
+      "code": 4294967291,
+      "refused": true,
+      "reason": "[tls @ 00000260a2ef81c0] Peer certificate failed verification"
+    },
+    {
+      "name": "publish without credentials refused",
+      "ok": true,
+      "code": 3469724424,
+      "refused": true,
+      "reason": "[rtsp @ 000002692fff35c0] method ANNOUNCE failed: 401 (Unauthorized)"
+    },
+    {
+      "name": "publish with wrong password refused",
+      "ok": true,
+      "code": 3469724424,
+      "refused": true,
+      "reason": "[rtsp @ 000002bc7eef3300] method ANNOUNCE failed: 401 (Unauthorized)"
+    },
+    {
+      "name": "anonymous loopback publish to source path refused",
+      "ok": true,
+      "code": 3469724424,
+      "refused": true,
+      "reason": "[rtsp @ 000001cd03011d40] method ANNOUNCE failed: 401 (Unauthorized)"
+    },
+    {
+      "name": "per-sender accounts: a sender cannot publish another sender's path",
+      "ok": true,
+      "bOnA": {
+        "code": 3469724424,
+        "refused": true,
+        "reason": "[rtsp @ 0000023a91161b80] method ANNOUNCE failed: 401 (Unauthorized)"
+      },
+      "aOnB": {
+        "code": 3469724424,
+        "refused": true,
+        "reason": "[rtsp @ 000001de4b5a5a40] method ANNOUNCE failed: 401 (Unauthorized)"
+      }
+    },
+    {
+      "name": "sender B publishes its own path over RTSPS",
+      "ok": true,
+      "source": "rtspsSession",
+      "tracks2": [
+        "H264",
+        "Opus"
+      ]
+    },
+    {
+      "name": "forwarder with wrong password: relay refuses, local stream unaffected, app retries",
+      "ok": true,
+      "relayReady": false,
+      "localReady": true,
+      "publisherRunning": true,
+      "attempts": 2,
+      "lastError": "[out#0/rtsp @ 00000232d6ff17c0] Could not write header (incorrect codec parameters ?): Server returned 401 Unauthorized (authorization failed)"
+    },
+    {
+      "name": "app-style FFmpeg forwarder (copy, RTSPS, -ca_file) reaches the relay",
+      "ok": true,
+      "readyAfterMs": 1100,
+      "source": "rtspsSession",
+      "tracks2": [
+        "H264",
+        "Opus"
+      ],
+      "attempts": 1
+    },
+    {
+      "name": "publish passwords never appear in MediaMTX logs",
+      "ok": true
+    },
+    {
+      "name": "second publisher on a live path refused (same account)",
+      "ok": true,
+      "code": 3199971767,
+      "refused": true,
+      "reason": "",
+      "mediamtx": "2026/10/29 19:06:13 INF [RTSPS] [conn 127.0.0.1:63952] closed: someone is already publishing to path 'screen-01'"
+    },
+    {
+      "name": "announce without token -> 401",
+      "ok": true,
+      "status": 401,
+      "wwwAuthenticate": "Bearer realm=\"frame-relay\""
+    },
+    {
+      "name": "announce with wrong token -> 401",
+      "ok": true,
+      "status": 401
+    },
+    {
+      "name": "announce with invalid item -> 400",
+      "ok": true,
+      "status": 400,
+      "body": "invalid title"
+    },
+    {
+      "name": "announce with token -> 204, media ready",
+      "ok": true,
+      "status": 204,
+      "mediaReady": "1"
+    },
+    {
+      "name": "path ownership: a token may only announce its own path(s)",
+      "ok": true,
+      "tokenBOnA": {
+        "status": 403,
+        "body": "path not assigned to this publisher token"
+      },
+      "tokenAOnB": {
+        "status": 403,
+        "body": "path not assigned to this publisher token"
+      }
+    },
+    {
+      "name": "bye with other token -> 403",
+      "ok": true,
+      "status": 403
+    },
+    {
+      "name": "invalid optional field dropped, not refused",
+      "ok": true,
+      "status": 204,
+      "ignored": "audio"
+    },
+    {
+      "name": "thumbnail without token -> 401",
+      "ok": true,
+      "status": 401
+    },
+    {
+      "name": "thumbnail > 256 KB -> 413",
+      "ok": true,
+      "status": 413
+    },
+    {
+      "name": "thumbnail wrong type -> 415",
+      "ok": true,
+      "status": 415
+    },
+    {
+      "name": "thumbnail with other token -> 403",
+      "ok": true,
+      "status": 403
+    },
+    {
+      "name": "thumbnail upload -> 204",
+      "ok": true,
+      "status": 204,
+      "bytes": 9968
+    },
+    {
+      "name": "thumbnail served",
+      "ok": true,
+      "status": 200,
+      "type": "image/jpeg",
+      "cache": "max-age=4",
+      "bytes": 9968
+    },
+    {
+      "name": "list contains broadcast with relay baseUrl",
+      "ok": true,
+      "item": {
+        "id": "92678a924398ad71f187ee995994cfc7",
+        "title": "중계 검증 방송",
+        "publisher": "RELAY-TEST",
+        "baseUrl": "http://127.0.0.1:24080",
+        "path": "screen-01",
+        "thumbnailUrl": "http://127.0.0.1:24080/thumbnails/92678a924398ad71f187ee995994cfc7.jpg",
+        "width": 1280,
+        "height": 720,
+        "fps": 30,
+        "running": true,
+        "startedAtMs": 1793268370546
+      }
+    },
+    {
+      "name": "info running, mediaReady, TURN credentials",
+      "ok": true,
+      "info": {
+        "running": true,
+        "mediaReady": true,
+        "path": "screen-01",
+        "width": 1280,
+        "height": 720,
+        "fps": 30,
+        "bitrate": 3,
+        "audio": "system",
+        "codec": "H.264",
+        "elapsedMs": 3096,
+        "startedAtMs": 1793268370546,
+        "broadcastId": "92678a924398ad71f187ee995994cfc7",
+        "dvr": true,
+        "title": "중계 검증 방송",
+        "publisher": "RELAY-TEST",
+        "renditions": [
+          {
+            "name": "480p",
+            "width": 854,
+            "height": 480,
+            "mbps": 1.8,
+            "fps": 30,
+            "codec": "H.264"
+          }
+        ],
+        "hlsVariants": {
+          "opus": "hls/index.m3u8",
+          "aac": "aac/hls/index.m3u8"
+        },
+        "iceServers": [
+          {
+            "urls": [
+              "turn:turn.example.invalid:3478?transport=udp"
+            ],
+            "username": "1793268973:frame",
+            "credential": "(hmac)"
+          }
+        ]
+      }
+    },
+    {
+      "name": "info renditions carry name,width,height,mbps,fps,codec (relay encoder: 854x480)",
+      "ok": true,
+      "renditions": [
+        {
+          "name": "480p",
+          "width": 854,
+          "height": 480,
+          "mbps": 1.8,
+          "fps": 30,
+          "codec": "H.264"
+        }
+      ]
+    },
+    {
+      "name": "info advertises hlsVariants (Opus, AAC)",
+      "ok": true,
+      "hlsVariants": {
+        "opus": "hls/index.m3u8",
+        "aac": "aac/hls/index.m3u8"
+      }
+    },
+    {
+      "name": "sentAtMs corrects a sender clock 60 s ahead",
+      "ok": true,
+      "elapsedMs": 3096,
+      "startedAtMs": 1793268370546,
+      "senderStartedAtMs": 1793268430544,
+      "skewMs": 60000
+    },
+    {
+      "name": "info for unknown path -> running:false",
+      "ok": true,
+      "running": false,
+      "path": "nothing"
+    },
+    {
+      "name": "not exposed: GET /v3/paths/list",
+      "ok": true,
+      "status": 404
+    },
+    {
+      "name": "not exposed: GET /v3/config/global/get",
+      "ok": true,
+      "status": 404
+    },
+    {
+      "name": "not exposed: POST /screen-01/whip",
+      "ok": true,
+      "status": 405
+    },
+    {
+      "name": "not exposed: GET /list?path=screen-01",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "not exposed: GET /screen-01/dvr/../../v3/paths/list",
+      "ok": true,
+      "status": 404
+    },
+    {
+      "name": "stats beacon: 204, 1 per 4 s per page (429), JSON or text/plain, <= 2 KB, 415/404/400",
+      "ok": true,
+      "first": 204,
+      "sameSessionWithin4s": 429,
+      "retryAfter": "4",
+      "json": 204,
+      "over2KB": 413,
+      "wrongType": 415,
+      "unknownPath": 404,
+      "noSid": 400
+    },
+    {
+      "name": "stats CSV: daily file, exact columns, no IP address, formula text neutralised",
+      "ok": true,
+      "file": "stats-2026-10-29.csv",
+      "header": "time,path,session,broadcast,transport,mode,quality,height,fps,loss_pct,jitter_ms,freezes,mbps,abr_switches,last_switch,event,device",
+      "rows": 2,
+      "containsLoopbackAddress": false,
+      "sample": {
+        "time": "2026-10-29T10:06:13.653Z",
+        "path": "screen-01",
+        "session": "e2e1",
+        "broadcast": "92678a924398ad71f187ee995994cfc7",
+        "transport": "webrtc",
+        "mode": "auto",
+        "quality": "720p",
+        "height": "720",
+        "fps": "29.9",
+        "loss_pct": "0.12",
+        "jitter_ms": "14",
+        "freezes": "0",
+        "mbps": "2.9",
+        "abr_switches": "1",
+        "last_switch": "720p>480p loss, \"x\"",
+        "event": "'=HYPERLINK(\"x\")",
+        "device": "desktop"
+      }
+    },
+    {
+      "name": "DVR index has the current broadcast",
+      "ok": true,
+      "ranges": [
+        {
+          "startMs": 1793268373368,
+          "endMs": 1793268380368
+        }
+      ],
+      "segments": 1,
+      "behindMs": -683
+    },
+    {
+      "name": "DVR chunk is playable fMP4 (H.264 + Opus)",
+      "ok": true,
+      "status": 200,
+      "te": "chunked",
+      "bytes": 1197538,
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "profile": "High",
+            "width": 1280,
+            "height": 720,
+            "r_frame_rate": "30/1"
+          },
+          {
+            "codec_name": "opus",
+            "sample_rate": "48000",
+            "channels": 2,
+            "r_frame_rate": "0/0"
+          }
+        ],
+        "format": {
+          "duration": "3.024989"
+        }
+      }
+    },
+    {
+      "name": "DVR chunk for another broadcast id -> 409",
+      "ok": true,
+      "status": 409,
+      "body": {
+        "error": "broadcast-changed"
+      }
+    },
+    {
+      "name": "DVR chunk before this broadcast -> 404",
+      "ok": true,
+      "status": 404,
+      "body": {
+        "error": "no-data"
+      }
+    },
+    {
+      "name": "DVR chunk too long -> 400",
+      "ok": true,
+      "status": 400
+    },
+    {
+      "name": "DVR chunk past live edge -> 404 no-data",
+      "ok": true,
+      "status": 404,
+      "body": {
+        "error": "no-data"
+      }
+    },
+    {
+      "name": "HLS (LL, fMP4) served via relay",
+      "ok": true,
+      "firstPlaylistMs": 1654,
+      "cookies": [
+        "cookieCheck",
+        "hlsSession"
+      ],
+      "master": [
+        "#EXT-X-STREAM-INF:BANDWIDTH=3042432,AVERAGE-BANDWIDTH=3042432,CODECS=\"avc1.64001f,opus\",RESOLUTION=1280x720,FRAME-RATE=30.000,AUDIO=\"audio\""
+      ],
+      "partTarget": "0.20000",
+      "segment": "7d8f35cd20ae_video1_seg7.mp4",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "profile": "High",
+            "width": 1280,
+            "height": 720,
+            "r_frame_rate": "30/1"
+          }
+        ],
+        "format": {
+          "duration": "19.040000"
+        }
+      }
+    },
+    {
+      "name": "HLS AAC variant (relay-side audio transcode)",
+      "ok": true,
+      "firstPlaylistMs": 3005,
+      "cookies": [
+        "cookieCheck",
+        "hlsSession"
+      ],
+      "master": [
+        "#EXT-X-STREAM-INF:BANDWIDTH=3004589,AVERAGE-BANDWIDTH=3004589,CODECS=\"avc1.64001f,mp4a.40.2\",RESOLUTION=1280x720,FRAME-RATE=30.000,AUDIO=\"audio\""
+      ],
+      "partTarget": "0.23300",
+      "segment": "eaf0bbc2c11a_video1_seg7.mp4",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "profile": "High",
+            "width": 1280,
+            "height": 720,
+            "r_frame_rate": "30/1"
+          }
+        ],
+        "format": {
+          "duration": "12.832578"
+        }
+      }
+    },
+    {
+      "name": "chat: stale broadcast id refused and closed",
+      "ok": true,
+      "connected": false,
+      "error": "방송이 종료되었거나 다른 방송으로 바뀌었습니다.",
+      "closed": true
+    },
+    {
+      "name": "chat: name normalised, same address may share it",
+      "ok": true,
+      "a": "검증 사용자",
+      "b": "검증 사용자",
+      "bError": ""
+    },
+    {
+      "name": "chat: name rules match native",
+      "ok": true,
+      "empty": {
+        "ok": false,
+        "displayName": "검증 사용자",
+        "error": "1~20자의 이름을 입력하십시오."
+      },
+      "21 chars": {
+        "ok": false,
+        "displayName": "검증 사용자",
+        "error": "1~20자의 이름을 입력하십시오."
+      },
+      "20 chars": {
+        "ok": true,
+        "displayName": "가가가가가가가가가가가가가가가가가가가가"
+      },
+      "reserved": {
+        "ok": false,
+        "displayName": "가가가가가가가가가가가가가가가가가가가가",
+        "error": "사용할 수 없는 이름입니다."
+      },
+      "control": {
+        "ok": false,
+        "displayName": "가가가가가가가가가가가가가가가가가가가가",
+        "error": "이름에 사용할 수 없는 문자가 있습니다."
+      },
+      "zero width": {
+        "ok": false,
+        "displayName": "가가가가가가가가가가가가가가가가가가가가",
+        "error": "이름에 사용할 수 없는 문자가 있습니다."
+      },
+      "html": {
+        "ok": true,
+        "displayName": "<b>굵게</b>"
+      }
+    },
+    {
+      "name": "chat: message delivered as text with ack",
+      "ok": true,
+      "ackOk": true,
+      "received": "<img src=x onerror=alert(1)> 한글 메시지",
+      "author": "검증 A",
+      "roundTripMs": 31
+    },
+    {
+      "name": "chat: text limits match native",
+      "ok": true,
+      "1000 chars": true,
+      "1001 chars": false,
+      "empty": false,
+      "control": false
+    },
+    {
+      "name": "chat: 8 messages / 10 s per connection",
+      "ok": true,
+      "accepted": 8,
+      "refused": 4
+    },
+    {
+      "name": "chat: late joiner gets history",
+      "ok": true,
+      "messages": 10
+    },
+    {
+      "name": "websocket: unmasked/oversized rejected, fragments+ping handled",
+      "ok": true,
+      "unmaskedClosed": true,
+      "oversizeClosed": true,
+      "badKeyStatus": 400,
+      "badVersionStatus": 426,
+      "fragmentedJoin": true,
+      "pong": true
+    },
+    {
+      "name": "headless Edge DevTools up",
+      "ok": true
+    },
+    {
+      "name": "Edge(HTTP): card listed, click plays WebRTC video",
+      "ok": true,
+      "cards": 1,
+      "cardText": "실시간\n720p / 30fps\n중계 검증 방송\nRELAY-TEST",
+      "firstFrameMs": 2303,
+      "first": {
+        "w": 1280,
+        "h": 720,
+        "t": 0.172616,
+        "paused": false,
+        "muted": false,
+        "src": "webrtc",
+        "quality": "720p"
+      },
+      "second": {
+        "w": 1280,
+        "h": 720,
+        "t": 3.180487,
+        "paused": false,
+        "muted": false,
+        "src": "webrtc",
+        "quality": "720p"
+      },
+      "advancedS": 3.01
+    },
+    {
+      "name": "Edge: switch to relay 480p rendition plays 480 lines",
+      "ok": true,
+      "switchMs": 4168,
+      "first": {
+        "w": 854,
+        "h": 480,
+        "t": 0.095015,
+        "paused": false,
+        "muted": false,
+        "src": "webrtc",
+        "quality": "480p"
+      },
+      "second": {
+        "w": 854,
+        "h": 480,
+        "t": 2.105706,
+        "paused": false,
+        "muted": false,
+        "src": "webrtc",
+        "quality": "480p"
+      },
+      "advancedS": 2.01
+    },
+    {
+      "name": "Edge: back to source quality",
+      "ok": true,
+      "state": {
+        "w": 1280,
+        "h": 720,
+        "t": 0.098638,
+        "paused": false,
+        "muted": false,
+        "src": "webrtc",
+        "quality": "720p"
+      }
+    },
+    {
+      "name": "HLS viewers count against the viewer cap (503 + Retry-After), an active HLS viewer is kept",
+      "ok": true,
+      "cap": 2,
+      "hls1": 200,
+      "whep": 503,
+      "whepRetryAfter": "15",
+      "hls2": 503,
+      "hls2RetryAfter": "15",
+      "hls1Again": 200,
+      "hlsViewers": 1,
+      "cookies": [
+        "cookieCheck",
+        "hlsSession"
+      ]
+    },
+    {
+      "name": "chat cap reached -> 503 + Retry-After",
+      "ok": true,
+      "opened": [
+        "open",
+        "open",
+        "error"
+      ],
+      "thirdUpgradeResponse": "HTTP/1.1 503 Service Unavailable\r\nContent-Type: text/plain; charset=utf-8\r\nContent-Length: 12\r\nConnection: close\r\nRetry-After: 10"
+    },
+    {
+      "name": "socket cap reached -> 503 + Retry-After (not a dropped socket)",
+      "ok": true,
+      "idleSockets": 22,
+      "status": 503,
+      "retryAfter": "5"
+    },
+    {
+      "name": "media grace: running+mediaReady:false+Retry-After, WHEP/HLS 503, then running:false after the grace",
+      "ok": true,
+      "announce": 204,
+      "during": {
+        "running": true,
+        "mediaReady": false,
+        "retryAfter": "2",
+        "broadcastId": true,
+        "whep": 503,
+        "whepRetryAfter": "2",
+        "hls": 503,
+        "dvrRanges": 0,
+        "dvrRecording": false
+      },
+      "after": {
+        "running": false,
+        "whep": 404
+      }
+    },
+    {
+      "name": "stalled MediaMTX API: last good list kept (marked stale), no viewer sees the broadcast offline",
+      "ok": true,
+      "samples": 8,
+      "notReady": 0,
+      "notListed": 0,
+      "staleSeen": true,
+      "slowestMs": 1515,
+      "recovered": true
+    },
+    {
+      "name": "announce flood from one token -> 429",
+      "ok": true,
+      "sent": 45,
+      "accepted": 30,
+      "limited": 15
+    },
+    {
+      "name": "repeated wrong tokens -> 429 after 10",
+      "ok": true,
+      "statuses": "401,401,401,401,401,401,401,401,401,401,429,429,429,429",
+      "correctTokenAfter": 429,
+      "thumbnailAfter": 429,
+      "retryAfterS": 6
+    },
+    {
+      "name": "limiter before token comparison: a correct token is refused (429) while the address is limited",
+      "ok": true,
+      "statuses": "401,401,401,401,401,401,401,401,401,401,429,429,429,429",
+      "correctTokenAfter": 429,
+      "thumbnailAfter": 429,
+      "retryAfterS": 6
+    },
+    {
+      "name": "Edge(HTTPS): list baseUrl is https origin, WHEP plays",
+      "ok": true,
+      "baseUrl": "https://127.0.0.1:24443",
+      "cards": 1,
+      "cardText": "실시간\n720p / 30fps\n중계 검증 방송\nRELAY-TEST",
+      "firstFrameMs": 444,
+      "first": {
+        "w": 1280,
+        "h": 720,
+        "t": 0.034205,
+        "paused": false,
+        "muted": false,
+        "src": "webrtc",
+        "quality": "720p"
+      },
+      "second": {
+        "w": 1280,
+        "h": 720,
+        "t": 3.042522,
+        "paused": false,
+        "muted": false,
+        "src": "webrtc",
+        "quality": "720p"
+      },
+      "advancedS": 3.01
+    },
+    {
+      "name": "Edge chat round trip ws <-> wss",
+      "ok": true,
+      "httpToHttpsMs": 5,
+      "httpsToHttpMs": 3,
+      "wsUrls": {
+        "p1": "ws://127.0.0.1:24080/screen-01/chat",
+        "p2": "wss://127.0.0.1:24443/screen-01/chat"
+      }
+    },
+    {
+      "name": "Edge: DVR seek plays recorded chunks (MSE)",
+      "ok": true,
+      "recordedMs": 58758.520751953125,
+      "first": {
+        "w": 1280,
+        "h": 720,
+        "t": 0.015783,
+        "paused": false,
+        "muted": false,
+        "src": "blob",
+        "quality": "720p"
+      },
+      "second": {
+        "w": 1280,
+        "h": 720,
+        "t": 3.024587,
+        "paused": false,
+        "muted": false,
+        "src": "blob",
+        "quality": "720p"
+      },
+      "advancedS": 3.01
+    },
+    {
+      "name": "Edge: return to live after DVR",
+      "ok": true,
+      "state": {
+        "w": 1280,
+        "h": 720,
+        "t": 0.035664,
+        "paused": false,
+        "muted": false,
+        "src": "webrtc",
+        "quality": "720p"
+      }
+    },
+    {
+      "name": "WebRTC readers released after pages close",
+      "ok": true,
+      "paths": [
+        {
+          "name": "screen-01",
+          "readers": 5
+        },
+        {
+          "name": "screen-01/480p",
+          "readers": 0
+        },
+        {
+          "name": "screen-01/aac",
+          "readers": 0
+        }
+      ]
+    },
+    {
+      "name": "chat sockets released after pages close",
+      "ok": true,
+      "healthz": {
+        "ok": true,
+        "version": "0.2.0",
+        "mediamtx": true,
+        "mediamtxListStale": false,
+        "broadcasts": 1,
+        "receiving": 1,
+        "hlsViewers": 1,
+        "chatClients": 0,
+        "sockets": 6,
+        "statsRows": 4,
+        "uptimeS": 81
+      }
+    },
+    {
+      "name": "UI pages' playback reports reach the daily CSV",
+      "ok": true,
+      "uiRows": 2,
+      "sample": [
+        {
+          "time": "2026-10-29T10:06:56.511Z",
+          "path": "screen-01",
+          "session": "hsi49muikg",
+          "broadcast": "92678a924398ad71f187ee995994cfc7",
+          "transport": "webrtc",
+          "mode": "manual",
+          "quality": "720p",
+          "height": "720",
+          "fps": "30",
+          "loss_pct": "0",
+          "jitter_ms": "22",
+          "freezes": "0",
+          "mbps": "3.1",
+          "abr_switches": "0",
+          "last_switch": "",
+          "event": "",
+          "device": "desktop"
+        },
+        {
+          "time": "2026-10-29T10:07:11.510Z",
+          "path": "screen-01",
+          "session": "hsi49muikg",
+          "broadcast": "92678a924398ad71f187ee995994cfc7",
+          "transport": "webrtc",
+          "mode": "manual",
+          "quality": "720p",
+          "height": "720",
+          "fps": "30",
+          "loss_pct": "0",
+          "jitter_ms": "72",
+          "freezes": "0",
+          "mbps": "3",
+          "abr_switches": "0",
+          "last_switch": "",
+          "event": "",
+          "device": "desktop"
+        }
+      ]
+    },
+    {
+      "name": "DVR spans the 60 s segment boundary as one range",
+      "ok": true,
+      "span": {
+        "ranges": 1,
+        "recordedS": 67.9,
+        "segments": 2,
+        "behindLiveMs": 290
+      },
+      "crossBoundaryChunk": {
+        "status": 200,
+        "bytes": 1606042,
+        "probe": {
+          "duration": "4.023619"
+        }
+      }
+    },
+    {
+      "name": "no RTP repacketising with -pkt_size 1190",
+      "ok": true,
+      "lines": []
+    },
+    {
+      "name": "relay MediaMTX restart: forwarder restarts with backoff, listed again, DVR keeps earlier part",
+      "ok": true,
+      "backAfterMs": 2912,
+      "forwarderStarts": 1,
+      "restartDelaysMs": [
+        1000
+      ],
+      "ranges": [
+        {
+          "startMs": 1793268373368,
+          "s": 68.8
+        },
+        {
+          "startMs": 1793268445368,
+          "s": 2.9
+        }
+      ]
+    },
+    {
+      "name": "media gap: /info stays running (mediaReady:false + Retry-After), WHEP 503 + Retry-After",
+      "ok": true,
+      "samples": 17,
+      "runningFalse": 0,
+      "mediaNotReady": 8,
+      "retryAfter": [
+        "2"
+      ],
+      "whep": {
+        "status": 503,
+        "retryAfter": "2"
+      }
+    },
+    {
+      "name": "while A reconnects, sender B can neither publish nor announce A's path",
+      "ok": true,
+      "aReadyAtAttempt": false,
+      "publishRefused": true,
+      "reason": "[rtsp @ 0000027761e03f40] method ANNOUNCE failed: 401 (Unauthorized)",
+      "announceStatus": 403
+    },
+    {
+      "name": "bye removes the broadcast at once (no grace after bye)",
+      "ok": true,
+      "status": 204,
+      "items": 0,
+      "info": {
+        "running": false,
+        "path": "screen-01"
+      }
+    }
+  ],
+  "notes": [
+    "FFmpeg forwarder output mentions the password: false (saved logs are masked either way; the password is on the FFmpeg command line of the sender PC)",
+    "Edge native HLS: {\"canPlayType\":\"maybe\",\"w\":1280,\"t\":5.951331,\"error\":0}"
+  ],
+  "passwordInMediamtxLogs": false,
+  "stats": {
+    "statuses": {
+      "first": 204,
+      "sameSessionWithin4s": 429,
+      "retryAfter": "4",
+      "json": 204,
+      "over2KB": 413,
+      "wrongType": 415,
+      "unknownPath": 404,
+      "noSid": 400
+    },
+    "csv": {
+      "file": "stats-2026-10-29.csv",
+      "header": "time,path,session,broadcast,transport,mode,quality,height,fps,loss_pct,jitter_ms,freezes,mbps,abr_switches,last_switch,event,device",
+      "rows": 2,
+      "containsLoopbackAddress": false,
+      "sample": {
+        "time": "2026-10-29T10:06:13.653Z",
+        "path": "screen-01",
+        "session": "e2e1",
+        "broadcast": "92678a924398ad71f187ee995994cfc7",
+        "transport": "webrtc",
+        "mode": "auto",
+        "quality": "720p",
+        "height": "720",
+        "fps": "29.9",
+        "loss_pct": "0.12",
+        "jitter_ms": "14",
+        "freezes": "0",
+        "mbps": "2.9",
+        "abr_switches": "1",
+        "last_switch": "720p>480p loss, \"x\"",
+        "event": "'=HYPERLINK(\"x\")",
+        "device": "desktop"
+      }
+    }
+  },
+  "chatRules": {
+    "staleRoom": {
+      "connected": false,
+      "error": "방송이 종료되었거나 다른 방송으로 바뀌었습니다.",
+      "closed": true
+    },
+    "join": {
+      "a": "검증 사용자",
+      "b": "검증 사용자",
+      "bError": ""
+    },
+    "names": {
+      "empty": {
+        "ok": false,
+        "displayName": "검증 사용자",
+        "error": "1~20자의 이름을 입력하십시오."
+      },
+      "21 chars": {
+        "ok": false,
+        "displayName": "검증 사용자",
+        "error": "1~20자의 이름을 입력하십시오."
+      },
+      "20 chars": {
+        "ok": true,
+        "displayName": "가가가가가가가가가가가가가가가가가가가가"
+      },
+      "reserved": {
+        "ok": false,
+        "displayName": "가가가가가가가가가가가가가가가가가가가가",
+        "error": "사용할 수 없는 이름입니다."
+      },
+      "control": {
+        "ok": false,
+        "displayName": "가가가가가가가가가가가가가가가가가가가가",
+        "error": "이름에 사용할 수 없는 문자가 있습니다."
+      },
+      "zero width": {
+        "ok": false,
+        "displayName": "가가가가가가가가가가가가가가가가가가가가",
+        "error": "이름에 사용할 수 없는 문자가 있습니다."
+      },
+      "html": {
+        "ok": true,
+        "displayName": "<b>굵게</b>"
+      }
+    },
+    "message": {
+      "ackOk": true,
+      "received": "<img src=x onerror=alert(1)> 한글 메시지",
+      "author": "검증 A",
+      "roundTripMs": 31
+    },
+    "limits": {
+      "1000 chars": true,
+      "1001 chars": false,
+      "empty": false,
+      "control": false
+    },
+    "rate": {
+      "accepted": 8,
+      "refused": 4
+    },
+    "lateHistory": 10,
+    "rfc6455": {
+      "unmaskedClosed": true,
+      "oversizeClosed": true,
+      "badKeyStatus": 400,
+      "badVersionStatus": 426,
+      "fragmentedJoin": true,
+      "pong": true
+    }
+  },
+  "page1": {
+    "cards": 1,
+    "cardText": "실시간\n720p / 30fps\n중계 검증 방송\nRELAY-TEST",
+    "firstFrameMs": 2303,
+    "first": {
+      "w": 1280,
+      "h": 720,
+      "t": 0.172616,
+      "paused": false,
+      "muted": false,
+      "src": "webrtc",
+      "quality": "720p"
+    },
+    "second": {
+      "w": 1280,
+      "h": 720,
+      "t": 3.180487,
+      "paused": false,
+      "muted": false,
+      "src": "webrtc",
+      "quality": "720p"
+    },
+    "advancedS": 3.01,
+    "ok": true,
+    "stats": {
+      "thumbnailShown": true,
+      "fps": "30 fps",
+      "bitrate": "3.0 Mbps",
+      "resolution": "720p (자동)"
+    }
+  },
+  "limits": {
+    "webrtcViewers": 1,
+    "hlsCap": {
+      "cap": 2,
+      "hls1": 200,
+      "whep": 503,
+      "whepRetryAfter": "15",
+      "hls2": 503,
+      "hls2RetryAfter": "15",
+      "hls1Again": 200,
+      "hlsViewers": 1,
+      "cookies": [
+        "cookieCheck",
+        "hlsSession"
+      ]
+    },
+    "chatCap": {
+      "opened": [
+        "open",
+        "open",
+        "error"
+      ],
+      "thirdUpgradeResponse": "HTTP/1.1 503 Service Unavailable\r\nContent-Type: text/plain; charset=utf-8\r\nContent-Length: 12\r\nConnection: close\r\nRetry-After: 10"
+    },
+    "socketCap": {
+      "idleSockets": 22,
+      "status": 503,
+      "retryAfter": "5"
+    },
+    "grace": {
+      "announce": 204,
+      "during": {
+        "running": true,
+        "mediaReady": false,
+        "retryAfter": "2",
+        "broadcastId": true,
+        "whep": 503,
+        "whepRetryAfter": "2",
+        "hls": 503,
+        "dvrRanges": 0,
+        "dvrRecording": false
+      },
+      "after": {
+        "running": false,
+        "whep": 404
+      }
+    },
+    "staleList": {
+      "samples": 8,
+      "notReady": 0,
+      "notListed": 0,
+      "staleSeen": true,
+      "slowestMs": 1515,
+      "recovered": true
+    },
+    "announceRate": {
+      "sent": 45,
+      "accepted": 30,
+      "limited": 15
+    },
+    "authFailures": {
+      "statuses": "401,401,401,401,401,401,401,401,401,401,429,429,429,429",
+      "correctTokenAfter": 429,
+      "thumbnailAfter": 429,
+      "retryAfterS": 6
+    }
+  },
+  "page2": {
+    "cards": 1,
+    "cardText": "실시간\n720p / 30fps\n중계 검증 방송\nRELAY-TEST",
+    "firstFrameMs": 444,
+    "first": {
+      "w": 1280,
+      "h": 720,
+      "t": 0.034205,
+      "paused": false,
+      "muted": false,
+      "src": "webrtc",
+      "quality": "720p"
+    },
+    "second": {
+      "w": 1280,
+      "h": 720,
+      "t": 3.042522,
+      "paused": false,
+      "muted": false,
+      "src": "webrtc",
+      "quality": "720p"
+    },
+    "advancedS": 3.01,
+    "ok": true
+  },
+  "edgeHls": {
+    "canPlayType": "maybe",
+    "w": 1280,
+    "t": 5.951331,
+    "error": 0
+  },
+  "healthz": {
+    "ok": true,
+    "version": "0.2.0",
+    "mediamtx": true,
+    "mediamtxListStale": false,
+    "broadcasts": 1,
+    "receiving": 1,
+    "hlsViewers": 1,
+    "chatClients": 0,
+    "sockets": 7,
+    "statsRows": 4,
+    "uptimeS": 81
+  },
+  "mediamtxWarnings": {
+    "rtpRepacketised": [],
+    "llhlsPartDurationChanged": 11,
+    "errors": []
+  },
+  "senderMediamtxErrors": [],
+  "mediamtxPath": {
+    "name": "screen-01",
+    "confName": "~^[a-zA-Z0-9][a-zA-Z0-9_-]{0,63}$",
+    "ready": true,
+    "readyTime": "2026-10-29T19:06:13.3665373+09:00",
+    "available": true,
+    "availableTime": "2026-10-29T19:06:13.3665373+09:00",
+    "online": true,
+    "onlineTime": "2026-10-29T19:06:13.3665373+09:00",
+    "source": {
+      "type": "rtspsSession",
+      "id": "1a91b5b8-1061-4105-a3a3-f1d4c70782aa"
+    },
+    "tracks": [
+      "H264",
+      "Opus"
+    ],
+    "tracks2": [
+      {
+        "codec": "H264",
+        "codecProps": {
+          "width": 1280,
+          "height": 720,
+          "profile": "High",
+          "level": "3.1"
+        }
+      },
+      {
+        "codec": "Opus",
+        "codecProps": {
+          "channelCount": 2
+        }
+      }
+    ],
+    "readers": [
+      {
+        "type": "hlsSession",
+        "id": "8b25862b-8b3a-4728-8ef4-792fd7afd4d4"
+      },
+      {
+        "type": "hlsSession",
+        "id": "8c620a3f-c182-4570-8aef-415a59ca74f1"
+      },
+      {
+        "type": "hlsSession",
+        "id": "c588486f-3b3b-440b-9eff-133580e61c1e"
+      },
+      {
+        "type": "rtspSession",
+        "id": "29893fa3-9ac7-4500-9dd0-6c5511f88b1d"
+      },
+      {
+        "type": "rtspSession",
+        "id": "49ce9763-e2f3-4555-8c79-ca7bf9fe8696"
+      }
+    ],
+    "inboundBytes": 27932106,
+    "outboundBytes": 96463658,
+    "inboundFramesInError": 0,
+    "bytesReceived": 27932106,
+    "bytesSent": 96463658
+  },
+  "finishedAt": "2026-10-29T10:07:27.049Z",
+  "durationS": 87,
+  "passed": 79,
+  "failed": 0
+}

@@ -1,0 +1,51 @@
+{
+  "parity": [
+    {
+      "columns": 1,
+      "id": "profile",
+      "mode": "actual",
+      "navDirection": "row",
+      "previewOrder": null
+    },
+    {
+      "columns": 1,
+      "id": "channel-edit",
+      "mode": "actual",
+      "navDirection": null,
+      "previewOrder": "-1"
+    },
+    {
+      "columns": 1,
+      "id": "studio",
+      "mode": "actual",
+      "navDirection": null,
+      "previewOrder": null
+    },
+    {
+      "columns": 1,
+      "id": "profile",
+      "mode": "preview",
+      "navDirection": "row",
+      "previewOrder": null
+    },
+    {
+      "columns": 1,
+      "id": "channel-edit",
+      "mode": "preview",
+      "navDirection": null,
+      "previewOrder": "-1"
+    },
+    {
+      "columns": 1,
+      "id": "studio",
+      "mode": "preview",
+      "navDirection": null,
+      "previewOrder": null
+    }
+  ],
+  "shortWindow": {
+    "chatComposerBottom": 589.4285888671875,
+    "height": 600,
+    "visible": true
+  }
+}

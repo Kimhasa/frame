@@ -1,0 +1,230 @@
+{
+  "checkedAt": "2026-10-29T09:40:44.560Z",
+  "url": "http://127.0.0.1:5328/index.html?screen=studio",
+  "tabId": "3",
+  "result": "passed",
+  "checkCount": 21,
+  "checks": [
+    {
+      "name": "취소 전 임시 선택",
+      "pass": true,
+      "detail": {
+        "source": "editor",
+        "pending": "discord"
+      }
+    },
+    {
+      "name": "취소 후 기존 대상 유지",
+      "pass": true,
+      "detail": {
+        "source": "editor",
+        "screen": "studio"
+      }
+    },
+    {
+      "name": "닫기 X 전 임시 선택",
+      "pass": true,
+      "detail": {
+        "source": "editor",
+        "pending": "discord"
+      }
+    },
+    {
+      "name": "닫기 X 후 기존 대상 유지",
+      "pass": true,
+      "detail": {
+        "source": "editor",
+        "screen": "studio"
+      }
+    },
+    {
+      "name": "ESC 전 임시 선택",
+      "pass": true,
+      "detail": {
+        "source": "editor",
+        "pending": "chrome"
+      }
+    },
+    {
+      "detail": {
+        "dialogOpen": false,
+        "screen": "studio",
+        "source": "editor"
+      },
+      "name": "ESC 후 기존 대상 유지",
+      "pass": true
+    },
+    {
+      "detail": {
+        "screen": "studio",
+        "source": "discord"
+      },
+      "name": "선택 확정 시에만 대상 반영",
+      "pass": true
+    },
+    {
+      "detail": {
+        "pending": "chrome",
+        "source": "discord",
+        "title": "방송 화면을 변경할까요?"
+      },
+      "name": "방송 중 변경 2차 확인",
+      "pass": true
+    },
+    {
+      "detail": {
+        "pending": "chrome",
+        "source": "discord"
+      },
+      "name": "다시 선택에서 기존 대상 유지",
+      "pass": true
+    },
+    {
+      "detail": {
+        "broadcasting": true,
+        "screen": "studio",
+        "source": "discord"
+      },
+      "name": "방송 중 확인창 닫기 시 기존 대상 유지",
+      "pass": true
+    },
+    {
+      "detail": {
+        "broadcasting": true,
+        "screen": "studio",
+        "source": "editor"
+      },
+      "name": "방송 중 최종 확인 후에만 대상 반영",
+      "pass": true
+    },
+    {
+      "detail": {
+        "disabled": true,
+        "readiness": {
+          "allowed": false,
+          "reason": "source",
+          "validation": "local-review-state-only"
+        },
+        "recovery": "방송할 화면 선택",
+        "state": "화면 선택 전"
+      },
+      "name": "화면 선택 전 시작 차단 및 복구 경로",
+      "pass": true
+    },
+    {
+      "detail": {
+        "disabled": true,
+        "readiness": {
+          "allowed": false,
+          "reason": "source",
+          "validation": "local-review-state-only"
+        },
+        "recovery": "화면 선택",
+        "state": "화면 연결 끊김"
+      },
+      "name": "화면 연결 끊김 시작 차단 및 복구 경로",
+      "pass": true
+    },
+    {
+      "detail": {
+        "disabled": true,
+        "readiness": {
+          "allowed": false,
+          "reason": "connection",
+          "validation": "local-review-state-only"
+        },
+        "recovery": "연결 설정",
+        "state": "방송 연결 실패"
+      },
+      "name": "방송 연결 실패 시작 차단 및 복구 경로",
+      "pass": true
+    },
+    {
+      "detail": {
+        "disabled": true,
+        "readiness": {
+          "allowed": false,
+          "reason": "source",
+          "validation": "local-review-state-only"
+        },
+        "recovery": "화면 선택",
+        "state": "선택 창 종료"
+      },
+      "name": "선택 창 종료 시작 차단 및 복구 경로",
+      "pass": true
+    },
+    {
+      "detail": {
+        "pending": null
+      },
+      "name": "화면 선택 전에는 선택 필요",
+      "pass": true
+    },
+    {
+      "detail": {
+        "readiness": {
+          "allowed": true,
+          "reason": null,
+          "validation": "local-review-state-only"
+        },
+        "source": "editor",
+        "state": "방송 전"
+      },
+      "name": "화면 정상 선택 후 시작 가능 시안 복귀",
+      "pass": true
+    },
+    {
+      "detail": {
+        "pending": "discord",
+        "source": "discord"
+      },
+      "name": "선택 창 종료 시 선택 확정 차단",
+      "pass": true
+    },
+    {
+      "detail": {
+        "readiness": {
+          "allowed": false,
+          "reason": "source",
+          "validation": "local-review-state-only"
+        },
+        "source": "discord"
+      },
+      "name": "종료된 대상 취소 후 시작 차단 유지",
+      "pass": true
+    },
+    {
+      "detail": {
+        "source": "editor",
+        "state": "방송 전"
+      },
+      "name": "종료된 대상 대신 정상 대상 선택으로 복구",
+      "pass": true
+    },
+    {
+      "detail": {
+        "broadcasting": true,
+        "screen": "studio",
+        "source": "editor"
+      },
+      "name": "방송 중 변경 확인창 ESC도 기존 대상 유지",
+      "pass": true
+    }
+  ],
+  "method": {
+    "browser": "separate temporary IAB tab; root tab untouched",
+    "actions": "local prototype DOM button clicks through CDP Runtime; Escape through cua Tab.pressKey",
+    "fixtures": "F.source/F.broadcasting/F.navigate/F.setState initialized local design states; no native target or network state was changed"
+  },
+  "screenshots": [
+    "source-live-confirm.png",
+    "source-start-blocked.png"
+  ],
+  "browserLogs": [],
+  "limitations": [
+    "Only local design behavior was tested.",
+    "No actual Windows capture, encoder, audio, server connection, live publish, viewer delivery, or network readiness was tested.",
+    "The connection-failure fixture remains a failure; saving an address is not treated as successful network validation."
+  ],
+  "sourceChangedDuringQa": false
+}

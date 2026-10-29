@@ -1,0 +1,140 @@
+﻿{
+    "label":  "concurrency-2",
+    "measuredAt":  "2026-10-28T16:47:35.4233132+09:00",
+    "cycles":  5,
+    "openMs":  1500,
+    "windows":  null,
+    "cpuMsPerOpen":  97,
+    "samples":  [
+                    {
+                        "tag":  "before",
+                        "cpuMs":  641,
+                        "privateMB":  205.4,
+                        "handles":  504,
+                        "gdi":  14,
+                        "user":  22,
+                        "threads":  31
+                    },
+                    {
+                        "tag":  "cycle 1",
+                        "cpuMs":  703,
+                        "privateMB":  205.4,
+                        "handles":  505,
+                        "gdi":  14,
+                        "user":  22,
+                        "threads":  31
+                    },
+                    {
+                        "tag":  "cycle 2",
+                        "cpuMs":  781,
+                        "privateMB":  205.4,
+                        "handles":  508,
+                        "gdi":  14,
+                        "user":  22,
+                        "threads":  31
+                    },
+                    {
+                        "tag":  "cycle 3",
+                        "cpuMs":  922,
+                        "privateMB":  206.8,
+                        "handles":  512,
+                        "gdi":  14,
+                        "user":  22,
+                        "threads":  31
+                    },
+                    {
+                        "tag":  "cycle 4",
+                        "cpuMs":  1047,
+                        "privateMB":  206.8,
+                        "handles":  513,
+                        "gdi":  14,
+                        "user":  22,
+                        "threads":  31
+                    },
+                    {
+                        "tag":  "cycle 5",
+                        "cpuMs":  1125,
+                        "privateMB":  206.7,
+                        "handles":  513,
+                        "gdi":  14,
+                        "user":  22,
+                        "threads":  30
+                    },
+                    {
+                        "tag":  "after 3 s",
+                        "cpuMs":  1125,
+                        "privateMB":  206.7,
+                        "handles":  513,
+                        "gdi":  14,
+                        "user":  22,
+                        "threads":  30
+                    }
+                ],
+    "gpuEngines":  [
+                       {
+                           "engine":  "3d",
+                           "max":  1.3,
+                           "mean":  0.43
+                       },
+                       {
+                           "engine":  "cuda",
+                           "max":  0,
+                           "mean":  0
+                       },
+                       {
+                           "engine":  "compute_1",
+                           "max":  0,
+                           "mean":  0
+                       },
+                       {
+                           "engine":  "vr",
+                           "max":  0,
+                           "mean":  0
+                       },
+                       {
+                           "engine":  "copy",
+                           "max":  0,
+                           "mean":  0
+                       },
+                       {
+                           "engine":  "security_1",
+                           "max":  0,
+                           "mean":  0
+                       },
+                       {
+                           "engine":  "compute_0",
+                           "max":  0,
+                           "mean":  0
+                       },
+                       {
+                           "engine":  "legacyoverlay",
+                           "max":  0,
+                           "mean":  0
+                       },
+                       {
+                           "engine":  "videodecode",
+                           "max":  0,
+                           "mean":  0
+                       },
+                       {
+                           "engine":  "security",
+                           "max":  0,
+                           "mean":  0
+                       },
+                       {
+                           "engine":  "videoencode",
+                           "max":  0,
+                           "mean":  0
+                       },
+                       {
+                           "engine":  "ofa_0",
+                           "max":  0,
+                           "mean":  0
+                       },
+                       {
+                           "engine":  "graphics_1",
+                           "max":  0,
+                           "mean":  0
+                       }
+                   ]
+}

@@ -1,0 +1,4 @@
+Earlier staged runs kept for the record; superseded by 20261028-131434-local-stages (and 20261028-122924-local-stages for stages 300/400).
+- Media numbers are valid; their browser columns are NOT: the browser sampler then opened its 2 viewers as tabs of one window, the hidden tab presented no frames, and decoded-FPS deltas mixed two peer connections.
+- 20261028-120833: runner without fullRateSuccessRate (rateVsSource shows the same degradation).
+- 20261028-121703: aborted by degraded-below-min at stage 50.

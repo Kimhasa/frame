@@ -1,0 +1,212 @@
+[
+  {
+    "name": "settings-profile",
+    "screen": "profile",
+    "section": "프로필",
+    "state": "기본",
+    "height": 1000,
+    "overflow": 0,
+    "scrollHeight": 1050,
+    "width": 1440
+  },
+  {
+    "name": "settings-account",
+    "screen": "security",
+    "section": "계정 연결",
+    "state": "기본",
+    "height": 1000,
+    "overflow": 0,
+    "scrollHeight": 1000,
+    "width": 1440
+  },
+  {
+    "name": "settings-security",
+    "screen": "security",
+    "section": "보안 및 기기",
+    "state": "기본",
+    "height": 1000,
+    "overflow": 0,
+    "scrollHeight": 1000,
+    "width": 1440
+  },
+  {
+    "name": "settings-notifications",
+    "screen": "preferences",
+    "section": "알림",
+    "state": "기본",
+    "height": 1000,
+    "overflow": 0,
+    "scrollHeight": 1000,
+    "width": 1440
+  },
+  {
+    "name": "settings-playback",
+    "screen": "preferences",
+    "section": "재생",
+    "state": "기본",
+    "height": 1000,
+    "overflow": 0,
+    "scrollHeight": 1000,
+    "width": 1440
+  },
+  {
+    "name": "settings-profile-mobile",
+    "screen": "profile",
+    "section": "프로필",
+    "state": "기본",
+    "height": 844,
+    "overflow": 0,
+    "scrollHeight": 1041,
+    "width": 390
+  },
+  {
+    "name": "settings-account-mobile",
+    "screen": "security",
+    "section": "계정 연결",
+    "state": "기본",
+    "height": 844,
+    "overflow": 0,
+    "scrollHeight": 846,
+    "width": 390
+  },
+  {
+    "name": "settings-security-mobile",
+    "screen": "security",
+    "section": "보안 및 기기",
+    "state": "기본",
+    "height": 844,
+    "overflow": 0,
+    "scrollHeight": 846,
+    "width": 390
+  },
+  {
+    "name": "settings-notifications-mobile",
+    "screen": "preferences",
+    "section": "알림",
+    "state": "기본",
+    "height": 844,
+    "overflow": 0,
+    "scrollHeight": 846,
+    "width": 390
+  },
+  {
+    "name": "settings-playback-mobile",
+    "screen": "preferences",
+    "section": "재생",
+    "state": "기본",
+    "height": 844,
+    "overflow": 0,
+    "scrollHeight": 846,
+    "width": 390
+  },
+  {
+    "name": "settings-profile-error",
+    "screen": "profile",
+    "section": "프로필",
+    "state": "닉네임 오류",
+    "height": 1000,
+    "overflow": 0,
+    "scrollHeight": 1050,
+    "width": 1440
+  },
+  {
+    "name": "settings-notifications-blocked",
+    "screen": "preferences",
+    "section": "알림",
+    "state": "알림 차단",
+    "height": 1000,
+    "overflow": 0,
+    "scrollHeight": 1000,
+    "width": 1440
+  },
+  {
+    "name": "settings-security-reauth",
+    "screen": "security",
+    "section": "보안 및 기기",
+    "state": "재인증 필요",
+    "height": 1000,
+    "overflow": 0,
+    "scrollHeight": 1000,
+    "width": 1440
+  },
+  {
+    "name": "channel-management",
+    "screen": "channel-edit",
+    "section": "",
+    "state": "기본",
+    "height": 1000,
+    "overflow": 0,
+    "scrollHeight": 1070,
+    "width": 1440
+  },
+  {
+    "name": "channel-branding",
+    "screen": "channel-edit",
+    "section": "",
+    "state": "기본",
+    "height": 1000,
+    "overflow": 0,
+    "scrollHeight": 1022,
+    "width": 1440
+  },
+  {
+    "name": "login",
+    "screen": "login",
+    "section": "",
+    "state": "기본",
+    "height": 1000,
+    "overflow": 0,
+    "scrollHeight": 1000,
+    "width": 1440
+  },
+  {
+    "name": "studio-ready",
+    "screen": "studio",
+    "section": "",
+    "state": "방송 전",
+    "height": 1000,
+    "overflow": 0,
+    "scrollHeight": 1215,
+    "width": 1440
+  },
+  {
+    "name": "login-mobile",
+    "screen": "login",
+    "section": "",
+    "state": "기본",
+    "height": 844,
+    "overflow": 0,
+    "scrollHeight": 844,
+    "width": 390
+  },
+  {
+    "name": "channel-mobile",
+    "screen": "channel-edit",
+    "section": "",
+    "state": "기본",
+    "height": 844,
+    "overflow": 0,
+    "scrollHeight": 1396,
+    "width": 390
+  },
+  {
+    "name": "studio-mobile",
+    "screen": "studio",
+    "section": "",
+    "state": "방송 전",
+    "height": 844,
+    "overflow": 0,
+    "scrollHeight": 1440,
+    "width": 390
+  },
+  {
+    "name": "live-empty",
+    "screen": "live",
+    "section": "",
+    "state": "방송 없음",
+    "height": 1000,
+    "overflow": 0,
+    "scrollHeight": 1000,
+    "width": 1440
+  }
+]

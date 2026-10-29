@@ -22,6 +22,7 @@ class ChatHub {
   // key is the Sec-WebSocket-Key header; peer is the client address used for rate limits and logs.
   void Serve(SOCKET socket, const std::string& key, const std::string& peer);
   int ConnectionCount() const;
+  json Stats() const;  // {clients, joined, refused}: aggregate counts for /api/stats
 
  private:
   struct Client;
@@ -40,6 +41,7 @@ class ChatHub {
   uint64_t nextMessage_ = 0;
   std::vector<std::shared_ptr<Client>> clients_;
   std::atomic<bool> stopping_{false};
+  std::atomic<int64_t> refused_{0};  // connections answered 503 because the hub was full
   std::thread pinger_;
 };
 

@@ -1,0 +1,3184 @@
+[
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "live",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "live",
+    "state": "불러오는 중"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "live",
+    "state": "방송 없음"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "live",
+    "state": "불러오기 실패"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "watch",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "watch",
+    "state": "일시정지"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "watch",
+    "state": "지난 구간"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "watch",
+    "state": "재연결 중"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "watch",
+    "state": "방송 종료"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "watch",
+    "state": "재생 실패"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "watch",
+    "state": "접속자 많음"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "watch",
+    "state": "소리 켜기"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "following",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "following",
+    "state": "팔로우 없음"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "following",
+    "state": "로그인 필요"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "search",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "search",
+    "state": "검색 결과 없음"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "channel",
+    "state": "방송 중"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "channel",
+    "state": "오프라인"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "channel",
+    "state": "접근 제한"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "vod",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "vod",
+    "state": "다시보기 없음"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "vod-watch",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "vod-watch",
+    "state": "재생 실패"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "vod-watch",
+    "state": "삭제된 영상"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "clips",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "clips",
+    "state": "클립 없음"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "clip-watch",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "clip-watch",
+    "state": "삭제된 영상"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "history",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "history",
+    "state": "기록 없음"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "notifications",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "notifications",
+    "state": "알림 없음"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "studio",
+    "state": "방송 전"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "studio",
+    "state": "방송 중"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "studio",
+    "state": "화면 연결 끊김"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "studio",
+    "state": "방송 연결 실패"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "sources",
+    "state": "프로그램 창"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "sources",
+    "state": "전체 화면"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "sources",
+    "state": "불러오는 중"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "sources",
+    "state": "응답 지연"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "sources",
+    "state": "창 닫힘"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "sources",
+    "state": "대상 없음"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "broadcast-settings",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "broadcast-settings",
+    "state": "수동 비트레이트"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "broadcast-settings",
+    "state": "지원 범위 오류"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "connection",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "connection",
+    "state": "연결 확인 중"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "connection",
+    "state": "연결 실패"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "broadcast-details",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "broadcast-details",
+    "state": "입력 오류"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "broadcast-end",
+    "state": "종료 확인"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "broadcast-end",
+    "state": "종료 요약"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "recordings",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "recordings",
+    "state": "저장 공간 부족"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "recordings",
+    "state": "녹화 없음"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "schedule",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "schedule",
+    "state": "예약 없음"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "scenes",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "scenes",
+    "state": "장면 없음"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "login",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "login",
+    "state": "연동 실패"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "login",
+    "state": "동의 필요"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "profile",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "profile",
+    "state": "닉네임 오류"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "security",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "security",
+    "state": "재인증 필요"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "preferences",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "preferences",
+    "state": "알림 차단"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "channel-edit",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "channel-edit",
+    "state": "저장 오류"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "moderation",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "moderation",
+    "state": "운영자 없음"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "reports",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "reports",
+    "state": "신고 없음"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "creator-stats",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "creator-stats",
+    "state": "데이터 없음"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "revenue",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "revenue",
+    "state": "정산 대기"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "transactions",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "transactions",
+    "state": "환불 요청"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "transactions",
+    "state": "내역 없음"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "integrations",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "integrations",
+    "state": "연결 없음"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "missions-manage",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "missions-manage",
+    "state": "미션 없음"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "polls-manage",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "polls-manage",
+    "state": "진행 중 없음"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "rewards-manage",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "rewards-manage",
+    "state": "보상 없음"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "members",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "members",
+    "state": "가입자 없음"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "donate",
+    "state": "금액 선택"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "donate",
+    "state": "처리 중"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "donate",
+    "state": "완료"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "donate",
+    "state": "결제 실패"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "membership",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "membership",
+    "state": "가입 완료"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "membership",
+    "state": "결제 실패"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "mission",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "mission",
+    "state": "진행 중"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "mission",
+    "state": "완료"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "mission",
+    "state": "실패"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "poll",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "poll",
+    "state": "투표 완료"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "poll",
+    "state": "마감"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "rewards",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "rewards",
+    "state": "포인트 부족"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "rewards",
+    "state": "교환 완료"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "share",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "share",
+    "state": "복사 완료"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "info",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "quality",
+    "state": "자동"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "quality",
+    "state": "수동"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "quality",
+    "state": "전환 중"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "nickname",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "nickname",
+    "state": "입력 오류"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "manual",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "manual",
+    "state": "연결 중"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "manual",
+    "state": "연결 실패"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "report-content",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "report-content",
+    "state": "접수 완료"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "clip-create",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "clip-create",
+    "state": "처리 중"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "clip-create",
+    "state": "생성 완료"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "service-health",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "service-health",
+    "state": "과부하"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "service-health",
+    "state": "장애"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "service-reports",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "service-reports",
+    "state": "신고 없음"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "audit",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "audit",
+    "state": "기록 없음"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "policy",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "update",
+    "state": "업데이트 있음"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "update",
+    "state": "다운로드 중"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "update",
+    "state": "최신 버전"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "devices",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "devices",
+    "state": "기기 없음"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "devices",
+    "state": "연결 실패"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "recommendations",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "recommendations",
+    "state": "추천 없음"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "raid",
+    "state": "방송 선택"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "raid",
+    "state": "이동 확인"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "raid",
+    "state": "완료"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "drop-rewards",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "drop-rewards",
+    "state": "수령 가능"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "drop-rewards",
+    "state": "수령 완료"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "developer",
+    "state": "기본"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "developer",
+    "state": "키 발급 확인"
+  },
+  {
+    "device": "desktop",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "verification",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "live",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "live",
+    "state": "불러오는 중"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "live",
+    "state": "방송 없음"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "live",
+    "state": "불러오기 실패"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "watch",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "watch",
+    "state": "일시정지"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "watch",
+    "state": "지난 구간"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "watch",
+    "state": "재연결 중"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "watch",
+    "state": "방송 종료"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "watch",
+    "state": "재생 실패"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "watch",
+    "state": "접속자 많음"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "watch",
+    "state": "소리 켜기"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "following",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "following",
+    "state": "팔로우 없음"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "following",
+    "state": "로그인 필요"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "search",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "search",
+    "state": "검색 결과 없음"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "channel",
+    "state": "방송 중"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "channel",
+    "state": "오프라인"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "channel",
+    "state": "접근 제한"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "vod",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "vod",
+    "state": "다시보기 없음"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "vod-watch",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "vod-watch",
+    "state": "재생 실패"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "vod-watch",
+    "state": "삭제된 영상"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "clips",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "clips",
+    "state": "클립 없음"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "clip-watch",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "clip-watch",
+    "state": "삭제된 영상"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "history",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "history",
+    "state": "기록 없음"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "notifications",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "notifications",
+    "state": "알림 없음"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "studio",
+    "state": "방송 전"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "studio",
+    "state": "방송 중"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "studio",
+    "state": "화면 연결 끊김"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "studio",
+    "state": "방송 연결 실패"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "sources",
+    "state": "프로그램 창"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "sources",
+    "state": "전체 화면"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "sources",
+    "state": "불러오는 중"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "sources",
+    "state": "응답 지연"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "sources",
+    "state": "창 닫힘"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "sources",
+    "state": "대상 없음"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "broadcast-settings",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "broadcast-settings",
+    "state": "수동 비트레이트"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "broadcast-settings",
+    "state": "지원 범위 오류"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "connection",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "connection",
+    "state": "연결 확인 중"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "connection",
+    "state": "연결 실패"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "broadcast-details",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "broadcast-details",
+    "state": "입력 오류"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "broadcast-end",
+    "state": "종료 확인"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "broadcast-end",
+    "state": "종료 요약"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "recordings",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "recordings",
+    "state": "저장 공간 부족"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "recordings",
+    "state": "녹화 없음"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "schedule",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "schedule",
+    "state": "예약 없음"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "scenes",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "scenes",
+    "state": "장면 없음"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "login",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "login",
+    "state": "연동 실패"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "login",
+    "state": "동의 필요"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "profile",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "profile",
+    "state": "닉네임 오류"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "security",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "security",
+    "state": "재인증 필요"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "preferences",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "preferences",
+    "state": "알림 차단"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "channel-edit",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "channel-edit",
+    "state": "저장 오류"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "moderation",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "moderation",
+    "state": "운영자 없음"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "reports",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "reports",
+    "state": "신고 없음"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "creator-stats",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "creator-stats",
+    "state": "데이터 없음"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "revenue",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "revenue",
+    "state": "정산 대기"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "transactions",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "transactions",
+    "state": "환불 요청"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "transactions",
+    "state": "내역 없음"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "integrations",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "integrations",
+    "state": "연결 없음"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "missions-manage",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "missions-manage",
+    "state": "미션 없음"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "polls-manage",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "polls-manage",
+    "state": "진행 중 없음"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "rewards-manage",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "rewards-manage",
+    "state": "보상 없음"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "members",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "members",
+    "state": "가입자 없음"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "donate",
+    "state": "금액 선택"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "donate",
+    "state": "처리 중"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "donate",
+    "state": "완료"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "donate",
+    "state": "결제 실패"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "membership",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "membership",
+    "state": "가입 완료"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "membership",
+    "state": "결제 실패"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "mission",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "mission",
+    "state": "진행 중"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "mission",
+    "state": "완료"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "mission",
+    "state": "실패"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "poll",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "poll",
+    "state": "투표 완료"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "poll",
+    "state": "마감"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "rewards",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "rewards",
+    "state": "포인트 부족"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "rewards",
+    "state": "교환 완료"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "share",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "share",
+    "state": "복사 완료"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "info",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "quality",
+    "state": "자동"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "quality",
+    "state": "수동"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "quality",
+    "state": "전환 중"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "nickname",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "nickname",
+    "state": "입력 오류"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "manual",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "manual",
+    "state": "연결 중"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "manual",
+    "state": "연결 실패"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "report-content",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "report-content",
+    "state": "접수 완료"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "clip-create",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "clip-create",
+    "state": "처리 중"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "clip-create",
+    "state": "생성 완료"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "service-health",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "service-health",
+    "state": "과부하"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "service-health",
+    "state": "장애"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "service-reports",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "service-reports",
+    "state": "신고 없음"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "audit",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "audit",
+    "state": "기록 없음"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "policy",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "update",
+    "state": "업데이트 있음"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "update",
+    "state": "다운로드 중"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "update",
+    "state": "최신 버전"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "devices",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "devices",
+    "state": "기기 없음"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "devices",
+    "state": "연결 실패"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "recommendations",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "recommendations",
+    "state": "추천 없음"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "raid",
+    "state": "방송 선택"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "raid",
+    "state": "이동 확인"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "raid",
+    "state": "완료"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "drop-rewards",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "drop-rewards",
+    "state": "수령 가능"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "drop-rewards",
+    "state": "수령 완료"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "developer",
+    "state": "기본"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "developer",
+    "state": "키 발급 확인"
+  },
+  {
+    "device": "tablet",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "verification",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [
+      "지식"
+    ],
+    "horizontalOverflow": false,
+    "id": "live",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [
+      "지식"
+    ],
+    "horizontalOverflow": false,
+    "id": "live",
+    "state": "불러오는 중"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [
+      "지식"
+    ],
+    "horizontalOverflow": false,
+    "id": "live",
+    "state": "방송 없음"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [
+      "지식"
+    ],
+    "horizontalOverflow": false,
+    "id": "live",
+    "state": "불러오기 실패"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "watch",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "watch",
+    "state": "일시정지"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "watch",
+    "state": "지난 구간"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "watch",
+    "state": "재연결 중"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "watch",
+    "state": "방송 종료"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "watch",
+    "state": "재생 실패"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "watch",
+    "state": "접속자 많음"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "watch",
+    "state": "소리 켜기"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "following",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "following",
+    "state": "팔로우 없음"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "following",
+    "state": "로그인 필요"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "search",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "search",
+    "state": "검색 결과 없음"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "channel",
+    "state": "방송 중"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "channel",
+    "state": "오프라인"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "channel",
+    "state": "접근 제한"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "vod",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "vod",
+    "state": "다시보기 없음"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "vod-watch",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "vod-watch",
+    "state": "재생 실패"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "vod-watch",
+    "state": "삭제된 영상"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "clips",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "clips",
+    "state": "클립 없음"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "clip-watch",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "clip-watch",
+    "state": "삭제된 영상"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "history",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "history",
+    "state": "기록 없음"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "notifications",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "notifications",
+    "state": "알림 없음"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "studio",
+    "state": "방송 전"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "studio",
+    "state": "방송 중"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "studio",
+    "state": "화면 연결 끊김"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "studio",
+    "state": "방송 연결 실패"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "sources",
+    "state": "프로그램 창"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "sources",
+    "state": "전체 화면"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "sources",
+    "state": "불러오는 중"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "sources",
+    "state": "응답 지연"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "sources",
+    "state": "창 닫힘"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "sources",
+    "state": "대상 없음"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "broadcast-settings",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "broadcast-settings",
+    "state": "수동 비트레이트"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "broadcast-settings",
+    "state": "지원 범위 오류"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "connection",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "connection",
+    "state": "연결 확인 중"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "connection",
+    "state": "연결 실패"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "broadcast-details",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "broadcast-details",
+    "state": "입력 오류"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "broadcast-end",
+    "state": "종료 확인"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "broadcast-end",
+    "state": "종료 요약"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [
+      "열기",
+      "열기"
+    ],
+    "horizontalOverflow": false,
+    "id": "recordings",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [
+      "열기",
+      "열기"
+    ],
+    "horizontalOverflow": false,
+    "id": "recordings",
+    "state": "저장 공간 부족"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "recordings",
+    "state": "녹화 없음"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [
+      "수정",
+      "수정"
+    ],
+    "horizontalOverflow": false,
+    "id": "schedule",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "schedule",
+    "state": "예약 없음"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "scenes",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "scenes",
+    "state": "장면 없음"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "login",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "login",
+    "state": "연동 실패"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "login",
+    "state": "동의 필요"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "profile",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "profile",
+    "state": "닉네임 오류"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "security",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "security",
+    "state": "재인증 필요"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "preferences",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "preferences",
+    "state": "알림 차단"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "channel-edit",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "channel-edit",
+    "state": "저장 오류"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "moderation",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "moderation",
+    "state": "운영자 없음"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [
+      "검토",
+      "내역"
+    ],
+    "horizontalOverflow": false,
+    "id": "reports",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "reports",
+    "state": "신고 없음"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "creator-stats",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "creator-stats",
+    "state": "데이터 없음"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "revenue",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "revenue",
+    "state": "정산 대기"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [
+      "상세",
+      "관리"
+    ],
+    "horizontalOverflow": false,
+    "id": "transactions",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [
+      "상세",
+      "관리"
+    ],
+    "horizontalOverflow": false,
+    "id": "transactions",
+    "state": "환불 요청"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "transactions",
+    "state": "내역 없음"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "integrations",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "integrations",
+    "state": "연결 없음"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [
+      "수락",
+      "검토"
+    ],
+    "horizontalOverflow": false,
+    "id": "missions-manage",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "missions-manage",
+    "state": "미션 없음"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "polls-manage",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "polls-manage",
+    "state": "진행 중 없음"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "rewards-manage",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "rewards-manage",
+    "state": "보상 없음"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "members",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "members",
+    "state": "가입자 없음"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "donate",
+    "state": "금액 선택"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "donate",
+    "state": "처리 중"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "donate",
+    "state": "완료"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "donate",
+    "state": "결제 실패"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "membership",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "membership",
+    "state": "가입 완료"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "membership",
+    "state": "결제 실패"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "mission",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "mission",
+    "state": "진행 중"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "mission",
+    "state": "완료"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "mission",
+    "state": "실패"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "poll",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "poll",
+    "state": "투표 완료"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "poll",
+    "state": "마감"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "rewards",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "rewards",
+    "state": "포인트 부족"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "rewards",
+    "state": "교환 완료"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "share",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "share",
+    "state": "복사 완료"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "info",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "quality",
+    "state": "자동"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "quality",
+    "state": "수동"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "quality",
+    "state": "전환 중"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "nickname",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "nickname",
+    "state": "입력 오류"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "manual",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "manual",
+    "state": "연결 중"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "manual",
+    "state": "연결 실패"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "report-content",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "report-content",
+    "state": "접수 완료"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "clip-create",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "clip-create",
+    "state": "처리 중"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "clip-create",
+    "state": "생성 완료"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "service-health",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "service-health",
+    "state": "과부하"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "service-health",
+    "state": "장애"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [
+      "검토",
+      "검토"
+    ],
+    "horizontalOverflow": false,
+    "id": "service-reports",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "service-reports",
+    "state": "신고 없음"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "audit",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "audit",
+    "state": "기록 없음"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "policy",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "update",
+    "state": "업데이트 있음"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "update",
+    "state": "다운로드 중"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "update",
+    "state": "최신 버전"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "devices",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "devices",
+    "state": "기기 없음"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "devices",
+    "state": "연결 실패"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "recommendations",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "recommendations",
+    "state": "추천 없음"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "raid",
+    "state": "방송 선택"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "raid",
+    "state": "이동 확인"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "raid",
+    "state": "완료"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "drop-rewards",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "drop-rewards",
+    "state": "수령 가능"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "drop-rewards",
+    "state": "수령 완료"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "developer",
+    "state": "기본"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "developer",
+    "state": "키 발급 확인"
+  },
+  {
+    "device": "mobile",
+    "escapedControls": [],
+    "horizontalOverflow": false,
+    "id": "verification",
+    "state": "기본"
+  }
+]

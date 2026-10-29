@@ -1,0 +1,17 @@
+[
+  {
+    "file": "preserved-player.js",
+    "unchanged": true,
+    "sha256": "3CBE52C76E0928A66E8CEE6101E123407F714D95AEE1E1335FFC0ACFED753054"
+  },
+  {
+    "file": "preserved-player.css",
+    "unchanged": true,
+    "sha256": "B422A9528666CCC9A3E1E33203D566830C6C46042EB2EEA21EC3314D5E6B3D57"
+  },
+  {
+    "file": "preserved-player-data.js",
+    "unchanged": true,
+    "sha256": "B7C82B83E7A826DEEAF740CE69AACE64840B419435A375AE4A8935B8716EE36F"
+  }
+]

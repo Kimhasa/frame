@@ -233,6 +233,7 @@ bool WindowCapture::StartItem(const wgc::GraphicsCaptureItem& item, HWND hwnd, c
     });
     closedRevoker_ = item.Closed(winrt::auto_revoke, [this](const wgc::GraphicsCaptureItem&, const winrt::Windows::Foundation::IInspectable&) {
       if (closed_.exchange(true)) return;
+      SetEvent(frameEvent_.Get());
       if (onClosed) onClosed();
     });
     session.StartCapture();
@@ -268,6 +269,7 @@ void WindowCapture::PollClosed() {
   if (closed_ || !running_) return;
   bool gone = hwnd_ ? !IsWindow(hwnd_) : !monitorDevice_.empty() && !MonitorPresent(monitorDevice_);
   if (!gone || closed_.exchange(true)) return;
+  SetEvent(frameEvent_.Get());
   if (onClosed) onClosed();
 }
 
@@ -285,7 +287,7 @@ void WindowCapture::OnFrameArrived(const wgc::Direct3D11CaptureFramePool& pool) 
     texture->GetDesc(&desc);
     UINT surfaceW = std::min<UINT>(static_cast<UINT>(size.Width), desc.Width), surfaceH = std::min<UINT>(static_cast<UINT>(size.Height), desc.Height);
     UINT x0 = 0, y0 = 0;
-    if (hwnd_) {
+    if (hwnd_ && clientCrop_) {
       ClientInsets in;
       if (MeasureClientInsets(hwnd_, in)) {
         // Asking the window about its title bar takes a few hundred cross-process messages: do it again only when the
@@ -341,6 +343,7 @@ void WindowCapture::OnFrameArrived(const wgc::Direct3D11CaptureFramePool& pool) 
     }
     ++frames_;
     lastFrameQpc_ = QpcNow();
+    SetEvent(frameEvent_.Get());
     frame.Close();
     if (size.Width != poolSize_.Width || size.Height != poolSize_.Height) {
       // The window was resized: re-create the buffers at the new size (handled on the next frame).
@@ -696,14 +699,14 @@ static bool IsCloaked(HWND hwnd) {
   return SUCCEEDED(DwmGetWindowAttribute(hwnd, DWMWA_CLOAKED, &cloaked, sizeof(cloaked))) && cloaked != 0;
 }
 
-static std::wstring ProcessName(DWORD pid) {
+static std::wstring ProcessPath(DWORD pid) {
   ScopedHandle process(OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pid));
   if (!process.Valid()) return L"";
   std::wstring path(MAX_PATH * 2, L'\0');
   DWORD size = static_cast<DWORD>(path.size());
   if (!QueryFullProcessImageNameW(process.Get(), 0, path.data(), &size)) return L"";
   path.resize(size);
-  return fs::path(path).filename().wstring();
+  return path;
 }
 
 std::vector<SourceWindow> EnumerateSourceWindows(HWND self) {
@@ -736,7 +739,8 @@ std::vector<SourceWindow> EnumerateSourceWindows(HWND self) {
         w.hwnd = hwnd;
         w.pid = pid;
         w.title = title;
-        w.exe = ProcessName(pid);
+        w.exePath = ProcessPath(pid);
+        w.exe = fs::path(w.exePath).filename().wstring();
         w.minimized = IsIconic(hwnd) != FALSE;
         if (FAILED(DwmGetWindowAttribute(hwnd, DWMWA_EXTENDED_FRAME_BOUNDS, &w.rect, sizeof(w.rect)))) GetWindowRect(hwnd, &w.rect);
         if (!w.minimized && (w.rect.right - w.rect.left < 2 || w.rect.bottom - w.rect.top < 2)) return TRUE;

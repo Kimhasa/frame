@@ -1,6 +1,6 @@
 # FRAME Console 네이티브 호스트
 
-승인된 UI(0.5 기준: `reference-v05/`, `UI_V05_LOCK.json`; 빌드 결과 `outputs/index.html`, 작성 소스 `work/`)를 WebView2로 띄우고 실제 창·모니터 캡처, FFmpeg 인코딩, MediaMTX 송출, 내부망 방송 목록, 시청, 방송 전체 되감기(DVR), 채팅을 연결하는 C++17 Win32 프로그램입니다.
+승인된 UI(0.5 기준: `reference-v05/`, `UI_V05_LOCK.json`; 빌드 결과 `outputs/index.html`, 작성 소스 `work/`)를 WebView2로 띄우고 실제 창·모니터 캡처, FFmpeg 인코딩, MediaMTX 송출, 같은 네트워크 방송 목록, 인터넷 중계 서버로의 복사 송출, 시청, 방송 전체 되감기(DVR), 채팅을 연결하는 C++17 Win32 프로그램입니다.
 
 ## 빌드 환경
 
@@ -40,6 +40,8 @@ CRT는 정적으로 링크(`/MT`)해 실행 PC에 Visual C++ 재배포 패키지
 | --- | --- |
 | `src/main.cpp` | 창, WebView2(가상 호스트 `http://frame-console.example/`), 메시지 검증과 명령 처리, 미리보기 전달, 시청 서버·목록·채팅 시작 |
 | `src/capture.*` | Windows Graphics Capture 창·모니터 캡처, 창은 클라이언트 영역만(DWM 프레임 범위 대비 클라이언트 좌표, 앱이 그린 제목 표시줄은 WM_NCHITTEST로 판별, DPI 가상화 창은 경계 1px 제외), D3D11 비디오 프로세서로 NV12/BGRA 변환, 창·모니터 목록(장치 경로 기반 고정 ID, 왼쪽부터 번호)과 썸네일, JPEG |
+| `src/thumbnails.*` | "프로그램 창" 미리보기 작업자: 목록 세대·요청 ID, 보이는 카드·선택 창 우선, 동시 2개, 첫 프레임 이벤트 대기(1초)·시도 3회(재시도 250/750ms, 두 번째는 DWM 경로)·창별 기한 5초, 최소화된 창은 DWM 썸네일을 cloak된 도우미 창에 그려 캡처(모두 0이면 이미지 없음), 캡처 제외(표시 선호도) 창은 시도하지 않음, 닫힘·숨김·최소화·복원 감시(0.5초), 60초 캐시(이전 화면 표시), 시도별 진단 로그(`[thumb]`), 시험용 결함 주입(`FRAME_CONSOLE_THUMB_FAULT`) |
+| `src/window_icon.*` | 선택창 제목 행의 앱 아이콘: WM_GETICON(SendMessageTimeout 100ms, 응답 없는 창은 즉시 포기) → 창 클래스 아이콘 → 창 아이콘이 표시 크기보다 작으면 실행 파일 아이콘(SHDefExtractIcon, ApplicationFrameHost 제외), WIC로 투명 PNG(표시 크기 × 배율), 창·프로세스·아이콘 핸들·크기별 캐시. 빌린 아이콘 핸들은 해제하지 않음 |
 | `src/streamer.*` | MediaMTX 설정 생성과 실행(녹화·재생 서버 포함), FFmpeg 실행과 인코더 대체, 고정 프레임 펌프, 이름 있는 파이프, 측정값과 경고, 목록 썸네일, DVR 색인과 구간 요청, 송출 중 절전 방지(power request) |
 | `src/recorder.*` | 녹화 폴더(`%LOCALAPPDATA%\FrameConsole\recordings\<방송ID>`), `broadcast.json`, 보관 기간·용량 상한 정리(이 프로그램의 방송 폴더만), 여유 공간 감시(녹화만 멈춤/재개), 분할 파일 시작 시각 |
 | `src/directory.*` | 방송 목록: UDP 멀티캐스트(239.255.42.99:8899) 알림 송수신, 선택적 HTTP 알림(`directoryServers`), 7초 만료, 보낸 주소 검증 |

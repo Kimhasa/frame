@@ -1,0 +1,181 @@
+/* FRAME 0.6 mobile addendum (allowed UI exception, recorded in UI_V06_ADDENDUM.json): phone and tablet viewer layout,
+   touch targets and safe areas. Only two kinds of media query are used (checked by tools/verify-ui-v06.mjs):
+   - (max-width: 800px): narrow windows with any pointer, the FrameConsole app in a narrow window included;
+   - (pointer: coarse): touch screens; every selector starts with :root:not(.frame-native), so the FrameConsole app
+     (WebView2; its script sets html.frame-native) keeps the desktop UI on a Windows touch screen.
+   Mouse windows 801 px wide or more therefore render exactly as in 0.5.1, the removed badge aside. One script hook sits
+   outside the media queries: html.volume-readonly, set only where video.volume cannot be changed (iOS).
+   --frame-visual-height: set by the script from visualViewport.height (on-screen keyboard); 100dvh without it.
+   Existing components, colours, Pretendard and spacing are reused; the narrow-window rules of 0.5 are extended. */
+
+/* Touch screens: about 44 px hit boxes; icons, track and thumb keep the desktop drawing. */
+@media (pointer: coarse) {
+  :root:not(.frame-native) .app-layout .nav-item, :root:not(.frame-native) .is-viewing .nav-item { min-height: 44px; }
+  :root:not(.frame-native) .icon-button { min-width: 44px; min-height: 44px; }
+  :root:not(.frame-native) .compact-toolbar button, :root:not(.frame-native) .dialog-footer button { min-height: 44px; }
+  :root:not(.frame-native) .catalog-actions .refresh-button { width: 44px; min-width: 44px; }
+  :root:not(.frame-native) .catalog-search { height: 44px; }
+  :root:not(.frame-native) .viewing-actions button, :root:not(.frame-native) .viewing-actions #viewer-info-button, :root:not(.frame-native) .viewing-actions #chat-toggle { min-width: 44px; min-height: 44px; }
+  :root:not(.frame-native) .viewing-actions #viewer-info-button, :root:not(.frame-native) .viewing-actions #chat-toggle { width: auto; }
+  :root:not(.frame-native) #viewer-stage .player-controls .player-button { width: auto; min-width: 44px; min-height: 44px; padding: 6px 10px; }
+  :root:not(.frame-native) #viewer-stage .player-controls .live-button { min-height: 44px; }
+  /* Range inputs: a 44 px box around the unchanged 3-4 px track; the timeline keeps its height with negative margins. */
+  :root:not(.frame-native) .player-volume input[type='range'] { height: 44px; }
+  :root:not(.frame-native) .timeline input[type=range] { height: 44px; margin: -13px 0; }
+  :root:not(.frame-native) .timeline-times { pointer-events: none; }
+  :root:not(.frame-native) #viewer-stage .player-quality-menu { bottom: 60px; max-height: min(350px, calc(100% - 70px)); }
+  :root:not(.frame-native) .quality-menu-option { min-height: 44px; }
+  :root:not(.frame-native) .chat-head { padding-top: 5px; padding-bottom: 5px; }
+  :root:not(.frame-native) .chat-head-actions .chat-name-button { min-height: 44px; }
+  :root:not(.frame-native) .chat-compose-actions button { min-height: 44px; min-width: 64px; }
+  :root:not(.frame-native) .dialog-head .icon-button { margin: -5px -5px -5px 0; }
+  /* 16 px text in fields: iOS Safari zooms the page into smaller fields on focus. */
+  :root:not(.frame-native) .chat-composer textarea, :root:not(.frame-native) .field input, :root:not(.frame-native) .catalog-search input { font-size: 16px; }
+  /* No double-tap zoom on the player (taps show the controls / pause), no hover look stuck after a tap. */
+  :root:not(.frame-native) #viewer-preview { touch-action: manipulation; container-type: inline-size; }
+  :root:not(.frame-native) .player-button:hover:not(:disabled), :root:not(.frame-native) .live-button:hover:not(:disabled) { background: transparent; }
+  :root:not(.frame-native) .player-button:active:not(:disabled), :root:not(.frame-native) .live-button:active:not(:disabled) { background: #ffffff20; }
+  /* Only what this device can do: picture-in-picture stays hidden where the script found no support. */
+  :root:not(.frame-native) #player-pip:disabled { display: none; }
+  /* The player's own width decides how much fits in the bar (chat open, rail, rotation): labels go first (600 px), then
+     the volume slider (500 px; the mute button stays, the device has volume keys), then picture-in-picture (340 px), so
+     the fullscreen button stays inside the player down to a 300 px player (320 px phone). */
+  @container (max-width: 600px) { :root:not(.frame-native) .player-controls .control-label { display: none; } }
+  @container (max-width: 500px) { :root:not(.frame-native) .player-toolbar { gap: 0; } :root:not(.frame-native) .player-controls .player-volume input[type='range'] { display: none; } }
+  @container (max-width: 340px) { :root:not(.frame-native) .player-controls #player-pip { display: none; } }
+}
+
+/* Narrow windows (800 px or less, any pointer): safe areas, the viewing actions in the top bar, dialogs inside the visible
+   height, the 0.5 tab bar with labels that fit, and the stacked viewer: player on top, chat below. */
+@media (max-width: 800px) {
+  :root { --frame-vh: var(--frame-visual-height, 100dvh); --frame-topbar: 54px; --frame-nav: 45px; --frame-chat-min: 220px; }
+  .topbar { padding-left: max(17px, env(safe-area-inset-left)); padding-right: max(17px, env(safe-area-inset-right)); }
+  .app-layout { min-height: calc(var(--frame-vh) - var(--frame-topbar)); }
+  .app-layout.is-viewing { min-height: 0; }
+  .app-layout .sidebar .sidebar-bottom, .is-viewing:not(.is-expanded) .sidebar .sidebar-bottom { display: none; }
+  /* The info and chat buttons move from their own row into the free right side of the top bar. */
+  #viewer-stage .viewing-toolbar { position: fixed; z-index: 5; top: 0; right: max(12px, env(safe-area-inset-right)); height: var(--frame-topbar); min-height: 0; margin: 0; padding: 0; background: none; }
+  #viewer-stage .viewing-actions { gap: 4px; }
+  #viewer-stage .viewing-actions button { color: #e2e6eb; background: transparent; border-color: transparent; }
+  #viewer-stage .viewing-actions button:hover:not(:disabled) { background: #ffffff20; border-color: transparent; }
+  #viewer-stage #chat-toggle[aria-expanded=true] { color: #22d581; background: #ffffff14; border-color: transparent; }
+  .is-viewing .content { padding: 9px max(9px, env(safe-area-inset-right)) max(9px, env(safe-area-inset-bottom)) max(9px, env(safe-area-inset-left)); }
+  .chat-panel:not(.is-sender-chat) { position: relative; inset: auto; width: auto; box-shadow: none; z-index: auto; }
+  /* Dialogs: header and buttons stay put, the body scrolls; inside the safe area and the smallest visible height. */
+  dialog[open]:not(.sender-settings-dialog) { display: flex; flex-direction: column; overflow: hidden; inset: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    max-width: none; max-height: calc(var(--frame-visual-height, 100svh) - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 16px); }
+  dialog[open]:not(.sender-settings-dialog) > :not(.dialog-body) { flex: none; }
+  dialog[open]:not(.sender-settings-dialog) > .dialog-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+  dialog { width: min(540px, calc(100vw - 24px - env(safe-area-inset-left) - env(safe-area-inset-right))); }
+  .network-dialog { width: min(480px, calc(100vw - 24px - env(safe-area-inset-left) - env(safe-area-inset-right))); }
+  .toast { bottom: calc(25px + env(safe-area-inset-bottom)); }
+  .nav-item, .is-viewing .nav-item, .is-viewing:not(.is-expanded) .nav-item, .is-viewing.is-expanded .nav-item { width: auto; min-height: 44px; padding: 10px 14px; }
+  /* Stacked viewer in the visible height (top bar and tab bar excluded). The player is 16:9 from 427 px width and 240 px
+     tall below it (a wider frame, the picture letterboxed); it gets lower only when the chat would drop under its minimum
+     height (short window, on-screen keyboard). The picture is always fitted whole (object-fit: contain) and the controls
+     are drawn over it, so the frame does not move when they show or hide. The workspace is a size container
+     (frame-workspace) for the low-height rules of touch screens below. */
+  .app-layout.is-viewing > .content { display: flex; flex-direction: column; height: calc(var(--frame-vh) - var(--frame-topbar) - var(--frame-nav)); }
+  .app-layout.is-viewing #viewer-view, .app-layout.is-viewing #viewer-stage { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; width: 100%; }
+  .app-layout.is-viewing #viewer-stage .viewer-workspace { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; container: frame-workspace / size; }
+  .app-layout.is-viewing #viewer-stage .viewer-player-panel { display: flex; flex-direction: column; flex: 0 1 auto; min-height: 0; }
+  .app-layout.is-viewing #viewer-stage .player { flex: 0 1 max(240px, 56.25cqw); height: auto; min-height: 0; aspect-ratio: auto; }
+  .app-layout.is-viewing #viewer-stage .chat-panel { flex: 1 1 0; height: auto; min-height: var(--frame-chat-min); }
+  /* Expanded view: the player takes the free height (portrait sources); with the chat open both share it. */
+  .app-layout.is-viewing .is-wide #viewer-stage .viewer-player-panel, .app-layout.is-viewing .is-wide #viewer-stage .player { flex: 1 1 0; }
+}
+
+/* Touch tablets (801 to 1366 px) and landscape phones: the same top bar, safe-area and dialog rules, and the 0.5 compact
+   rail (the expanded-view sidebar) instead of the 220 px sidebar or the tab bar. */
+@media (pointer: coarse) and (min-width: 801px) and (max-width: 1366px), (pointer: coarse) and (orientation: landscape) and (max-height: 500px) {
+  :root:not(.frame-native) { --frame-vh: var(--frame-visual-height, 100dvh); --frame-topbar: 58px; --frame-nav: 0px; --frame-chat-min: 220px; }
+  :root:not(.frame-native) .topbar { padding-left: max(17px, env(safe-area-inset-left)); padding-right: max(17px, env(safe-area-inset-right)); }
+  :root:not(.frame-native) .app-layout { min-height: calc(var(--frame-vh) - var(--frame-topbar)); }
+  :root:not(.frame-native) .app-layout.is-viewing { min-height: 0; }
+  :root:not(.frame-native) #viewer-stage .viewing-toolbar { position: fixed; z-index: 5; top: 0; right: max(12px, env(safe-area-inset-right)); height: var(--frame-topbar); min-height: 0; margin: 0; padding: 0; background: none; }
+  :root:not(.frame-native) #viewer-stage .viewing-actions { gap: 4px; }
+  :root:not(.frame-native) #viewer-stage .viewing-actions button { color: #e2e6eb; background: transparent; border-color: transparent; }
+  :root:not(.frame-native) #viewer-stage .viewing-actions button:hover:not(:disabled) { background: #ffffff20; border-color: transparent; }
+  :root:not(.frame-native) #viewer-stage #chat-toggle[aria-expanded=true] { color: #22d581; background: #ffffff14; border-color: transparent; }
+  :root:not(.frame-native) .chat-panel:not(.is-sender-chat) { position: relative; inset: auto; width: auto; box-shadow: none; z-index: auto; }
+  :root:not(.frame-native) dialog[open]:not(.sender-settings-dialog) { display: flex; flex-direction: column; overflow: hidden; inset: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    max-width: none; max-height: calc(var(--frame-visual-height, 100svh) - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 16px); }
+  :root:not(.frame-native) dialog[open]:not(.sender-settings-dialog) > :not(.dialog-body) { flex: none; }
+  :root:not(.frame-native) dialog[open]:not(.sender-settings-dialog) > .dialog-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+  :root:not(.frame-native) dialog { width: min(540px, calc(100vw - 24px - env(safe-area-inset-left) - env(safe-area-inset-right))); }
+  :root:not(.frame-native) .network-dialog { width: min(480px, calc(100vw - 24px - env(safe-area-inset-left) - env(safe-area-inset-right))); }
+  :root:not(.frame-native) .app-layout, :root:not(.frame-native) .app-layout.is-viewing, :root:not(.frame-native) .app-layout.is-viewing.is-expanded { display: grid; grid-template-columns: calc(72px + env(safe-area-inset-left)) minmax(0, 1fr); }
+  :root:not(.frame-native) .sidebar, :root:not(.frame-native) .is-expanded .sidebar { display: flex; position: sticky; z-index: 3; top: var(--frame-topbar); height: calc(var(--frame-vh) - var(--frame-topbar)); padding-left: env(safe-area-inset-left); border-right: 1px solid #dce1e6; border-bottom: 0; }
+  :root:not(.frame-native) .sidebar .nav-title, :root:not(.frame-native) .sidebar .sidebar-bottom, :root:not(.frame-native) .nav-label { display: none; }
+  :root:not(.frame-native) .nav-menu { flex-direction: column; padding: 18px 7px; gap: 7px; }
+  :root:not(.frame-native) .app-layout .nav-item { width: 100%; min-height: 48px; padding: 12px; justify-content: center; border-radius: 5px; }
+  :root:not(.frame-native) .nav-item svg { width: 17px; height: 17px; }
+  :root:not(.frame-native) .nav-item[aria-selected='true']::before { display: none; }
+  :root:not(.frame-native) .nav-item[aria-selected='true'] { background: var(--green-wash) !important; }
+  :root:not(.frame-native) .content { padding-left: 16px; padding-right: max(22px, env(safe-area-inset-right)); padding-bottom: max(28px, env(safe-area-inset-bottom)); }
+  :root:not(.frame-native) .is-viewing .content { padding: 8px max(8px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) 8px; }
+  :root:not(.frame-native) .toast { left: calc(50% + 36px); bottom: calc(25px + env(safe-area-inset-bottom)); }
+}
+
+/* Touch tablets in portrait: the stacked viewer of the narrow window (16:9 player, chat below). */
+@media (pointer: coarse) and (orientation: portrait) and (min-width: 801px) and (max-width: 1366px) {
+  :root:not(.frame-native) .app-layout.is-viewing > .content { display: flex; flex-direction: column; height: calc(var(--frame-vh) - var(--frame-topbar) - var(--frame-nav)); }
+  :root:not(.frame-native) .app-layout.is-viewing #viewer-view, :root:not(.frame-native) .app-layout.is-viewing #viewer-stage { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; width: 100%; }
+  :root:not(.frame-native) .app-layout.is-viewing #viewer-stage .viewer-workspace { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; container: frame-workspace / size; }
+  :root:not(.frame-native) .app-layout.is-viewing #viewer-stage .viewer-player-panel { display: flex; flex-direction: column; flex: 0 1 auto; min-height: 0; }
+  :root:not(.frame-native) .app-layout.is-viewing #viewer-stage .player { flex: 0 1 56.25cqw; height: auto; min-height: 0; aspect-ratio: auto; }
+  :root:not(.frame-native) .app-layout.is-viewing #viewer-stage .chat-panel { flex: 1 1 0; height: auto; min-height: var(--frame-chat-min); }
+  :root:not(.frame-native) .app-layout.is-viewing .is-wide #viewer-stage .viewer-player-panel, :root:not(.frame-native) .app-layout.is-viewing .is-wide #viewer-stage .player { flex: 1 1 0; }
+}
+
+/* Touch in landscape (phones and tablets up to 1366 px): the player fills the visible height beside the chat column.
+   Overrides the stacked viewer of the narrow window for landscape phones of 800 px or less. */
+@media (pointer: coarse) and (orientation: landscape) and (max-width: 1366px) {
+  :root:not(.frame-native) .app-layout.is-viewing > .content { display: flex; flex-direction: column; height: calc(var(--frame-vh) - var(--frame-topbar) - var(--frame-nav)); }
+  :root:not(.frame-native) .app-layout.is-viewing #viewer-view, :root:not(.frame-native) .app-layout.is-viewing #viewer-stage { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; width: 100%; }
+  :root:not(.frame-native) .app-layout.is-viewing #viewer-stage .viewer-workspace { display: flex; flex-direction: row; flex: 1 1 auto; min-height: 0; gap: 8px; container: frame-workspace / size; }
+  :root:not(.frame-native) .app-layout.is-viewing #viewer-stage .viewer-player-panel { display: flex; flex-direction: column; flex: 1 1 0; min-width: 0; min-height: 0; }
+  :root:not(.frame-native) .app-layout.is-viewing #viewer-stage .player { flex: 1 1 0; height: auto; min-height: 0; aspect-ratio: auto; }
+  :root:not(.frame-native) .app-layout.is-viewing #viewer-stage .chat-panel { flex: 0 0 clamp(240px, 34%, 320px); height: auto; min-height: 0; }
+}
+
+/* Landscape phones: a lower top bar and tighter dialog edges. */
+@media (pointer: coarse) and (orientation: landscape) and (max-height: 500px) {
+  :root:not(.frame-native) { --frame-topbar: 48px; }
+  :root:not(.frame-native) .topbar { height: 48px; }
+  :root:not(.frame-native) .dialog-head, :root:not(.frame-native) .network-dialog .dialog-head { padding: 10px 20px; }
+  :root:not(.frame-native) .dialog-footer, :root:not(.frame-native) .network-dialog .dialog-footer { padding: 10px 20px; }
+  :root:not(.frame-native) .network-dialog .dialog-body { padding: 14px 20px 4px; }
+}
+
+/* Touch phones: the send button beside the message box (more room for messages); the box grows with its text where
+   field-sizing is supported and otherwise keeps its two rows. The shorter composer lowers the chat's minimum height. */
+@media (pointer: coarse) and (max-width: 800px), (pointer: coarse) and (orientation: landscape) and (max-height: 500px) {
+  :root:not(.frame-native) { --frame-chat-min: 180px; }
+  :root:not(.frame-native) .chat-composer { display: flex; align-items: flex-end; gap: 8px; padding: 8px; flex-wrap: wrap; }
+  :root:not(.frame-native) .chat-composer textarea { flex: 1 1 0; min-width: 0; height: auto; min-height: 44px; max-height: 96px; field-sizing: content; padding: 8px 11px; }
+  :root:not(.frame-native) .chat-compose-actions { margin-top: 0; }
+  :root:not(.frame-native) .chat-composer .error { flex-basis: 100%; margin-top: 0; }
+}
+
+/* Touch screens with little visible height (on-screen keyboard: --frame-visual-height from visualViewport; a short
+   window): the message box and send button stay above the keyboard. Below 340 px of workspace the chat keeps less
+   minimum height, below 200 px its header (name, close; the top-bar chat button still closes it) gives way to the
+   messages and the box. The player controls give way where they no longer fit in the player (portrait: the chat takes
+   the rest of the height; landscape: the player has the full height) and come back when the keyboard closes. */
+@media (pointer: coarse) {
+  @container frame-workspace (max-height: 340px) { :root:not(.frame-native) .app-layout.is-viewing #viewer-stage .chat-panel { --frame-chat-min: 150px; } }
+  @container frame-workspace (max-height: 200px) { :root:not(.frame-native) .app-layout.is-viewing #viewer-stage .chat-panel { --frame-chat-min: 100px; } :root:not(.frame-native) #viewer-stage .chat-panel .chat-head { display: none; } }
+}
+@media (pointer: coarse) and (orientation: portrait) {
+  @container frame-workspace (max-height: 290px) { :root:not(.frame-native) #viewer-stage .player-controls, :root:not(.frame-native) #viewer-stage .player-quality-menu { display: none; } }
+}
+@media (pointer: coarse) and (orientation: landscape) {
+  @container frame-workspace (max-height: 140px) { :root:not(.frame-native) #viewer-stage .player-controls, :root:not(.frame-native) #viewer-stage .player-quality-menu { display: none; } }
+}
+
+/* Script hook (no media query; a desktop browser never gets the class): where video.volume cannot be changed (iOS) the
+   volume slider is hidden and the mute button stays. #viewer-fullscreen is hidden by the script with the hidden
+   attribute (0.5 rule [hidden] { display: none !important }) where no fullscreen API exists. */
+:root.volume-readonly .player-volume input[type='range'] { display: none; }
+/* end FRAME 0.6 mobile addendum */

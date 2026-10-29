@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-29",
+  "prototype": [
+    "studio-desktop.jpg",
+    "studio-mobile.jpg",
+    "info-dirty-desktop.jpg",
+    "source-live-confirm.png",
+    "source-start-blocked.png",
+    "settings-video-desktop.jpg",
+    "settings-audio-mobile.jpg"
+  ],
+  "safeReferences": [
+    "11-stream-alerts-empty.png",
+    "22-broadcast-tools.png"
+  ],
+  "privateScreenshotsCopied": 0,
+  "research": {
+    "chzzk": 16,
+    "twitch": 24
+  }
+}

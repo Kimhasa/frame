@@ -71,7 +71,12 @@ json SettingsToJson(const Settings& s) {
           {"renditions", s.renditions}, {"captureCursor", s.captureCursor}, {"iceServers", s.iceServers},
           {"broadcastTitle", s.broadcastTitle}, {"publisherName", s.publisherName}, {"discoveryPort", s.discoveryPort},
           {"directoryServers", s.directoryServers}, {"recordEnabled", s.recordEnabled}, {"recordDir", s.recordDir}, {"recordMaxGB", s.recordMaxGB},
-          {"recordMinFreeGB", s.recordMinFreeGB}, {"recordKeepDays", s.recordKeepDays}, {"rateControl", s.rateControl}};
+          {"recordMinFreeGB", s.recordMinFreeGB}, {"recordKeepDays", s.recordKeepDays}, {"rateControl", s.rateControl},
+          {"publicUrl", s.publicUrl}, {"iceHosts", s.iceHosts}, {"relayPublishUrl", s.relayPublishUrl}, {"relayApiUrl", s.relayApiUrl},
+          {"relayCaFile", s.relayCaFile},
+          {"windowPreview", {{"firstFrameMs", s.windowPreview.firstFrameMs}, {"attempts", s.windowPreview.attempts},
+                             {"retryDelaysMs", s.windowPreview.retryDelaysMs}, {"deadlineMs", s.windowPreview.deadlineMs},
+                             {"concurrency", s.windowPreview.concurrency}, {"cacheMs", s.windowPreview.cacheMs}}}};
 }
 
 template <typename T>
@@ -126,6 +131,28 @@ Settings LoadSettings(std::string* warning) {
   Read(j, "recordMinFreeGB", s.recordMinFreeGB);
   Read(j, "recordKeepDays", s.recordKeepDays);
   Read(j, "rateControl", s.rateControl);
+  Read(j, "publicUrl", s.publicUrl);
+  Read(j, "relayPublishUrl", s.relayPublishUrl);
+  Read(j, "relayApiUrl", s.relayApiUrl);
+  Read(j, "relayCaFile", s.relayCaFile);
+  if (j.contains("windowPreview") && j["windowPreview"].is_object()) {
+    const json& p = j["windowPreview"];
+    WindowPreviewSettings& w = s.windowPreview;
+    Read(p, "firstFrameMs", w.firstFrameMs);
+    Read(p, "attempts", w.attempts);
+    Read(p, "retryDelaysMs", w.retryDelaysMs);
+    Read(p, "deadlineMs", w.deadlineMs);
+    Read(p, "concurrency", w.concurrency);
+    Read(p, "cacheMs", w.cacheMs);
+    w.firstFrameMs = std::clamp(w.firstFrameMs, 100, 10000);
+    w.attempts = std::clamp(w.attempts, 1, 5);
+    if (w.retryDelaysMs.empty() || w.retryDelaysMs.size() > 4) w.retryDelaysMs = d.windowPreview.retryDelaysMs;
+    for (int& delay : w.retryDelaysMs) delay = std::clamp(delay, 0, 5000);
+    w.deadlineMs = std::clamp(w.deadlineMs, 500, 30000);
+    w.concurrency = std::clamp(w.concurrency, 1, 4);
+    w.cacheMs = std::clamp(w.cacheMs, 0, 600000);
+  }
+  if (j.contains("iceHosts") && j["iceHosts"].is_array()) s.iceHosts = j["iceHosts"];
   if (j.contains("iceServers") && j["iceServers"].is_array()) s.iceServers = j["iceServers"];
   // Invalid values in the file fall back to defaults instead of reaching the encoder or the server.
   if (s.serverHost != "auto" && !ValidHost(s.serverHost)) s.serverHost = d.serverHost;
@@ -149,7 +176,7 @@ Settings LoadSettings(std::string* warning) {
   if (s.publisherName.size() > 60) s.publisherName.resize(60);
   if (s.discoveryPort != 0 && !ValidPort(s.discoveryPort)) s.discoveryPort = d.discoveryPort;
   json servers = json::array();
-  static const std::regex server(R"(^[A-Za-z0-9.-]{1,253}:d{1,5}$)");
+  static const std::regex server(R"(^[A-Za-z0-9.-]{1,253}:\d{1,5}$)");
   for (const auto& entry : s.directoryServers)
     if (entry.is_string() && std::regex_match(entry.get<std::string>(), server)) servers.push_back(entry);
   s.directoryServers = servers;
@@ -157,7 +184,32 @@ Settings LoadSettings(std::string* warning) {
   if (!(s.recordMinFreeGB >= 0.5)) s.recordMinFreeGB = d.recordMinFreeGB;
   if (s.recordKeepDays < 0) s.recordKeepDays = d.recordKeepDays;
   if (s.rateControl != "vbr" && s.rateControl != "cbr") s.rateControl = d.rateControl;
+  static const std::regex web(R"(^https?://[A-Za-z0-9.-]{1,253}(:\d{1,5})?(/[A-Za-z0-9._~/-]*)?$)");
+  static const std::regex relay(R"(^rtsps?://[A-Za-z0-9.-]{1,253}(:\d{1,5})?(/[A-Za-z0-9._~/-]{0,128})?$)");
+  while (!s.publicUrl.empty() && s.publicUrl.back() == '/') s.publicUrl.pop_back();
+  while (!s.relayApiUrl.empty() && s.relayApiUrl.back() == '/') s.relayApiUrl.pop_back();
+  if (!s.publicUrl.empty() && !std::regex_match(s.publicUrl, web)) s.publicUrl.clear();
+  if (!s.relayApiUrl.empty() && !std::regex_match(s.relayApiUrl, web)) s.relayApiUrl.clear();
+  if (!s.relayPublishUrl.empty() && !std::regex_match(s.relayPublishUrl, relay)) s.relayPublishUrl.clear();
+  while (!s.relayPublishUrl.empty() && s.relayPublishUrl.back() == '/') s.relayPublishUrl.pop_back();
+  if (s.relayCaFile.size() > 260) s.relayCaFile.clear();
+  json hosts = json::array();
+  for (const auto& entry : s.iceHosts)
+    if (entry.is_string() && ValidHost(entry.get<std::string>()) && hosts.size() < 8) hosts.push_back(entry);
+  s.iceHosts = hosts;
   return s;
+}
+
+Secrets LoadSecrets() {
+  Secrets out;
+  std::ifstream in(ConfigPath().parent_path() / L"frame-console.secrets.json", std::ios::binary);
+  if (!in) return out;
+  json j = json::parse(in, nullptr, false);
+  if (!j.is_object()) return out;
+  Read(j, "relayUser", out.relayUser);
+  Read(j, "relayPassword", out.relayPassword);
+  Read(j, "relayToken", out.relayToken);
+  return out;
 }
 
 bool SaveSettings(const Settings& s, std::string* error) {

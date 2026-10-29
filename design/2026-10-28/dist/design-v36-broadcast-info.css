@@ -1,0 +1,5 @@
+.v3-studio .v36-info-footer{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.v3-studio .v36-info-footer>.v36-info-note{flex:1;min-width:0;font-size:14px;line-height:1.65;color:#667581}
+.v3-studio .v36-info-footer>button{flex:none;min-height:42px}
+.v3-studio .v36-info-footer>button:disabled{cursor:default}
+@media(max-width:520px){.v3-studio .v36-info-footer>.v36-info-note{flex-basis:100%}.v3-studio .v36-info-footer>button{min-height:44px}.v3-studio .v36-info-footer>[data-action="v36-info-cancel"]{margin-left:auto}.v3-studio .v36-info-footer>[data-action="v3-studio-save"]:first-of-type{margin-left:auto}}

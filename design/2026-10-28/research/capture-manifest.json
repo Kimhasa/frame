@@ -1,0 +1,128 @@
+[
+  {
+    "key": "chzzk-list",
+    "url": "https://chzzk.naver.com/lives",
+    "file": "chzzk-list.jpg",
+    "notes": "라이브 목록, 프로필과 제목의 계층, 검색·정렬, 기본 메뉴",
+    "capturedAt": "2026-10-28T10:06:24.227Z"
+  },
+  {
+    "key": "chzzk-channel",
+    "url": "https://chzzk.naver.com/d9c65c92b701450ff4e6c86b0ca7c932",
+    "file": "chzzk-channel.jpg",
+    "notes": "프로필·팔로우·멤버십·선물과 홈/동영상/클립/커뮤니티/정보의 위계",
+    "capturedAt": "2026-10-28T10:07:36.694Z"
+  },
+  {
+    "key": "chzzk-watch-entry",
+    "url": "https://chzzk.naver.com/live/d9c65c92b701450ff4e6c86b0ca7c932",
+    "file": "chzzk-watch-entry.jpg",
+    "notes": "시청 진입 시 확장 프로그램 안내와 설치 없는 시청 선택",
+    "capturedAt": "2026-10-28T10:08:24.579Z"
+  },
+  {
+    "key": "chzzk-watch",
+    "url": "https://chzzk.naver.com/live/d9c65c92b701450ff4e6c86b0ca7c932",
+    "file": "chzzk-watch.jpg",
+    "notes": "설치 없는 시청 이후의 실제 영상·우측 채팅·하단 채널 행동. 일부 초기 진입 오류와 구분해 최종 상태를 다시 촬영",
+    "capturedAt": "2026-10-28T10:41:07.630Z"
+  },
+  {
+    "key": "chzzk-search",
+    "url": "https://chzzk.naver.com/search?query=%EC%9D%B4%ED%84%B0%EB%84%90%20%EB%A6%AC%ED%84%B4",
+    "file": "chzzk-search.jpg",
+    "notes": "검색 결과에서 채널·라이브·동영상으로 분기되는 구조",
+    "capturedAt": "2026-10-28T10:09:44.143Z"
+  },
+  {
+    "key": "youtube-live",
+    "url": "https://www.youtube.com/channel/UC4R8DWoMoI7CAwX8_LjQHig",
+    "file": "youtube-live.jpg",
+    "notes": "공개 라이브 허브. 개인 구독 목록이 보이지 않도록 좌측 메뉴를 접은 상태",
+    "capturedAt": "2026-10-28T10:13:51.778Z"
+  },
+  {
+    "key": "youtube-watch",
+    "url": "https://www.youtube.com/live/tvYxpn-lX9A",
+    "file": "youtube-watch.jpg",
+    "notes": "라이브 시청: 영상·제목·채널 행동·우측 채팅의 위계. 로그인된 개인 계정 메뉴는 열지 않음",
+    "capturedAt": "2026-10-28T10:17:25.098Z"
+  },
+  {
+    "key": "youtube-channel",
+    "url": "https://www.youtube.com/@TheQ_TV_official",
+    "file": "youtube-channel.jpg",
+    "notes": "배너·프로필·채널 구독/멤버십과 콘텐츠 탭. 방송자 관리 화면과 분리됨",
+    "capturedAt": "2026-10-28T10:17:37.441Z"
+  },
+  {
+    "key": "youtube-search",
+    "url": "https://www.youtube.com/results?search_query=%EB%94%94%EC%95%84%EB%B8%94%EB%A1%9C4+%EB%9D%BC%EC%9D%B4%EB%B8%8C",
+    "file": "youtube-search.jpg",
+    "notes": "검색어 유지·콘텐츠 결과·필터로 탐색 흐름 연결",
+    "capturedAt": "2026-10-28T10:17:47.808Z"
+  },
+  {
+    "key": "soop-home",
+    "url": "https://www.sooplive.com/",
+    "file": "soop-home.jpg",
+    "notes": "밝은 배경, 검색, 인기 채널과 대표 콘텐츠. 프로모션 팝업은 닫고 촬영",
+    "capturedAt": "2026-10-28T10:18:09.970Z"
+  },
+  {
+    "key": "soop-list",
+    "url": "https://www.sooplive.com/live/all",
+    "file": "soop-list.jpg",
+    "notes": "분류·정렬·라이브 카드. 썸네일/방송 제목은 시청으로, 프로필은 채널로 분리",
+    "capturedAt": "2026-10-28T10:18:22.456Z"
+  },
+  {
+    "key": "soop-watch",
+    "url": "https://play.sooplive.com/xoals137/298177129",
+    "file": "soop-watch.jpg",
+    "notes": "라이브 시청과 채팅·후원 진입의 위치. AX에 숨은 설정도 노출되므로 보이는 화면 기준으로 비교",
+    "capturedAt": "2026-10-28T10:18:32.740Z"
+  },
+  {
+    "key": "soop-channel",
+    "url": "https://www.sooplive.com/station/xoals137",
+    "file": "soop-channel.jpg",
+    "notes": "채널 정체성·현재 라이브·VOD·커뮤니티와 팬 행동. 프로모션 안내를 닫고 캡처",
+    "capturedAt": "2026-10-28T10:27:31.114Z"
+  },
+  {
+    "key": "soop-search",
+    "url": "https://www.sooplive.com/search?szLocation=station&szSearchType=total&szKeyword=%EB%A6%AC%EA%B7%B8+%EC%98%A4%EB%B8%8C+%EB%A0%88%EC%A0%84%EB%93%9C&szStype=di&szActype=input_field",
+    "file": "soop-search.jpg",
+    "notes": "통합 검색, 라이브·VOD·채널 등 결과 유형 분류",
+    "capturedAt": "2026-10-28T10:19:04.329Z"
+  },
+  {
+    "key": "twitch-list",
+    "url": "https://www.twitch.tv/directory/all",
+    "file": "twitch-list.jpg",
+    "notes": "카테고리/생방송 채널, 언어·태그·정렬. 한국 운영 종료 안내가 보이는 공개 화면",
+    "capturedAt": "2026-10-28T10:19:04.391Z"
+  },
+  {
+    "key": "twitch-watch",
+    "url": "https://www.twitch.tv/caedrel247",
+    "file": "twitch-watch.jpg",
+    "notes": "큰 영상·우측 채팅·하단 채널 정보 및 팔로우/정기구독 분리",
+    "capturedAt": "2026-10-28T10:19:18.801Z"
+  },
+  {
+    "key": "twitch-channel",
+    "url": "https://www.twitch.tv/caedrel247/videos",
+    "file": "twitch-channel.jpg",
+    "notes": "채널 탭·방송 중 진입·팔로우/정기구독·동영상 빈 상태. 해당 채널에 영상 없음",
+    "capturedAt": "2026-10-28T10:19:39.430Z"
+  },
+  {
+    "key": "twitch-search",
+    "url": "https://www.twitch.tv/search?term=League%20of%20Legends",
+    "file": "twitch-search.jpg",
+    "notes": "검색 결과를 채널·카테고리·동영상으로 구분, 결과 부족 시 관련 경로 제공",
+    "capturedAt": "2026-10-28T10:19:50.278Z"
+  }
+]

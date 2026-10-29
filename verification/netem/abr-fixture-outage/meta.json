@@ -1,0 +1,926 @@
+{
+  "tool": "tools/netem/run-viewer.mjs",
+  "date": "2026-10-28T06:38:36.883Z",
+  "host": {
+    "node": "v24.22.1",
+    "os": "win32",
+    "cpu": "11th Gen Intel(R) Core(TM) i7-11800H @ 2.30GHz",
+    "logicalCpus": 16,
+    "memGB": 15.8
+  },
+  "browser": "Edg/156.0.4314.42",
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0",
+  "viewerUrl": "http://127.0.0.1:22600/live",
+  "window": {
+    "size": "1600,1000",
+    "dpr": 2,
+    "headed": false
+  },
+  "edgeArgs": [],
+  "proxy": {
+    "listen": "127.0.0.1:22610",
+    "target": "127.0.0.1:22601",
+    "targetResolved": "127.0.0.1",
+    "server": null
+  },
+  "probe": "frame (tools/netem/attach.mjs FRAME_PROBE)",
+  "fixture": {
+    "url": "http://127.0.0.1:22600/live",
+    "target": "127.0.0.1:22601",
+    "ports": {
+      "http": 22600,
+      "ice": 22601,
+      "whep": 22602,
+      "rtsp": 22603
+    },
+    "info": {
+      "running": true,
+      "path": "live",
+      "width": 1920,
+      "height": 1080,
+      "fps": 60,
+      "bitrate": 8,
+      "audio": "system",
+      "codec": "H.264",
+      "elapsedMs": 11,
+      "startedAtMs": 1793169219810,
+      "broadcastId": "",
+      "dvr": false,
+      "title": "netem fixture",
+      "publisher": "tools/netem",
+      "renditions": [
+        {
+          "name": "720p",
+          "width": 1280,
+          "height": 720,
+          "mbps": 4,
+          "fps": 60,
+          "codec": "H.264"
+        },
+        {
+          "name": "480p",
+          "width": 854,
+          "height": 480,
+          "mbps": 1.5,
+          "fps": 60,
+          "codec": "H.264"
+        }
+      ],
+      "iceServers": []
+    },
+    "encoder": "h264_nvenc",
+    "rateControl": "cbr",
+    "page": "C:\\Users\\wlsdu\\OneDrive\\Desktop\\frame\\outputs\\index.html",
+    "mediamtx": "v1.21.3",
+    "ffmpeg": "ffmpeg version 9.0.2-essentials_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers"
+  },
+  "profile": {
+    "file": "C:\\Users\\wlsdu\\OneDrive\\Desktop\\frame\\tools\\netem\\profiles\\abr-outage.json",
+    "name": "abr-outage",
+    "timeScale": 1,
+    "rateScale": 1,
+    "total": 272,
+    "steps": [
+      {
+        "label": "normal",
+        "start": 0,
+        "duration": 40
+      },
+      {
+        "label": "cut-1s",
+        "start": 40,
+        "duration": 1
+      },
+      {
+        "label": "after-1s",
+        "start": 41,
+        "duration": 45
+      },
+      {
+        "label": "cut-3s",
+        "start": 86,
+        "duration": 3
+      },
+      {
+        "label": "after-3s",
+        "start": 89,
+        "duration": 45
+      },
+      {
+        "label": "cut-6s",
+        "start": 134,
+        "duration": 6
+      },
+      {
+        "label": "after-6s",
+        "start": 140,
+        "duration": 60
+      },
+      {
+        "label": "cut-12s",
+        "start": 200,
+        "duration": 12
+      },
+      {
+        "label": "after-12s",
+        "start": 212,
+        "duration": 60
+      }
+    ]
+  },
+  "warmupSeconds": 15,
+  "page_state": {
+    "netem": {
+      "cfg": {
+        "proxyAddress": "127.0.0.1",
+        "proxyPort": 22610,
+        "serverAddress": null,
+        "serverPort": null,
+        "keepLocalCandidates": false,
+        "keepIceServers": false,
+        "recordOnly": false
+      },
+      "rewrites": [
+        {
+          "at": 1793169221704,
+          "kind": "remote-description",
+          "kept": [
+            {
+              "from": "a=candidate:2494380076 1 udp 2130706431 fd7a:115c:a1e0::1439:f820 22601 typ host ufrag mtVogPisHfVRQUCa generation 0",
+              "to": "a=candidate:2494380076 1 udp 2130706431 127.0.0.1 22610 typ host ufrag mtVogPisHfVRQUCa generation 0"
+            },
+            {
+              "from": "a=candidate:2494380076 2 udp 2130706431 fd7a:115c:a1e0::1439:f820 22601 typ host ufrag mtVogPisHfVRQUCa generation 0",
+              "to": "a=candidate:2494380076 2 udp 2130706431 127.0.0.1 22610 typ host ufrag mtVogPisHfVRQUCa generation 0"
+            }
+          ],
+          "dropped": [
+            {
+              "line": "a=candidate:694045132 1 tcp 1671430143 fd7a:115c:a1e0::1439:f820 22601 typ host tcptype passive ufrag mtVogPisHfVRQUCa generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:694045132 2 tcp 1671430143 fd7a:115c:a1e0::1439:f820 22601 typ host tcptype passive ufrag mtVogPisHfVRQUCa generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:2535500899 1 tcp 1671430143 100.93.248.31 22601 typ host tcptype passive ufrag mtVogPisHfVRQUCa generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:2535500899 2 tcp 1671430143 100.93.248.31 22601 typ host tcptype passive ufrag mtVogPisHfVRQUCa generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:362531068 1 tcp 1671430143 192.168.1.27 22601 typ host tcptype passive ufrag mtVogPisHfVRQUCa generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:362531068 2 tcp 1671430143 192.168.1.27 22601 typ host tcptype passive ufrag mtVogPisHfVRQUCa generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:375738803 1 tcp 1671430143 127.0.0.1 22601 typ host tcptype passive ufrag mtVogPisHfVRQUCa generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:375738803 2 tcp 1671430143 127.0.0.1 22601 typ host tcptype passive ufrag mtVogPisHfVRQUCa generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:718527875 1 udp 2130706431 100.93.248.31 22601 typ host ufrag mtVogPisHfVRQUCa generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:718527875 2 udp 2130706431 100.93.248.31 22601 typ host ufrag mtVogPisHfVRQUCa generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:2825435420 1 udp 2130706431 192.168.1.27 22601 typ host ufrag mtVogPisHfVRQUCa generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:2825435420 2 udp 2130706431 192.168.1.27 22601 typ host ufrag mtVogPisHfVRQUCa generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:2878742611 1 udp 2130706431 127.0.0.1 22601 typ host ufrag mtVogPisHfVRQUCa generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:2878742611 2 udp 2130706431 127.0.0.1 22601 typ host ufrag mtVogPisHfVRQUCa generation 0",
+              "why": "duplicate"
+            }
+          ]
+        },
+        {
+          "at": 1793169281111,
+          "kind": "remote-description",
+          "kept": [
+            {
+              "from": "a=candidate:2494380076 1 udp 2130706431 fd7a:115c:a1e0::1439:f820 22601 typ host ufrag pzgjdutzQZQleWYj generation 0",
+              "to": "a=candidate:2494380076 1 udp 2130706431 127.0.0.1 22610 typ host ufrag pzgjdutzQZQleWYj generation 0"
+            },
+            {
+              "from": "a=candidate:2494380076 2 udp 2130706431 fd7a:115c:a1e0::1439:f820 22601 typ host ufrag pzgjdutzQZQleWYj generation 0",
+              "to": "a=candidate:2494380076 2 udp 2130706431 127.0.0.1 22610 typ host ufrag pzgjdutzQZQleWYj generation 0"
+            }
+          ],
+          "dropped": [
+            {
+              "line": "a=candidate:718527875 1 udp 2130706431 100.93.248.31 22601 typ host ufrag pzgjdutzQZQleWYj generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:718527875 2 udp 2130706431 100.93.248.31 22601 typ host ufrag pzgjdutzQZQleWYj generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:2825435420 1 udp 2130706431 192.168.1.27 22601 typ host ufrag pzgjdutzQZQleWYj generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:2825435420 2 udp 2130706431 192.168.1.27 22601 typ host ufrag pzgjdutzQZQleWYj generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:2878742611 1 udp 2130706431 127.0.0.1 22601 typ host ufrag pzgjdutzQZQleWYj generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:2878742611 2 udp 2130706431 127.0.0.1 22601 typ host ufrag pzgjdutzQZQleWYj generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:694045132 1 tcp 1671430143 fd7a:115c:a1e0::1439:f820 22601 typ host tcptype passive ufrag pzgjdutzQZQleWYj generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:694045132 2 tcp 1671430143 fd7a:115c:a1e0::1439:f820 22601 typ host tcptype passive ufrag pzgjdutzQZQleWYj generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:2535500899 1 tcp 1671430143 100.93.248.31 22601 typ host tcptype passive ufrag pzgjdutzQZQleWYj generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:2535500899 2 tcp 1671430143 100.93.248.31 22601 typ host tcptype passive ufrag pzgjdutzQZQleWYj generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:362531068 1 tcp 1671430143 192.168.1.27 22601 typ host tcptype passive ufrag pzgjdutzQZQleWYj generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:362531068 2 tcp 1671430143 192.168.1.27 22601 typ host tcptype passive ufrag pzgjdutzQZQleWYj generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:375738803 1 tcp 1671430143 127.0.0.1 22601 typ host tcptype passive ufrag pzgjdutzQZQleWYj generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:375738803 2 tcp 1671430143 127.0.0.1 22601 typ host tcptype passive ufrag pzgjdutzQZQleWYj generation 0",
+              "why": "tcp"
+            }
+          ]
+        },
+        {
+          "at": 1793169294515,
+          "kind": "remote-description",
+          "kept": [
+            {
+              "from": "a=candidate:2494380076 1 udp 2130706431 fd7a:115c:a1e0::1439:f820 22601 typ host ufrag FlaZbNjRFdBEzqPP generation 0",
+              "to": "a=candidate:2494380076 1 udp 2130706431 127.0.0.1 22610 typ host ufrag FlaZbNjRFdBEzqPP generation 0"
+            },
+            {
+              "from": "a=candidate:2494380076 2 udp 2130706431 fd7a:115c:a1e0::1439:f820 22601 typ host ufrag FlaZbNjRFdBEzqPP generation 0",
+              "to": "a=candidate:2494380076 2 udp 2130706431 127.0.0.1 22610 typ host ufrag FlaZbNjRFdBEzqPP generation 0"
+            }
+          ],
+          "dropped": [
+            {
+              "line": "a=candidate:694045132 1 tcp 1671430143 fd7a:115c:a1e0::1439:f820 22601 typ host tcptype passive ufrag FlaZbNjRFdBEzqPP generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:694045132 2 tcp 1671430143 fd7a:115c:a1e0::1439:f820 22601 typ host tcptype passive ufrag FlaZbNjRFdBEzqPP generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:2535500899 1 tcp 1671430143 100.93.248.31 22601 typ host tcptype passive ufrag FlaZbNjRFdBEzqPP generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:2535500899 2 tcp 1671430143 100.93.248.31 22601 typ host tcptype passive ufrag FlaZbNjRFdBEzqPP generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:362531068 1 tcp 1671430143 192.168.1.27 22601 typ host tcptype passive ufrag FlaZbNjRFdBEzqPP generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:362531068 2 tcp 1671430143 192.168.1.27 22601 typ host tcptype passive ufrag FlaZbNjRFdBEzqPP generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:375738803 1 tcp 1671430143 127.0.0.1 22601 typ host tcptype passive ufrag FlaZbNjRFdBEzqPP generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:375738803 2 tcp 1671430143 127.0.0.1 22601 typ host tcptype passive ufrag FlaZbNjRFdBEzqPP generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:718527875 1 udp 2130706431 100.93.248.31 22601 typ host ufrag FlaZbNjRFdBEzqPP generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:718527875 2 udp 2130706431 100.93.248.31 22601 typ host ufrag FlaZbNjRFdBEzqPP generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:2825435420 1 udp 2130706431 192.168.1.27 22601 typ host ufrag FlaZbNjRFdBEzqPP generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:2825435420 2 udp 2130706431 192.168.1.27 22601 typ host ufrag FlaZbNjRFdBEzqPP generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:2878742611 1 udp 2130706431 127.0.0.1 22601 typ host ufrag FlaZbNjRFdBEzqPP generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:2878742611 2 udp 2130706431 127.0.0.1 22601 typ host ufrag FlaZbNjRFdBEzqPP generation 0",
+              "why": "duplicate"
+            }
+          ]
+        },
+        {
+          "at": 1793169330138,
+          "kind": "remote-description",
+          "kept": [
+            {
+              "from": "a=candidate:2494380076 1 udp 2130706431 fd7a:115c:a1e0::1439:f820 22601 typ host ufrag QXqnISawQLysCITf generation 0",
+              "to": "a=candidate:2494380076 1 udp 2130706431 127.0.0.1 22610 typ host ufrag QXqnISawQLysCITf generation 0"
+            },
+            {
+              "from": "a=candidate:2494380076 2 udp 2130706431 fd7a:115c:a1e0::1439:f820 22601 typ host ufrag QXqnISawQLysCITf generation 0",
+              "to": "a=candidate:2494380076 2 udp 2130706431 127.0.0.1 22610 typ host ufrag QXqnISawQLysCITf generation 0"
+            }
+          ],
+          "dropped": [
+            {
+              "line": "a=candidate:718527875 1 udp 2130706431 100.93.248.31 22601 typ host ufrag QXqnISawQLysCITf generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:718527875 2 udp 2130706431 100.93.248.31 22601 typ host ufrag QXqnISawQLysCITf generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:2825435420 1 udp 2130706431 192.168.1.27 22601 typ host ufrag QXqnISawQLysCITf generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:2825435420 2 udp 2130706431 192.168.1.27 22601 typ host ufrag QXqnISawQLysCITf generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:2878742611 1 udp 2130706431 127.0.0.1 22601 typ host ufrag QXqnISawQLysCITf generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:2878742611 2 udp 2130706431 127.0.0.1 22601 typ host ufrag QXqnISawQLysCITf generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:694045132 1 tcp 1671430143 fd7a:115c:a1e0::1439:f820 22601 typ host tcptype passive ufrag QXqnISawQLysCITf generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:694045132 2 tcp 1671430143 fd7a:115c:a1e0::1439:f820 22601 typ host tcptype passive ufrag QXqnISawQLysCITf generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:2535500899 1 tcp 1671430143 100.93.248.31 22601 typ host tcptype passive ufrag QXqnISawQLysCITf generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:2535500899 2 tcp 1671430143 100.93.248.31 22601 typ host tcptype passive ufrag QXqnISawQLysCITf generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:362531068 1 tcp 1671430143 192.168.1.27 22601 typ host tcptype passive ufrag QXqnISawQLysCITf generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:362531068 2 tcp 1671430143 192.168.1.27 22601 typ host tcptype passive ufrag QXqnISawQLysCITf generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:375738803 1 tcp 1671430143 127.0.0.1 22601 typ host tcptype passive ufrag QXqnISawQLysCITf generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:375738803 2 tcp 1671430143 127.0.0.1 22601 typ host tcptype passive ufrag QXqnISawQLysCITf generation 0",
+              "why": "tcp"
+            }
+          ]
+        },
+        {
+          "at": 1793169343514,
+          "kind": "remote-description",
+          "kept": [
+            {
+              "from": "a=candidate:2494380076 1 udp 2130706431 fd7a:115c:a1e0::1439:f820 22601 typ host ufrag pHVvLKLdXABgaPmf generation 0",
+              "to": "a=candidate:2494380076 1 udp 2130706431 127.0.0.1 22610 typ host ufrag pHVvLKLdXABgaPmf generation 0"
+            },
+            {
+              "from": "a=candidate:2494380076 2 udp 2130706431 fd7a:115c:a1e0::1439:f820 22601 typ host ufrag pHVvLKLdXABgaPmf generation 0",
+              "to": "a=candidate:2494380076 2 udp 2130706431 127.0.0.1 22610 typ host ufrag pHVvLKLdXABgaPmf generation 0"
+            }
+          ],
+          "dropped": [
+            {
+              "line": "a=candidate:718527875 1 udp 2130706431 100.93.248.31 22601 typ host ufrag pHVvLKLdXABgaPmf generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:718527875 2 udp 2130706431 100.93.248.31 22601 typ host ufrag pHVvLKLdXABgaPmf generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:2825435420 1 udp 2130706431 192.168.1.27 22601 typ host ufrag pHVvLKLdXABgaPmf generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:2825435420 2 udp 2130706431 192.168.1.27 22601 typ host ufrag pHVvLKLdXABgaPmf generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:2878742611 1 udp 2130706431 127.0.0.1 22601 typ host ufrag pHVvLKLdXABgaPmf generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:2878742611 2 udp 2130706431 127.0.0.1 22601 typ host ufrag pHVvLKLdXABgaPmf generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:694045132 1 tcp 1671430143 fd7a:115c:a1e0::1439:f820 22601 typ host tcptype passive ufrag pHVvLKLdXABgaPmf generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:694045132 2 tcp 1671430143 fd7a:115c:a1e0::1439:f820 22601 typ host tcptype passive ufrag pHVvLKLdXABgaPmf generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:2535500899 1 tcp 1671430143 100.93.248.31 22601 typ host tcptype passive ufrag pHVvLKLdXABgaPmf generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:2535500899 2 tcp 1671430143 100.93.248.31 22601 typ host tcptype passive ufrag pHVvLKLdXABgaPmf generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:362531068 1 tcp 1671430143 192.168.1.27 22601 typ host tcptype passive ufrag pHVvLKLdXABgaPmf generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:362531068 2 tcp 1671430143 192.168.1.27 22601 typ host tcptype passive ufrag pHVvLKLdXABgaPmf generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:375738803 1 tcp 1671430143 127.0.0.1 22601 typ host tcptype passive ufrag pHVvLKLdXABgaPmf generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:375738803 2 tcp 1671430143 127.0.0.1 22601 typ host tcptype passive ufrag pHVvLKLdXABgaPmf generation 0",
+              "why": "tcp"
+            }
+          ]
+        },
+        {
+          "at": 1793169381106,
+          "kind": "remote-description",
+          "kept": [
+            {
+              "from": "a=candidate:2494380076 1 udp 2130706431 fd7a:115c:a1e0::1439:f820 22601 typ host ufrag KZaImZxLllPQicyz generation 0",
+              "to": "a=candidate:2494380076 1 udp 2130706431 127.0.0.1 22610 typ host ufrag KZaImZxLllPQicyz generation 0"
+            },
+            {
+              "from": "a=candidate:2494380076 2 udp 2130706431 fd7a:115c:a1e0::1439:f820 22601 typ host ufrag KZaImZxLllPQicyz generation 0",
+              "to": "a=candidate:2494380076 2 udp 2130706431 127.0.0.1 22610 typ host ufrag KZaImZxLllPQicyz generation 0"
+            }
+          ],
+          "dropped": [
+            {
+              "line": "a=candidate:694045132 1 tcp 1671430143 fd7a:115c:a1e0::1439:f820 22601 typ host tcptype passive ufrag KZaImZxLllPQicyz generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:694045132 2 tcp 1671430143 fd7a:115c:a1e0::1439:f820 22601 typ host tcptype passive ufrag KZaImZxLllPQicyz generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:2535500899 1 tcp 1671430143 100.93.248.31 22601 typ host tcptype passive ufrag KZaImZxLllPQicyz generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:2535500899 2 tcp 1671430143 100.93.248.31 22601 typ host tcptype passive ufrag KZaImZxLllPQicyz generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:362531068 1 tcp 1671430143 192.168.1.27 22601 typ host tcptype passive ufrag KZaImZxLllPQicyz generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:362531068 2 tcp 1671430143 192.168.1.27 22601 typ host tcptype passive ufrag KZaImZxLllPQicyz generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:375738803 1 tcp 1671430143 127.0.0.1 22601 typ host tcptype passive ufrag KZaImZxLllPQicyz generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:375738803 2 tcp 1671430143 127.0.0.1 22601 typ host tcptype passive ufrag KZaImZxLllPQicyz generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:718527875 1 udp 2130706431 100.93.248.31 22601 typ host ufrag KZaImZxLllPQicyz generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:718527875 2 udp 2130706431 100.93.248.31 22601 typ host ufrag KZaImZxLllPQicyz generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:2825435420 1 udp 2130706431 192.168.1.27 22601 typ host ufrag KZaImZxLllPQicyz generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:2825435420 2 udp 2130706431 192.168.1.27 22601 typ host ufrag KZaImZxLllPQicyz generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:2878742611 1 udp 2130706431 127.0.0.1 22601 typ host ufrag KZaImZxLllPQicyz generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:2878742611 2 udp 2130706431 127.0.0.1 22601 typ host ufrag KZaImZxLllPQicyz generation 0",
+              "why": "duplicate"
+            }
+          ]
+        },
+        {
+          "at": 1793169394494,
+          "kind": "remote-description",
+          "kept": [
+            {
+              "from": "a=candidate:2494380076 1 udp 2130706431 fd7a:115c:a1e0::1439:f820 22601 typ host ufrag BAoFAOBXXqjBlIcl generation 0",
+              "to": "a=candidate:2494380076 1 udp 2130706431 127.0.0.1 22610 typ host ufrag BAoFAOBXXqjBlIcl generation 0"
+            },
+            {
+              "from": "a=candidate:2494380076 2 udp 2130706431 fd7a:115c:a1e0::1439:f820 22601 typ host ufrag BAoFAOBXXqjBlIcl generation 0",
+              "to": "a=candidate:2494380076 2 udp 2130706431 127.0.0.1 22610 typ host ufrag BAoFAOBXXqjBlIcl generation 0"
+            }
+          ],
+          "dropped": [
+            {
+              "line": "a=candidate:2535500899 1 tcp 1671430143 100.93.248.31 22601 typ host tcptype passive ufrag BAoFAOBXXqjBlIcl generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:2535500899 2 tcp 1671430143 100.93.248.31 22601 typ host tcptype passive ufrag BAoFAOBXXqjBlIcl generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:362531068 1 tcp 1671430143 192.168.1.27 22601 typ host tcptype passive ufrag BAoFAOBXXqjBlIcl generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:362531068 2 tcp 1671430143 192.168.1.27 22601 typ host tcptype passive ufrag BAoFAOBXXqjBlIcl generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:375738803 1 tcp 1671430143 127.0.0.1 22601 typ host tcptype passive ufrag BAoFAOBXXqjBlIcl generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:375738803 2 tcp 1671430143 127.0.0.1 22601 typ host tcptype passive ufrag BAoFAOBXXqjBlIcl generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:718527875 1 udp 2130706431 100.93.248.31 22601 typ host ufrag BAoFAOBXXqjBlIcl generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:718527875 2 udp 2130706431 100.93.248.31 22601 typ host ufrag BAoFAOBXXqjBlIcl generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:2825435420 1 udp 2130706431 192.168.1.27 22601 typ host ufrag BAoFAOBXXqjBlIcl generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:2825435420 2 udp 2130706431 192.168.1.27 22601 typ host ufrag BAoFAOBXXqjBlIcl generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:2878742611 1 udp 2130706431 127.0.0.1 22601 typ host ufrag BAoFAOBXXqjBlIcl generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:2878742611 2 udp 2130706431 127.0.0.1 22601 typ host ufrag BAoFAOBXXqjBlIcl generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:694045132 1 tcp 1671430143 fd7a:115c:a1e0::1439:f820 22601 typ host tcptype passive ufrag BAoFAOBXXqjBlIcl generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:694045132 2 tcp 1671430143 fd7a:115c:a1e0::1439:f820 22601 typ host tcptype passive ufrag BAoFAOBXXqjBlIcl generation 0",
+              "why": "tcp"
+            }
+          ]
+        },
+        {
+          "at": 1793169448671,
+          "kind": "remote-description",
+          "kept": [
+            {
+              "from": "a=candidate:2494380076 1 udp 2130706431 fd7a:115c:a1e0::1439:f820 22601 typ host ufrag HcGaOhMGkPozwEtT generation 0",
+              "to": "a=candidate:2494380076 1 udp 2130706431 127.0.0.1 22610 typ host ufrag HcGaOhMGkPozwEtT generation 0"
+            },
+            {
+              "from": "a=candidate:2494380076 2 udp 2130706431 fd7a:115c:a1e0::1439:f820 22601 typ host ufrag HcGaOhMGkPozwEtT generation 0",
+              "to": "a=candidate:2494380076 2 udp 2130706431 127.0.0.1 22610 typ host ufrag HcGaOhMGkPozwEtT generation 0"
+            }
+          ],
+          "dropped": [
+            {
+              "line": "a=candidate:718527875 1 udp 2130706431 100.93.248.31 22601 typ host ufrag HcGaOhMGkPozwEtT generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:718527875 2 udp 2130706431 100.93.248.31 22601 typ host ufrag HcGaOhMGkPozwEtT generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:2825435420 1 udp 2130706431 192.168.1.27 22601 typ host ufrag HcGaOhMGkPozwEtT generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:2825435420 2 udp 2130706431 192.168.1.27 22601 typ host ufrag HcGaOhMGkPozwEtT generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:2878742611 1 udp 2130706431 127.0.0.1 22601 typ host ufrag HcGaOhMGkPozwEtT generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:2878742611 2 udp 2130706431 127.0.0.1 22601 typ host ufrag HcGaOhMGkPozwEtT generation 0",
+              "why": "duplicate"
+            },
+            {
+              "line": "a=candidate:694045132 1 tcp 1671430143 fd7a:115c:a1e0::1439:f820 22601 typ host tcptype passive ufrag HcGaOhMGkPozwEtT generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:694045132 2 tcp 1671430143 fd7a:115c:a1e0::1439:f820 22601 typ host tcptype passive ufrag HcGaOhMGkPozwEtT generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:2535500899 1 tcp 1671430143 100.93.248.31 22601 typ host tcptype passive ufrag HcGaOhMGkPozwEtT generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:2535500899 2 tcp 1671430143 100.93.248.31 22601 typ host tcptype passive ufrag HcGaOhMGkPozwEtT generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:362531068 1 tcp 1671430143 192.168.1.27 22601 typ host tcptype passive ufrag HcGaOhMGkPozwEtT generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:362531068 2 tcp 1671430143 192.168.1.27 22601 typ host tcptype passive ufrag HcGaOhMGkPozwEtT generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:375738803 1 tcp 1671430143 127.0.0.1 22601 typ host tcptype passive ufrag HcGaOhMGkPozwEtT generation 0",
+              "why": "tcp"
+            },
+            {
+              "line": "a=candidate:375738803 2 tcp 1671430143 127.0.0.1 22601 typ host tcptype passive ufrag HcGaOhMGkPozwEtT generation 0",
+              "why": "tcp"
+            }
+          ]
+        }
+      ],
+      "strippedOffers": 8,
+      "patches": [],
+      "created": 8,
+      "plays": [
+        {
+          "at": 1793169221708,
+          "settledAt": 1793169222218,
+          "outcome": "resolved",
+          "track": "42f81552-0384-4fd7-8c8a-439fb8678214"
+        },
+        {
+          "at": 1793169222219,
+          "settledAt": 1793169222223,
+          "outcome": "resolved",
+          "track": "42f81552-0384-4fd7-8c8a-439fb8678214"
+        },
+        {
+          "at": 1793169281113,
+          "settledAt": 1793169281692,
+          "outcome": "resolved",
+          "track": "c062250f-d7a0-485d-828b-7e08fc29061c"
+        },
+        {
+          "at": 1793169281696,
+          "settledAt": 1793169281697,
+          "outcome": "resolved",
+          "track": "c062250f-d7a0-485d-828b-7e08fc29061c"
+        },
+        {
+          "at": 1793169294516,
+          "settledAt": 1793169295212,
+          "outcome": "resolved",
+          "track": "95e79977-92c2-4084-b128-56672afe4573"
+        },
+        {
+          "at": 1793169295214,
+          "settledAt": 1793169295214,
+          "outcome": "resolved",
+          "track": "95e79977-92c2-4084-b128-56672afe4573"
+        },
+        {
+          "at": 1793169330142,
+          "settledAt": 1793169330711,
+          "outcome": "resolved",
+          "track": "72513771-6e49-4fa3-a94c-ed9b80957560"
+        },
+        {
+          "at": 1793169330714,
+          "settledAt": 1793169330714,
+          "outcome": "resolved",
+          "track": "72513771-6e49-4fa3-a94c-ed9b80957560"
+        },
+        {
+          "at": 1793169343517,
+          "settledAt": 1793169344214,
+          "outcome": "resolved",
+          "track": "f7c8a406-ee1c-43a8-9372-a3d4fe23d63d"
+        },
+        {
+          "at": 1793169344216,
+          "settledAt": 1793169344217,
+          "outcome": "resolved",
+          "track": "f7c8a406-ee1c-43a8-9372-a3d4fe23d63d"
+        },
+        {
+          "at": 1793169381108,
+          "settledAt": 1793169381739,
+          "outcome": "resolved",
+          "track": "641a7459-ce1d-4398-87d3-677343cee286"
+        },
+        {
+          "at": 1793169381743,
+          "settledAt": 1793169381745,
+          "outcome": "resolved",
+          "track": "641a7459-ce1d-4398-87d3-677343cee286"
+        },
+        {
+          "at": 1793169394496,
+          "settledAt": 1793169395206,
+          "outcome": "resolved",
+          "track": "fb4d89f7-01a6-4f49-9298-2b7261cdf469"
+        },
+        {
+          "at": 1793169395211,
+          "settledAt": 1793169395212,
+          "outcome": "resolved",
+          "track": "fb4d89f7-01a6-4f49-9298-2b7261cdf469"
+        },
+        {
+          "at": 1793169448676,
+          "settledAt": 1793169451217,
+          "outcome": "resolved",
+          "track": "010b8eb4-45d7-4b8b-a61c-dc440eb6fafb"
+        },
+        {
+          "at": 1793169451220,
+          "settledAt": 1793169451220,
+          "outcome": "resolved",
+          "track": "010b8eb4-45d7-4b8b-a61c-dc440eb6fafb"
+        }
+      ]
+    },
+    "viewer": null,
+    "location": "http://127.0.0.1:22600/live",
+    "videos": [
+      {
+        "videoWidth": 1920,
+        "videoHeight": 1080,
+        "totalVideoFrames": 3709,
+        "droppedVideoFrames": 54
+      }
+    ]
+  },
+  "abr_state_at_end": {
+    "connected": true,
+    "connecting": false,
+    "mode": "auto",
+    "playing": "1920x1080",
+    "holdUpMs": 12000,
+    "decisions": [
+      {
+        "at": 1793169281697,
+        "from": "1080p",
+        "to": "720p",
+        "reason": "재생 끊김",
+        "ms": 2456
+      },
+      {
+        "at": 1793169295215,
+        "from": "720p",
+        "to": "1080p",
+        "reason": "안정 12초",
+        "ms": 977
+      },
+      {
+        "at": 1793169330714,
+        "from": "1080p",
+        "to": "720p",
+        "reason": "재생 끊김",
+        "ms": 2476
+      },
+      {
+        "at": 1793169344217,
+        "from": "720p",
+        "to": "1080p",
+        "reason": "안정 12초",
+        "ms": 979
+      },
+      {
+        "at": 1793169381745,
+        "from": "1080p",
+        "to": "720p",
+        "reason": "재생 끊김",
+        "ms": 2508
+      },
+      {
+        "at": 1793169395212,
+        "from": "720p",
+        "to": "1080p",
+        "reason": "안정 12초",
+        "ms": 973
+      }
+    ],
+    "last": {
+      "t": 293604,
+      "loss": 0,
+      "fps": 0,
+      "jitterMs": null,
+      "freeze": false,
+      "decodeDrop": 0
+    },
+    "video": {
+      "w": 1920,
+      "h": 1080,
+      "shownH": 1139,
+      "readyState": 4,
+      "paused": false,
+      "frames": 3709,
+      "dropped": 54,
+      "track": "010b8eb4-45d7-4b8b-a61c-dc440eb6fafb"
+    },
+    "ladder": [
+      {
+        "name": "1080p",
+        "width": 1920,
+        "height": 1080,
+        "mbps": 8,
+        "original": true
+      },
+      {
+        "name": "720p",
+        "width": 1280,
+        "height": 720,
+        "mbps": 4
+      },
+      {
+        "name": "480p",
+        "width": 854,
+        "height": 480,
+        "mbps": 1.5
+      }
+    ],
+    "hidden": false,
+    "dpr": 2
+  }
+}

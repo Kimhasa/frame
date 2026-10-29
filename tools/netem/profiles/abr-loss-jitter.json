@@ -1,0 +1,20 @@
+{
+  "name": "abr-loss-jitter",
+  "description": "대역폭 여유(30 Mbps)에서 손실·지연 변동만 단계별로 40초씩 준다. 자동 화질 기준(손실 4% 초과 시 하향, 0.5% 이하·jitter buffer 180 ms 이하일 때만 상향)에 맞춰 경계 아래(0.5%, 2%)와 위(5%, 버스트 손실)를 나누었다. 대역폭이 남는데 화질을 내리는지, 손실이 끝난 뒤 원래 화질로 돌아오는지 본다.",
+  "defaults": {
+    "down": { "rateMbps": 30, "maxQueueMs": 250, "delayMs": 25 },
+    "up": { "rateMbps": 5, "maxQueueMs": 250, "delayMs": 25 }
+  },
+  "steps": [
+    { "label": "clean", "duration": 40 },
+    { "label": "loss0.5", "duration": 40, "down": { "lossPct": 0.5 } },
+    { "label": "loss2-j10", "duration": 40, "down": { "lossPct": 2, "jitterMs": 10 } },
+    { "label": "loss5", "duration": 40, "down": { "lossPct": 5 } },
+    { "label": "clean-1", "duration": 60 },
+    { "label": "loss5-burst3-j30", "duration": 40, "down": { "lossPct": 5, "lossBurst": 3, "jitterMs": 30 } },
+    { "label": "clean-2", "duration": 60 },
+    { "label": "packet-jitter20", "duration": 40, "down": { "jitterMs": 20, "jitterMode": "packet" } },
+    { "label": "delay150", "duration": 40, "down": { "delayMs": 150 }, "up": { "delayMs": 150 } },
+    { "label": "clean-again", "duration": 60 }
+  ]
+}

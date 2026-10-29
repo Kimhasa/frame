@@ -1,0 +1,6 @@
+INVALID (2026-10-28 check): do not use these numbers.
+- First media: every viewer's value is the sample clock, not first media (defect A: MediaMTX's zero-year onlineTime/readyTime
+  placeholder was taken as "receiving"; firstMediaFromSampleClock = all viewers). The reconnect counts are the same mistake.
+- Burst first media was measured from each add request (addedAt), so the queue behind the 32 concurrent adds was left out (defect N).
+- The 100-viewer stage ran with host CPU at 100% and ~1 MB free memory caused by other programs (generator 6.5%, target 8.8%).
+- Made with a runner version older than the current tools/load code. Re-run with the fixed runner (plans/burst-local.json).

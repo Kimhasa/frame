@@ -1,0 +1,10 @@
+label,seconds,set_down_mbps,set_loss_pct,set_jitter_ms,set_outage,proxy_offered_mbps,proxy_forwarded_mbps,proxy_drop_pct,proxy_loss_drop_pct,proxy_queue_drop_pct,proxy_drop_queue,proxy_drop_loss,proxy_drop_outage,proxy_queue_ms_avg,proxy_queue_ms_max,proxy_late_ms_max,proxy_cpu_pct,host_cpu_pct,host_cpu_pct_max,browser_video_mbps,browser_video_mbps_all_connections,browser_loss_pct,browser_packets_lost,browser_jitter_ms,browser_jitter_buffer_ms,browser_fps,browser_decode_ms_per_frame,browser_frames_dropped,browser_freezes,browser_freeze_sec,browser_pauses,browser_zero_fps_sec,browser_nacks,browser_plis,browser_rtt_ms,resolution,switches,connections,connection_states,remote_candidates
+normal,40,30,0,0,false,8.34,8.33,0.18,0,0,0,0,69,2.4,14.5,0.9,96.8,27.2,49.9,8,8,0,0,7.1,125.1,59.9,0.6,0,0,0,0,0,0,0,41,1920x1080,0,1,connected,127.0.0.1:22610/udp/host
+cut-1s,1,30,0,0,true,,,,,,0,0,0,,0,0,,,,,,,0,,,,,0,0,0,0,0,0,0,,,0,0,,
+after-1s,45,30,0,0,false,7.13,7.12,0,0,0,0,0,0,1.9,14.1,0.9,91.7,30.8,52,6.72,6.81,0,0,7.8,47.3,59.8,0.62,0,0,0,0,0,0,0,41.9,"1280x720 1920x1080",2,2,connected,127.0.0.1:22610/udp/host
+cut-3s,3,30,0,0,true,8.43,0,100,0,0,0,0,1060,0,0,0,0,16.1,24.6,0,0,,0,8,,0,,0,0,0,0,1,0,0,41,1920x1080,0,1,connected,127.0.0.1:22610/udp/host
+after-3s,45,30,0,0,false,7.13,7.13,0,0,0,0,0,0,1.9,14.9,9.2,92.3,34.9,69.6,6.68,6.8,0,0,7.6,49.3,59.3,0.64,0,0,0,0,0,0,5,41.4,"1280x720 1920x1080",2,3,connected,127.0.0.1:22610/udp/host
+cut-6s,6,30,0,0,true,8.33,0,100,0,0,0,0,3113,0,0,0,2.6,24.7,33.3,0,0,,0,6,,0,,0,0,0,0,3,0,1,42,1920x1080,0,1,"connected disconnected",127.0.0.1:22610/udp/host
+after-6s,60,30,0,0,false,7.47,7.47,0,0,0,0,0,0,2.1,18.1,1.1,94,32.3,69.1,7.05,7.1,0,0,7.5,57.7,59.5,0.58,0,0,0,0,0,0,2,41.5,"1280x720 1920x1080",2,2,connected,127.0.0.1:22610/udp/host
+cut-12s,12,30,0,0,true,8.37,0,100,0,0,0,0,8366,0,0,0,1.4,19.7,30.4,0,0,,0,7,,0,,0,0,0,0,8,0,0,41,1920x1080,0,2,"connected disconnected",127.0.0.1:22610/udp/host
+after-12s,60,30,0,0,false,8.35,8.34,0,0,0,0,0,0,2.3,14.9,5.8,97,29.6,63.5,8.01,8.01,0,0,7.3,77.8,59.9,0.55,0,0,0,0,0,0,0,41.5,1920x1080,1,1,connected,127.0.0.1:22610/udp/host

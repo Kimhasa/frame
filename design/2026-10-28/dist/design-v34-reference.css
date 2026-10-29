@@ -1,0 +1,39 @@
+/* Natural title height keeps the channel directly under one- and two-line titles. */
+#product-root .v3-card .card-info{min-height:0;align-items:start;padding-top:12px;gap:11px}
+#product-root .v3-card .card-text{display:flex;flex-direction:column;align-items:stretch;gap:4px;min-width:0}
+#product-root .v3-card button.card-title{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;align-content:start;font-size:16px;line-height:1.45;font-weight:650;letter-spacing:-.3px;min-height:0;height:auto;max-height:2.9em;margin:0;padding:0;text-align:left;white-space:normal;overflow:hidden}
+#product-root .v3-card .card-sub{font-size:14px;line-height:1.5;min-height:0;margin:0;padding:0;color:#5b6570}
+#product-root .v3-card .card-category{font-size:13px;line-height:1.45;color:#78828c;margin:0;min-height:0}
+#product-root .v3-card .v34-card-meta{display:flex;gap:8px;flex-wrap:wrap;white-space:normal}
+#product-root .v3-card .card-profile,#product-root .v3-card .card-profile>.avatar{width:38px;height:38px;flex:none}
+#product-root .v33-history-card .card-info{position:relative}
+#product-root .v33-history-remove{top:8px;bottom:auto;right:0;min-width:40px;width:40px;min-height:40px;height:40px;padding:10px}
+#product-root .v33-history-card .card-text{padding-right:52px}
+#product-root .v3-card .card-title:focus-visible,#product-root .v3-card .card-sub:focus-visible{border-radius:3px;outline-offset:3px}
+:is(#product-root,#product-dialog) .v34-detail-list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+:is(#product-root,#product-dialog) .v34-detail-list>li{margin:0;padding:0;line-height:1.6}
+:is(#product-root,#product-dialog) .v34-detail-list>li::marker{content:''}
+/* Keep content width steady when a dialog or side panel starts scrolling. */
+:is(#product-root .sidebar,#product-root .content,#product-root .watch-content,#product-root .v3-profile-menu,#product-dialog .modal-body,.choice-options){scrollbar-width:thin;scrollbar-color:#b9c3bf transparent;overscroll-behavior:contain}
+:is(#product-root .sidebar,#product-root .content,#product-root .watch-content,#product-root .v3-profile-menu,#product-dialog .modal-body,.choice-options)::-webkit-scrollbar{width:6px;height:6px}
+:is(#product-root .sidebar,#product-root .content,#product-root .watch-content,#product-root .v3-profile-menu,#product-dialog .modal-body,.choice-options)::-webkit-scrollbar-track{background:transparent}
+:is(#product-root .sidebar,#product-root .content,#product-root .watch-content,#product-root .v3-profile-menu,#product-dialog .modal-body,.choice-options)::-webkit-scrollbar-thumb{background:#b9c3bf;border:1px solid transparent;background-clip:padding-box;border-radius:99px}
+:is(#product-root .sidebar,#product-root .content,#product-root .watch-content,#product-dialog .modal-body,.choice-options)::-webkit-scrollbar-thumb:hover{background-color:#8f9e97}
+:is(#product-root .sidebar,#product-root .content,#product-root .watch-content,#product-dialog .modal-body,.choice-options)::-webkit-scrollbar-button{display:none;width:0;height:0}
+#product-dialog .modal-body{scrollbar-gutter:stable}
+.v31-viewer-info .v31-viewer-info-category+.v31-viewer-info-ended::before{display:none}
+@media(hover:hover){
+  #product-root .sidebar{scrollbar-color:transparent transparent}
+  #product-root .sidebar:hover,#product-root .sidebar:focus-within{scrollbar-color:#b9c3bf transparent}
+}
+@container(max-width:850px){
+  #product-root .v3-card .card-info{padding-top:10px;gap:10px}
+  #product-root .v3-card button.card-title{font-size:15px;line-height:1.45}
+  #product-root .v3-card .card-sub{font-size:13px}
+  #product-root .v3-card .card-category{font-size:12px}
+  #product-root .v3-card .card-profile,#product-root .v3-card .card-profile>.avatar{width:34px;height:34px}
+  #product-root .v33-history-remove{min-width:44px;width:44px;min-height:44px;height:44px;padding:12px}
+}
+@media(forced-colors:active){
+  :is(#product-root .sidebar,#product-root .content,#product-root .watch-content,#product-dialog .modal-body,.choice-options){scrollbar-color:auto}
+}

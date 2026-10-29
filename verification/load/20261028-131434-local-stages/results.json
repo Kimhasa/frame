@@ -1,0 +1,1959 @@
+{
+  "schema": "frame-load/1",
+  "runId": "20261028-131434-local-stages",
+  "final": true,
+  "startedAt": "2026-10-28T04:14:36.716Z",
+  "endedAt": "2026-10-28T04:22:24.523Z",
+  "command": "C:\\Users\\wlsdu\\AppData\\Local\\Programs\\nodejs\\node.exe C:\\Users\\wlsdu\\OneDrive\\Desktop\\frame\\tools\\load\\run-load.mjs --plan tools/load/plans/local-stages.json --target-state C:/Users/wlsdu/AppData/Local/Temp/claude/C--Users-wlsdu-OneDrive-Desktop-frame/303680ce-1b31-435d-bda2-38f52053a23f/scratchpad/t8/state.json --stages 1,10,25,50,100,200",
+  "cwd": "C:\\Users\\wlsdu\\OneDrive\\Desktop\\frame",
+  "plan": {
+    "name": "local-stages",
+    "target": {
+      "whep": "http://127.0.0.1:21889/{stream}/whep",
+      "base": "http://127.0.0.1:21888",
+      "path": "screen-01",
+      "stateFile": "C:/Users/wlsdu/AppData/Local/Temp/claude/C--Users-wlsdu-OneDrive-Desktop-frame/303680ce-1b31-435d-bda2-38f52053a23f/scratchpad/t8/state.json",
+      "api": "http://127.0.0.1:21997",
+      "pids": [
+        43944,
+        9864,
+        34180
+      ],
+      "tree": [
+        43944
+      ],
+      "names": [],
+      "pathLike": [],
+      "criticalNames": [
+        "FrameConsole",
+        "mediamtx"
+      ],
+      "host": "127.0.0.1"
+    },
+    "stages": [
+      1,
+      10,
+      25,
+      50,
+      100,
+      200
+    ],
+    "rampPerSec": 10,
+    "burst": false,
+    "burstConcurrency": 32,
+    "holdSec": 60,
+    "settleSec": 10,
+    "keepBetweenStages": true,
+    "firstMediaTimeoutMs": 10000,
+    "sampleMs": 2000,
+    "resourceMs": 3000,
+    "stallKbps": 0,
+    "sustainedMinFraction": 0.95,
+    "fullRateFraction": 0.9,
+    "referenceKbps": null,
+    "lowRateKbps": 300,
+    "churn": {
+      "perSec": 0,
+      "rejoinDelayMs": 0,
+      "minAgeSec": 10
+    },
+    "qualities": {
+      "source": 1
+    },
+    "chat": {
+      "fraction": 0,
+      "senderFraction": 0.05,
+      "messagesPerMinute": 6,
+      "reconnectMs": 0,
+      "connectTimeoutMs": 10000
+    },
+    "dvr": {
+      "fraction": 0,
+      "chunkMs": 4000,
+      "intervalMs": 4000,
+      "liveMarginMs": 5000
+    },
+    "generator": {
+      "instances": 1,
+      "apiPortBase": 21900,
+      "udpReadBufferSize": 4194304
+    },
+    "limits": {
+      "generatorCpuPct": 90,
+      "hostCpuPct": 95,
+      "targetCpuPct": 90,
+      "sustainSec": 30,
+      "minSuccess": 0.9,
+      "successGraceSec": 20,
+      "maxTrafficGB": 400,
+      "minFreeMemMB": 300,
+      "memSustainSec": 10,
+      "eventLoopLagMs": 1000,
+      "nicUtil": 0.8,
+      "abortOnDegraded": false
+    },
+    "browser": {
+      "count": 2,
+      "url": "http://127.0.0.1:21888/screen-01",
+      "seconds": 20,
+      "stages": null,
+      "devtoolsPort": 21222,
+      "headless": true,
+      "startDelaySec": 5
+    },
+    "media": true,
+    "calibrate": false,
+    "calibrateStages": [
+      10,
+      25,
+      50,
+      75,
+      100,
+      150,
+      200,
+      300,
+      400,
+      500,
+      700,
+      1000
+    ],
+    "cleanupWaitSec": 30,
+    "_comment": "Standalone target on this PC (node tools/load/target.mjs, then --target-state <dir>/state.json). Media-only staged load with 2 real-browser viewers per stage. Degradation is recorded but does not stop the run here, so the table shows the stages past the knee; host CPU/memory and success rules still stop it. Loopback traffic is not billable, hence the high traffic cap."
+  },
+  "versions": {
+    "node": "v24.22.1",
+    "generatorMediamtx": "v1.21.3",
+    "target": {
+      "mediamtx": "v1.21.3",
+      "ffmpeg": "ffmpeg version 9.0.2-essentials_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers"
+    }
+  },
+  "host": {
+    "hostname": "KJY",
+    "cores": 8,
+    "os": "Microsoft Windows 11 Pro 10.0.26200",
+    "logical": 16,
+    "nics": [
+      {
+        "description": "Intel(R) Wi-Fi 6 AX201 160MHz",
+        "name": "Wi-Fi",
+        "linkSpeed": "866.7 Mbps"
+      },
+      {
+        "description": "Tailscale Tunnel",
+        "name": "Tailscale",
+        "linkSpeed": "100 Gbps"
+      }
+    ],
+    "gpus": [
+      "NVIDIA GeForce RTX 3060 Laptop GPU",
+      "Intel(R) UHD Graphics"
+    ],
+    "cpu": "11th Gen Intel(R) Core(TM) i7-11800H @ 2.30GHz",
+    "logicalCpus": 16,
+    "ramGB": 15.8,
+    "osRelease": "10.0.26200",
+    "node": "v24.22.1"
+  },
+  "hostBaseline": {
+    "hostCpuPct": 19.8,
+    "freeMemMB": 4659,
+    "targetCpuPct": 0.1,
+    "targetRssMB": 85.3,
+    "targetProcs": [
+      {
+        "id": 34180,
+        "name": "node",
+        "cores": 0,
+        "rssMB": 30.6,
+        "threads": 13,
+        "handles": 285
+      },
+      {
+        "id": 43944,
+        "name": "mediamtx",
+        "cores": 0,
+        "rssMB": 48.2,
+        "threads": 25,
+        "handles": 358
+      },
+      {
+        "id": 27236,
+        "name": "conhost",
+        "cores": 0,
+        "rssMB": 1.1,
+        "threads": 2,
+        "handles": 99
+      },
+      {
+        "id": 9864,
+        "name": "ffmpeg",
+        "cores": 0.01,
+        "rssMB": 5.4,
+        "threads": 3,
+        "handles": 207
+      }
+    ],
+    "gpu": {
+      "enc": 0,
+      "dec": 0,
+      "memMB": 3466,
+      "util": 45
+    }
+  },
+  "target": {
+    "whep": "http://127.0.0.1:21889/{stream}/whep",
+    "base": "http://127.0.0.1:21888",
+    "path": "screen-01",
+    "info": {
+      "running": true,
+      "path": "screen-01",
+      "width": 1920,
+      "height": 1080,
+      "fps": 60,
+      "bitrate": 8,
+      "audio": "system",
+      "codec": "H.264",
+      "elapsedMs": 519632,
+      "startedAtMs": 1793160377463,
+      "broadcastId": "8c8cbdb4d53dc314f4e8903721308636",
+      "dvr": true,
+      "title": "부하 시험 대상",
+      "publisher": "load-target",
+      "renditions": [
+        {
+          "name": "720p",
+          "width": 1280,
+          "height": 720,
+          "mbps": 4,
+          "fps": 60,
+          "codec": "H.264"
+        },
+        {
+          "name": "480p",
+          "width": 852,
+          "height": 480,
+          "mbps": 1.5,
+          "fps": 60,
+          "codec": "H.264"
+        }
+      ],
+      "iceServers": []
+    },
+    "standalone": {
+      "dir": "C:/Users/wlsdu/AppData/Local/Temp/claude/C--Users-wlsdu-OneDrive-Desktop-frame/303680ce-1b31-435d-bda2-38f52053a23f/scratchpad/t8",
+      "options": {
+        "dir": "C:/Users/wlsdu/AppData/Local/Temp/claude/C--Users-wlsdu-OneDrive-Desktop-frame/303680ce-1b31-435d-bda2-38f52053a23f/scratchpad/t8",
+        "path": "screen-01",
+        "size": "1920x1080",
+        "fps": 60,
+        "mbps": 8,
+        "audioKbps": 128,
+        "encoder": "h264_nvenc",
+        "rateControl": "cbr",
+        "rtspPort": 21554,
+        "webrtcPort": 21889,
+        "icePort": 21189,
+        "apiPort": 21997,
+        "playbackPort": 21996,
+        "shimPort": 21888,
+        "webrtcBind": "127.0.0.1",
+        "shimBind": "0.0.0.0",
+        "interfaces": "",
+        "additionalHosts": "",
+        "renditions": "720p,480p",
+        "record": true,
+        "barcode": true,
+        "shim": true,
+        "duration": 5400,
+        "source": "clip",
+        "clipSec": 20,
+        "chatLimit": 1100,
+        "httpLimit": 1300,
+        "renditionList": [
+          {
+            "name": "720p",
+            "width": 1280,
+            "height": 720,
+            "mbps": 4
+          },
+          {
+            "name": "480p",
+            "width": 852,
+            "height": 480,
+            "mbps": 1.5
+          }
+        ]
+      },
+      "pids": {
+        "mediamtx": 43944,
+        "publisher": 9864,
+        "shim": 34180
+      },
+      "urls": {
+        "whepDirect": "http://127.0.0.1:21889/{stream}/whep",
+        "whepProxy": "http://127.0.0.1:21888/{stream}/whep",
+        "base": "http://127.0.0.1:21888",
+        "viewerPage": "http://127.0.0.1:21888/screen-01",
+        "mediamtxPage": "http://127.0.0.1:21889/screen-01/",
+        "api": "http://127.0.0.1:21997"
+      }
+    }
+  },
+  "definitions": {
+    "viewer": "one WebRTC peer (MediaMTX WHEP source in the generator process): ICE + DTLS-SRTP + RTCP, receives and depacketizes H.264/Opus, no decoding or rendering",
+    "receiving": "received bytes grew by more than 0 kbit/s in a 2000 ms sample window",
+    "firstMedia": "generator path online time (first RTP of the offered tracks arrived) minus the time the viewer was added; HTTP/WHEP status alone never counts",
+    "sustained": "first media and receiving in >= 95% of the hold windows; successRate = sustained / requested",
+    "fullRate": "sustained and (source quality) mean rate >= 90% of the reference rate (referenceFrom); fullRateSuccessRate = full-rate viewers / requested",
+    "stall": "a 2000 ms window without growth (<= 0 kbit/s); stallTimeRatio = stalled time / observed time after first media",
+    "cpuPct": "percent of the whole machine (all logical CPUs) from process CPU time; cores = same in CPU cores",
+    "rtpPacketsLost": "losses reported by the generator WebRTC sources (MediaMTX log); lossRatioEst assumes ~1,150 B per RTP packet",
+    "network": "generator and target location are recorded in host/target; loopback or same-PC traffic does not cross the NIC"
+  },
+  "notMeasured": [
+    "decoded FPS, rendering, A/V sync, player rebuffering and live latency are not measured by protocol viewers (see browser sampler fields)"
+  ],
+  "stages": [
+    {
+      "stage": 1,
+      "requested": 1,
+      "holdSec": 60.5,
+      "measuredViewers": 1,
+      "joined": 1,
+      "addFailed": 0,
+      "addApiMsP95": 7,
+      "firstMediaMs": {
+        "n": 1,
+        "p50": 208,
+        "p95": 208,
+        "max": 208
+      },
+      "firstMediaTimeouts": 0,
+      "sustainedReceiving": 1,
+      "successRate": 1,
+      "successBasis": "requested viewers",
+      "fullRateSuccessRate": 1,
+      "referenceKbps": 8266,
+      "referenceFrom": "target ingest rate (MediaMTX API)",
+      "receivingRatio": {
+        "min": 1,
+        "mean": 1
+      },
+      "stallTimeRatio": 0,
+      "lowRateWindowRatio": 0,
+      "stallEvents": 0,
+      "viewersWithStall": 0,
+      "rssTrendMBPerMin": {
+        "generator": 52.85,
+        "target": 368.79
+      },
+      "disconnects": 0,
+      "reconnects": 0,
+      "perViewerKbps": {
+        "p5": 8266,
+        "p50": 8266,
+        "p95": 8266,
+        "mean": 8266
+      },
+      "totalMbps": {
+        "mean": 8.3,
+        "max": 8.5
+      },
+      "sourceKbps": 8266,
+      "rateVsSource": {
+        "p5": 1,
+        "p50": 1,
+        "degradedViewers": 0
+      },
+      "rtpPacketsLost": 0,
+      "lostPerViewerMinute": 0,
+      "lossRatioEst": 0,
+      "processingErrors": 0,
+      "iceCandidatePairs": {
+        "host/udp cgnat-vpn -> host/udp cgnat-vpn": 1
+      },
+      "churn": null,
+      "qualityMix": {
+        "source": 1
+      },
+      "chat": null,
+      "dvr": null,
+      "resources": {
+        "genCpuPct": {
+          "mean": 0.6,
+          "max": 1.3
+        },
+        "genRssMB": {
+          "max": 307.7
+        },
+        "targetCpuPct": {
+          "mean": 2.8,
+          "max": 6.5
+        },
+        "targetRssMB": {
+          "max": 377.6
+        },
+        "hostCpuPct": {
+          "mean": 16.3,
+          "max": 38.2
+        },
+        "freeMemMB": {
+          "min": 3927
+        },
+        "nicRxMbps": {
+          "mean": 4.4
+        },
+        "nicTxMbps": {
+          "mean": 0.2
+        },
+        "gpuPct": {
+          "max": 60
+        },
+        "gpuEncPct": {
+          "max": 25
+        },
+        "eventLoopLagP99Ms": {
+          "max": 37.9
+        },
+        "generatorListMs": {
+          "max": 3
+        },
+        "targetSendMbps": {
+          "mean": 17
+        },
+        "targetDiscardedFrames": 0,
+        "targetSessionsMax": 5
+      },
+      "decodedFps": "not measured",
+      "renderedFps": "not measured",
+      "avSync": "not measured",
+      "liveLatencyMs": "not measured",
+      "rebuffering": "stall windows only (byte growth); player rebuffering not measured",
+      "browser": {
+        "tool": "browser-sampler",
+        "url": "http://127.0.0.1:21888/screen-01",
+        "count": 2,
+        "seconds": 20,
+        "startedAt": "2026-10-28T04:15:13.543Z",
+        "browser": "Edg/156.0.4314.42",
+        "headless": true,
+        "definitions": {
+          "firstFrameMs": "page navigation start -> first presented video frame (requestVideoFrameCallback), includes page load, WHEP/ICE and first keyframe",
+          "presentedFps": "presented frames per second in the window (rVFC)",
+          "freeze": "gap > 500 ms between presented frames",
+          "latencyMs": "barcode stamp (source wall clock) -> expected display time; needs a shared clock"
+        },
+        "pages": [
+          {
+            "index": 0,
+            "firstFrameMs": 1198,
+            "windowSec": 20,
+            "presentedFps": 57.6,
+            "freezes": 0,
+            "freezeMs": 0,
+            "maxGapMs": 83,
+            "decodedWidth": 1280,
+            "decodedHeight": 720,
+            "decodedFps": 47.2,
+            "decodedFpsBasis": "connection created inside the window, since its creation",
+            "framesDropped": 0,
+            "statsFreezeCount": 0,
+            "statsFreezeSec": 0,
+            "decoder": null,
+            "powerEfficientDecoder": null,
+            "videoPacketsLost": 0,
+            "videoPacketsReceived": 5148,
+            "videoLossRatio": 0,
+            "videoJitterMs": 2,
+            "jitterBufferMs": 67.6,
+            "videoKbps": 3284,
+            "nack": 0,
+            "pli": 3,
+            "audio": {
+              "packetsLost": 0,
+              "jitterMs": 8,
+              "concealedRatio": 0
+            },
+            "rttMs": 1,
+            "peerConnections": 1,
+            "connectionChangedInWindow": true,
+            "videoElementSwitches": 1,
+            "peerConnectionLog": [
+              {
+                "id": 1,
+                "createdMs": 709,
+                "state": "closed"
+              },
+              {
+                "id": 2,
+                "createdMs": 11191,
+                "state": "connected"
+              }
+            ],
+            "windowStartMs": 3335,
+            "latencyMs": "not measured (source has no live barcode)",
+            "avSync": "not measured",
+            "video": "video",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+          },
+          {
+            "index": 1,
+            "firstFrameMs": 1232,
+            "windowSec": 20,
+            "presentedFps": 56.1,
+            "freezes": 0,
+            "freezeMs": 0,
+            "maxGapMs": 83,
+            "decodedWidth": 1280,
+            "decodedHeight": 720,
+            "decodedFps": 47.5,
+            "decodedFpsBasis": "connection created inside the window, since its creation",
+            "framesDropped": 0,
+            "statsFreezeCount": 0,
+            "statsFreezeSec": 0,
+            "decoder": null,
+            "powerEfficientDecoder": null,
+            "videoPacketsLost": 0,
+            "videoPacketsReceived": 5033,
+            "videoLossRatio": 0,
+            "videoJitterMs": 2,
+            "jitterBufferMs": 34.7,
+            "videoKbps": 3215,
+            "nack": 0,
+            "pli": 3,
+            "audio": {
+              "packetsLost": 0,
+              "jitterMs": 9,
+              "concealedRatio": 0
+            },
+            "rttMs": 1,
+            "peerConnections": 1,
+            "connectionChangedInWindow": true,
+            "videoElementSwitches": 1,
+            "peerConnectionLog": [
+              {
+                "id": 1,
+                "createdMs": 694,
+                "state": "closed"
+              },
+              {
+                "id": 2,
+                "createdMs": 11176,
+                "state": "connected"
+              }
+            ],
+            "windowStartMs": 3335,
+            "latencyMs": "not measured (source has no live barcode)",
+            "avSync": "not measured",
+            "video": "video",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+          }
+        ],
+        "summary": {
+          "ok": 2,
+          "failed": 0,
+          "firstFrameMs": {
+            "p50": 1198,
+            "p95": 1232
+          },
+          "presentedFps": {
+            "mean": 56.9,
+            "min": 56.1
+          },
+          "decodedFps": {
+            "mean": 47.4
+          },
+          "freezes": 0,
+          "freezeMs": 0,
+          "framesDropped": 0,
+          "videoLossRatioMax": 0,
+          "resolution": [
+            "1280x720"
+          ],
+          "connectionChanges": 2,
+          "latencyMs": "not measured"
+        }
+      },
+      "abortReason": null
+    },
+    {
+      "stage": 10,
+      "requested": 10,
+      "holdSec": 60.5,
+      "measuredViewers": 10,
+      "joined": 9,
+      "addFailed": 0,
+      "addApiMsP95": 5,
+      "firstMediaMs": {
+        "n": 9,
+        "p50": 259,
+        "p95": 393,
+        "max": 393
+      },
+      "firstMediaTimeouts": 0,
+      "sustainedReceiving": 10,
+      "successRate": 1,
+      "successBasis": "requested viewers",
+      "fullRateSuccessRate": 1,
+      "referenceKbps": 8267,
+      "referenceFrom": "target ingest rate (MediaMTX API)",
+      "receivingRatio": {
+        "min": 1,
+        "mean": 1
+      },
+      "stallTimeRatio": 0,
+      "lowRateWindowRatio": 0,
+      "stallEvents": 0,
+      "viewersWithStall": 0,
+      "rssTrendMBPerMin": {
+        "generator": -0.19,
+        "target": 340.24
+      },
+      "disconnects": 0,
+      "reconnects": 0,
+      "perViewerKbps": {
+        "p5": 8264,
+        "p50": 8267,
+        "p95": 8267,
+        "mean": 8267
+      },
+      "totalMbps": {
+        "mean": 82.7,
+        "max": 85
+      },
+      "sourceKbps": 8267,
+      "rateVsSource": {
+        "p5": 1,
+        "p50": 1,
+        "degradedViewers": 0
+      },
+      "rtpPacketsLost": 0,
+      "lostPerViewerMinute": 0,
+      "lossRatioEst": 0,
+      "processingErrors": 0,
+      "iceCandidatePairs": {
+        "host/udp cgnat-vpn -> host/udp cgnat-vpn": 4,
+        "host/udp private -> host/udp private": 1,
+        "host/udp ula -> host/udp ula": 5
+      },
+      "churn": null,
+      "qualityMix": {
+        "source": 10
+      },
+      "chat": null,
+      "dvr": null,
+      "resources": {
+        "genCpuPct": {
+          "mean": 2.5,
+          "max": 5.1
+        },
+        "genRssMB": {
+          "max": 336
+        },
+        "targetCpuPct": {
+          "mean": 4.8,
+          "max": 14.4
+        },
+        "targetRssMB": {
+          "max": 424.4
+        },
+        "hostCpuPct": {
+          "mean": 24.6,
+          "max": 50.1
+        },
+        "freeMemMB": {
+          "min": 3618
+        },
+        "nicRxMbps": {
+          "mean": 3.9
+        },
+        "nicTxMbps": {
+          "mean": 0.4
+        },
+        "gpuPct": {
+          "max": 62
+        },
+        "gpuEncPct": {
+          "max": 25
+        },
+        "eventLoopLagP99Ms": {
+          "max": 46.2
+        },
+        "generatorListMs": {
+          "max": 5
+        },
+        "targetSendMbps": {
+          "mean": 92.7
+        },
+        "targetDiscardedFrames": 0,
+        "targetSessionsMax": 14
+      },
+      "decodedFps": "not measured",
+      "renderedFps": "not measured",
+      "avSync": "not measured",
+      "liveLatencyMs": "not measured",
+      "rebuffering": "stall windows only (byte growth); player rebuffering not measured",
+      "browser": {
+        "tool": "browser-sampler",
+        "url": "http://127.0.0.1:21888/screen-01",
+        "count": 2,
+        "seconds": 20,
+        "startedAt": "2026-10-28T04:16:24.975Z",
+        "browser": "Edg/156.0.4314.42",
+        "headless": true,
+        "definitions": {
+          "firstFrameMs": "page navigation start -> first presented video frame (requestVideoFrameCallback), includes page load, WHEP/ICE and first keyframe",
+          "presentedFps": "presented frames per second in the window (rVFC)",
+          "freeze": "gap > 500 ms between presented frames",
+          "latencyMs": "barcode stamp (source wall clock) -> expected display time; needs a shared clock"
+        },
+        "pages": [
+          {
+            "index": 0,
+            "firstFrameMs": 1734,
+            "windowSec": 20,
+            "presentedFps": 58.1,
+            "freezes": 0,
+            "freezeMs": 0,
+            "maxGapMs": 67,
+            "decodedWidth": 1280,
+            "decodedHeight": 720,
+            "decodedFps": 47.1,
+            "decodedFpsBasis": "connection created inside the window, since its creation",
+            "framesDropped": 0,
+            "statsFreezeCount": 0,
+            "statsFreezeSec": 0,
+            "decoder": null,
+            "powerEfficientDecoder": null,
+            "videoPacketsLost": 0,
+            "videoPacketsReceived": 5151,
+            "videoLossRatio": 0,
+            "videoJitterMs": 2,
+            "jitterBufferMs": 98.7,
+            "videoKbps": 3299,
+            "nack": 0,
+            "pli": 3,
+            "audio": {
+              "packetsLost": 0,
+              "jitterMs": 8,
+              "concealedRatio": 0
+            },
+            "rttMs": 1,
+            "peerConnections": 1,
+            "connectionChangedInWindow": true,
+            "videoElementSwitches": 1,
+            "peerConnectionLog": [
+              {
+                "id": 1,
+                "createdMs": 687,
+                "state": "closed"
+              },
+              {
+                "id": 2,
+                "createdMs": 11708,
+                "state": "connected"
+              }
+            ],
+            "windowStartMs": 3762,
+            "latencyMs": "not measured (source has no live barcode)",
+            "avSync": "not measured",
+            "video": "video",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+          },
+          {
+            "index": 1,
+            "firstFrameMs": 1744,
+            "windowSec": 20,
+            "presentedFps": 57.5,
+            "freezes": 0,
+            "freezeMs": 0,
+            "maxGapMs": 67,
+            "decodedWidth": 1280,
+            "decodedHeight": 720,
+            "decodedFps": 47.5,
+            "decodedFpsBasis": "connection created inside the window, since its creation",
+            "framesDropped": 0,
+            "statsFreezeCount": 0,
+            "statsFreezeSec": 0,
+            "decoder": null,
+            "powerEfficientDecoder": null,
+            "videoPacketsLost": 0,
+            "videoPacketsReceived": 5256,
+            "videoLossRatio": 0,
+            "videoJitterMs": 5,
+            "jitterBufferMs": 82.9,
+            "videoKbps": 3305,
+            "nack": 0,
+            "pli": 3,
+            "audio": {
+              "packetsLost": 0,
+              "jitterMs": 9,
+              "concealedRatio": 0
+            },
+            "rttMs": 0,
+            "peerConnections": 1,
+            "connectionChangedInWindow": true,
+            "videoElementSwitches": 1,
+            "peerConnectionLog": [
+              {
+                "id": 1,
+                "createdMs": 680,
+                "state": "closed"
+              },
+              {
+                "id": 2,
+                "createdMs": 11703,
+                "state": "connected"
+              }
+            ],
+            "windowStartMs": 3987,
+            "latencyMs": "not measured (source has no live barcode)",
+            "avSync": "not measured",
+            "video": "video",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+          }
+        ],
+        "summary": {
+          "ok": 2,
+          "failed": 0,
+          "firstFrameMs": {
+            "p50": 1734,
+            "p95": 1744
+          },
+          "presentedFps": {
+            "mean": 57.8,
+            "min": 57.5
+          },
+          "decodedFps": {
+            "mean": 47.3
+          },
+          "freezes": 0,
+          "freezeMs": 0,
+          "framesDropped": 0,
+          "videoLossRatioMax": 0,
+          "resolution": [
+            "1280x720"
+          ],
+          "connectionChanges": 2,
+          "latencyMs": "not measured"
+        }
+      },
+      "abortReason": null
+    },
+    {
+      "stage": 25,
+      "requested": 25,
+      "holdSec": 60.4,
+      "measuredViewers": 25,
+      "joined": 15,
+      "addFailed": 0,
+      "addApiMsP95": 6,
+      "firstMediaMs": {
+        "n": 15,
+        "p50": 262,
+        "p95": 320,
+        "max": 320
+      },
+      "firstMediaTimeouts": 0,
+      "sustainedReceiving": 25,
+      "successRate": 1,
+      "successBasis": "requested viewers",
+      "fullRateSuccessRate": 1,
+      "referenceKbps": 8272,
+      "referenceFrom": "target ingest rate (MediaMTX API)",
+      "receivingRatio": {
+        "min": 1,
+        "mean": 1
+      },
+      "stallTimeRatio": 0,
+      "lowRateWindowRatio": 0,
+      "stallEvents": 0,
+      "viewersWithStall": 0,
+      "rssTrendMBPerMin": {
+        "generator": 12.61,
+        "target": 339.93
+      },
+      "disconnects": 0,
+      "reconnects": 3,
+      "perViewerKbps": {
+        "p5": 8271,
+        "p50": 8271,
+        "p95": 8272,
+        "mean": 8271
+      },
+      "totalMbps": {
+        "mean": 206.8,
+        "max": 212.2
+      },
+      "sourceKbps": 8272,
+      "rateVsSource": {
+        "p5": 1,
+        "p50": 1,
+        "degradedViewers": 0
+      },
+      "rtpPacketsLost": 0,
+      "lostPerViewerMinute": 0,
+      "lossRatioEst": 0,
+      "processingErrors": 0,
+      "iceCandidatePairs": {
+        "host/udp cgnat-vpn -> host/udp cgnat-vpn": 11,
+        "host/udp private -> host/udp private": 2,
+        "host/udp ula -> host/udp ula": 12
+      },
+      "churn": null,
+      "qualityMix": {
+        "source": 25
+      },
+      "chat": null,
+      "dvr": null,
+      "resources": {
+        "genCpuPct": {
+          "mean": 6,
+          "max": 8.1
+        },
+        "genRssMB": {
+          "max": 310.1
+        },
+        "targetCpuPct": {
+          "mean": 8.3,
+          "max": 12.4
+        },
+        "targetRssMB": {
+          "max": 492.4
+        },
+        "hostCpuPct": {
+          "mean": 34.5,
+          "max": 70.5
+        },
+        "freeMemMB": {
+          "min": 3135
+        },
+        "nicRxMbps": {
+          "mean": 3.4
+        },
+        "nicTxMbps": {
+          "mean": 0.4
+        },
+        "gpuPct": {
+          "max": 42
+        },
+        "gpuEncPct": {
+          "max": 24
+        },
+        "eventLoopLagP99Ms": {
+          "max": 50.4
+        },
+        "generatorListMs": {
+          "max": 4
+        },
+        "targetSendMbps": {
+          "mean": 218.5
+        },
+        "targetDiscardedFrames": 0,
+        "targetSessionsMax": 29
+      },
+      "decodedFps": "not measured",
+      "renderedFps": "not measured",
+      "avSync": "not measured",
+      "liveLatencyMs": "not measured",
+      "rebuffering": "stall windows only (byte growth); player rebuffering not measured",
+      "browser": {
+        "tool": "browser-sampler",
+        "url": "http://127.0.0.1:21888/screen-01",
+        "count": 2,
+        "seconds": 20,
+        "startedAt": "2026-10-28T04:17:37.093Z",
+        "browser": "Edg/156.0.4314.42",
+        "headless": true,
+        "definitions": {
+          "firstFrameMs": "page navigation start -> first presented video frame (requestVideoFrameCallback), includes page load, WHEP/ICE and first keyframe",
+          "presentedFps": "presented frames per second in the window (rVFC)",
+          "freeze": "gap > 500 ms between presented frames",
+          "latencyMs": "barcode stamp (source wall clock) -> expected display time; needs a shared clock"
+        },
+        "pages": [
+          {
+            "index": 0,
+            "firstFrameMs": 1706,
+            "windowSec": 20,
+            "presentedFps": 56,
+            "freezes": 0,
+            "freezeMs": 0,
+            "maxGapMs": 83,
+            "decodedWidth": 1280,
+            "decodedHeight": 720,
+            "decodedFps": 47.3,
+            "decodedFpsBasis": "connection created inside the window, since its creation",
+            "framesDropped": 0,
+            "statsFreezeCount": 0,
+            "statsFreezeSec": 0,
+            "decoder": null,
+            "powerEfficientDecoder": null,
+            "videoPacketsLost": 0,
+            "videoPacketsReceived": 5132,
+            "videoLossRatio": 0,
+            "videoJitterMs": 4,
+            "jitterBufferMs": 68.8,
+            "videoKbps": 3283,
+            "nack": 0,
+            "pli": 3,
+            "audio": {
+              "packetsLost": 0,
+              "jitterMs": 8,
+              "concealedRatio": 0
+            },
+            "rttMs": 0,
+            "peerConnections": 1,
+            "connectionChangedInWindow": true,
+            "videoElementSwitches": 1,
+            "peerConnectionLog": [
+              {
+                "id": 1,
+                "createdMs": 702,
+                "state": "closed"
+              },
+              {
+                "id": 2,
+                "createdMs": 11676,
+                "state": "connected"
+              }
+            ],
+            "windowStartMs": 3801,
+            "latencyMs": "not measured (source has no live barcode)",
+            "avSync": "not measured",
+            "video": "video",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+          },
+          {
+            "index": 1,
+            "firstFrameMs": 1663,
+            "windowSec": 20,
+            "presentedFps": 57.6,
+            "freezes": 0,
+            "freezeMs": 0,
+            "maxGapMs": 67,
+            "decodedWidth": 1280,
+            "decodedHeight": 720,
+            "decodedFps": 47.4,
+            "decodedFpsBasis": "connection created inside the window, since its creation",
+            "framesDropped": 0,
+            "statsFreezeCount": 0,
+            "statsFreezeSec": 0,
+            "decoder": null,
+            "powerEfficientDecoder": null,
+            "videoPacketsLost": 0,
+            "videoPacketsReceived": 5117,
+            "videoLossRatio": 0,
+            "videoJitterMs": 4,
+            "jitterBufferMs": 45.6,
+            "videoKbps": 3274,
+            "nack": 0,
+            "pli": 3,
+            "audio": {
+              "packetsLost": 0,
+              "jitterMs": 8,
+              "concealedRatio": 0
+            },
+            "rttMs": 0,
+            "peerConnections": 1,
+            "connectionChangedInWindow": true,
+            "videoElementSwitches": 1,
+            "peerConnectionLog": [
+              {
+                "id": 1,
+                "createdMs": 693,
+                "state": "closed"
+              },
+              {
+                "id": 2,
+                "createdMs": 11666,
+                "state": "connected"
+              }
+            ],
+            "windowStartMs": 3791,
+            "latencyMs": "not measured (source has no live barcode)",
+            "avSync": "not measured",
+            "video": "video",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+          }
+        ],
+        "summary": {
+          "ok": 2,
+          "failed": 0,
+          "firstFrameMs": {
+            "p50": 1663,
+            "p95": 1706
+          },
+          "presentedFps": {
+            "mean": 56.8,
+            "min": 56
+          },
+          "decodedFps": {
+            "mean": 47.3
+          },
+          "freezes": 0,
+          "freezeMs": 0,
+          "framesDropped": 0,
+          "videoLossRatioMax": 0,
+          "resolution": [
+            "1280x720"
+          ],
+          "connectionChanges": 2,
+          "latencyMs": "not measured"
+        }
+      },
+      "abortReason": null
+    },
+    {
+      "stage": 50,
+      "requested": 50,
+      "holdSec": 60.3,
+      "measuredViewers": 50,
+      "joined": 25,
+      "addFailed": 0,
+      "addApiMsP95": 8,
+      "firstMediaMs": {
+        "n": 25,
+        "p50": 331,
+        "p95": 451,
+        "max": 536
+      },
+      "firstMediaTimeouts": 0,
+      "sustainedReceiving": 50,
+      "successRate": 1,
+      "successBasis": "requested viewers",
+      "fullRateSuccessRate": 0.42,
+      "referenceKbps": 8266,
+      "referenceFrom": "target ingest rate (MediaMTX API)",
+      "receivingRatio": {
+        "min": 1,
+        "mean": 1
+      },
+      "stallTimeRatio": 0,
+      "lowRateWindowRatio": 0,
+      "stallEvents": 0,
+      "viewersWithStall": 0,
+      "rssTrendMBPerMin": {
+        "generator": 28.34,
+        "target": 814.64
+      },
+      "disconnects": 0,
+      "reconnects": 6,
+      "perViewerKbps": {
+        "p5": 6688,
+        "p50": 7278,
+        "p95": 7884,
+        "mean": 7290
+      },
+      "totalMbps": {
+        "mean": 364.5,
+        "max": 416.2
+      },
+      "sourceKbps": 8266,
+      "rateVsSource": {
+        "p5": 0.809,
+        "p50": 0.88,
+        "degradedViewers": 29
+      },
+      "rtpPacketsLost": 16173,
+      "lostPerViewerMinute": 322.4,
+      "lossRatioEst": 0.00674,
+      "processingErrors": 0,
+      "iceCandidatePairs": {
+        "host/udp cgnat-vpn -> host/udp cgnat-vpn": 21,
+        "host/udp private -> host/udp private": 4,
+        "host/udp ula -> host/udp ula": 25
+      },
+      "churn": null,
+      "qualityMix": {
+        "source": 50
+      },
+      "chat": null,
+      "dvr": null,
+      "resources": {
+        "genCpuPct": {
+          "mean": 10.7,
+          "max": 12.5
+        },
+        "genRssMB": {
+          "max": 366.9
+        },
+        "targetCpuPct": {
+          "mean": 15.1,
+          "max": 20.4
+        },
+        "targetRssMB": {
+          "max": 900.9
+        },
+        "hostCpuPct": {
+          "mean": 46.1,
+          "max": 58
+        },
+        "freeMemMB": {
+          "min": 2643
+        },
+        "nicRxMbps": {
+          "mean": 3.2
+        },
+        "nicTxMbps": {
+          "mean": 0.1
+        },
+        "gpuPct": {
+          "max": 37
+        },
+        "gpuEncPct": {
+          "max": 30
+        },
+        "eventLoopLagP99Ms": {
+          "max": 35.3
+        },
+        "generatorListMs": {
+          "max": 8
+        },
+        "targetSendMbps": {
+          "mean": 373.8
+        },
+        "targetDiscardedFrames": 229164,
+        "targetSessionsMax": 54
+      },
+      "decodedFps": "not measured",
+      "renderedFps": "not measured",
+      "avSync": "not measured",
+      "liveLatencyMs": "not measured",
+      "rebuffering": "stall windows only (byte growth); player rebuffering not measured",
+      "browser": {
+        "tool": "browser-sampler",
+        "url": "http://127.0.0.1:21888/screen-01",
+        "count": 2,
+        "seconds": 20,
+        "startedAt": "2026-10-28T04:18:49.602Z",
+        "browser": "Edg/156.0.4314.42",
+        "headless": true,
+        "definitions": {
+          "firstFrameMs": "page navigation start -> first presented video frame (requestVideoFrameCallback), includes page load, WHEP/ICE and first keyframe",
+          "presentedFps": "presented frames per second in the window (rVFC)",
+          "freeze": "gap > 500 ms between presented frames",
+          "latencyMs": "barcode stamp (source wall clock) -> expected display time; needs a shared clock"
+        },
+        "pages": [
+          {
+            "index": 0,
+            "firstFrameMs": 4110,
+            "windowSec": 20,
+            "presentedFps": 22.1,
+            "freezes": 0,
+            "freezeMs": 0,
+            "maxGapMs": 433,
+            "decodedWidth": 852,
+            "decodedHeight": 480,
+            "decodedFps": 31.2,
+            "decodedFpsBasis": "connection created inside the window, since its creation",
+            "framesDropped": 0,
+            "statsFreezeCount": 0,
+            "statsFreezeSec": 0,
+            "decoder": null,
+            "powerEfficientDecoder": null,
+            "videoPacketsLost": 0,
+            "videoPacketsReceived": 1015,
+            "videoLossRatio": 0,
+            "videoJitterMs": 10,
+            "jitterBufferMs": 51.4,
+            "videoKbps": 832,
+            "nack": 0,
+            "pli": 2,
+            "audio": {
+              "packetsLost": 0,
+              "jitterMs": 8,
+              "concealedRatio": 0.17053
+            },
+            "rttMs": 11,
+            "peerConnections": 1,
+            "connectionChangedInWindow": true,
+            "videoElementSwitches": 2,
+            "peerConnectionLog": [
+              {
+                "id": 1,
+                "createdMs": 893,
+                "state": "closed"
+              },
+              {
+                "id": 2,
+                "createdMs": 13070,
+                "state": "closed"
+              },
+              {
+                "id": 3,
+                "createdMs": 19072,
+                "state": "connected"
+              }
+            ],
+            "windowStartMs": 6329,
+            "latencyMs": "not measured (source has no live barcode)",
+            "avSync": "not measured",
+            "video": "video",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+          },
+          {
+            "index": 1,
+            "firstFrameMs": 3982,
+            "windowSec": 20,
+            "presentedFps": 19.3,
+            "freezes": 2,
+            "freezeMs": 2417,
+            "maxGapMs": 1600,
+            "decodedWidth": 1280,
+            "decodedHeight": 720,
+            "decodedFps": 22.2,
+            "decodedFpsBasis": "connection created inside the window, since its creation",
+            "framesDropped": 0,
+            "statsFreezeCount": 0,
+            "statsFreezeSec": 0,
+            "decoder": null,
+            "powerEfficientDecoder": null,
+            "videoPacketsLost": 0,
+            "videoPacketsReceived": 2957,
+            "videoLossRatio": 0,
+            "videoJitterMs": 15,
+            "jitterBufferMs": 215.2,
+            "videoKbps": 1613,
+            "nack": 0,
+            "pli": 6,
+            "audio": {
+              "packetsLost": 5,
+              "jitterMs": 11,
+              "concealedRatio": 0.51582
+            },
+            "rttMs": 0,
+            "peerConnections": 1,
+            "connectionChangedInWindow": true,
+            "videoElementSwitches": 1,
+            "peerConnectionLog": [
+              {
+                "id": 1,
+                "createdMs": 883,
+                "state": "closed"
+              },
+              {
+                "id": 2,
+                "createdMs": 11946,
+                "state": "connected"
+              }
+            ],
+            "windowStartMs": 6106,
+            "latencyMs": "not measured (source has no live barcode)",
+            "avSync": "not measured",
+            "video": "video",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+          }
+        ],
+        "summary": {
+          "ok": 2,
+          "failed": 0,
+          "firstFrameMs": {
+            "p50": 3982,
+            "p95": 4110
+          },
+          "presentedFps": {
+            "mean": 20.7,
+            "min": 19.3
+          },
+          "decodedFps": {
+            "mean": 26.7
+          },
+          "freezes": 2,
+          "freezeMs": 2417,
+          "framesDropped": 0,
+          "videoLossRatioMax": 0,
+          "resolution": [
+            "852x480",
+            "1280x720"
+          ],
+          "connectionChanges": 2,
+          "latencyMs": "not measured"
+        }
+      },
+      "abortReason": null
+    },
+    {
+      "stage": 100,
+      "requested": 100,
+      "holdSec": 60.1,
+      "measuredViewers": 100,
+      "joined": 50,
+      "addFailed": 0,
+      "addApiMsP95": 15,
+      "firstMediaMs": {
+        "n": 50,
+        "p50": 512,
+        "p95": 649,
+        "max": 718
+      },
+      "firstMediaTimeouts": 0,
+      "sustainedReceiving": 100,
+      "successRate": 1,
+      "successBasis": "requested viewers",
+      "fullRateSuccessRate": 0,
+      "referenceKbps": 8270,
+      "referenceFrom": "target ingest rate (MediaMTX API)",
+      "receivingRatio": {
+        "min": 1,
+        "mean": 1
+      },
+      "stallTimeRatio": 0,
+      "lowRateWindowRatio": 0,
+      "stallEvents": 0,
+      "viewersWithStall": 0,
+      "rssTrendMBPerMin": {
+        "generator": 3.98,
+        "target": 409.51
+      },
+      "disconnects": 0,
+      "reconnects": 23,
+      "perViewerKbps": {
+        "p5": 3380,
+        "p50": 3826,
+        "p95": 4390,
+        "mean": 3841
+      },
+      "totalMbps": {
+        "mean": 384.1,
+        "max": 456.1
+      },
+      "sourceKbps": 8270,
+      "rateVsSource": {
+        "p5": 0.409,
+        "p50": 0.463,
+        "degradedViewers": 100
+      },
+      "rtpPacketsLost": 239380,
+      "lostPerViewerMinute": 2392.3,
+      "lossRatioEst": 0.08717,
+      "processingErrors": 0,
+      "iceCandidatePairs": {
+        "host/udp cgnat-vpn -> host/udp cgnat-vpn": 34,
+        "host/udp private -> host/udp private": 10,
+        "host/udp ula -> host/udp ula": 54,
+        "host/udp loopback -> host/udp loopback": 2
+      },
+      "churn": null,
+      "qualityMix": {
+        "source": 100
+      },
+      "chat": null,
+      "dvr": null,
+      "resources": {
+        "genCpuPct": {
+          "mean": 10.5,
+          "max": 12.9
+        },
+        "genRssMB": {
+          "max": 491.3
+        },
+        "targetCpuPct": {
+          "mean": 14.9,
+          "max": 20.7
+        },
+        "targetRssMB": {
+          "max": 889.8
+        },
+        "hostCpuPct": {
+          "mean": 47.2,
+          "max": 74.2
+        },
+        "freeMemMB": {
+          "min": 2259
+        },
+        "nicRxMbps": {
+          "mean": 5
+        },
+        "nicTxMbps": {
+          "mean": 0.1
+        },
+        "gpuPct": {
+          "max": 41
+        },
+        "gpuEncPct": {
+          "max": 18
+        },
+        "eventLoopLagP99Ms": {
+          "max": 34.6
+        },
+        "generatorListMs": {
+          "max": 6
+        },
+        "targetSendMbps": {
+          "mean": 393.2
+        },
+        "targetDiscardedFrames": 2686170,
+        "targetSessionsMax": 104
+      },
+      "decodedFps": "not measured",
+      "renderedFps": "not measured",
+      "avSync": "not measured",
+      "liveLatencyMs": "not measured",
+      "rebuffering": "stall windows only (byte growth); player rebuffering not measured",
+      "browser": {
+        "tool": "browser-sampler",
+        "url": "http://127.0.0.1:21888/screen-01",
+        "count": 2,
+        "seconds": 20,
+        "startedAt": "2026-10-28T04:20:05.156Z",
+        "browser": "Edg/156.0.4314.42",
+        "headless": true,
+        "definitions": {
+          "firstFrameMs": "page navigation start -> first presented video frame (requestVideoFrameCallback), includes page load, WHEP/ICE and first keyframe",
+          "presentedFps": "presented frames per second in the window (rVFC)",
+          "freeze": "gap > 500 ms between presented frames",
+          "latencyMs": "barcode stamp (source wall clock) -> expected display time; needs a shared clock"
+        },
+        "pages": [
+          {
+            "index": 0,
+            "firstFrameMs": 1681,
+            "windowSec": 20,
+            "presentedFps": 14.4,
+            "freezes": 2,
+            "freezeMs": 2517,
+            "maxGapMs": 1867,
+            "decodedWidth": 1280,
+            "decodedHeight": 720,
+            "decodedFps": 14.2,
+            "decodedFpsBasis": "connection created inside the window, since its creation",
+            "framesDropped": 0,
+            "statsFreezeCount": 0,
+            "statsFreezeSec": 0,
+            "decoder": null,
+            "powerEfficientDecoder": null,
+            "videoPacketsLost": 0,
+            "videoPacketsReceived": 1698,
+            "videoLossRatio": 0,
+            "videoJitterMs": 7,
+            "jitterBufferMs": 59.3,
+            "videoKbps": 1061,
+            "nack": 0,
+            "pli": 9,
+            "audio": {
+              "packetsLost": 0,
+              "jitterMs": 20,
+              "concealedRatio": 0.71197
+            },
+            "rttMs": 7,
+            "peerConnections": 1,
+            "connectionChangedInWindow": true,
+            "videoElementSwitches": 1,
+            "peerConnectionLog": [
+              {
+                "id": 1,
+                "createdMs": 946,
+                "state": "closed"
+              },
+              {
+                "id": 2,
+                "createdMs": 11646,
+                "state": "connected"
+              }
+            ],
+            "windowStartMs": 3851,
+            "latencyMs": "not measured (source has no live barcode)",
+            "avSync": "not measured",
+            "video": "video",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+          },
+          {
+            "index": 1,
+            "firstFrameMs": 1803,
+            "windowSec": 20,
+            "presentedFps": 14.8,
+            "freezes": 3,
+            "freezeMs": 2100,
+            "maxGapMs": 867,
+            "decodedWidth": 1280,
+            "decodedHeight": 720,
+            "decodedFps": 14.1,
+            "decodedFpsBasis": "connection created inside the window, since its creation",
+            "framesDropped": 0,
+            "statsFreezeCount": 0,
+            "statsFreezeSec": 0,
+            "decoder": null,
+            "powerEfficientDecoder": null,
+            "videoPacketsLost": 0,
+            "videoPacketsReceived": 1624,
+            "videoLossRatio": 0,
+            "videoJitterMs": 7,
+            "jitterBufferMs": 68.2,
+            "videoKbps": 1025,
+            "nack": 0,
+            "pli": 10,
+            "audio": {
+              "packetsLost": 0,
+              "jitterMs": 27,
+              "concealedRatio": 0.6931
+            },
+            "rttMs": 10,
+            "peerConnections": 1,
+            "connectionChangedInWindow": true,
+            "videoElementSwitches": 1,
+            "peerConnectionLog": [
+              {
+                "id": 1,
+                "createdMs": 935,
+                "state": "closed"
+              },
+              {
+                "id": 2,
+                "createdMs": 11745,
+                "state": "connected"
+              }
+            ],
+            "windowStartMs": 3825,
+            "latencyMs": "not measured (source has no live barcode)",
+            "avSync": "not measured",
+            "video": "video",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+          }
+        ],
+        "summary": {
+          "ok": 2,
+          "failed": 0,
+          "firstFrameMs": {
+            "p50": 1681,
+            "p95": 1803
+          },
+          "presentedFps": {
+            "mean": 14.6,
+            "min": 14.4
+          },
+          "decodedFps": {
+            "mean": 14.2
+          },
+          "freezes": 5,
+          "freezeMs": 4617,
+          "framesDropped": 0,
+          "videoLossRatioMax": 0,
+          "resolution": [
+            "1280x720"
+          ],
+          "connectionChanges": 2,
+          "latencyMs": "not measured"
+        }
+      },
+      "abortReason": null
+    },
+    {
+      "stage": 200,
+      "requested": 200,
+      "holdSec": 60,
+      "measuredViewers": 200,
+      "joined": 100,
+      "addFailed": 0,
+      "addApiMsP95": 27,
+      "firstMediaMs": {
+        "n": 100,
+        "p50": 724,
+        "p95": 1119,
+        "max": 1576
+      },
+      "firstMediaTimeouts": 0,
+      "sustainedReceiving": 200,
+      "successRate": 1,
+      "successBasis": "requested viewers",
+      "fullRateSuccessRate": 0,
+      "referenceKbps": 8265,
+      "referenceFrom": "target ingest rate (MediaMTX API)",
+      "receivingRatio": {
+        "min": 1,
+        "mean": 1
+      },
+      "stallTimeRatio": 0,
+      "lowRateWindowRatio": 0,
+      "stallEvents": 0,
+      "viewersWithStall": 0,
+      "rssTrendMBPerMin": {
+        "generator": 49.46,
+        "target": 420.42
+      },
+      "disconnects": 0,
+      "reconnects": 65,
+      "perViewerKbps": {
+        "p5": 1329,
+        "p50": 1469,
+        "p95": 1717,
+        "mean": 1483
+      },
+      "totalMbps": {
+        "mean": 296.6,
+        "max": 348.1
+      },
+      "sourceKbps": 8265,
+      "rateVsSource": {
+        "p5": 0.161,
+        "p50": 0.178,
+        "degradedViewers": 200
+      },
+      "rtpPacketsLost": 838702,
+      "lostPerViewerMinute": 4190.5,
+      "lossRatioEst": 0.30229,
+      "processingErrors": 0,
+      "iceCandidatePairs": {
+        "host/udp cgnat-vpn -> host/udp cgnat-vpn": 66,
+        "host/udp private -> host/udp private": 20,
+        "host/udp ula -> host/udp ula": 108,
+        "host/udp loopback -> host/udp loopback": 6
+      },
+      "churn": null,
+      "qualityMix": {
+        "source": 200
+      },
+      "chat": null,
+      "dvr": null,
+      "resources": {
+        "genCpuPct": {
+          "mean": 10.6,
+          "max": 12
+        },
+        "genRssMB": {
+          "max": 658.2
+        },
+        "targetCpuPct": {
+          "mean": 16,
+          "max": 19.7
+        },
+        "targetRssMB": {
+          "max": 1386.4
+        },
+        "hostCpuPct": {
+          "mean": 48.2,
+          "max": 77.9
+        },
+        "freeMemMB": {
+          "min": 2386
+        },
+        "nicRxMbps": {
+          "mean": 3.2
+        },
+        "nicTxMbps": {
+          "mean": 0.1
+        },
+        "gpuPct": {
+          "max": 40
+        },
+        "gpuEncPct": {
+          "max": 19
+        },
+        "eventLoopLagP99Ms": {
+          "max": 33.8
+        },
+        "generatorListMs": {
+          "max": 14
+        },
+        "targetSendMbps": {
+          "mean": 303.6
+        },
+        "targetDiscardedFrames": 9222065,
+        "targetSessionsMax": 204
+      },
+      "decodedFps": "not measured",
+      "renderedFps": "not measured",
+      "avSync": "not measured",
+      "liveLatencyMs": "not measured",
+      "rebuffering": "stall windows only (byte growth); player rebuffering not measured",
+      "browser": {
+        "tool": "browser-sampler",
+        "url": "http://127.0.0.1:21888/screen-01",
+        "count": 2,
+        "seconds": 20,
+        "startedAt": "2026-10-28T04:21:25.168Z",
+        "browser": "Edg/156.0.4314.42",
+        "headless": true,
+        "definitions": {
+          "firstFrameMs": "page navigation start -> first presented video frame (requestVideoFrameCallback), includes page load, WHEP/ICE and first keyframe",
+          "presentedFps": "presented frames per second in the window (rVFC)",
+          "freeze": "gap > 500 ms between presented frames",
+          "latencyMs": "barcode stamp (source wall clock) -> expected display time; needs a shared clock"
+        },
+        "pages": [
+          {
+            "index": 0,
+            "firstFrameMs": 2254,
+            "windowSec": 20,
+            "presentedFps": 9.6,
+            "freezes": 0,
+            "freezeMs": 0,
+            "maxGapMs": 217,
+            "decodedWidth": 1280,
+            "decodedHeight": 720,
+            "decodedFps": 9.2,
+            "decodedFpsBasis": "connection created inside the window, since its creation",
+            "framesDropped": 0,
+            "statsFreezeCount": 0,
+            "statsFreezeSec": 0,
+            "decoder": null,
+            "powerEfficientDecoder": null,
+            "videoPacketsLost": 0,
+            "videoPacketsReceived": 985,
+            "videoLossRatio": 0,
+            "videoJitterMs": 10,
+            "jitterBufferMs": 119.2,
+            "videoKbps": 685,
+            "nack": 0,
+            "pli": 5,
+            "audio": {
+              "packetsLost": 0,
+              "jitterMs": 46,
+              "concealedRatio": 0.81652
+            },
+            "rttMs": 5,
+            "peerConnections": 1,
+            "connectionChangedInWindow": true,
+            "videoElementSwitches": 1,
+            "peerConnectionLog": [
+              {
+                "id": 1,
+                "createdMs": 891,
+                "state": "closed"
+              },
+              {
+                "id": 2,
+                "createdMs": 13175,
+                "state": "connected"
+              }
+            ],
+            "windowStartMs": 4387,
+            "latencyMs": "not measured (source has no live barcode)",
+            "avSync": "not measured",
+            "video": "video",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+          },
+          {
+            "index": 1,
+            "firstFrameMs": 2659,
+            "windowSec": 20,
+            "presentedFps": 9.8,
+            "freezes": 0,
+            "freezeMs": 0,
+            "maxGapMs": 233,
+            "decodedWidth": 1280,
+            "decodedHeight": 720,
+            "decodedFps": 9.7,
+            "decodedFpsBasis": "connection created inside the window, since its creation",
+            "framesDropped": 0,
+            "statsFreezeCount": 0,
+            "statsFreezeSec": 0,
+            "decoder": null,
+            "powerEfficientDecoder": null,
+            "videoPacketsLost": 0,
+            "videoPacketsReceived": 1049,
+            "videoLossRatio": 0,
+            "videoJitterMs": 12,
+            "jitterBufferMs": 89.4,
+            "videoKbps": 724,
+            "nack": 0,
+            "pli": 5,
+            "audio": {
+              "packetsLost": 0,
+              "jitterMs": 47,
+              "concealedRatio": 0.81495
+            },
+            "rttMs": 6,
+            "peerConnections": 1,
+            "connectionChangedInWindow": true,
+            "videoElementSwitches": 1,
+            "peerConnectionLog": [
+              {
+                "id": 1,
+                "createdMs": 878,
+                "state": "closed"
+              },
+              {
+                "id": 2,
+                "createdMs": 13529,
+                "state": "connected"
+              }
+            ],
+            "windowStartMs": 4804,
+            "latencyMs": "not measured (source has no live barcode)",
+            "avSync": "not measured",
+            "video": "video",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+          }
+        ],
+        "summary": {
+          "ok": 2,
+          "failed": 0,
+          "firstFrameMs": {
+            "p50": 2254,
+            "p95": 2659
+          },
+          "presentedFps": {
+            "mean": 9.7,
+            "min": 9.6
+          },
+          "decodedFps": {
+            "mean": 9.5
+          },
+          "freezes": 0,
+          "freezeMs": 0,
+          "framesDropped": 0,
+          "videoLossRatioMax": 0,
+          "resolution": [
+            "1280x720"
+          ],
+          "connectionChanges": 2,
+          "latencyMs": "not measured"
+        }
+      },
+      "abortReason": null
+    }
+  ],
+  "abort": null,
+  "saturation": [
+    {
+      "kind": "target-discarding-frames",
+      "stage": 50,
+      "phase": "hold",
+      "t": "2026-10-28T04:18:50.217Z",
+      "detail": {
+        "frames": 4,
+        "sessions": 50
+      }
+    },
+    {
+      "kind": "viewers-below-source-rate",
+      "stage": 50,
+      "phase": "hold",
+      "t": "2026-10-28T04:19:12.292Z",
+      "detail": {
+        "perViewerKbpsP50": 6348,
+        "sourceKbps": 8229
+      }
+    }
+  ],
+  "calibration": null,
+  "cleanup": {
+    "targetSessionsTrace": [
+      {
+        "afterMs": 2,
+        "targetSessions": 0
+      }
+    ],
+    "remainingTargetSessions": 0,
+    "targetAfter": {
+      "cpuPct": 19,
+      "rssMB": 1388.7,
+      "procs": 5
+    },
+    "targetBaseline": {
+      "cpuPct": 0.1,
+      "rssMB": 85.3
+    },
+    "chatServerClientsAfter": 0
+  },
+  "files": {
+    "stagesCsv": "stages.csv",
+    "samplesCsv": "samples.csv",
+    "generatorLogs": [
+      "generator-0.log"
+    ]
+  }
+}

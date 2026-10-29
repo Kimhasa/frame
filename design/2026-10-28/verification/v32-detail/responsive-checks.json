@@ -1,0 +1,460 @@
+[
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "profile",
+    "section": "프로필",
+    "spill": [],
+    "state": "기본",
+    "width": 320
+  },
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "security",
+    "section": "계정 연결",
+    "spill": [],
+    "state": "기본",
+    "width": 320
+  },
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "security",
+    "section": "보안 및 기기",
+    "spill": [],
+    "state": "기본",
+    "width": 320
+  },
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "preferences",
+    "section": "알림",
+    "spill": [],
+    "state": "기본",
+    "width": 320
+  },
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "preferences",
+    "section": "재생",
+    "spill": [],
+    "state": "기본",
+    "width": 320
+  },
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "profile",
+    "section": "프로필",
+    "spill": [],
+    "state": "닉네임 오류",
+    "width": 320
+  },
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "preferences",
+    "section": "알림",
+    "spill": [],
+    "state": "알림 차단",
+    "width": 320
+  },
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "security",
+    "section": "보안 및 기기",
+    "spill": [],
+    "state": "재인증 필요",
+    "width": 320
+  },
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "channel-edit",
+    "section": "",
+    "spill": [],
+    "state": "기본",
+    "width": 320
+  },
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "studio",
+    "section": "",
+    "spill": [],
+    "state": "방송 전",
+    "width": 320
+  },
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "live",
+    "section": "",
+    "spill": [],
+    "state": "방송 없음",
+    "width": 320,
+    "intentionalScroll": {
+      "contained": [
+        "일상·이야기",
+        "지식"
+      ],
+      "paragraphs": 0,
+      "railScrolls": true,
+      "railWithin": true
+    }
+  },
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "profile",
+    "section": "프로필",
+    "spill": [],
+    "state": "기본",
+    "width": 390
+  },
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "security",
+    "section": "계정 연결",
+    "spill": [],
+    "state": "기본",
+    "width": 390
+  },
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "security",
+    "section": "보안 및 기기",
+    "spill": [],
+    "state": "기본",
+    "width": 390
+  },
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "preferences",
+    "section": "알림",
+    "spill": [],
+    "state": "기본",
+    "width": 390
+  },
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "preferences",
+    "section": "재생",
+    "spill": [],
+    "state": "기본",
+    "width": 390
+  },
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "profile",
+    "section": "프로필",
+    "spill": [],
+    "state": "닉네임 오류",
+    "width": 390
+  },
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "preferences",
+    "section": "알림",
+    "spill": [],
+    "state": "알림 차단",
+    "width": 390
+  },
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "security",
+    "section": "보안 및 기기",
+    "spill": [],
+    "state": "재인증 필요",
+    "width": 390
+  },
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "channel-edit",
+    "section": "",
+    "spill": [],
+    "state": "기본",
+    "width": 390
+  },
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "studio",
+    "section": "",
+    "spill": [],
+    "state": "방송 전",
+    "width": 390
+  },
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "live",
+    "section": "",
+    "spill": [],
+    "state": "방송 없음",
+    "width": 390,
+    "intentionalScroll": {
+      "contained": [
+        "일상·이야기",
+        "지식"
+      ],
+      "paragraphs": 0,
+      "railScrolls": true,
+      "railWithin": true
+    }
+  },
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "profile",
+    "section": "프로필",
+    "spill": [],
+    "state": "기본",
+    "width": 820
+  },
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "security",
+    "section": "계정 연결",
+    "spill": [],
+    "state": "기본",
+    "width": 820
+  },
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "security",
+    "section": "보안 및 기기",
+    "spill": [],
+    "state": "기본",
+    "width": 820
+  },
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "preferences",
+    "section": "알림",
+    "spill": [],
+    "state": "기본",
+    "width": 820
+  },
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "preferences",
+    "section": "재생",
+    "spill": [],
+    "state": "기본",
+    "width": 820
+  },
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "profile",
+    "section": "프로필",
+    "spill": [],
+    "state": "닉네임 오류",
+    "width": 820
+  },
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "preferences",
+    "section": "알림",
+    "spill": [],
+    "state": "알림 차단",
+    "width": 820
+  },
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "security",
+    "section": "보안 및 기기",
+    "spill": [],
+    "state": "재인증 필요",
+    "width": 820
+  },
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "channel-edit",
+    "section": "",
+    "spill": [],
+    "state": "기본",
+    "width": 820
+  },
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "studio",
+    "section": "",
+    "spill": [],
+    "state": "방송 전",
+    "width": 820
+  },
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "live",
+    "section": "",
+    "spill": [],
+    "state": "방송 없음",
+    "width": 820
+  },
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "profile",
+    "section": "프로필",
+    "spill": [],
+    "state": "기본",
+    "width": 1440
+  },
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "security",
+    "section": "계정 연결",
+    "spill": [],
+    "state": "기본",
+    "width": 1440
+  },
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "security",
+    "section": "보안 및 기기",
+    "spill": [],
+    "state": "기본",
+    "width": 1440
+  },
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "preferences",
+    "section": "알림",
+    "spill": [],
+    "state": "기본",
+    "width": 1440
+  },
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "preferences",
+    "section": "재생",
+    "spill": [],
+    "state": "기본",
+    "width": 1440
+  },
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "profile",
+    "section": "프로필",
+    "spill": [],
+    "state": "닉네임 오류",
+    "width": 1440
+  },
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "preferences",
+    "section": "알림",
+    "spill": [],
+    "state": "알림 차단",
+    "width": 1440
+  },
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "security",
+    "section": "보안 및 기기",
+    "spill": [],
+    "state": "재인증 필요",
+    "width": 1440
+  },
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "channel-edit",
+    "section": "",
+    "spill": [],
+    "state": "기본",
+    "width": 1440
+  },
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "studio",
+    "section": "",
+    "spill": [],
+    "state": "방송 전",
+    "width": 1440
+  },
+  {
+    "activeVisible": true,
+    "overflow": 0,
+    "rowsTouch": true,
+    "screen": "live",
+    "section": "",
+    "spill": [],
+    "state": "방송 없음",
+    "width": 1440
+  }
+]

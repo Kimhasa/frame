@@ -1,0 +1,27 @@
+# /etc/systemd/system/mediamtx-relay.service — 중계 MediaMTX (deploy/README.md 참고)
+[Unit]
+Description=FRAME relay MediaMTX (RTSPS ingest, WebRTC/LL-HLS, DVR recording)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=frame-relay
+Group=frame-relay
+# 녹화(./recordings)가 이 폴더 아래에 쌓인다. relay.env의 RELAY_RECORD_DIR과 맞춘다.
+WorkingDirectory=/var/lib/frame-relay
+# 비밀(송출 비밀번호 해시, 공인 주소, 인증서 경로)은 yml이 아니라 환경 파일에서 온다.
+EnvironmentFile=/etc/frame-relay/mediamtx.env
+ExecStart=/usr/local/bin/mediamtx /etc/frame-relay/mediamtx-relay.yml
+Restart=on-failure
+RestartSec=2
+LimitNOFILE=65536
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/lib/frame-relay
+# 하위 화질·AAC 변환을 쓰면 FFmpeg 자식 프로세스가 같은 제한 안에서 돈다.
+
+[Install]
+WantedBy=multi-user.target

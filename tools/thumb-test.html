@@ -1,0 +1,23 @@
+<!doctype html>
+<!-- Window-picker thumbnail test window: ?title=...&mode=pattern|black|static. The clock tells a current image from an old one. -->
+<html lang="ko"><head><meta charset="utf-8"><title>FRAME 미리보기 시험</title>
+<style>
+  html, body { margin: 0; height: 100%; overflow: hidden; font: 700 7vh/1.2 'Malgun Gothic', sans-serif; color: #fff; }
+  body.pattern { background: linear-gradient(90deg, #d33 0 25%, #2a2 25% 50%, #33d 50% 75%, #dd3 75%); }
+  body.black { background: #000; }
+  body.static { background: #5b7d99; }
+  #label { position: absolute; left: 4vw; top: 6vh; text-shadow: 0 2px 6px #0008; }
+  #clock { position: absolute; left: 4vw; bottom: 8vh; font-size: 12vh; font-variant-numeric: tabular-nums; text-shadow: 0 2px 6px #0008; }
+  #bar { position: absolute; top: 0; bottom: 0; width: 3vw; background: #fff; opacity: .85; }
+  body.black #label, body.black #clock, body.black #bar { display: none; }
+</style></head>
+<body><div id="bar"></div><div id="label"></div><div id="clock"></div>
+<script>
+  const q = new URLSearchParams(location.search), mode = q.get('mode') || 'pattern';
+  document.title = q.get('title') || 'FRAME 미리보기 시험';
+  document.body.className = mode;
+  document.getElementById('label').textContent = document.title;
+  const clock = document.getElementById('clock'), bar = document.getElementById('bar');
+  const tick = () => { const d = new Date(); clock.textContent = d.toTimeString().slice(0, 8) + '.' + String(d.getMilliseconds()).padStart(3, '0').slice(0, 1); bar.style.left = (performance.now() / 20 % 100) + 'vw'; if (mode !== 'static') requestAnimationFrame(tick); };
+  tick(); if (mode === 'static') setInterval(tick, 1000);
+</script></body></html>

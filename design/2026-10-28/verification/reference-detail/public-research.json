@@ -1,0 +1,85 @@
+{
+  "date": "2026-10-29",
+  "observations": [
+    {
+      "service": "CHZZK",
+      "source": "live public page",
+      "observation": {
+        "url": "https://chzzk.naver.com/lives",
+        "title": "치지직 - CHZZK",
+        "cards": [
+          {
+            "text": "LIVE\n8,024명\n침착맨라이브 엔드로 이동",
+            "parent": "LIVE\n8,024명\n침착맨라이브 엔드로 이동\n침착맨 채널로 이동\n개 훈련사 강형욱 님과 육아 난이도 높은 반려견 특징 월드컵\n라이브 엔드로 이동\n침착맨\n스트리머 채널로 이동\ntalk",
+            "className": "_thumbnail_195e3_10"
+          },
+          {
+            "text": "개 훈련사 강형욱 님과 육아 난이도 높은 반려견 특징 월드컵\n라이브 엔드로 이동",
+            "parent": "개 훈련사 강형욱 님과 육아 난이도 높은 반려견 특징 월드컵\n라이브 엔드로 이동\n침착맨\n스트리머 채널로 이동\ntalk",
+            "className": "_title_195e3_40"
+          }
+        ],
+        "scroll": [
+          {
+            "className": "_content_1b725_30",
+            "bar": "none",
+            "thumb": "auto"
+          }
+        ]
+      }
+    },
+    {
+      "service": "YouTube",
+      "source": "public page recheck",
+      "observation": {
+        "url": "https://www.youtube.com/feed/live",
+        "title": "YouTube",
+        "cards": [],
+        "body": "홈\nShorts\n구독\n내 페이지"
+      }
+    },
+    {
+      "service": "Twitch",
+      "source": "live public page",
+      "observation": {
+        "url": "https://www.twitch.tv/directory",
+        "title": "모든 카테고리 - Twitch",
+        "text": "알림: 한국 시간 기준 2024년 2월 27일부로 한국 내 Twitch 운영이 종료됩니다. 도움말 페이지에서 정보를 확인하거나 도움을 받으세요.\n\n이동하기...\nAlt\nP\n\n탐색\n\n9\n로그인\n회원가입\n생방송 채널\n\n우정우정우정우정 (woojungx4)\n\nJust Chatting\n\n방송 중\n\n488\n\n시청자 488명\n\nPGL\n\n카운터 스트라이크: 글로벌 오펜시브\n\n방송 중\n\n2,345\n\n시청자 2,345명\n\nj0beats\n\n포켓몬 Go\n\n방송 중\n\n333\n\n시청자 333명\n\n세림잉 (serimm11)\n\nJust Chatting\n\n방송 중\n\n178\n\n시청자 178명\n\nyeo_ul\n\nJust Chatting\n\n방송 중\n\n156\n\n시청자 156명\n\nCaedrel247\n\n리그 오브 레전드\n\n방송 중\n\n3,622\n\n시청자 3,622명\n\nStreamDatabase\n\nJust Chatting\n\n방송 중\n\n264\n\n시청자 264명\n\nbetitoDeidadSyGOD\n\n포켓몬 Go\n\n방송 중\n\n352\n\n시청자 352명\n\nTwitchPlaysPokemon\n\nPokémon FireRed/LeafGreen\n\n방송 중\n\n542\n\n시청자 542명\n\nagurin\n\n리그 오브 레전드\n\n방송 중\n\n2,782\n\n시청자 2,782명\n\n탐색\n\n게임\n\n리얼라이프\n\n음악 및 DJ\n\n크리에이티브\n\ne스포츠\n\n카테고리\n생방송 채널\nSearch\n\n정렬:\n추천\nStream-o-Ween\n\n시청자 1.7만명\n\nJust Chatting\n\n시청자 10.2만명\n\n리얼라이프\n리그 오브 레전드\n\n시청자 4.6만명\n\nRPG\n전략\nMOBA\n발로란트\n\n시청자 3.9만명\n\nFPS\n슈팅 장르\n액션\n월드 오브 워크래프트\n\n시청자 1.3만명\n\nRPG\n어드벤처 게임\nAION 2\n\n시청자 4.8만명\n\nRPG\n어드벤처 게임\n헌트 쇼다운\n\n시청자 4,955명\n\nFPS\n슈팅 장르\nOverwatch\n\n시청자 1만명\n\nFPS\n슈팅 장르\n액션\n워 썬더\n\n시청자 246명\n\nFPS\n슈팅 장르\n포켓몬 Go\n\n시청자 1,479명\n\n모바일 게임\nRPG\n카운터 스트라이크: 글로벌 오펜시브\n\n시청자 2.2만명\n\nFPS\n슈팅 장르\n액션\n신규\n콜 오브 듀티: 모던 워페어 4\n\n시청자 2.1만명\n\nFPS\n슈팅 장르\n액션\n러스트\n\n시청자 2,668명\n\nFPS\n슈팅 장르\nRPG\nMinecraft\n\n시청자 2.8만명\n\n시뮬레이션\n어드벤처 게임\n데드 바이 데이라이트\n\n시청자 1.5만명\n\n전략\n액션\n공포\n생존\n검은사막\n\n시청",
+        "cards": [],
+        "scroll": [
+          {
+            "className": "scrollable-area root-scrollable root-scrollable__content",
+            "bar": "auto"
+          }
+        ]
+      }
+    },
+    {
+      "service": "SOOP",
+      "source": "public page recheck",
+      "observation": {
+        "url": "https://www.sooplive.com/",
+        "title": "SOOP",
+        "text": "메뉴 확장/축소\n검색\n알림\n로그인\n설정\n전체메뉴\n\nLIVE\n\n탐색\n\nMY\n\nCatch\n\n인기\n두치와뿌꾸\nFC 온라인\n13,662\n철구형2↑\n토크/캠방\n11,032\n수피\n여행\n10,837\n김학수\n스타크래프트\n5,880\n제갈금자\n버추얼\n4,929\n리스트 새로고침\n더보기\n\ne스포츠\n\n숲토어\n\n소통센터\n\n랭킹\n\n이벤트\n\n마빡\n\n미쳤다;; 열쇠800개 떴다!!! 열쇠 종류별로 몸빵개봉갑니다 확률검증 FC온라인 피파4 마빡\n\nFC 온라인\n라이브 이어보기\n\n하두링\n\n대만 스펀 소원등 날리러 *용돈 여행*뉴엔터\n\n여행\n라이브 이어보기\n\n두치와뿌꾸\n\n장거리 형님 오셨다 폭풍현질 시작합니다 모먼트 13카 오우너.. [감컴 어인섬] 피파4\n\nFC 온라인\n라이브 이어보기\n\n하치_HACHI\n\n콜옵 해볼게영~~~\n\n콜 오브 듀티: 모던 워페어 4\n라이브 이어보기\n이전\n다음\n\n마빡\n\n402명 참여 중\n\n하두링\n\n404명 참여 중\n\n두치와뿌꾸\n\n13,662명 참여 중\n\n하치_HACHI\n\n1,318명 참여 중\n10/29(목) 오후 2시\n도심 속 자연 쉼터\n\n일산호수공원 힐링 LIVE\n\nLIVE\n10/30(금) 새벽 5시\n2026 WORLDS\n\nCFO vs KC\nBLG vs TES\n\n방송 알람\n10/29(목) 밤 9시\n달체솜&니프의\n\n할로윈 노래대회\n\n방송 알람\n10/29(목) 저녁 8시\n노래 잘하는 사람들의\n\n기상천외 연기대결\n\n방송 알람\n10/29(목) 저녁 8시\n키마의 THE WAV\n\nEP.1\n\n방송 알람\n10/29(목) 저녁 8시\nISSL : Premier\n\n16강 조별 풀리그\n\n방송 알람\n10/29(목) 밤 10시\n미스트롯 포유\n\n보석함 특집\n\n방송 알람\n10/26(월) ~ 11/1(일)\n스트리머 편성 지원\n\n퇴근길 스트리머 지원하고\n배너 편성 지원 받자!\n\n0\n10/29(목) ~ 11/2(월)\n괴산 김장축",
+        "cards": [
+          {
+            "text": "두치와뿌꾸\nFC 온라인\n13,662",
+            "parent": "두치와뿌꾸\nFC 온라인\n13,662"
+          },
+          {
+            "text": "철구형2↑\n토크/캠방\n11,032",
+            "parent": "철구형2↑\n토크/캠방\n11,032"
+          },
+          {
+            "text": "수피\n여행\n10,837",
+            "parent": "수피\n여행\n10,837"
+          }
+        ]
+      }
+    }
+  ],
+  "limits": [
+    "이번 YouTube 공개 라이브 페이지에서는 목록 본문이 표시되지 않음. 이전 캡처와 공식 안내를 구분해 참고.",
+    "각 서비스의 비로그인 공개 화면을 확인했으며 실제 계정 닉네임 변경이나 방송 시작·설정 저장은 수행하지 않음."
+  ]
+}

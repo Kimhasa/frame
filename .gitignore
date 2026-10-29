@@ -9,6 +9,10 @@
 
 # Local runtime configuration, recordings and browser data.
 /config/frame-console.json
+# Relay credentials and tokens never go into the repository.
+**/frame-console.secrets.json
+*.env
+!*.env.example
 /data/
 /recordings/
 /runtime/
@@ -37,6 +41,13 @@ node_modules/
 *.key
 *.pfx
 *.p12
+
+# Signed-in account research stays local; reviewed safe references are copied into design dist assets.
+/design/**/research/logged-in-*/
+/design/**/research/broadcast-*/
+/design/**/research/account-*/
+/design/**/dist/assets/account-references/
+/design/**/account-research.html
 
 # Windows metadata.
 Thumbs.db

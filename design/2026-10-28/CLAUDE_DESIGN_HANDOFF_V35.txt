@@ -1,0 +1,18 @@
+FRAME 최신 시안 인계 · v3.5
+
+작업 폴더: C:\Users\wlsdu\OneDrive\Desktop\frame
+최신 시안: design\2026-10-28\dist\index.html
+최신 비교: http://127.0.0.1:5328/authenticated-review.html
+
+AUTHENTICATED_REVIEW.txt, TERMINOLOGY.txt와 기존 CLAUDE_DESIGN_HANDOFF_V33.txt를 함께 확인한다.
+기존 wrapper 뒤에 design-v35-content → design-v35-navigation → design-v35-channel → design-events 순서를 유지한다.
+과거 캡처보다 현재 실행 시안의 조회수 표기·부모/자식 메뉴 계층·소셜 링크 편집을 우선한다.
+조회수는 콘텐츠 모델에서, 현재 시청자 수는 라이브 세션에서 받아 혼용하지 않는다.
+기존 마크업 숫자 해석과 로컬 state는 시안 이행용이다. 실제 콘텐츠 ID/viewCount/publishedAt 및 권한·저장 API로 교체한다.
+부모 페이지 이동과 하위 접기 버튼, current-group과 current-page, 탭과 내비게이션을 구분한다.
+소셜 링크는 기존 채널 저장·취소와 원자적으로 연결하고 서버에서도 URL/개수/권한을 검증한다.
+미저장 입력은 공개 채널에 반영하지 않는다. 저장 실패와 네트워크 실패를 성공으로 표시하지 않는다.
+개인 계정 연구 원본을 배포 산출물에 포함하지 않는다.
+치지직 스튜디오와 Twitch 방송자 설정의 동의창 뒤 기능은 직접 검증하지 못했다. 접근 가능한 계정으로 별도 확인한다.
+보존 플레이어·화질·미디어·실제 앱 파일의 기준 해시를 덮어쓰지 않는다.
+시안이 구현되어 있다는 것과 실제 서버·미디어 기능이 완성되었다는 것을 구분해 보고한다.

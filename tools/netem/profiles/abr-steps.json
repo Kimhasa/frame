@@ -1,0 +1,17 @@
+{
+  "name": "abr-steps",
+  "description": "자동 화질 시험용 하향 대역폭 계단 15→8→3→1→0.5→8→15 Mbps(사용자 요청 순서). 단계 길이는 자동 화질의 판단 창(하향 3초, 상향 12초 안정 + 상향 대기 12초, 실패 시 2배)보다 충분히 길게 40~90초로 잡았다. FRAME 화질 사다리 1080p 8M / 720p 4M / 480p 1.5M 기준으로 15M은 1080p, 8M은 720p, 3M은 480p까지 맞고 1M·0.5M은 어떤 화질도 맞지 않는다.",
+  "defaults": {
+    "down": { "rateMbps": 15, "maxQueueMs": 250, "delayMs": 20, "jitterMs": 2 },
+    "up": { "rateMbps": 5, "maxQueueMs": 250, "delayMs": 20 }
+  },
+  "steps": [
+    { "label": "15M", "duration": 40, "down": { "rateMbps": 15 } },
+    { "label": "8M", "duration": 50, "down": { "rateMbps": 8 } },
+    { "label": "3M", "duration": 50, "down": { "rateMbps": 3 } },
+    { "label": "1M", "duration": 45, "down": { "rateMbps": 1 } },
+    { "label": "0.5M", "duration": 45, "down": { "rateMbps": 0.5 } },
+    { "label": "8M-again", "duration": 60, "down": { "rateMbps": 8 } },
+    { "label": "15M-again", "duration": 90, "down": { "rateMbps": 15 } }
+  ]
+}

@@ -1,0 +1,116 @@
+{
+  "tool": "tools/netem/run-verify.mjs",
+  "date": "2026-10-28T03:19:08.625Z",
+  "host": {
+    "node": "v24.22.1",
+    "os": "win32",
+    "cpu": "11th Gen Intel(R) Core(TM) i7-11800H @ 2.30GHz",
+    "logicalCpus": 16,
+    "memGB": 15.8
+  },
+  "browser": "Edg/156.0.4314.42",
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0",
+  "mediamtx": "v1.21.3",
+  "ffmpeg": "ffmpeg version 9.0.2-essentials_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers",
+  "source": {
+    "video": "testsrc2 1920x1080 60fps",
+    "encoder": "h264_nvenc",
+    "mbps": 8,
+    "gop": 60,
+    "bframes": 0,
+    "audio": "sine 440 Hz, Opus 128k stereo 10 ms"
+  },
+  "page": "whep",
+  "viewerUrl": "http://127.0.0.1:22080/?whep=http%3A%2F%2F127.0.0.1%3A22889%2Ftest%2Fwhep",
+  "attached": false,
+  "proxy": {
+    "listen": "127.0.0.1:22300",
+    "target": "127.0.0.1:22189",
+    "keepLocalCandidates": false
+  },
+  "profile": {
+    "file": "C:\\Users\\wlsdu\\OneDrive\\Desktop\\frame\\tools\\netem\\profiles\\steps.json",
+    "name": "steps",
+    "timeScale": 0.4,
+    "total": 70,
+    "steps": [
+      {
+        "label": "15M",
+        "start": 0,
+        "duration": 10
+      },
+      {
+        "label": "8M",
+        "start": 10,
+        "duration": 10
+      },
+      {
+        "label": "3M",
+        "start": 20,
+        "duration": 10
+      },
+      {
+        "label": "1M",
+        "start": 30,
+        "duration": 10
+      },
+      {
+        "label": "0.5M",
+        "start": 40,
+        "duration": 10
+      },
+      {
+        "label": "8M-again",
+        "start": 50,
+        "duration": 10
+      },
+      {
+        "label": "15M-again",
+        "start": 60,
+        "duration": 10
+      }
+    ]
+  },
+  "warmupSeconds": 6,
+  "ports": {
+    "rtsp": 22554,
+    "webrtc": 22889,
+    "iceUdp": 22189,
+    "iceTcp": 22190,
+    "proxy": 22300,
+    "devtools": 22222,
+    "page": 22080
+  },
+  "page_state": {
+    "netem": {
+      "cfg": {
+        "proxyAddress": "-",
+        "proxyPort": 0,
+        "serverAddress": null,
+        "serverPort": null,
+        "keepLocalCandidates": false,
+        "keepIceServers": false,
+        "recordOnly": true
+      },
+      "rewrites": [],
+      "strippedOffers": 0,
+      "droppedPatches": 0,
+      "created": 1
+    },
+    "viewer": {
+      "connects": 1,
+      "failures": 0,
+      "state": "연결 상태: connected",
+      "lastError": null,
+      "firstFrameMs": [
+        2433
+      ]
+    },
+    "quality": {
+      "videoWidth": 1920,
+      "videoHeight": 1080,
+      "totalVideoFrames": 4912,
+      "droppedVideoFrames": 75
+    }
+  }
+}

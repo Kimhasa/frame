@@ -1,3 +1,6 @@
+2026-10-28 최신 우선 지시
+CLAUDE_PHASE1_INSTRUCTIONS.txt와 FEATURE_ROADMAP.txt, FEATURE_BACKLOG.csv를 먼저 읽는다. 이번 작업은 P0인 동시 시청 최대 1,000명 목표의 단계 부하 검증·실제 네트워크 자동 화질·모바일 시청과 필요한 공개 접속 기반이다. 아래의 과거 네트워크 전제와 개발 순서는 최신 지시로 대체한다. 제품 환경 문구 제거는 최신 지시의 허용 UI 변경이며 원본 UI 기준은 보존한다. 이미 구현된 기능을 다시 구현하지 말고 현재 코드와 검증 보고서에서 확인한다.
+
 FRAME Console 기능 구현 추가 지시
 
 작업 폴더: C:\Users\wlsdu\OneDrive\Desktop\frame
