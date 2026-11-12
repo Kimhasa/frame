@@ -1,4 +1,5 @@
-// Automatic playback quality in the real app: a LAN viewer (Edge, DevTools 9334) and the app's own viewer (9222).
+// Automatic playback quality in the real app: a LAN viewer (Edge, DevTools 9334; HLS with hls.js, whose player-size cap
+// and bandwidth estimate choose among live.m3u8's levels) and the app's own viewer (9222; WebRTC with the page's own ABR).
 // 1) the viewer's player is made small: automatic mode must move to a lower shared rendition (real decoded size changes)
 //    while the app's viewer keeps the original (independent choices); 2) back to full size: it must come back up after
 //    the calm period; 3) a manual choice must stay fixed through size changes; 4) server side: one encoder per quality.
@@ -24,7 +25,7 @@ const v = await connect(9334, t => t.type === 'page' && !t.url.startsWith('edge'
 await v.send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 1000, deviceScaleFactor: 1.75, mobile: false });
 await v.send('Page.navigate', { url: base }); await sleep(2500);
 await v.evaluate(`document.getElementById('viewer-form').requestSubmit()`);
-const st = c => c.evaluate(`(() => { const r = window.FrameRuntime.abr, x = window.FrameRuntime.video; return { mode: r.mode, playing: r.playing, decoded: x ? x.videoWidth + 'x' + x.videoHeight : null,
+const st = c => c.evaluate(`(() => { const r = window.FrameRuntime.abr, x = window.FrameRuntime.video; return { transport: window.FrameRuntime.hls ? window.FrameRuntime.hls.transport : 'webrtc', mode: r.mode, playing: r.playing, decoded: x ? x.videoWidth + 'x' + x.videoHeight : null,
   label: document.getElementById('player-quality-label').textContent, holdUpMs: r.holdUpMs, decisions: r.decisions.map(d => d.from + '>' + d.to + ' ' + d.reason + ' ' + d.ms + 'ms') }; })()`);
 for (let i = 0; i < 40 && !(await v.evaluate(`!!(window.FrameRuntime.video && window.FrameRuntime.video.currentTime > 0.5)`)); i++) await sleep(250);
 await sleep(3000);

@@ -1,0 +1,81 @@
+{
+  "method": "Windows working set and private bytes of the relay process, sampled every 3 s (Win32_Process) while server/verify/e2e.mjs ran against it on this PC; not a Linux RSS and not a viewer-load measurement",
+  "spring": {
+    "jvmOptions": "-Xmx256m -XX:+ExitOnOutOfMemoryError -Xms64m",
+    "java": "21.0.13",
+    "e2e": {
+      "passed": 108,
+      "failed": 0,
+      "startedAt": "2026-11-10T07:49:48.200Z"
+    },
+    "samples": 34,
+    "seconds": 122,
+    "wsMb": {
+      "first": 245,
+      "max": 245,
+      "last": 217
+    },
+    "privateMb": {
+      "first": 298,
+      "max": 298,
+      "last": 259
+    },
+    "threadsMax": 69,
+    "handlesMax": 656
+  },
+  "node": {
+    "node": "v24.22.1",
+    "e2e": {
+      "passed": 108,
+      "failed": 0,
+      "startedAt": "2026-11-10T08:01:41.631Z"
+    },
+    "samples": 32,
+    "seconds": 114,
+    "wsMb": {
+      "first": 58,
+      "max": 76,
+      "last": 71
+    },
+    "privateMb": {
+      "first": 30,
+      "max": 78,
+      "last": 73
+    },
+    "threadsMax": 17,
+    "handlesMax": 302
+  },
+  "chat1000": {
+    "spring": {
+      "at": "2026-11-10T07:56:24.928Z",
+      "jvmOptions": "-Xmx256m -XX:+ExitOnOutOfMemoryError -Xms64m",
+      "before": {
+        "cpuS": 12.72,
+        "rssMB": 229.9
+      },
+      "afterJoin": {
+        "cpuS": 18.66,
+        "rssMB": 302.7
+      },
+      "afterMessages": {
+        "cpuS": 19.31,
+        "rssMB": 293.4
+      }
+    },
+    "node20261028": {
+      "at": "2026-10-28T02:54:12.367Z",
+      "before": {
+        "cpuS": 0.36,
+        "rssMB": 56.2
+      },
+      "afterJoin": {
+        "cpuS": 1.7,
+        "rssMB": 73.6
+      },
+      "afterMessages": {
+        "cpuS": 2.11,
+        "rssMB": 63.1
+      }
+    }
+  }
+}

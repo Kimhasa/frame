@@ -1,0 +1,35 @@
+{
+  "verificationDatabaseOnly": true,
+  "productionUserDataUntouched": true,
+  "nativeObsReceiverUntouched": true,
+  "complete": true,
+  "testedJarSha256": "ddbb83128c77b32ee081954c7e0d0358f530c99f75e4387303f6efaac1e01df7",
+  "results": [
+    {
+      "name": "Real question submission and management UI verification pass",
+      "pass": true
+    },
+    {
+      "name": "One low-resolution source is replaced sequentially to verify old broadcast protection",
+      "pass": true
+    },
+    {
+      "name": "Read-only development StrictMode management UI verification passes",
+      "pass": true
+    },
+    {
+      "name": "Private questions, answers and old-broadcast privacy persist after restart",
+      "pass": true
+    },
+    {
+      "name": "The tested private JAR stays immutable throughout verification",
+      "pass": true
+    }
+  ],
+  "fixture": "Dedicated MediaMTX + 320x180 15fps H.264/AAC FFmpeg source + immutable Spring JAR + production React + headless Edge",
+  "limits": [
+    "Single PC and loopback only",
+    "No Caddy HTTPS/WSS or physical mobile device coverage",
+    "No load or capacity claim"
+  ]
+}

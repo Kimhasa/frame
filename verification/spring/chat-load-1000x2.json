@@ -1,0 +1,47 @@
+{
+  "at": "2026-11-10T07:56:24.928Z",
+  "backend": "spring",
+  "jvmOptions": "-Xmx256m -XX:+ExitOnOutOfMemoryError -Xms64m",
+  "node": "v24.22.1",
+  "definition": "one room, Node built-in WebSocket clients in one process on the same PC as the relay (loopback); no media",
+  "clients": 1000,
+  "joined": 1000,
+  "rampSeconds": 5.1,
+  "connectErrors": 0,
+  "joinRefused": 0,
+  "messages": {
+    "senders": 2,
+    "perSender": 5,
+    "sent": 10,
+    "expectedDeliveries": 10000,
+    "delivered": 10000,
+    "durationS": 7.9
+  },
+  "deliveryMs": {
+    "p50": 20.9,
+    "p95": 41.5,
+    "p99": 47.5,
+    "max": 49.6
+  },
+  "relayProcess": {
+    "before": {
+      "cpuS": 12.72,
+      "rssMB": 229.9
+    },
+    "afterJoin": {
+      "cpuS": 18.66,
+      "rssMB": 302.7
+    },
+    "afterMessages": {
+      "cpuS": 19.31,
+      "rssMB": 293.4
+    }
+  },
+  "hostCpuLoadPct": {
+    "logicalCpus": 16,
+    "samples": 6,
+    "min": 15,
+    "avg": 24,
+    "max": 33
+  }
+}

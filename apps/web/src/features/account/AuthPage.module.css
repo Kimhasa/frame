@@ -1,0 +1,28 @@
+.all { display: flex; width: 100%; min-height: 54px; padding: 8px 0 12px; margin-top: 12px; border-bottom: 1px solid #e7ece9; font-weight: 650; color: #293e32; }
+.agreementRow { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 44px; }
+.agreementRow > label { flex: 1; font-size: 13px; }
+.required { margin-right: 5px; color: var(--frame-green-ink); font-weight: 600; }
+.view { flex: none; display: grid; place-items: center; width: 40px; min-height: 40px; padding: 0; border: 0; border-radius: 6px; background: transparent; color: #5e7165; }
+.view:hover:not(:disabled) { background: #eff7f2; color: var(--frame-green-ink); }
+.view:disabled { color: #a1aea6; }
+.consentError { margin: 0; color: #a22d3f; font-size: 12px; line-height: 1.6; }
+.policyStatus { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 0; color: #697b70; font-size: 12px; line-height: 1.6; }
+.policyStatus p { margin: 0; }
+.retry { flex: none; min-height: 32px; padding: 2px 6px; border: 0; border-radius: 4px; background: transparent; color: var(--frame-green-ink); font-size: 12px; font-weight: 600; }
+.retry:hover { background: var(--frame-green-soft); }
+.dialog { width: min(480px, calc(100vw - 32px)); max-height: min(700px, calc(100dvh - 48px)); padding: 0; border: 1px solid #dce5df; border-radius: 14px; color: #263d2f; background: #fff; box-shadow: 0 20px 80px #0d251e33; }
+.dialog::backdrop { background: #15281f66; }
+.dialogBody { display: flex; flex-direction: column; max-height: inherit; }
+.dialogHeader { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 24px 12px; flex: none; }
+.dialogHeader h2 { margin: 0; font-size: 19px; font-weight: 700; line-height: 1.5; letter-spacing: -.02em; }
+.close { display: grid; place-items: center; flex: none; width: 36px; height: 36px; padding: 0; border: 0; border-radius: 7px; background: transparent; color: #65786b; }
+.close:hover { background: #f0f4f1; }
+.dialogContent { overflow-y: auto; overscroll-behavior: contain; padding: 0 24px 12px; color: #53675b; font-size: 14px; line-height: 1.8; }
+.dialogContent section + section { margin-top: 22px; }
+.dialogContent h3 { margin: 0 0 6px; color: #304d3b; font-size: 14px; font-weight: 650; }
+.dialogContent p { margin: 0 0 10px; overflow-wrap: anywhere; }
+.version { color: #75867b; font-size: 12px; margin-bottom: 20px !important; }
+.dialogFooter { flex: none; padding: 0 24px 24px; }
+.dialogFooter button { width: 100%; min-height: 44px; border: 1px solid #c9ded2; border-radius: 8px; background: #edf8f1; color: var(--frame-green-ink); font-size: 14px; font-weight: 650; }
+.dialogFooter button:hover { background: #e0f3e8; border-color: var(--frame-green-line); }
+@media (max-width: 480px) { .dialogHeader { padding: 16px 18px 10px; } .dialogContent { padding: 0 18px 12px; } .dialogFooter { padding: 0 18px 18px; } }

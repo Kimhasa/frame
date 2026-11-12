@@ -1,0 +1,17 @@
+/* UIF-006: own visibility state overrides stale pointer :focus-within; controls retain Tab access. */
+.preserved-player.v51-controls-managed .locked-player-controls,
+.preserved-player.v51-controls-managed .v39-player-back { opacity:0; pointer-events:none; transition:opacity .18s ease; }
+.preserved-player.v51-controls-managed.v51-controls-visible .locked-player-controls,
+.preserved-player.v51-controls-managed.v51-controls-visible .v39-player-back { opacity:1; pointer-events:auto; }
+.preserved-player.v51-controls-managed:has(.v39-player-back) .player-note { left:62px; max-width:calc(100% - 74px); }
+.preserved-player.v51-controls-managed:not(.v51-controls-visible) #locked-player-volume~.v50-volume-value { visibility:hidden; opacity:0; }
+.preserved-player.v51-controls-managed .v39-player-back { border:0; }
+.preserved-player.v51-controls-managed .v39-player-back:hover:not(:disabled) { background:#111b2ad9; }
+.preserved-player.v51-controls-managed .v39-player-back:active:not(:disabled) { background:#111b2af2; }
+.preserved-player.v51-controls-managed .v39-player-back:focus-visible { outline:2px solid #fff; outline-offset:2px; box-shadow:none; }
+.preserved-player.v51-controls-managed .v39-player-back:disabled { opacity:.42; cursor:default; }
+.preserved-player.v51-controls-managed:not(.v51-controls-visible) .v39-player-back:disabled { opacity:0; }
+@media (prefers-reduced-motion:reduce) {
+  .preserved-player.v51-controls-managed .locked-player-controls,
+  .preserved-player.v51-controls-managed .v39-player-back { transition:none; }
+}

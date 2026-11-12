@@ -1,0 +1,20 @@
+.label { display: inline-flex; align-items: center; gap: 10px; min-height: 40px; position: relative; color: #43564b; font-size: 14px; line-height: 1.5; cursor: pointer; }
+.control { position: relative; flex: 0 0 22px; width: 22px; height: 22px; }
+.input { position: absolute; inset: 0; z-index: 1; width: 22px; height: 22px; margin: 0; opacity: 0; cursor: inherit; }
+.box { display: grid; place-items: center; width: 22px; height: 22px; border: 1.5px solid #bac8bf; border-radius: 6px; background: #fff; color: #fff; transition: background-color .12s, border-color .12s, box-shadow .12s; }
+.check, .partial { grid-area: 1 / 1; opacity: 0; }
+.text { min-width: 0; }
+.label:hover .input:not(:disabled) + .box { border-color: var(--frame-green); background: #f3fbf6; }
+.input:checked + .box, .input:indeterminate + .box { border-color: var(--frame-green); background: var(--frame-green); }
+.label:hover .input:checked:not(:disabled) + .box, .label:hover .input:indeterminate:not(:disabled) + .box { border-color: var(--frame-green-ink); background: var(--frame-green-ink); }
+.input:checked + .box .check { opacity: 1; }
+.input:indeterminate + .box .check { opacity: 0; }
+.input:indeterminate + .box .partial { opacity: 1; }
+.input:focus-visible { outline: none; }
+.input:focus-visible + .box { outline: 2px solid var(--frame-green); outline-offset: 3px; }
+.input[aria-invalid=true] + .box { border-color: #ae3b4d; box-shadow: 0 0 0 2px #ae3b4d0d; }
+.label:has(.input:disabled) { cursor: default; color: #819187; }
+.input:disabled + .box { border-color: #d7dfda; background: #f2f5f3; }
+.input:disabled:checked + .box, .input:disabled:indeterminate + .box { background: #92b9a3; border-color: #92b9a3; }
+@media (prefers-reduced-motion: reduce) { .box { transition: none; } }
+@media (forced-colors: active) { .input { opacity: 1; appearance: auto; } .box { visibility: hidden; } }

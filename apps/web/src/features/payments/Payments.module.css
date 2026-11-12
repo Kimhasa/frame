@@ -1,0 +1,15 @@
+.result { display: grid; justify-items: center; gap: 18px; max-width: 640px; margin: 30px auto; padding: 36px 28px; border: 1px solid #e2e8e4; border-radius: 12px; background: #fff; text-align: center; }
+.resultIcon { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; background: var(--frame-green-soft); color: var(--frame-green-ink); }
+.resultIcon.failure { background: #f7f2ef; color: #8d6a56; }
+.result h2 { margin: 0; color: #2d4435; font-size: 21px; font-weight: 700; line-height: 1.5; }
+.result > p { margin: 0; color: #718176; font-size: 13px; line-height: 1.8; }
+.result .error { color: #a22d3f; }
+.details { display: grid; gap: 14px; width: 100%; margin: 8px 0 0; padding: 20px 0; border-block: 1px solid #e8edea; }
+.details > div { display: grid; grid-template-columns: 86px minmax(0, 1fr); gap: 16px; text-align: left; font-size: 13px; line-height: 1.7; }
+.details dt { color: #7a897f; }
+.details dd { margin: 0; color: #344a3e; overflow-wrap: anywhere; }
+.actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 8px; }
+.spinner { animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (max-width: 600px) { .result { margin-block: 12px; padding: 28px 18px; } .result h2 { font-size: 19px; } .details > div { grid-template-columns: 72px minmax(0, 1fr); gap: 10px; } }
+@media (prefers-reduced-motion: reduce) { .spinner { animation: none; } }

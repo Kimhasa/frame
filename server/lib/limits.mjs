@@ -66,8 +66,8 @@ export class Counter {
   add(key, n) { const v = this.get(key) + n; if (v <= 0) this.map.delete(key); else this.map.set(key, v); return v; }
 }
 
-// Clients seen per path within a sliding window (HLS viewers have no server-side session the relay could count, so a
-// viewer is a MediaMTX HLS session cookie, or address + browser when there is none). Pruned every 2 s; size() is the count.
+// Clients seen per path within a sliding window: the fallback count of HLS clients that open no viewer session (address +
+// browser, or an older relay's MediaMTX session cookie). Pruned every 2 s.
 export class ActiveSet {
   constructor(windowMs) {
     this.windowMs = windowMs; this.byPath = new Map();
@@ -77,6 +77,8 @@ export class ActiveSet {
   delete(path, key) { const m = this.byPath.get(path); if (m) { m.delete(key); if (!m.size) this.byPath.delete(path); } }
   has(path, key) { const t = this.byPath.get(path)?.get(key); return !!t && Date.now() - t < this.windowMs; }
   size(path) { return this.byPath.get(path)?.size || 0; }
+  // Keys of the path active within the window.
+  *active(path) { const m = this.byPath.get(path); if (!m) return; const old = Date.now() - this.windowMs; for (const [k, t] of m) if (t >= old) yield k; }
   prune() {
     const old = Date.now() - this.windowMs;
     for (const [path, m] of this.byPath) { for (const [k, t] of m) if (t < old) m.delete(k); if (!m.size) this.byPath.delete(path); }

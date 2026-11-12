@@ -1,0 +1,537 @@
+{
+  "verificationDatabaseOnly": true,
+  "origin": "http://127.0.0.1:5365",
+  "api": "http://127.0.0.1:18083",
+  "checks": 53,
+  "passed": 53,
+  "actualWatchProof": {
+    "observedEligibleMs": 65660,
+    "wallElapsedMs": 65675,
+    "mediaAdvancedMs": 65676,
+    "decodedFrames": 985,
+    "sourceWidth": 320,
+    "sourceHeight": 180,
+    "transport": "hls.js",
+    "observations": 65,
+    "balance": 10,
+    "watchCredits": [
+      {
+        "delta": 10,
+        "label": "방송 시청 적립"
+      }
+    ],
+    "syntheticTimeOrBalanceUsed": false,
+    "lastSample": {
+      "at": 66882,
+      "media": 71.794262,
+      "frames": 989,
+      "paused": false,
+      "seeking": false,
+      "ready": 4,
+      "width": 320,
+      "height": 180,
+      "rate": 1,
+      "muted": true,
+      "visible": true,
+      "online": true,
+      "transport": "hls.js",
+      "playerIntent": "blocked",
+      "watchKind": "ready",
+      "viewerSessionPresent": true
+    },
+    "mediaEvents": {
+      "counts": {
+        "timeupdate": 248,
+        "pause": 1
+      },
+      "last": [
+        {
+          "type": "timeupdate",
+          "at": 59587.30000001192,
+          "media": 64.499799,
+          "ready": 4,
+          "paused": false,
+          "rate": 1
+        },
+        {
+          "type": "timeupdate",
+          "at": 59853.30000001192,
+          "media": 64.766129,
+          "ready": 4,
+          "paused": false,
+          "rate": 1
+        },
+        {
+          "type": "timeupdate",
+          "at": 60118.39999997616,
+          "media": 65.031011,
+          "ready": 4,
+          "paused": false,
+          "rate": 1
+        },
+        {
+          "type": "timeupdate",
+          "at": 60385.39999997616,
+          "media": 65.297953,
+          "ready": 4,
+          "paused": false,
+          "rate": 1
+        },
+        {
+          "type": "timeupdate",
+          "at": 60649,
+          "media": 65.561436,
+          "ready": 4,
+          "paused": false,
+          "rate": 1
+        },
+        {
+          "type": "timeupdate",
+          "at": 60914.69999998808,
+          "media": 65.827734,
+          "ready": 4,
+          "paused": false,
+          "rate": 1
+        },
+        {
+          "type": "timeupdate",
+          "at": 61181.19999998808,
+          "media": 66.094325,
+          "ready": 4,
+          "paused": false,
+          "rate": 1
+        },
+        {
+          "type": "timeupdate",
+          "at": 61446.69999998808,
+          "media": 66.359261,
+          "ready": 4,
+          "paused": false,
+          "rate": 1
+        },
+        {
+          "type": "timeupdate",
+          "at": 61711.89999997616,
+          "media": 66.624539,
+          "ready": 4,
+          "paused": false,
+          "rate": 1
+        },
+        {
+          "type": "timeupdate",
+          "at": 61978.5,
+          "media": 66.89115,
+          "ready": 4,
+          "paused": false,
+          "rate": 1
+        },
+        {
+          "type": "timeupdate",
+          "at": 62244,
+          "media": 67.15686,
+          "ready": 4,
+          "paused": false,
+          "rate": 1
+        },
+        {
+          "type": "timeupdate",
+          "at": 62509.19999998808,
+          "media": 67.42086,
+          "ready": 4,
+          "paused": false,
+          "rate": 1
+        },
+        {
+          "type": "timeupdate",
+          "at": 62774.69999998808,
+          "media": 67.687081,
+          "ready": 4,
+          "paused": false,
+          "rate": 1
+        },
+        {
+          "type": "timeupdate",
+          "at": 63040.39999997616,
+          "media": 67.953094,
+          "ready": 4,
+          "paused": false,
+          "rate": 1
+        },
+        {
+          "type": "timeupdate",
+          "at": 63306.10000002384,
+          "media": 68.219315,
+          "ready": 4,
+          "paused": false,
+          "rate": 1
+        },
+        {
+          "type": "timeupdate",
+          "at": 63571.69999998808,
+          "media": 68.483583,
+          "ready": 4,
+          "paused": false,
+          "rate": 1
+        },
+        {
+          "type": "timeupdate",
+          "at": 63838.30000001192,
+          "media": 68.751149,
+          "ready": 4,
+          "paused": false,
+          "rate": 1
+        },
+        {
+          "type": "timeupdate",
+          "at": 64102.69999998808,
+          "media": 69.015254,
+          "ready": 4,
+          "paused": false,
+          "rate": 1
+        },
+        {
+          "type": "timeupdate",
+          "at": 64368.60000002384,
+          "media": 69.281803,
+          "ready": 4,
+          "paused": false,
+          "rate": 1
+        },
+        {
+          "type": "timeupdate",
+          "at": 64635,
+          "media": 69.546999,
+          "ready": 4,
+          "paused": false,
+          "rate": 1
+        },
+        {
+          "type": "timeupdate",
+          "at": 64900.30000001192,
+          "media": 69.812207,
+          "ready": 4,
+          "paused": false,
+          "rate": 1
+        },
+        {
+          "type": "timeupdate",
+          "at": 65164.80000001192,
+          "media": 70.077196,
+          "ready": 4,
+          "paused": false,
+          "rate": 1
+        },
+        {
+          "type": "timeupdate",
+          "at": 65430.5,
+          "media": 70.342671,
+          "ready": 4,
+          "paused": false,
+          "rate": 1
+        },
+        {
+          "type": "timeupdate",
+          "at": 65696.69999998808,
+          "media": 70.608658,
+          "ready": 4,
+          "paused": false,
+          "rate": 1
+        },
+        {
+          "type": "timeupdate",
+          "at": 65962.60000002384,
+          "media": 70.875138,
+          "ready": 4,
+          "paused": false,
+          "rate": 1
+        },
+        {
+          "type": "timeupdate",
+          "at": 66227.60000002384,
+          "media": 71.140099,
+          "ready": 4,
+          "paused": false,
+          "rate": 1
+        },
+        {
+          "type": "timeupdate",
+          "at": 66492.89999997616,
+          "media": 71.405223,
+          "ready": 4,
+          "paused": false,
+          "rate": 1
+        },
+        {
+          "type": "timeupdate",
+          "at": 66758.5,
+          "media": 71.671144,
+          "ready": 4,
+          "paused": false,
+          "rate": 1
+        },
+        {
+          "type": "timeupdate",
+          "at": 66894,
+          "media": 71.805485,
+          "ready": 4,
+          "paused": true,
+          "rate": 1
+        },
+        {
+          "type": "pause",
+          "at": 66895,
+          "media": 71.805485,
+          "ready": 4,
+          "paused": true,
+          "rate": 1
+        }
+      ]
+    },
+    "pulseCount": 8,
+    "acceptedMsTotal": 60505,
+    "reasonCounts": {
+      "baseline": 1,
+      "accepted": 6
+    }
+  },
+  "syntheticFunding": {
+    "accounts": [
+      "policy",
+      "other"
+    ],
+    "pointsEach": 1000,
+    "label": "QA fixture credit; not actual watching",
+    "primaryViewerFunded": false
+  },
+  "paginationInstrumentation": "Owner catalog/request GET limits are lowered to 2; all rows and opaque cursors are real server responses. Ledger cursor checks call the actual API with limit 2.",
+  "faultInjection": [
+    "Owner catalog GET 503",
+    "Reward create request-stage 503/delay",
+    "Redemption request-stage 503/delay",
+    "Redemption response-stage 503 after actual HTTP 201 debit",
+    "Cancellation request-stage 503/delay",
+    "Owner terminal PATCH 503/delay"
+  ],
+  "limits": [
+    "Single PC and loopback only",
+    "Headless Edge; mobile viewports, no physical mobile devices",
+    "No Caddy HTTPS/WSS, external network, load or capacity coverage",
+    "Playback observations are test evidence; server time/session caps do not prove human viewing"
+  ],
+  "results": [
+    {
+      "name": "One create request UUID produces exactly one real reward under concurrent retries",
+      "pass": true
+    },
+    {
+      "name": "The public enabled catalog exposes no private balance or requests and protects owner mutations and account scope",
+      "pass": true
+    },
+    {
+      "name": "The real-watching viewer begins with zero balance and an insufficient request cannot create a debit",
+      "pass": true
+    },
+    {
+      "name": "Synthetic policy funding is recorded separately and is never presented as actual viewing evidence",
+      "pass": true
+    },
+    {
+      "name": "Concurrent identical redemption UUIDs create one request and exactly one debit",
+      "pass": true
+    },
+    {
+      "name": "A reused redemption UUID with changed content cannot debit or replace the original request",
+      "pass": true
+    },
+    {
+      "name": "A stale displayed reward version cannot charge a changed price without a fresh confirmation",
+      "pass": true
+    },
+    {
+      "name": "Disabled rewards reject new requests while an existing receipt retains its original price and name without another debit",
+      "pass": true
+    },
+    {
+      "name": "Different concurrent UUIDs cannot bypass the one-per-broadcast reward limit",
+      "pass": true
+    },
+    {
+      "name": "Canceling returns the points once and preserves the consumed broadcast limit",
+      "pass": true
+    },
+    {
+      "name": "Concurrent terminal handling produces one refund while the other stale mutation fails",
+      "pass": true
+    },
+    {
+      "name": "Completed requests are immutable, keep their debit and remain private to the requester and owner",
+      "pass": true
+    },
+    {
+      "name": "Stored follower and block policy reject unauthorized requests without charging their wallets or leaking another viewer history",
+      "pass": true
+    },
+    {
+      "name": "API-only concurrent pulse claims are capped by server elapsed time, sequence deduplication and one active visit lease",
+      "pass": true
+    },
+    {
+      "name": "Stopped or unadmitted media sessions cannot credit points in the separate synthetic policy account",
+      "pass": true
+    },
+    {
+      "name": "The owner retries a list failure and appends actual reward cursor pages without duplicates",
+      "pass": true
+    },
+    {
+      "name": "Invalid reward cost is rejected locally with focus on the point field",
+      "pass": true
+    },
+    {
+      "name": "An unknown reward create result preserves and freezes the original name, price and create UUID",
+      "pass": true
+    },
+    {
+      "name": "Pending reward creation locks its dialog and prevents duplicate submission or Escape",
+      "pass": true
+    },
+    {
+      "name": "The connected owner editor creates one real reward with its confirmed settings",
+      "pass": true
+    },
+    {
+      "name": "A real reward version conflict preserves the editor draft and blocks stale overwrite",
+      "pass": true
+    },
+    {
+      "name": "Keeping the draft in the conflict confirmation does not discard the edited reward name",
+      "pass": true
+    },
+    {
+      "name": "The owner reward fields and custom enabled checkbox fit the 390px viewport",
+      "pass": true
+    },
+    {
+      "name": "The owner reward fields and custom enabled checkbox fit the 320px viewport",
+      "pass": true
+    },
+    {
+      "name": "The anonymous reward panel shows the public catalog while keeping balances and requests private",
+      "pass": true
+    },
+    {
+      "name": "Reward login preserves the exact broadcast return route",
+      "pass": true
+    },
+    {
+      "name": "At least sixty real visible online seconds of advancing decoded HLS video earn exactly ten durable points with no synthetic funding",
+      "pass": true
+    },
+    {
+      "name": "Pausing actual playback sends a release and prevents earning pulses over the next full heartbeat interval",
+      "pass": true
+    },
+    {
+      "name": "A genuinely hidden browser tab does not send positive earning claims over a full heartbeat interval",
+      "pass": true
+    },
+    {
+      "name": "The offline browser does not report positive earning time while media may still be buffered",
+      "pass": true
+    },
+    {
+      "name": "A real broadcast replacement rejects old-link requests while channel point balances persist",
+      "pass": true
+    },
+    {
+      "name": "The viewer sees only its confirmed earned balance and an unaffordable reward remains disabled",
+      "pass": true
+    },
+    {
+      "name": "An unknown viewer request preserves and freezes its note without optimistic point subtraction",
+      "pass": true
+    },
+    {
+      "name": "The uncertain request reuses its price version and UUID while pending controls prevent another debit or Escape",
+      "pass": true
+    },
+    {
+      "name": "A server-confirmed request charges exactly five earned points and focuses its acknowledgement",
+      "pass": true
+    },
+    {
+      "name": "A real debit committed before an injected 503 is recovered by its own receipt without a duplicate charge or stale failure",
+      "pass": true
+    },
+    {
+      "name": "A failed cancellation keeps its confirmation and does not invent a refund",
+      "pass": true
+    },
+    {
+      "name": "Pending viewer cancellation prevents a second refund attempt or dialog dismissal",
+      "pass": true
+    },
+    {
+      "name": "The actual pending-request cancel stores one five-point refund",
+      "pass": true
+    },
+    {
+      "name": "The private point ledger displays the real earned credit, two debits and one refund",
+      "pass": true
+    },
+    {
+      "name": "The viewer wallet and ledger fit the 390px viewport",
+      "pass": true
+    },
+    {
+      "name": "The viewer wallet and ledger fit the 320px viewport",
+      "pass": true
+    },
+    {
+      "name": "Closing the wallet returns focus to its original opener",
+      "pass": true
+    },
+    {
+      "name": "Owner rejection requires a reason and focuses its field without a mutation",
+      "pass": true
+    },
+    {
+      "name": "A real request-version conflict retains the selected status and complete reason while blocking stale processing",
+      "pass": true
+    },
+    {
+      "name": "The owner can keep a conflicting processing draft instead of discarding it",
+      "pass": true
+    },
+    {
+      "name": "Owner processing 503 preserves the reason and selected status without optimistic refund",
+      "pass": true
+    },
+    {
+      "name": "The owner request details and processing fields fit the 390px viewport",
+      "pass": true
+    },
+    {
+      "name": "The owner request details and processing fields fit the 320px viewport",
+      "pass": true
+    },
+    {
+      "name": "Pending terminal handling locks its controls and prevents duplicate refund writes",
+      "pass": true
+    },
+    {
+      "name": "The real owner rejection returns the remaining five points exactly once and stores the reason",
+      "pass": true
+    },
+    {
+      "name": "Private point ledger pagination uses actual server cursors and keeps the authoritative total balance",
+      "pass": true
+    },
+    {
+      "name": "No browser runtime or unconfirmed interception errors",
+      "pass": true
+    }
+  ],
+  "runtimeErrors": [],
+  "confirmedCanceledInterceptions": []
+}

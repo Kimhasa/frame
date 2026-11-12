@@ -20,6 +20,19 @@ for (const dir of process.argv.slice(2)) {
   });
   console.log('| ' + head.join(' | ') + ' |\n|' + head.map(() => '---').join('|') + '|');
   for (const row of rows) console.log('| ' + row.join(' | ') + ' |');
+  // HLS receiver runs: what only the HLS clients measure (the browser columns above are the separate Edge phase).
+  if (r.stages.some(s => s.hls)) {
+    const h = ['stage', 'receiving viewers', 'fullRate', 'first p50/p95 ms', 'delay est p50/p95 ms', 'recv delay p95 ms', 'stalls >3s (viewers)', 'restarts', 'req/viewer/s', '429/503 (share)', 'Retry-After', 'sessions opened / target max', 'variants', 'gen lag p99 ms', 'gen CPU%', 'host CPU% max', 'free MB min', 'browser transport / dec fps / PDT delay p50 ms'];
+    console.log('\nHLS receiver\n| ' + h.join(' | ') + ' |\n|' + h.map(() => '---').join('|') + '|');
+    for (const s of r.stages.filter(x => x.hls)) {
+      const x = s.hls, bp = s.browserPhase || s.browser, b = bp && !bp.error ? bp.summary : null;
+      console.log('| ' + [s.stage, `${s.sustainedReceiving}/${s.requested}`, s.fullRateSuccessRate, typeof s.firstMediaMs === 'object' ? `${fmt(s.firstMediaMs.p50)}/${fmt(s.firstMediaMs.p95)}` : 'n/m',
+        `${fmt(x.delayEstimateMs.p50)}/${fmt(x.delayEstimateMs.p95)}`, x.receiveDelayMs.p95, `${x.stalls.events} (${x.stalls.viewersWithStall})`, x.stalls.restarts, x.requests.perViewerSec,
+        `${x.requests.busy429or503} (${fmt(x.requests.busyShare)})`, Object.entries(x.requests.retryAfter).map(([k, n]) => `${k}s x${n}`).join(' ') || '-', `${x.sessions.opened} / ${fmt(x.sessions.targetSessionsMax)}`,
+        Object.entries(x.variants).map(([k, n]) => `${k}:${n}`).join(' '), x.generatorLagP99MsMax, s.resources.genCpuPct.mean, s.resources.hostCpuPct.max, s.resources.freeMemMB.min,
+        b ? `${(b.transports || []).join('/') || '-'} / ${fmt(b.decodedFps.mean)} / ${typeof b.pdtDelayMs === 'object' ? b.pdtDelayMs.p50 : 'n/m'}` : 'n/m'].map(fmt).join(' | ') + ' |');
+    }
+  }
   console.log(`abort: ${r.abort ? `${r.abort.reason} at stage ${r.abort.stage} (${r.abort.phase}) ${JSON.stringify(r.abort.detail)}` : 'none'}`);
   console.log(`first saturation: ${r.saturation.map(s => `${s.kind}@${s.stage}`).join(' -> ') || 'none'}`);
   if (r.calibration) console.log(`calibration: max sustained ${r.calibration.maxSustainedStage}, limited by ${r.calibration.limitedBy}, per stage ${JSON.stringify(r.calibration.perStage)}${r.calibration.estimate ? `, estimate ${JSON.stringify(r.calibration.estimate)}` : ''}`);

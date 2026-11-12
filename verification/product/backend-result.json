@@ -1,0 +1,101 @@
+{
+  "generatedAt": "2026-11-11T10:12:49.154Z",
+  "suite": {
+    "tests": 65,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "classes": 17,
+  "realPostgresRedisIntegration": {
+    "tests": 1,
+    "skipped": 0,
+    "database": "isolated verification DB, generated schema only",
+    "redis": "generated verification namespace only; scoped keys cleaned",
+    "restartPersistence": true,
+    "absoluteSessionExpiry": true,
+    "cookieReplayAfterLogoutRejected": true,
+    "unicode128Password": true,
+    "csrfAndOriginRejections": true,
+    "channelOwnershipAndUniqueStreamProof": true,
+    "mainDatabaseSeeded": false,
+    "liveMediaProcessChanged": false
+  },
+  "privateCredentialChecks": {
+    "source": {
+      "filesScanned": 85,
+      "privateCredentialMatchFiles": 0
+    },
+    "build": {
+      "filesScanned": 160,
+      "privateCredentialMatchFiles": 0
+    },
+    "logs": {
+      "filesScanned": 7,
+      "privateCredentialMatchFiles": 0
+    }
+  },
+  "redisOutage": {
+    "actualRedisStopped": false,
+    "probeUsesSeparateWrongPortContext": true,
+    "sessionFilterLimitedToProductRoutes": true,
+    "authenticatedPrivatePathsStatus": 503,
+    "anonymousSessionBootstrapStatus": 503,
+    "falseAnonymousSuccess": false,
+    "legacyHealthWithSameCookieStatus": 200,
+    "legacyBroadcastsWithSameCookieStatus": 200,
+    "legacyResponsesCreateProductCookie": false
+  },
+  "directoryValidation": {
+    "maxCodepoints": 120,
+    "accepted120": true,
+    "rejected121": true,
+    "rejectedNul": true
+  },
+  "finalJarSha256": "c2c1c92a545a596a00e6fe81e253d513d67729e280791627ddbcf0ed42dd52b2",
+  "signupConsents": {
+    "termsVersion": "2026-11-11",
+    "privacyVersion": "2026-11-11",
+    "requiredStrictBooleanTrue": true,
+    "missingFalseAndStringConsentRejected": true,
+    "missingOrStaleEitherVersionRejected": true,
+    "rejectedSignupCreatesNoAccountOrChannel": true,
+    "acceptedVersionsAndDatabaseTimePersisted": true,
+    "duplicateChannelRollsBackAccountAndConsent": true,
+    "existingUnrecordedConsentsStayNullAfterLogin": true,
+    "publicPoliciesSections": {
+      "terms": 3,
+      "privacy": 4
+    },
+    "migration": "V2__signup_consents.sql",
+    "mainDatabaseOrExistingUsersModifiedByAgent": false,
+    "legalDocumentStatus": "Current implemented-service draft; not represented as legally complete",
+    "beforePublicRelease": [
+      "Confirm operating party and contact route",
+      "Confirm account withdrawal, personal-data deletion and consent-withdrawal procedures"
+    ]
+  },
+  "automaticChannelHandles": {
+    "omittedOrNullHandleGenerated": true,
+    "format": "ch-[0-9a-f]{20}",
+    "randomBits": 80,
+    "generatedHandlesDistinct": true,
+    "emailAndNicknameNotUsed": true,
+    "returnedHandleMatchesLookup": true,
+    "explicitManualHandleCompatibility": true,
+    "existingChannelAddressesPreserved": true,
+    "postgresConflictDoesNotAbortTransaction": true,
+    "collisionRetryThenRollbackVerified": true,
+    "maxCandidateAttempts": 5,
+    "signupConsentRegressionPassed": true,
+    "newMigrationRequired": false
+  },
+  "orphanSessionRecovery": {
+    "policiesPublicStatus": 200,
+    "firstBootstrapStatus": 401,
+    "orphanCookieInvalidated": true,
+    "retryBootstrapStatus": 200,
+    "retryAnonymousAndFreshCsrf": true,
+    "normalAnd503SessionsPreserved": true
+  }
+}

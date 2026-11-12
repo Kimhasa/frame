@@ -1,0 +1,305 @@
+{
+  "createdAt": "2026-11-11T08:49:03.227Z",
+  "fixtureOnly": true,
+  "buildDir": "C:\\Users\\wlsdu\\OneDrive\\Desktop\\repository\\frame\\outputs\\portfolio-frame\\site",
+  "screens": [
+    {
+      "name": "live",
+      "route": "/live",
+      "file": "C:\\Users\\wlsdu\\OneDrive\\Desktop\\repository\\frame\\outputs\\portfolio-frame\\screens\\live.png",
+      "cssSize": [
+        1600,
+        1050
+      ],
+      "pngSize": [
+        3200,
+        2100
+      ],
+      "dpr": 2,
+      "title": "FRAME · 라이브",
+      "h1": "지금 라이브",
+      "capturedFixtureDate": "2026-11-11T11:18:00.000Z",
+      "fontLoaded": true,
+      "viewport": [
+        1600,
+        1050
+      ],
+      "cards": 12,
+      "brokenImages": 0,
+      "openDialogs": 0,
+      "bodyOverflow": false,
+      "unexpectedEmpty": false
+    },
+    {
+      "name": "watch",
+      "route": "/watch/workspace/00000000000000000000000000000001",
+      "file": "C:\\Users\\wlsdu\\OneDrive\\Desktop\\repository\\frame\\outputs\\portfolio-frame\\screens\\watch.png",
+      "cssSize": [
+        1600,
+        1050
+      ],
+      "pngSize": [
+        3200,
+        2100
+      ],
+      "dpr": 2,
+      "title": "퇴근 후 사이드 프로젝트 | 채팅 UI 완성하기 · FRAME",
+      "h1": "퇴근 후 사이드 프로젝트 | 채팅 UI 완성하기",
+      "capturedFixtureDate": "2026-11-11T11:18:00.000Z",
+      "fontLoaded": true,
+      "viewport": [
+        1600,
+        1050
+      ],
+      "cards": 0,
+      "brokenImages": 0,
+      "openDialogs": 0,
+      "bodyOverflow": false,
+      "unexpectedEmpty": false
+    },
+    {
+      "name": "channel",
+      "route": "/channel/spring",
+      "file": "C:\\Users\\wlsdu\\OneDrive\\Desktop\\repository\\frame\\outputs\\portfolio-frame\\screens\\channel.png",
+      "cssSize": [
+        1600,
+        1050
+      ],
+      "pngSize": [
+        3200,
+        2100
+      ],
+      "dpr": 2,
+      "title": "FRAME · 라이브",
+      "h1": "개발하는 봄",
+      "capturedFixtureDate": "2026-11-11T11:18:00.000Z",
+      "fontLoaded": true,
+      "viewport": [
+        1600,
+        1050
+      ],
+      "cards": 0,
+      "brokenImages": 0,
+      "openDialogs": 0,
+      "bodyOverflow": false,
+      "unexpectedEmpty": false
+    },
+    {
+      "name": "following",
+      "route": "/following",
+      "file": "C:\\Users\\wlsdu\\OneDrive\\Desktop\\repository\\frame\\outputs\\portfolio-frame\\screens\\following.png",
+      "cssSize": [
+        1600,
+        1050
+      ],
+      "pngSize": [
+        3200,
+        2100
+      ],
+      "dpr": 2,
+      "title": "FRAME · 라이브",
+      "h1": "팔로잉",
+      "capturedFixtureDate": "2026-11-11T11:18:00.000Z",
+      "fontLoaded": true,
+      "viewport": [
+        1600,
+        1050
+      ],
+      "cards": 7,
+      "brokenImages": 0,
+      "openDialogs": 0,
+      "bodyOverflow": false,
+      "unexpectedEmpty": false
+    },
+    {
+      "name": "broadcast",
+      "route": "/studio/broadcast?state=live",
+      "file": "C:\\Users\\wlsdu\\OneDrive\\Desktop\\repository\\frame\\outputs\\portfolio-frame\\screens\\broadcast.png",
+      "cssSize": [
+        1600,
+        1050
+      ],
+      "pngSize": [
+        3200,
+        2100
+      ],
+      "dpr": 2,
+      "title": "FRAME · 라이브",
+      "h1": "방송하기",
+      "capturedFixtureDate": "2026-11-11T11:18:00.000Z",
+      "fontLoaded": true,
+      "viewport": [
+        1600,
+        1050
+      ],
+      "cards": 0,
+      "brokenImages": 0,
+      "openDialogs": 0,
+      "bodyOverflow": false,
+      "unexpectedEmpty": false
+    },
+    {
+      "name": "analytics",
+      "route": "/studio/analytics",
+      "file": "C:\\Users\\wlsdu\\OneDrive\\Desktop\\repository\\frame\\outputs\\portfolio-frame\\screens\\analytics.png",
+      "cssSize": [
+        1600,
+        1050
+      ],
+      "pngSize": [
+        3200,
+        2100
+      ],
+      "dpr": 2,
+      "title": "FRAME · 라이브",
+      "h1": "방송 분석",
+      "capturedFixtureDate": "2026-11-11T11:18:00.000Z",
+      "fontLoaded": true,
+      "viewport": [
+        1600,
+        1050
+      ],
+      "cards": 0,
+      "brokenImages": 0,
+      "openDialogs": 0,
+      "bodyOverflow": false,
+      "unexpectedEmpty": false
+    },
+    {
+      "name": "revenue",
+      "route": "/studio/revenue",
+      "file": "C:\\Users\\wlsdu\\OneDrive\\Desktop\\repository\\frame\\outputs\\portfolio-frame\\screens\\revenue.png",
+      "cssSize": [
+        1600,
+        1050
+      ],
+      "pngSize": [
+        3200,
+        2100
+      ],
+      "dpr": 2,
+      "title": "FRAME · 라이브",
+      "h1": "수익·정산",
+      "capturedFixtureDate": "2026-11-11T11:18:00.000Z",
+      "fontLoaded": true,
+      "viewport": [
+        1600,
+        1050
+      ],
+      "cards": 0,
+      "brokenImages": 0,
+      "openDialogs": 0,
+      "bodyOverflow": false,
+      "unexpectedEmpty": false
+    },
+    {
+      "name": "channel-videos",
+      "route": "/channel/spring?tab=videos",
+      "file": "C:\\Users\\wlsdu\\OneDrive\\Desktop\\repository\\frame\\outputs\\portfolio-frame\\screens\\channel-videos.png",
+      "cssSize": [
+        1600,
+        1050
+      ],
+      "pngSize": [
+        3200,
+        2100
+      ],
+      "dpr": 2,
+      "title": "FRAME · 라이브",
+      "h1": "개발하는 봄",
+      "capturedFixtureDate": "2026-11-11T11:18:00.000Z",
+      "fontLoaded": true,
+      "viewport": [
+        1600,
+        1050
+      ],
+      "cards": 0,
+      "brokenImages": 0,
+      "openDialogs": 0,
+      "bodyOverflow": false,
+      "unexpectedEmpty": false
+    },
+    {
+      "name": "live-mobile",
+      "route": "/live",
+      "file": "C:\\Users\\wlsdu\\OneDrive\\Desktop\\repository\\frame\\outputs\\portfolio-frame\\screens\\live-mobile.png",
+      "cssSize": [
+        390,
+        844
+      ],
+      "pngSize": [
+        780,
+        1688
+      ],
+      "dpr": 2,
+      "title": "FRAME · 라이브",
+      "h1": "지금 라이브",
+      "capturedFixtureDate": "2026-11-11T11:18:00.000Z",
+      "fontLoaded": true,
+      "viewport": [
+        390,
+        844
+      ],
+      "cards": 12,
+      "brokenImages": 0,
+      "openDialogs": 0,
+      "bodyOverflow": false,
+      "unexpectedEmpty": false
+    },
+    {
+      "name": "channel-mobile",
+      "route": "/channel/spring",
+      "file": "C:\\Users\\wlsdu\\OneDrive\\Desktop\\repository\\frame\\outputs\\portfolio-frame\\screens\\channel-mobile.png",
+      "cssSize": [
+        390,
+        844
+      ],
+      "pngSize": [
+        780,
+        1688
+      ],
+      "dpr": 2,
+      "title": "FRAME · 라이브",
+      "h1": "개발하는 봄",
+      "capturedFixtureDate": "2026-11-11T11:18:00.000Z",
+      "fontLoaded": true,
+      "viewport": [
+        390,
+        844
+      ],
+      "cards": 0,
+      "brokenImages": 0,
+      "openDialogs": 0,
+      "bodyOverflow": false,
+      "unexpectedEmpty": false
+    },
+    {
+      "name": "watch-mobile",
+      "route": "/watch/workspace/00000000000000000000000000000001",
+      "file": "C:\\Users\\wlsdu\\OneDrive\\Desktop\\repository\\frame\\outputs\\portfolio-frame\\screens\\watch-mobile.png",
+      "cssSize": [
+        390,
+        844
+      ],
+      "pngSize": [
+        780,
+        1688
+      ],
+      "dpr": 2,
+      "title": "퇴근 후 사이드 프로젝트 | 채팅 UI 완성하기 · FRAME",
+      "h1": "퇴근 후 사이드 프로젝트 | 채팅 UI 완성하기",
+      "capturedFixtureDate": "2026-11-11T11:18:00.000Z",
+      "fontLoaded": true,
+      "viewport": [
+        390,
+        844
+      ],
+      "cards": 0,
+      "brokenImages": 0,
+      "openDialogs": 0,
+      "bodyOverflow": false,
+      "unexpectedEmpty": false
+    }
+  ],
+  "errors": []
+}

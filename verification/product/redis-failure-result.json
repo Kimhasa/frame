@@ -1,0 +1,53 @@
+{
+  "generatedAt": "2026-11-11T09:38:45.069Z",
+  "scope": "separate owned API only; actual Redis/PG/OBS and APIs18080/18081 untouched",
+  "configuredRedisPort": 16380,
+  "tests": [
+    {
+      "check": "same private cookie authenticates on healthy staging API",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "check": "/api/v1/session with valid existing session and Redis unreachable",
+      "status": 503,
+      "code": "PRODUCT_UNAVAILABLE",
+      "authenticatedInformationReturned": false,
+      "pass": true
+    },
+    {
+      "check": "/api/v1/me/follows with valid existing session and Redis unreachable",
+      "status": 503,
+      "code": "PRODUCT_UNAVAILABLE",
+      "authenticatedInformationReturned": false,
+      "pass": true
+    },
+    {
+      "check": "/api/v1/studio with valid existing session and Redis unreachable",
+      "status": 503,
+      "code": "PRODUCT_UNAVAILABLE",
+      "authenticatedInformationReturned": false,
+      "pass": true
+    },
+    {
+      "check": "anonymous CSRF/session bootstrap while Redis unreachable",
+      "status": 503,
+      "code": "PRODUCT_UNAVAILABLE",
+      "pass": true
+    },
+    {
+      "check": "/healthz with same cookie while Redis unreachable",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "check": "/api/broadcasts with same cookie while Redis unreachable",
+      "status": 200,
+      "pass": true
+    }
+  ],
+  "booted": true,
+  "privateCredentialValuesAbsentFromProbeLog": true,
+  "passed": true,
+  "probeStopped": true
+}

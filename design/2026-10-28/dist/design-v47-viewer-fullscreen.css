@@ -1,0 +1,3 @@
+/* Fill the native viewport rather than inheriting the page's scrollbar-width containing block. */
+.v47-fullscreen-target:fullscreen{width:100vw!important;height:100dvh!important;max-width:none!important;max-height:none!important;border-radius:0!important}
+:root:has(.v47-fullscreen-target:fullscreen){scrollbar-gutter:auto}

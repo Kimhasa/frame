@@ -28,7 +28,7 @@ F.fullscreen=el=>{if(!el)return;if(document.fullscreenElement)document.exitFulls
 F.genericDialog=(title,body,confirmText='확인')=>{if(dialog.open)dialog.close();root.inert=true;backdrop.hidden=false;dialog.className='product-dialog';dialog.setAttribute('aria-labelledby','product-dialog-title');dialog.innerHTML=`<div class="modal-head"><h2 id="product-dialog-title">${e(title)}</h2>${F.btn('','close-modal','close','icon ghost','aria-label="닫기"')}</div><div class="modal-body">${body}</div><div class="modal-footer">${F.btn('취소','close-modal')}${F.btn(confirmText,'confirm-generic','','primary')}</div>`;dialog.show();F.labelControls(dialog);};
 F.copy=text=>{if(navigator.clipboard?.writeText)navigator.clipboard.writeText(text).then(()=>F.toast('복사했어요.')).catch(()=>F.toast('주소를 선택해서 복사해 주세요.'));else F.toast('주소를 선택해서 복사해 주세요.');};
 F.recalcBitrate=()=>{const px={'360p':640*360,'480p':854*480,'720p':1280*720,'1080p':1920*1080,'1440p':2560*1440,'2160p (4K)':3840*2160};if(F.bitrateAuto)F.values.bitrate=String(Math.round(8*(px[F.values.resolution]||1920*1080)/(1920*1080)*Math.pow(parseInt(F.values.fps)/60,.8)*2)/2);};
-backdrop.addEventListener('click',()=>F.closeModal());window.addEventListener('popstate',()=>{F.readUrl();F.render();});window.addEventListener('resize',F.closeDropdown);
+backdrop.addEventListener('click',()=>F.closeModal());window.addEventListener('popstate',event=>{if(F.v39Mobile?.handlePopState(event))return;F.readUrl();F.render();});window.addEventListener('resize',F.closeDropdown);
 F.readUrl();F.renderOutline();F.render();F.writeUrl(true);window.FRAME_PROTOTYPE={navigate:F.navigate,setState:F.setState,getState:()=>({screen:F.screen,state:F.viewState,device:F.device}),manifest:F.data};
 })();
 

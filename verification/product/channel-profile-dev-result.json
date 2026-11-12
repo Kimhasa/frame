@@ -1,0 +1,37 @@
+{
+  "origin": "http://127.0.0.1:5366",
+  "developmentStrictMode": true,
+  "readOnly": true,
+  "clipboardDeniedMocked": true,
+  "nativeSharingCancelledMocked": true,
+  "externalOrOsSharing": false,
+  "results": [
+    {
+      "name": "Real Vite development StrictMode keeps the details open and heading focused after effect replay",
+      "pass": true
+    },
+    {
+      "name": "Escape restores focus to the control that opened the dialog",
+      "pass": true
+    },
+    {
+      "name": "Clipboard denial selects the read-only immutable channel URL for manual copying",
+      "pass": true
+    },
+    {
+      "name": "Changing share mode clears the previous copy feedback",
+      "pass": true
+    },
+    {
+      "name": "Cancelling mocked native sharing keeps the dialog without an error or a fabricated success",
+      "pass": true
+    },
+    {
+      "name": "Development share dialog fits 320px without runtime errors or data-changing requests",
+      "pass": true
+    }
+  ],
+  "runtimeErrors": [],
+  "dataChangingRequests": 0,
+  "complete": true
+}

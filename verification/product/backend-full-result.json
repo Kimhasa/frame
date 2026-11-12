@@ -1,0 +1,210 @@
+{
+  "generatedAt": "2026-11-12T02:12:39.318Z",
+  "command": "gradlew.bat test bootJar",
+  "privateConfiguration": "FRAME_PRODUCT_TEST_CONFIG points outside the repository; values not recorded",
+  "suite": {
+    "tests": 69,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "classes": 19,
+  "classResults": [
+    {
+      "name": "frame.api.account.AccountIntegrationTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.account.AccountSessionRecoveryTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.account.ProductMigrationIntegrationTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.account.ProductStorageDisabledTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.BlankRelayVariablesTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.broadcast.BroadcastRegistryTest",
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.chat.ChatHandshakeFilterTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.chat.ChatRulesTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.dvr.DvrRulesTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.mediamtx.MediaMtxPathsTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.obs.ObsBroadcastsTest",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.payments.PaymentsTest",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.playback.PlaybackRulesTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.playback.ViewerSessionsTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.ShutdownTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.StartupGraceTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.stats.StatsRowTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.UpstreamBreakTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.web.JsCompatTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "artifact": {
+    "path": "apps/api/build/libs/frame-api.jar",
+    "sha256": "39218faa25039c70c54fe3957298e88b878d28ae5c01ece31106521946f896c8",
+    "bootJarBuilt": true,
+    "additionalBuildsPlanned": false
+  },
+  "previousEvidence": {
+    "path": "backend-result.json",
+    "generatedAt": "2026-11-11T10:12:49.154Z",
+    "suite": {
+      "tests": 65,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "preservedUnchanged": true
+  },
+  "flywayEvidence": "flyway-result.json",
+  "databaseSafety": {
+    "runtime": "native PostgreSQL and Redis on loopback",
+    "database": "frame_product_verify",
+    "generatedSchemasOnly": true,
+    "generatedRedisNamespacesOnly": true,
+    "mainUserRecordsReadOrChanged": false,
+    "mainMediaProcessRestarted": false
+  },
+  "dockerRuntimeExecution": false,
+  "testOnlyFollowup": {
+    "generatedAt": "2026-11-12T02:14:39.437Z",
+    "change": "Verification JDBC guard accepts only loopback FRAME native/Docker ports and verification DB names; application sources and JAR unchanged",
+    "command": "gradlew.bat test --tests 'frame.api.account.AccountIntegrationTest' --tests 'frame.api.account.ProductMigrationIntegrationTest'",
+    "suite": {
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "classResults": [
+      {
+        "name": "AccountIntegrationTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "ProductMigrationIntegrationTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    ],
+    "allowedVerificationPorts": [
+      15432,
+      25432
+    ],
+    "productionDatabaseExternalHostsAndUrlOptionsRejected": true,
+    "nativePostgresRedisExecuted": true,
+    "dockerRuntimeExecution": false,
+    "bootJarRebuilt": false,
+    "jarSha256Unchanged": true
+  }
+}

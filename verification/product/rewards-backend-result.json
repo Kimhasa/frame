@@ -1,0 +1,307 @@
+{
+  "GeneratedAt": "2026-11-12T09:04:14.0470198+00:00",
+  "Command": "gradlew.bat test bootJar",
+  "Suite": {
+    "Tests": 123.0,
+    "Failures": 0.0,
+    "Errors": 0.0,
+    "Skipped": 0.0
+  },
+  "Classes": [
+    {
+      "Name": "frame.api.account.AccountIntegrationTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.AccountSessionRecoveryTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ChannelPollsTest",
+      "Tests": 4,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ChannelProfileTest",
+      "Tests": 6,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ChannelQuestionsTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ChannelRewardsTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ChatModerationTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ChatTicketsTest",
+      "Tests": 5,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ProductMigrationIntegrationTest",
+      "Tests": 11,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ProductNotificationsTest",
+      "Tests": 5,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ProductStorageDisabledTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ReportManagementTest",
+      "Tests": 6,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ScheduledBroadcastsTest",
+      "Tests": 4,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.WatchHistoryTest",
+      "Tests": 5,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.BlankRelayVariablesTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.broadcast.BroadcastRegistryTest",
+      "Tests": 12,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.chat.ChatHandshakeFilterTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.chat.ChatRulesTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.chat.ManagedChatHubTest",
+      "Tests": 2,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.dvr.DvrRulesTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.mediamtx.MediaMtxPathsTest",
+      "Tests": 2,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.obs.ObsBroadcastsTest",
+      "Tests": 10,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.payments.PaymentsTest",
+      "Tests": 10,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.playback.PlaybackRulesTest",
+      "Tests": 7,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.playback.ViewerSessionsTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.ShutdownTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.StartupGraceTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.stats.StatsRowTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.UpstreamBreakTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.web.JsCompatTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    }
+  ],
+  "JarSha256": "7b77ca3c9651d9aaa8a429164aa3d8282c4209a1287bebffd0ff295db3459dc1",
+  "Migrations": [
+    {
+      "Name": "V1__accounts_channels_follows.sql",
+      "Sha256": "09aac64c7d820f3ea8b3229b99b4dca11a1de6c104c7da277846415bf8a39b4f"
+    },
+    {
+      "Name": "V2__signup_consents.sql",
+      "Sha256": "5841a933a3fb672ee4876ebf6a4c36247416a126b7e17555151e9ecc8bb4daad"
+    },
+    {
+      "Name": "V3__broadcast_schedules.sql",
+      "Sha256": "8661aecdd2fadaf14a67a36a2ad5e60811dae1a94b77f09ca62480f8a61bea6d"
+    },
+    {
+      "Name": "V4__watch_history.sql",
+      "Sha256": "e5c93b9231061ec8253b160b7de5f5fbbb14ff3e50754e56ba3e6b65340029ca"
+    },
+    {
+      "Name": "V5__channel_profiles_reports.sql",
+      "Sha256": "b82d405664a182606e35cea5919be5096ffdaea1d8a57223eb3be0c95529a0ee"
+    },
+    {
+      "Name": "V6__report_management.sql",
+      "Sha256": "b282072620ab76027dbed89f4d37179e79199c150233eb8722d0d92d15ee3557"
+    },
+    {
+      "Name": "V7__product_notifications.sql",
+      "Sha256": "88f914cbe4137bab2376f84bb78e1b60402b9c4ec9c2c990f27ec78c9947f4ef"
+    },
+    {
+      "Name": "V8__channel_chat_moderation.sql",
+      "Sha256": "c6fd971cfb0dc10dd59bb107dfed6131a1f37ead43f8c1453a071fee03090044"
+    },
+    {
+      "Name": "V9__channel_polls.sql",
+      "Sha256": "65e4689d1b6622b59b541129e6c6742bc8e77458790e53d468dbff8a68721782"
+    },
+    {
+      "Name": "V10__channel_questions.sql",
+      "Sha256": "e7e7eceacdd6e3871317e8e5167670a355510524d09f088134acbecb965dd50c"
+    },
+    {
+      "Name": "V11__channel_points_rewards.sql",
+      "Sha256": "90df9d920a7f2d7e69578e29cf84d17cc040ab076629a3e73d936139f2a20653"
+    }
+  ],
+  "Database": "Native PostgreSQL verification database only; generated schemas and Redis namespaces cleaned",
+  "DockerContainerExecution": false,
+  "MainDatabaseChanged": false,
+  "ActualBroadcastProcessesChanged": false,
+  "RewardChecks": [
+    "Owner reward creation uses canonical request UUID idempotency even after later edits; the 50-item cap includes disabled rewards and accepts exact receipt retries",
+    "Name, integer price, limit, activation, version, strict body keys and request authority are validated",
+    "Owner-only lists details edits and review use session CSRF Origin and optional expected-account guards; other owners receive the same missing response",
+    "Anonymous catalog has no balances private requests nonces or user emails; individual account ledgers remain private",
+    "Current ready broadcast catalog and personal usedRewardIds are independent of request pagination; disabled rewards cannot be newly redeemed",
+    "Request price version mismatches cause conflicts without debit while committed retry receipts retain original price and reward name",
+    "Concurrent identical requests create one redemption and one debit; changed note or request-version payload under one UUID is rejected",
+    "Blocking and follower policy apply to requests while chat slow links and word policy do not apply to reward notes",
+    "Once-per-broadcast remains consumed after cancellation or rejection and is scoped to registry instance",
+    "Wallet row locks prevent negative balances under concurrent distinct requests; the ledger sum remains equal to final wallet balance",
+    "Pending processing completed rejected and canceled transitions enforce versions and terminal immutability; viewer cancellation is pending-only",
+    "Concurrent owner rejection and viewer cancellation produce one refund ledger receipt and exactly one refund",
+    "Watch eligibility checks current HLS sid IP and browser key plus registry instance and fresh ready source without renewing admission sessions",
+    "First watch pulse duplicate or older sequence competing visits stop resume process restart and gaps over twenty-five seconds do not grant catch-up credit",
+    "Server elapsed and twenty-second interval caps limit reported eligible time; sixty-second remainder and ten-point credit are persisted transactionally",
+    "Private historical request channel context is restored independently from a later path owner and never mixed with the new channel wallet",
+    "Balances ledger snapshots and completed requests survive a fresh Spring API instance while old broadcast keys keep only private history",
+    "Cookie-free public catalog reads remain available during Redis outage; authenticated failure is never treated as anonymous success",
+    "V10 to V11 migration preserves private answers creates no fake balances or rewards and enforces nonnegative wallet one-use and unique refund constraints",
+    "V1 through V10 migration hashes are unchanged and a changed applied SQL blocks synthetic pending V12 DDL"
+  ],
+  "Notes": [
+    "Backend watch accounting tests use explicit controlled timestamps to exercise credit boundaries; they are not evidence of sixty seconds of actual video playback",
+    "Actual source and browser watching plus owner UI recovery are verified separately by root in the isolated rewards e2e harness",
+    "No cash purchase recharge payment settlement generic queue scheduler or additional media session was added",
+    "The backend task did not change the main database or running API OBS Docker or operating system"
+  ],
+  "Documentation": [
+    "apps/api/PRODUCT_API.md",
+    "apps/api/README.md",
+    "README.md",
+    "deploy/DOCKER.md"
+  ]
+}

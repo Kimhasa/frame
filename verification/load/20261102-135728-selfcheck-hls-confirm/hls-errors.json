@@ -1,0 +1,32 @@
+{
+  "receiver": "hls",
+  "errorKinds": {},
+  "totals": {
+    "requests": 28648,
+    "bytes": 1382666379,
+    "playlistBytes": 22118692,
+    "mediaBytes": 1360544587,
+    "byKind": {
+      "session": 162,
+      "master": 50,
+      "playlist": 13710,
+      "init": 100,
+      "part": 14626
+    },
+    "status": {
+      "session 200": 50,
+      "master 200": 50,
+      "playlist 200": 13710,
+      "init 200": 100,
+      "part 200": 14626,
+      "session 204": 112
+    },
+    "errors": {},
+    "busy": 0,
+    "retryAfter": {},
+    "sessionOpened": 50,
+    "sessionRefused": 0,
+    "aborted": 100
+  },
+  "sourceErrorsSample": {}
+}

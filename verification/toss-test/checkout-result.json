@@ -1,0 +1,47 @@
+{
+  "flow": "actual official Toss sandbox quick-account demo to Spring confirmation",
+  "state": {
+    "path": "/_frame/payments/success",
+    "queryKeys": [
+      "orderId"
+    ],
+    "text": "본문으로 이동\n봄\n라이브\n팔로잉\n다시보기\n클립\n시청 기록\n\n팔로우한 채널\n\n개\n개발하는 봄\n128\n초\n초록\n84\n모\n모아\n오프라인\n방송하기\n설정\n결제 결과\n결제가 완료되었어요\n주문번호\nframe_5a09dafa915f4518aa49a9fce2c22340\n내용\nspring 채널 메시지 후원\n결제 금액\n5,000원\n결제수단\n계좌이체\n결제일\n2026. 11. 11. 17:22\n영수증\n채널로 돌아가기\n결제 내역"
+  },
+  "requests": [
+    {
+      "method": "POST",
+      "path": "/_frame/api/payments/confirm"
+    }
+  ],
+  "responses": [
+    {
+      "status": 200
+    }
+  ],
+  "orders": [
+    {
+      "orderId": "frame_5a09dafa915f4518aa49a9fce2c22340",
+      "status": "DONE",
+      "amount": 5000,
+      "currency": "KRW",
+      "method": "계좌이체",
+      "approvedAt": "2026-11-11T17:22:27+09:00"
+    },
+    {
+      "orderId": "frame_9da0070da0294296b83964d3d12f9ef2",
+      "status": "READY",
+      "amount": 5000,
+      "currency": "KRW",
+      "method": null,
+      "approvedAt": null
+    },
+    {
+      "orderId": "frame_2354a111a10a42488f3e8e65edd272ac",
+      "status": "READY",
+      "amount": 5000,
+      "currency": "KRW",
+      "method": null,
+      "approvedAt": null
+    }
+  ]
+}

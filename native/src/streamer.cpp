@@ -47,6 +47,49 @@ std::vector<std::string> VideoEncoderArgs(const std::string& encoder, int fps, d
 }
 
 
+// AAC-LC track for HLS (every browser viewer) and the recording; the Opus track stays first for WebRTC.
+constexpr int kAacKbps = 128;
+// HLS DVR media segments: consecutive recorded parts, each segment starting with a video sync sample, about this long.
+constexpr double kDvrSegmentSeconds = 4.0;
+
+// H.264 level_idc for a High-profile stream of this size, rate and bitrate (ITU-T H.264 Table A-1, MaxBR x1.25 for
+// High). Used for the CODECS attribute when MediaMTX has not reported the real SPS yet.
+int AvcLevelIdc(int width, int height, int fps, double mbps) {
+  struct Level {
+    int idc;
+    double maxMbps, maxFs, maxKbps;
+  };
+  static const Level levels[] = {{10, 1485, 99, 64},          {11, 3000, 396, 192},         {12, 6000, 396, 384},
+                                 {13, 11880, 396, 768},       {20, 11880, 396, 2000},       {21, 19800, 792, 4000},
+                                 {22, 20250, 1620, 4000},     {30, 40500, 1620, 10000},     {31, 108000, 3600, 14000},
+                                 {32, 216000, 5120, 20000},   {40, 245760, 8192, 20000},    {41, 245760, 8192, 50000},
+                                 {42, 522240, 8704, 50000},   {50, 589824, 22080, 135000},  {51, 983040, 36864, 240000},
+                                 {52, 2073600, 36864, 240000}, {60, 4177920, 139264, 240000}, {61, 8355840, 139264, 480000},
+                                 {62, 16711680, 139264, 800000}};
+  double fs = std::ceil(width / 16.0) * std::ceil(height / 16.0);
+  for (const auto& l : levels)
+    if (fs <= l.maxFs && fs * fps <= l.maxMbps && mbps * 1000 <= l.maxKbps * 1.25) return l.idc;
+  return 62;
+}
+
+// "avc1.PPCCLL" from MediaMTX's track description of a path (tracks2[].codecProps when this MediaMTX reports them).
+std::string AvcCodecFromApi(const json& item) {
+  if (!item.is_object() || !item.contains("tracks2") || !item["tracks2"].is_array()) return "";
+  for (const auto& t : item["tracks2"]) {
+    if (!t.is_object() || t.value("codec", std::string()) != "H264" || !t.contains("codecProps") || !t["codecProps"].is_object()) continue;
+    const json& p = t["codecProps"];
+    std::string profile = p.value("profile", std::string()), level = p.value("level", std::string());
+    static const std::map<std::string, int> profiles = {{"Baseline", 66}, {"Constrained Baseline", 66}, {"Main", 77}, {"Extended", 88},
+                                                        {"High", 100},    {"High 10", 110},            {"High 4:2:2", 122}, {"High 4:4:4", 244}};
+    auto it = profiles.find(profile);
+    double l = level.empty() ? 0 : atof(level.c_str());
+    if (it == profiles.end() || l <= 0) return "";
+    int constraints = profile == "Constrained Baseline" ? 0x40 : 0;
+    return Printf("avc1.%02x%02x%02x", it->second, constraints, static_cast<int>(std::lround(l * 10)));
+  }
+  return "";
+}
+
 std::string RandomHex(size_t bytes) {
   std::vector<unsigned char> buffer(bytes);
   BCryptGenRandom(nullptr, buffer.data(), static_cast<ULONG>(buffer.size()), BCRYPT_USE_SYSTEM_PREFERRED_RNG);
@@ -302,9 +345,150 @@ std::string Streamer::StreamPath() const {
 bool Streamer::KnownStreamPath(const std::string& path) const {
   std::lock_guard<std::mutex> lock(mutex_);
   if (path == settings_.streamPath) return true;
-  for (const auto& r : renditions_)
-    if (path == settings_.streamPath + "/" + r.name) return true;
+  for (const auto& p : LadderPathsLocked())
+    if (path == p) return true;
   return false;
+}
+
+std::vector<std::string> Streamer::LadderPathsLocked() const {
+  // The source copy and the lower qualities; none when qualities are off (then HLS plays the stream's own path).
+  std::vector<std::string> out;
+  if (renditions_.empty()) return out;
+  out.push_back(settings_.streamPath + "/src");
+  for (const auto& r : renditions_) out.push_back(settings_.streamPath + "/" + r.name);
+  return out;
+}
+
+bool Streamer::WaitPathReady(const std::string& path, DWORD waitMs) {
+  int64_t until = EpochMillis() + waitMs;
+  do {
+    {
+      std::lock_guard<std::mutex> lock(ladderMutex_);
+      if (ladderReady_.count(path)) return true;
+      if (!ladder_ || !ladder_->Running()) return false;
+    }
+    HttpResponse r;
+    if (HttpRequest("GET", apiPort_, "/v3/paths/get/" + path, "", {}, r, 1000) && r.status == 200) {
+      json j = json::parse(r.body, nullptr, false);
+      if (!j.is_discarded() && j.value("ready", false)) {
+        std::lock_guard<std::mutex> lock(ladderMutex_);
+        ladderReady_.insert(path);  // a failure streak ends only once the ladder has also run for a while (StatsLoop)
+        return true;
+      }
+    }
+    Sleep(100);
+  } while (running_ && EpochMillis() < until);
+  return false;
+}
+
+bool Streamer::EnsureLadder(const std::string& path, DWORD waitMs) {
+  std::vector<std::string> paths;
+  {
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (!running_) return false;
+    paths = LadderPathsLocked();
+  }
+  if (std::find(paths.begin(), paths.end(), path) == paths.end()) return false;
+  ladderUseMs_ = EpochMillis();
+  std::thread oldWarm;  // a previous ladder's warm-up, joined outside the lock (it takes the lock itself)
+  {
+    std::lock_guard<std::mutex> lock(ladderMutex_);
+    if (!running_) return false;  // Stop() takes this lock after clearing running_, so no ladder outlives a broadcast
+    if (ladderReady_.count(path) && ladder_ && ladder_->Running()) return true;
+    if (LadderEndedLocked() || !ladder_) {
+      if (EpochMillis() < ladderRetryAtMs_) return false;
+      // Every output's clock: the wall time at PTS 0 (MediaMTX takes these absolute times for the ladder paths).
+      int64_t startUs = EpochMillis() * 1000;
+      std::vector<std::wstring> args;
+      {
+        std::lock_guard<std::mutex> settings(mutex_);
+        args = LadderArgs(startUs);
+      }
+      auto child = std::make_unique<ChildProcess>();
+      std::string error;
+      auto log = [](const std::string& line) { LogFile("ladder", line); };
+      if (!child->Start(ffmpegExe_, args, RuntimeDir(), log, log, error)) {
+        LadderFailedLocked("start failed", error);
+        return false;
+      }
+      LogFile("ladder", Printf("started (pid %lu): source copy + %zu qualities", static_cast<unsigned long>(child->Pid()), paths.size() - 1));
+      ladder_ = std::move(child);
+      ladderPathCount_ = paths.size();
+      ladderStartedMs_ = EpochMillis();
+      // Warm-up: once published, open each variant's HLS muxer (it takes about a segment to produce a playlist), so the
+      // first switch to a quality finds it ready. MediaMTX closes a muxer 60 s after its last request.
+      int hls = hlsPort_;
+      std::thread warm([this, paths, hls] {
+        std::vector<std::thread> each;
+        for (const auto& p : paths)
+          each.emplace_back([this, p, hls] {
+            if (!WaitPathReady(p, 15000)) return;
+            HttpResponse r;
+            HttpRequest("GET", hls, "/" + p + "/index.m3u8?cookieCheck=1", "", {}, r, 8000);
+          });
+        for (auto& t : each) t.join();
+      });
+      // The previous warm-up leaves the member only now, when nothing can fail any more: a joinable thread destroyed on
+      // an early return or a throw would terminate the app (it stays in ladderWarm_ for StopLadder or the next start).
+      oldWarm = std::move(ladderWarm_);
+      ladderWarm_ = std::move(warm);
+    }
+  }
+  if (oldWarm.joinable()) oldWarm.join();
+  return !waitMs || WaitPathReady(path, waitMs);
+}
+
+bool Streamer::LadderEndedLocked() {
+  // The ladder exited by itself (encoder error, stream gone): forget it; the next request starts a new one after 3 s (or
+  // later, see LadderFailedLocked, when it had not published every path).
+  if (!ladder_ || ladder_->Running()) return false;
+  std::string tail = JoinTail(ladder_->Tail(), 3);
+  // The source copy publishes before the encoders open (they open on the first decoded frame), so a ladder whose
+  // encoder cannot open shows a ready "src" first; only one that published every path had really started.
+  // One that ends soon after publishing (a runtime encoder error, out of memory) fails the same way: counting it as a
+  // normal end would restart it every 3 s with an event each time.
+  bool published = ladderPathCount_ && ladderReady_.size() >= ladderPathCount_;
+  bool brief = EpochMillis() - ladderStartedMs_ < kLadderStableMs;
+  ladder_.reset();
+  ladderReady_.clear();
+  if (!published || brief) {
+    LadderFailedLocked(published ? "ended within 30 s of its start" : "ended before publishing every path", tail);
+    return true;
+  }
+  LogFile("ladder", "ended by itself: " + tail);
+  UiLog("화질", "화질 인코더가 종료되었습니다. 다음 시청 요청 때 다시 시작합니다. " + tail);
+  ladderRetryAtMs_ = EpochMillis() + 3000;
+  return true;
+}
+
+void Streamer::LadderFailedLocked(const std::string& what, const std::string& detail) {
+  // A ladder that cannot run (e.g. the GPU's encoder session limit, reached with a game's recorder or another streaming
+  // app): restarts back off (3 s, 6 s, 12 s ... 60 s), only the first failure of a streak reaches the event table, and
+  // until a ladder publishes every path again live.m3u8 offers the stream's own path, so browser viewers keep the source.
+  ++ladderFailures_;
+  int64_t delay = std::min<int64_t>(60000, int64_t{3000} << std::min(ladderFailures_ - 1, 5));
+  ladderRetryAtMs_ = EpochMillis() + delay;
+  LogFile("ladder", Printf("%s (%d in a row, next start in %lld s): ", what.c_str(), ladderFailures_, static_cast<long long>(delay / 1000)) + detail);
+  if (ladderFailures_ == 1)
+    UiLog("화질", "화질 인코더를 시작하지 못했습니다. 브라우저 시청자는 원본 화질로 계속 시청하며, 화질 인코더는 잠시 후 다시 시작합니다. " + detail);
+}
+
+void Streamer::StopLadder() {
+  std::unique_ptr<ChildProcess> ladder;
+  std::thread warm;
+  {
+    std::lock_guard<std::mutex> lock(ladderMutex_);
+    ladder = std::move(ladder_);
+    ladderReady_.clear();
+    ladderRetryAtMs_ = 0;
+    ladderFailures_ = 0;  // idle stop or end of the broadcast: the next start begins a new streak
+    warm = std::move(ladderWarm_);
+  }
+  if (ladder) {
+    ladder->Terminate();
+    LogFile("ladder", "stopped");
+  }
+  if (warm.joinable()) warm.join();
 }
 
 void Streamer::SetVolume(const std::string& channel, int volume) {
@@ -375,7 +559,7 @@ std::string Streamer::BroadcastId() const {
 
 bool Streamer::SetRecording(bool on, std::string& error) {
   HttpResponse r;
-  std::string path = StreamPath();
+  std::string path = StreamPath() + "/rec";  // only the copy path records
   if (!HttpRequest("PATCH", apiPort_, "/v3/config/paths/patch/" + path, json{{"record", on}}.dump(), {{"Content-Type", "application/json"}}, r, 3000, &error))
     return false;
   if (r.status != 200) {
@@ -405,7 +589,8 @@ json Streamer::DvrIndex(const std::string& path) {
   json ranges = json::array();
   HttpResponse r;
   std::string error;
-  bool ok = HttpRequest("GET", port, "/list?path=" + path, "", {}, r, 3000, &error);
+  const std::string recordPath = path + "/rec";
+  bool ok = HttpRequest("GET", port, "/list?path=" + recordPath, "", {}, r, 3000, &error);
   if (ok && r.status == 200) {
     json list = json::parse(r.body, nullptr, false);
     if (list.is_array())
@@ -424,7 +609,7 @@ json Streamer::DvrIndex(const std::string& path) {
                {"dvr", true},
                {"recording", recording_.load()},
                {"ranges", ranges},
-               {"segments", record_.SegmentStarts(path)},
+               {"segments", record_.SegmentStarts(recordPath)},
                {"gopMs", 1000},
                {"nowMs", EpochMillis()}};
   dvrCacheQpc_ = now;
@@ -459,8 +644,264 @@ bool Streamer::DvrMediaTarget(const std::string& path, const std::string& id, do
   std::string start = FormatRfc3339Utc(startMs);
   std::string encoded;
   for (char c : start) encoded += c == ':' ? std::string("%3A") : std::string(1, c);
-  target = "/get?path=" + path + "&start=" + encoded + Printf("&duration=%.3f", durationMs / 1000.0) + "&format=fmp4";
+  // The recording holds the video and the AAC track (the copy path "<stream>/rec").
+  target = "/get?path=" + path + "/rec&start=" + encoded + Printf("&duration=%.3f", durationMs / 1000.0) + "&format=fmp4";
   return true;
+}
+
+bool Streamer::HlsMultivariant(const std::string& path, const std::string& quality, std::string& body, int& status) {
+  struct Entry {
+    std::string name, prefix, mtxPath;
+    int width = 0, height = 0;
+    double mbps = 0;
+  };
+  std::vector<Entry> entries;
+  bool audio = false, vbr = false, ladderFailing = false;
+  int fps = 0, opusKbps = 0;
+  {
+    // Taken before mutex_ (the order EnsureLadder uses); a ladder that has just died is accounted for first.
+    std::lock_guard<std::mutex> lock(ladderMutex_);
+    LadderEndedLocked();
+    ladderFailing = ladderFailures_ > 0;
+  }
+  {
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (!running_ || path != settings_.streamPath) {
+      status = 404;
+      return false;
+    }
+    audio = settings_.audio != "none";
+    fps = settings_.fps;
+    opusKbps = settings_.audioBitrateKbps;
+    vbr = settings_.rateControl == "vbr" && (encoder_ == "h264_nvenc" || encoder_ == "libx264");
+    // With qualities, the source variant is the ladder's copy ("src/", same clock as the qualities); its codec and rate
+    // are the stream's own (mtxPath stays the stream's path for those). While the ladder keeps failing, the source is
+    // the stream's own path (served without the ladder) and no quality is offered, so browser viewers keep watching.
+    // A player that asks for one quality then (?q=720p, Safari's manual choice, also on its reconnect) gets the source
+    // instead of a 404 that would end its playback while the source plays fine.
+    const bool ladder = !renditions_.empty() && !ladderFailing;
+    if (quality.empty() || quality == "source" || (!ladder && !renditions_.empty()))
+      entries.push_back({"source", ladder ? "src/" : "", path, width_, height_, settings_.bitrateMbps});
+    // Only the qualities below the source exist (ConfigureEncoderLocked), already ordered high to low.
+    if (ladder)
+      for (const auto& r : renditions_)
+        if (quality.empty() || quality == r.name) entries.push_back({r.name, r.name + "/", path + "/" + r.name, r.width, r.height, r.mbps});
+  }
+  if (entries.empty()) {
+    status = 404;
+    return false;
+  }
+  std::map<std::string, PathMedia> media;
+  {
+    std::lock_guard<std::mutex> lock(rateMutex_);
+    media = pathMedia_;
+  }
+  const double audioBps = audio ? kAacKbps * 1000.0 : 0;
+  const double publishedAudioBps = audio ? (opusKbps + kAacKbps) * 1000.0 : 0;  // both tracks reach MediaMTX
+  // Average video bitrate measured on a path of this broadcast (>= 10 s of data), or 0.
+  auto measuredVideo = [&](const std::string& name) {
+    auto it = media.find(name);
+    if (it == media.end() || it->second.seconds < 10) return 0.0;
+    return std::max(0.0, it->second.bits / it->second.seconds - publishedAudioBps);
+  };
+  double sourceRatio = 0;  // measured / cap of the source, for qualities that have not run yet (VBR only)
+  {
+    double v = measuredVideo(path);
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (v > 0 && settings_.bitrateMbps > 0) sourceRatio = std::min(1.0, v / (settings_.bitrateMbps * 1e6));
+  }
+  std::ostringstream out;
+  out << "#EXTM3U\n#EXT-X-VERSION:9\n#EXT-X-INDEPENDENT-SEGMENTS\n";
+  for (const auto& e : entries) {
+    // BANDWIDTH: the configured or automatic video rate (the VBR cap) plus the AAC track. AVERAGE-BANDWIDTH: what this
+    // path really averaged in this broadcast; a quality that has not run yet uses the source's measured share of its cap.
+    double peak = e.mbps * 1e6 + audioBps;
+    double average = peak;
+    if (vbr) {
+      double v = measuredVideo(e.mtxPath);
+      if (v <= 0 && sourceRatio > 0) v = e.mbps * 1e6 * sourceRatio;
+      if (v > 0) average = std::min(peak, v + audioBps);
+    }
+    auto codecIt = media.find(e.mtxPath);
+    std::string codec = codecIt != media.end() && !codecIt->second.codec.empty() ? codecIt->second.codec
+                                                                                  : Printf("avc1.6400%02x", AvcLevelIdc(e.width, e.height, fps, e.mbps));
+    std::string group = "aac-" + e.name;
+    if (audio)
+      out << "#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID=\"" << group << "\",NAME=\"audio\",DEFAULT=YES,AUTOSELECT=YES,CHANNELS=\"2\",URI=\"" << e.prefix
+          << "hls/audio3_stream.m3u8\"\n";
+    out << "#EXT-X-STREAM-INF:BANDWIDTH=" << static_cast<int64_t>(std::llround(peak)) << ",AVERAGE-BANDWIDTH=" << static_cast<int64_t>(std::llround(average))
+        << ",RESOLUTION=" << e.width << "x" << e.height << ",FRAME-RATE=" << Printf("%.3f", static_cast<double>(fps)) << ",CODECS=\"" << codec
+        << (audio ? ",mp4a.40.2" : "") << "\"" << (audio ? ",AUDIO=\"" + group + "\"" : std::string()) << "\n"
+        << e.prefix << "hls/video1_stream.m3u8\n";
+  }
+  body = out.str();
+  status = 200;
+  return true;
+}
+
+void Streamer::RefreshDvrFilesLocked(const std::string& id) {
+  if (dvrFilesId_ != id) {
+    dvrFiles_.clear();
+    dvrPlaylist_.clear();
+    dvrFilesId_ = id;
+  }
+  // Files are only added while the broadcast runs (retention never removes the current broadcast), so known entries keep
+  // their index; a file that disappeared from disk is dropped and never listed again.
+  std::vector<RecordFile> next;
+  std::string recordPath;
+  {
+    std::lock_guard<std::mutex> lock(mutex_);
+    recordPath = RecordPathName();
+  }
+  for (const auto& entry : record_.Files(recordPath)) {
+    const fs::path& file = entry.first;
+    auto it = std::find_if(dvrFiles_.begin(), dvrFiles_.end(), [&](const RecordFile& f) { return f.path == file; });
+    if (it != dvrFiles_.end()) {
+      next.push_back(std::move(*it));
+    } else {
+      RecordFile f;
+      f.path = file;
+      f.startMs = entry.second;
+      next.push_back(std::move(f));
+    }
+  }
+  dvrFiles_ = std::move(next);
+  int64_t now = EpochMillis();
+  for (size_t i = 0; i < dvrFiles_.size(); ++i) {
+    RecordFile& f = dvrFiles_[i];
+    if (f.complete) continue;
+    ScanRecordFile(f);
+    // MediaMTX writes one file at a time: every file but the newest is finished. The newest is final once it has not
+    // grown for 5 s (recording paused or stopped); until then its open last group is not listed.
+    bool final = i + 1 < dvrFiles_.size() || now - f.grewAtMs >= 5000;
+    GroupRecordFile(f, final, kDvrSegmentSeconds);
+    if (i + 1 < dvrFiles_.size() || f.broken) f.complete = true;
+  }
+  dvrFilesQpc_ = QpcNow();
+}
+
+bool Streamer::DvrPlaylist(const std::string& path, std::string& body, int& status) {
+  std::string id;
+  {
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (!running_ || path != settings_.streamPath) {
+      status = 404;
+      return false;
+    }
+    id = broadcastId_;
+  }
+  if (!record_.Active()) {
+    status = 404;
+    return false;
+  }
+  std::lock_guard<std::mutex> lock(dvrHlsMutex_);
+  if (dvrFilesId_ == id && !dvrPlaylist_.empty() && QpcSeconds(QpcNow() - dvrPlaylistQpc_) < 1.0) {
+    body = dvrPlaylist_;
+    status = 200;
+    return true;
+  }
+  RefreshDvrFilesLocked(id);
+  // EVENT playlist: segments are only appended. Each recorded file has its own init (EXT-X-MAP) and its own timeline,
+  // so a discontinuity separates files (and with them every gap where recording was paused).
+  std::ostringstream segments;
+  long long target = 1;
+  bool first = true;
+  for (size_t k = 0; k < dvrFiles_.size(); ++k) {
+    const RecordFile& f = dvrFiles_[k];
+    const double ts = f.VideoTimescale();
+    if (f.segments.empty() || ts <= 0) continue;
+    // ".mp4" in the path: players that check segment extensions (FFmpeg's HLS demuxer) accept it; /dvr/file is the same.
+    std::string uri = "dvr/file.mp4?id=" + id + "&f=" + std::to_string(k);
+    if (!first) segments << "#EXT-X-DISCONTINUITY\n";
+    first = false;
+    // The init is the file's own ftyp+moov (a byte range of the file); each segment is cut at a video keyframe and
+    // built from the file's parts (see RecordFile). Decode time 0 is the file's first sample, the time in its name.
+    segments << "#EXT-X-MAP:URI=\"" << uri << "\",BYTERANGE=\"" << f.initSize << "@0\"\n";
+    for (size_t s = 0; s < f.segments.size(); ++s) {
+      const RecordSegment& seg = f.segments[s];
+      double seconds = static_cast<double>(seg.end - seg.start) / ts;  // the video samples' durations
+      target = std::max(target, std::llround(seconds));
+      segments << "#EXT-X-PROGRAM-DATE-TIME:" << FormatIso8601Ms(f.startMs + static_cast<double>(seg.start) * 1000.0 / ts) << "\n#EXTINF:"
+               << Printf("%.5f", seconds) << ",\n"
+               << uri << "&s=" << s << "\n";
+    }
+  }
+  std::ostringstream out;
+  out << "#EXTM3U\n#EXT-X-VERSION:7\n#EXT-X-PLAYLIST-TYPE:EVENT\n#EXT-X-TARGETDURATION:"
+      << std::max<long long>(target, static_cast<long long>(std::ceil(kDvrSegmentSeconds))) << "\n#EXT-X-MEDIA-SEQUENCE:0\n#EXT-X-INDEPENDENT-SEGMENTS\n"
+      << segments.str();
+  dvrPlaylist_ = out.str();
+  dvrPlaylistQpc_ = QpcNow();
+  body = dvrPlaylist_;
+  status = 200;
+  return true;
+}
+
+bool Streamer::DvrFile(const std::string& path, const std::string& id, int index, RecordFile& file, int& status) {
+  {
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (!running_ || path != settings_.streamPath) {
+      status = 404;
+      return false;
+    }
+    if (id != broadcastId_) {
+      status = 409;  // a new broadcast on the same path: the player must reload the playlist
+      return false;
+    }
+  }
+  if (!record_.Active() || index < 0) {
+    status = 404;
+    return false;
+  }
+  std::lock_guard<std::mutex> lock(dvrHlsMutex_);
+  // An unknown index rescans the folder at most once a second: players only ask for listed files, so a flood of
+  // unlisted ones (a misbehaving client) must not keep every DVR request waiting on this lock behind rescans.
+  if (dvrFilesId_ != id || (static_cast<size_t>(index) >= dvrFiles_.size() && QpcSeconds(QpcNow() - dvrFilesQpc_) >= 1.0)) RefreshDvrFilesLocked(id);
+  if (static_cast<size_t>(index) >= dvrFiles_.size() || dvrFiles_[static_cast<size_t>(index)].segments.empty()) {
+    status = 404;
+    return false;
+  }
+  file = dvrFiles_[static_cast<size_t>(index)];  // a copy: one file holds about 60 parts
+  status = 200;
+  return true;
+}
+
+std::string Streamer::HlsSessionOpen(const std::string& path, int& status) {
+  if (!running_ || path != StreamPath()) {
+    status = 404;
+    return "";
+  }
+  int64_t now = EpochMillis();
+  std::lock_guard<std::mutex> lock(sessionMutex_);
+  for (auto it = hlsSessions_.begin(); it != hlsSessions_.end();) it = now - it->second > 30000 ? hlsSessions_.erase(it) : std::next(it);
+  // Memory bound only; this server sets no viewer cap, so a full table (one client can fill it) drops its oldest
+  // heartbeat instead of refusing a viewer (the page awaits this before playing; a dropped viewer simply opens anew).
+  if (hlsSessions_.size() >= 20000)
+    hlsSessions_.erase(std::min_element(hlsSessions_.begin(), hlsSessions_.end(), [](const auto& a, const auto& b) { return a.second < b.second; }));
+  std::string sid = RandomHex(16);
+  hlsSessions_[sid] = now;
+  status = 200;
+  return sid;
+}
+
+bool Streamer::HlsSessionTouch(const std::string& path, const std::string& sid, bool close) {
+  if (!running_ || path != StreamPath()) return false;
+  std::lock_guard<std::mutex> lock(sessionMutex_);
+  auto it = hlsSessions_.find(sid);
+  if (it == hlsSessions_.end() || EpochMillis() - it->second > 30000) {
+    if (it != hlsSessions_.end()) hlsSessions_.erase(it);
+    return false;
+  }
+  if (close) hlsSessions_.erase(it);
+  else it->second = EpochMillis();
+  return true;
+}
+
+int Streamer::ActiveHlsSessions() {
+  int64_t now = EpochMillis();
+  std::lock_guard<std::mutex> lock(sessionMutex_);
+  for (auto it = hlsSessions_.begin(); it != hlsSessions_.end();) it = now - it->second > 30000 ? hlsSessions_.erase(it) : std::next(it);
+  return static_cast<int>(hlsSessions_.size());
 }
 
 json Streamer::Status() const {
@@ -505,6 +946,13 @@ json Streamer::ViewerInfo(const std::string& path) const {
           {"startedAtMs", startedAtMs_},
           {"broadcastId", broadcastId_},
           {"dvr", record_.Active()},
+          // HLS for every browser viewer (paths relative to /<stream>/): the multivariant live playlist with the AAC
+          // track, and the full-broadcast recording as an HLS EVENT playlist when this broadcast is recorded.
+          {"hls",
+           {{"master", "live.m3u8"},
+            {"lowLatency", true},
+            {"audio", settings_.audio == "none" ? "none" : "aac"},
+            {"dvr", record_.Active() ? json("dvr.m3u8") : json(nullptr)}}},
           {"title", title_},
           {"publisher", publisher_},
           {"renditions", renditions},
@@ -692,19 +1140,53 @@ json Streamer::ServerStats() {
     if (page + 1 >= list.value("pageCount", 1)) break;
   }
   out["webrtc"] = {{"sessions", sessions}, {"bytesSent", sent}, {"bytesReceived", received}};
+  out["hls"] = {{"sessions", ActiveHlsSessions()}};
   serverStatsCache_ = out;
   serverStatsAt_ = now;
   return out;
 }
 
-std::string Streamer::RenditionCommand(const Rendition& r) const {
-  // Executed by MediaMTX (runOnDemand) only while a viewer watches this quality; MediaMTX splits it like a POSIX shell.
+std::vector<std::wstring> Streamer::LadderArgs(int64_t startUs) const {
+  // One process shared by every viewer of every quality: the stream is decoded once and scaled for each lower quality.
+  // All outputs keep the input timestamps (encoder time base = filter time base, no frame-rate conversion: a derived
+  // quality has the source's frame rate) and the same -start_time_realtime, so their RTCP sender reports put one frame
+  // at one wall time on every path; keyframes are forced where the source has them (GOP unchanged). Both audio tracks
+  // (Opus, AAC) are copied in the source's order, so every path's HLS playlists have the source's names.
+  const std::string rtsp = Printf("rtsp://127.0.0.1:%d/", settings_.publishPort), t = std::to_string(startUs);
+  // One decoding thread up to 1080p60: no frame-threading delay (each extra thread holds a frame) and far less memory;
+  // such a stream decodes well within one core. Above that (up to 2160p165) one thread falls behind real time, and since
+  // the outputs of this process advance together, a slow decoder would hold back the source copy too: FFmpeg picks.
+  const bool oneThread = static_cast<int64_t>(width_) * height_ * settings_.fps <= int64_t{1920} * 1080 * 60;
+  std::vector<std::string> a = {"-hide_banner", "-nostdin", "-loglevel", "warning", "-threads", oneThread ? "1" : "0", "-rtsp_transport", "tcp", "-i",
+                                rtsp + settings_.streamPath};
+  std::string graph = "[0:v:0]split=" + std::to_string(renditions_.size());
+  for (size_t i = 0; i < renditions_.size(); ++i) graph += Printf("[s%zu]", i);
+  for (size_t i = 0; i < renditions_.size(); ++i)
+    graph += Printf(";[s%zu]scale=%d:%d:flags=bilinear[v%zu]", i, renditions_[i].width, renditions_[i].height, i);
+  a.insert(a.end(), {"-filter_complex", graph});
+  auto output = [&](const std::string& name) {
+    a.insert(a.end(), {"-start_time_realtime", t, "-f", "rtsp", "-rtsp_transport", "tcp", "-pkt_size", "1200", rtsp + settings_.streamPath + "/" + name});
+  };
+  a.insert(a.end(), {"-map", "0:v:0", "-map", "0:a?", "-c", "copy"});
+  output("src");
+  for (size_t i = 0; i < renditions_.size(); ++i) {
+    const auto& r = renditions_[i];
+    a.insert(a.end(), {"-map", Printf("[v%zu]", i), "-map", "0:a?", "-fps_mode", "passthrough", "-enc_time_base:v", "filter"});
+    for (const auto& v : VideoEncoderArgs(encoder_, settings_.fps, r.mbps, settings_.rateControl)) a.push_back(v);
+    a.insert(a.end(), {"-force_key_frames", "source", "-c:a", "copy"});
+    output(r.name);
+  }
+  std::vector<std::wstring> out;
+  for (const auto& s : a) out.push_back(Wide(s));
+  return out;
+}
+
+std::string Streamer::RecordCopyCommand() const {
+  // Run by MediaMTX while the broadcast is available (runOnAvailable, restarted if it exits): the video and the AAC track
+  // (second audio) copied unchanged into "<stream>/rec", the only path that records. No second encode.
   std::string exe = Utf8(ffmpegExe_.generic_wstring());
-  std::string cmd = "'" + exe + "' -hide_banner -nostdin -loglevel warning -rtsp_transport tcp -i rtsp://127.0.0.1:$RTSP_PORT/" + settings_.streamPath +
-                    " -map 0:v:0 -map 0:a? -vf scale=" + std::to_string(r.width) + ":" + std::to_string(r.height) + ":flags=bilinear";
-  for (const auto& a : VideoEncoderArgs(encoder_, settings_.fps, r.mbps, settings_.rateControl)) cmd += " " + a;
-  cmd += " -c:a copy -f rtsp -rtsp_transport tcp -pkt_size 1200 rtsp://127.0.0.1:$RTSP_PORT/$MTX_PATH";
-  return cmd;
+  return "'" + exe + "' -hide_banner -nostdin -loglevel warning -rtsp_transport tcp -i rtsp://127.0.0.1:$RTSP_PORT/" + settings_.streamPath +
+         " -map 0:v:0 -map 0:a:1? -c copy -f rtsp -rtsp_transport tcp -pkt_size 1200 rtsp://127.0.0.1:$RTSP_PORT/" + RecordPathName();
 }
 
 bool Streamer::StartMediaMtx(std::string& field, std::string& error) {
@@ -748,8 +1230,9 @@ bool Streamer::StartMediaMtx(std::string& field, std::string& error) {
     << "playback: true\nplaybackAddress: 127.0.0.1:" << playbackPort_ << "\n"
     << "rtsp: true\nrtspTransports: [tcp]\nrtspEncryption: \"no\"\nrtspAddress: 127.0.0.1:" << settings_.publishPort << "\n"
     << "rtmp: false\nsrt: false\nmoq: false\n"
-    // Low-latency HLS (fMP4, H.264 + Opus as published, no re-encode) on loopback, made only when a viewer asks for it:
-    // the fallback for browsers or networks where WebRTC does not work. The viewer server forwards /<path>/hls/<file>.
+    // Low-latency HLS (fMP4, H.264 + Opus + AAC as published, no re-encode) on loopback, made when a viewer asks for it:
+    // the default for every browser viewer (live.m3u8 points at the video and AAC playlists). The viewer server
+    // forwards /<path>[/<quality>]/hls/<file>.
     << "hls: true\nhlsAddress: 127.0.0.1:" << hlsPort_ << "\nhlsVariant: lowLatency\nhlsAlwaysRemux: false\nhlsSegmentCount: 7\n"
     << "hlsSegmentDuration: 1s\nhlsPartDuration: 200ms\nhlsAllowOrigins: ['*']\n"
     << "webrtc: true\nwebrtcAddress: 127.0.0.1:" << webrtcHttpPort_ << "\nwebrtcEncryption: false\nwebrtcAllowOrigins: ['*']\n"
@@ -769,15 +1252,18 @@ bool Streamer::StartMediaMtx(std::string& field, std::string& error) {
   y << "paths:\n  " << YamlQuote(settings_.streamPath) << ":\n    source: publisher\n";
   bool record = record_.Active();
   if (record) {
-    // Full broadcast, as published (no second encode): fMP4 parts flushed every second (the DVR live edge), files split
-    // at the first keyframe after 60 s, never deleted by MediaMTX (retention is RecordStore's job).
-    y << "    record: true\n    recordPath: " << YamlQuote(record_.RecordPathPattern()) << "\n    recordFormat: fmp4\n"
+    // Full broadcast, as published (no second encode), recorded from the copy path "<stream>/rec" that carries the video
+    // and the AAC track only (what HLS players need): fMP4 parts flushed every second (the DVR live edge), files split at
+    // the first keyframe after 60 s, never deleted by MediaMTX (retention is RecordStore's job).
+    y << "    runOnAvailable: " << YamlQuote(RecordCopyCommand()) << "\n    runOnAvailableRestart: true\n"
+      << "  " << YamlQuote(RecordPathName()) << ":\n    source: publisher\n"
+      << "    record: true\n    recordPath: " << YamlQuote(record_.RecordPathPattern()) << "\n    recordFormat: fmp4\n"
       << "    recordPartDuration: 1s\n    recordMaxPartSize: 100M\n    recordSegmentDuration: 60s\n    recordDeleteAfter: 0s\n";
   }
-  for (const auto& r : renditions_) {
-    y << "  " << YamlQuote(settings_.streamPath + "/" + r.name) << ":\n    runOnDemand: " << YamlQuote(RenditionCommand(r))
-      << "\n    runOnDemandStartTimeout: 15s\n    runOnDemandCloseAfter: 30s\n";  // outlives a viewer's brief quality round trip
-  }
+  // The ladder's paths (EnsureLadder publishes them): frames keep the absolute times of the ladder's sender reports, so
+  // HLS dates and timestamps match across the source copy and the qualities.
+  for (const auto& p : LadderPathsLocked())
+    y << "  " << YamlQuote(p) << ":\n    source: publisher\n    useAbsoluteTimestamp: true\n";
   fs::path config = RuntimeDir() / L"mediamtx.yml";
   {
     std::ofstream out(config, std::ios::binary | std::ios::trunc);
@@ -848,11 +1334,14 @@ std::vector<std::wstring> Streamer::FfmpegArgs(const std::string& encoder) const
   // Streaming WAV instead of raw s16le: the raw PCM demuxer reads ~85 ms per packet, WAV honours max_size (10 ms here).
   if (withAudio) a.insert(a.end(), {"-f", "wav", "-max_size", "1920", "-ignore_length", "1", "-thread_queue_size", "64", "-i", Utf8(audioPipe_.Name())});
   a.insert(a.end(), {"-map", "0:v:0"});
-  if (withAudio) a.insert(a.end(), {"-map", "1:a:0"});
+  // The one captured mix as two audio tracks: Opus first (WebRTC uses the first audio it supports), AAC-LC second (HLS
+  // for every browser viewer and the recording). Audio "none" publishes no audio track.
+  if (withAudio) a.insert(a.end(), {"-map", "1:a:0", "-map", "1:a:0"});
   auto video = VideoEncoderArgs(encoder, settings_.fps, settings_.bitrateMbps, settings_.rateControl);
   a.insert(a.end(), video.begin(), video.end());
   if (withAudio)
-    a.insert(a.end(), {"-c:a", "libopus", "-b:a", std::to_string(settings_.audioBitrateKbps) + "k", "-application", "lowdelay", "-frame_duration", "10"});
+    a.insert(a.end(), {"-c:a:0", "libopus", "-b:a:0", std::to_string(settings_.audioBitrateKbps) + "k", "-application:a:0", "lowdelay",
+                       "-frame_duration:a:0", "10", "-c:a:1", "aac", "-b:a:1", std::to_string(kAacKbps) + "k", "-ar:a:1", "48000"});
   a.insert(a.end(), {"-f", "rtsp", "-rtsp_transport", "tcp", "-pkt_size", "1200", "rtsp://127.0.0.1:" + std::to_string(settings_.publishPort) + "/" + settings_.streamPath});
   std::vector<std::wstring> wide;
   for (const auto& s : a) wide.push_back(Wide(s));
@@ -995,6 +1484,20 @@ bool Streamer::Start(const Settings& settings, std::shared_ptr<WindowCapture> ca
     std::lock_guard<std::mutex> lock(dvrMutex_);
     dvrCache_ = json();
   }
+  {
+    std::lock_guard<std::mutex> lock(dvrHlsMutex_);
+    dvrFiles_.clear();
+    dvrFilesId_.clear();
+    dvrPlaylist_.clear();
+  }
+  {
+    std::lock_guard<std::mutex> lock(rateMutex_);
+    pathMedia_.clear();
+  }
+  {
+    std::lock_guard<std::mutex> lock(sessionMutex_);
+    hlsSessions_.clear();
+  }
   json recordMeta;
   std::string broadcastId;
   {
@@ -1069,9 +1572,15 @@ bool Streamer::Start(const Settings& settings, std::shared_ptr<WindowCapture> ca
   stats_ = std::thread([this] { StatsLoop(); });
   relayStop_ = false;
   if (!settings_.relayPublishUrl.empty() || !settings_.relayApiUrl.empty()) relay_ = std::thread([this] { RelayLoop(); });
+  // The quality ladder starts with the broadcast: a new ladder path only takes frames once FFmpeg's second RTCP sender
+  // report arrives (MediaMTX drops the first, sent before it knows the SSRC; the next comes 5 s later), so starting it on
+  // the first viewer's request made that viewer wait about 8 s. It stops after kLadderIdleMs without a reader and then
+  // starts again on the next request.
+  EnsureLadder(settings_.streamPath + "/src", 0);
 
   int refresh = WindowMonitorRefreshRate(capture->Window());
-  std::string audioText = settings.audio == "none" ? "없음" : "Opus " + std::to_string(settings.audioBitrateKbps) + "kbps 48kHz 스테레오";
+  std::string audioText = settings.audio == "none" ? "없음"
+                                                   : "Opus " + std::to_string(settings.audioBitrateKbps) + "kbps + AAC " + std::to_string(kAacKbps) + "kbps 48kHz 스테레오";
   bool vbr = settings_.rateControl == "vbr" && (encoder_ == "h264_nvenc" || encoder_ == "libx264");
   std::string sourceText = sourceWidth_ >= 2 ? Printf("원본 %ldx%ld", sourceWidth_, sourceHeight_) : std::string("원본 크기 미확인: 화면이 아직 들어오지 않음");
   UiLog("송출", Printf("적용: %dx%d (%s), %d fps 고정 프레임, %s %.1f Mbps%s, %s, 오디오 %s", width_, height_, sourceText.c_str(), settings.fps,
@@ -1136,10 +1645,12 @@ void Streamer::Stop(const std::string& reason, bool failed) {
   if (stats_.joinable() && stats_.get_id() != std::this_thread::get_id()) stats_.join();
   relayStop_ = true;
   if (relay_.joinable()) relay_.join();
+  StopLadder();
   StopFfmpeg();
   if (audio_) audio_->Stop();
   audio_.reset();
-  if (mediamtx_ && record_.Active()) Sleep(300);  // the publisher has left: let the recorder close its last segment
+  // The publisher has left: MediaMTX ends the record copy and the recorder of "<stream>/rec" closes its last segment.
+  if (mediamtx_ && record_.Active()) Sleep(600);
   if (mediamtx_) mediamtx_->Terminate();
   mediamtx_.reset();
   capture_.reset();
@@ -1149,6 +1660,16 @@ void Streamer::Stop(const std::string& reason, bool failed) {
   {
     std::lock_guard<std::mutex> lock(dvrMutex_);
     dvrCache_ = json();
+  }
+  {
+    std::lock_guard<std::mutex> lock(dvrHlsMutex_);
+    dvrFiles_.clear();
+    dvrFilesId_.clear();
+    dvrPlaylist_.clear();
+  }
+  {
+    std::lock_guard<std::mutex> lock(sessionMutex_);
+    hlsSessions_.clear();
   }
   if (!recordSummary.empty()) UiLog("녹화", recordSummary);
   if (!wasRunning) return;
@@ -1271,6 +1792,11 @@ void Streamer::StatsLoop() {
   bool reportedMinimized = false;
   SIZE seenSource{sourceWidth_, sourceHeight_}, reportedSource = seenSource;
   int seenSince = 0;
+  std::vector<std::string> ladderPaths;
+  {
+    std::lock_guard<std::mutex> lock(mutex_);
+    ladderPaths = LadderPathsLocked();
+  }
   while (!statsStop_) {
     for (int i = 0; i < 10 && !statsStop_; ++i) Sleep(100);
     if (statsStop_) break;
@@ -1304,27 +1830,67 @@ void Streamer::StatsLoop() {
     double encoderFps = encoderRate_;
     double speed = encoderFps / std::max(1, settings_.fps);
     // Server side: viewers (WebRTC sessions on the main path and its qualities) and the bitrate actually received.
-    int viewers = 0;
+    int viewers = 0, ladderReaders = 0;
     double serverMbps = 0;
     HttpResponse r;
     std::string path = StreamPath();
+    bool listed = false;
     if (HttpRequest("GET", apiPort_, "/v3/paths/list?itemsPerPage=1000", "", {}, r, 800) && r.status == 200) {
       json j = json::parse(r.body, nullptr, false);
-      if (!j.is_discarded() && j.contains("items")) {
+      if (!j.is_discarded() && j.contains("items") && j["items"].is_array()) {
+        listed = true;
+        std::lock_guard<std::mutex> lock(rateMutex_);
         for (const auto& item : j["items"]) {
+          if (!item.is_object()) continue;
           std::string name = item.value("name", "");
           if (name != path && name.rfind(path + "/", 0) != 0) continue;
-          if (item.contains("readers"))
+          if (item.contains("readers") && item["readers"].is_array()) {
             for (const auto& reader : item["readers"])
-              if (reader.value("type", "") == "webRTCSession") ++viewers;
+              if (reader.is_object() && reader.value("type", "") == "webRTCSession") ++viewers;
+            // HLS muxers (alive 60 s after their last request) and WebRTC sessions keep the ladder running.
+            if (std::find(ladderPaths.begin(), ladderPaths.end(), name) != ladderPaths.end()) ladderReaders += static_cast<int>(item["readers"].size());
+          }
+          const json* in = item.contains("inboundBytes") ? &item["inboundBytes"] : item.contains("bytesReceived") ? &item["bytesReceived"] : nullptr;
+          int64_t bytes = in && in->is_number() ? in->get<int64_t>() : 0;
           if (name == path) {
-            int64_t bytes = item.value("bytesReceived", static_cast<int64_t>(0));
             if (lastBytes >= 0 && bytes >= lastBytes) serverMbps = (bytes - lastBytes) * 8.0 / dt / 1e6;
             lastBytes = bytes;
           }
+          // Per path (source, qualities while they run): average received rate and the codec MediaMTX parsed from the SPS.
+          PathMedia& m = pathMedia_[name];
+          if (!item.value("ready", false)) {
+            m.lastBytes = -1;
+            continue;
+          }
+          if (m.lastBytes >= 0 && bytes >= m.lastBytes && seconds > 3) {
+            m.bits += (bytes - m.lastBytes) * 8.0;
+            m.seconds += dt;
+          }
+          m.lastBytes = bytes;
+          if (m.codec.empty()) m.codec = AvcCodecFromApi(item);
         }
       }
     }
+    if (!ladderPaths.empty()) {
+      if (ladderReaders) ladderUseMs_ = EpochMillis();
+      bool stopLadder = false;
+      {
+        std::lock_guard<std::mutex> lock(ladderMutex_);
+        LadderEndedLocked();
+        stopLadder = ladder_ && listed && EpochMillis() - ladderUseMs_ > kLadderIdleMs;
+        if (ladderFailures_ && ladder_ && ladderReady_.size() >= ladderPathCount_ && EpochMillis() - ladderStartedMs_ >= kLadderStableMs) {
+          // A restarted ladder published every path and kept running: the streak ends, live.m3u8 lists the qualities again.
+          LogFile("ladder", Printf("running with every path for %d s after %d failed starts", kLadderStableMs / 1000, ladderFailures_));
+          UiLog("화질", "화질 인코더가 다시 시작되었습니다. 새로 접속하는 브라우저 시청자에게 화질 선택이 다시 제공됩니다.");
+          ladderFailures_ = 0;
+        }
+      }
+      if (stopLadder) {
+        LogFile("ladder", Printf("no reader on any quality for %d s", kLadderIdleMs / 1000));
+        StopLadder();
+      }
+    }
+    viewers += ActiveHlsSessions();  // browser viewers on HLS (session heartbeats), next to the WebRTC sessions
     viewers_ = viewers;
     measuredMbps_ = serverMbps;
     AudioLevels levels = audio_ ? audio_->TakeLevels() : AudioLevels{};

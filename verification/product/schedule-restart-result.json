@@ -1,0 +1,17 @@
+{
+  "base": "http://127.0.0.1:18081",
+  "results": [
+    {
+      "name": "Saved schedule and authentication survive API restart",
+      "pass": true
+    },
+    {
+      "name": "Public schedule survives API restart",
+      "pass": true
+    },
+    {
+      "name": "Cancelled schedule stays absent after API restart",
+      "pass": true
+    }
+  ]
+}

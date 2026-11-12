@@ -1,7 +1,10 @@
 // Real-browser playback sampler: headless Edge (own profile and DevTools port) opens K viewer pages and measures what a
 // protocol client cannot: first presented frame, presented FPS (requestVideoFrameCallback), freezes (gaps > 500 ms),
-// decoded resolution, getStats decode/loss/jitter, and capture->display latency when the picture carries the barcode of
-// tools/motion-test.html or tools/load/target.mjs (16 cells: 4 markers + 12 bits of epoch ms % 4000; same clock needed).
+// decoded resolution, getStats decode/loss/jitter (WebRTC) or getVideoPlaybackQuality decoded/dropped frames (HLS), and
+// capture->display latency when the picture carries the barcode of tools/motion-test.html or tools/load/target.mjs
+// (16 cells: 4 markers + 12 bits of epoch ms % 4000; same clock needed). HLS pages (hls.js): every Hls instance the page
+// makes is recorded, and once a second the delay of the playing position (now - hls.playingDate, i.e. EXT-X-PROGRAM-
+// DATE-TIME = the target MediaMTX's ingest clock), hls.latency and the page's FrameRuntime.hls state are sampled.
 // usage: node tools/load/browser-sampler.mjs --url http://<host>:8889/screen-01 [--count 2] [--seconds 30] [--port 21222]
 //        [--video "<css selector>"] [--window 1920,1080] [--latency true] [--headless true] [--out result.json] [--dir <profile dir>]
 //        [--profiles desktop,mobile]  (pages take the profiles in turn; "mobile" = 390x844 CSS px, DPR 3, touch, Android
@@ -29,6 +32,13 @@ if (o.port < 21000 || o.port > 21999) console.error(`warning: DevTools port ${o.
 // Runs in every page before its own scripts: records RTCPeerConnections and measures presented frames of the main video.
 const probe = `(() => {
   const pcs = window.__loadPcs = [];
+  // hls.js (loaded later by the page with a <script>): wrap the class the moment it is assigned to window.Hls.
+  const hlsList = window.__loadHls = [];
+  let HlsClass;
+  try {
+    Object.defineProperty(window, 'Hls', { configurable: true, enumerable: true, get() { return HlsClass; },
+      set(C) { HlsClass = typeof C === 'function' ? new Proxy(C, { construct(t, a, nt) { const h = Reflect.construct(t, a, nt); hlsList.push(h); return h; } }) : C; } });
+  } catch {}
   const Orig = window.RTCPeerConnection;
   if (Orig) {
     const Wrapped = function (...args) { const pc = new Orig(...args); pc.__loadId = pcs.length + 1; pc.__loadAt = performance.now(); pcs.push(pc); return pc; };
@@ -47,7 +57,22 @@ const probe = `(() => {
       }
     }, 200);
   }
-  const m = window.__loadMetrics = { firstFrameAt: null, frames: 0, last: null, gaps: [], width: 0, height: 0, lat: [], latBad: 0, decodeTried: 0, decodeHit: 0, video: null, windowStart: null, wFrames: 0, wFreezes: 0, wFreezeMs: 0, wMaxGap: 0 };
+  const m = window.__loadMetrics = { firstFrameAt: null, frames: 0, last: null, gaps: [], width: 0, height: 0, lat: [], latBad: 0, decodeTried: 0, decodeHit: 0, video: null, windowStart: null, wFrames: 0, wFreezes: 0, wFreezeMs: 0, wMaxGap: 0,
+    vq0: null, vqSwitched: false, pdt: [], hlsLat: [], transport: null, level: null, rtStalls: null, bufferAhead: null, bwEstimate: null };
+  const vqNow = () => { const q = current && current.getVideoPlaybackQuality ? current.getVideoPlaybackQuality() : null; return q ? { total: q.totalVideoFrames, dropped: q.droppedVideoFrames, t: performance.now() } : null; };
+  window.__loadVqNow = vqNow;
+  setInterval(() => {
+    if (m.windowStart === null || !current) return;
+    const h = hlsList.filter(x => x.media === current).pop();
+    if (h) {
+      try { const d = h.playingDate; if (d && Number.isFinite(d.getTime())) m.pdt.push(Date.now() - d.getTime()); } catch {}
+      if (Number.isFinite(h.latency) && h.latency > 0) m.hlsLat.push(h.latency * 1000);
+    }
+    try {
+      const rt = window.FrameRuntime && window.FrameRuntime.hls;
+      if (rt) { m.transport = rt.transport; m.level = rt.level ? rt.level.width + 'x' + rt.level.height : null; m.rtStalls = rt.stalls; m.bufferAhead = rt.bufferAhead; m.bwEstimate = rt.bandwidthEstimate; }
+    } catch {}
+  }, 1000);
   const luma = (d, i) => 0.2126 * d[i] + 0.7152 * d[i + 1] + 0.0722 * d[i + 2];
   let canvas = null, ctx = null, band = null, misses = 0;
   function runs(row, W) { const out = []; let start = 0, bright = luma(row, 0) > 128; for (let x = 1; x <= W; x++) { const b = x < W && luma(row, x * 4) > 128; if (x === W || b !== bright) { out.push({ bright, start, len: x - start }); start = x; bright = b; } } return out; }
@@ -78,6 +103,7 @@ const probe = `(() => {
   let current = null;
   function attach(video) {
     current = video;
+    if (m.windowStart !== null) { m.vq0 = vqNow(); m.vqSwitched = true; }  // decoded frames count on the new element from here
     m.video = video.id || video.className || 'video';
     const onFrame = (now, meta) => {
       if (m.firstFrameAt === null) m.firstFrameAt = now;
@@ -157,11 +183,12 @@ async function samplePage(page, index, profile) {
   }
   // Measurement window starts 2 s after the first frame (start-up transients are reported by firstFrameMs).
   await sleep(2000);
-  await page.evaluate('window.__loadMetrics.windowStart = performance.now()');
+  await page.evaluate('(() => { const m = window.__loadMetrics; m.windowStart = performance.now(); m.vq0 = window.__loadVqNow(); })()');
   const s0 = await page.evaluate(statsExpr), w0 = Date.now();
   await sleep(o.seconds * 1000);
   const s1 = await page.evaluate(statsExpr), w1 = Date.now();
-  const m = await page.evaluate(`(() => { const m = window.__loadMetrics; return { firstFrameAt: m.firstFrameAt, frames: m.wFrames, freezes: m.wFreezes, freezeMs: m.wFreezeMs, maxGap: m.wMaxGap, width: m.width, height: m.height, lat: m.lat, latBad: m.latBad, tried: m.decodeTried, hit: m.decodeHit, video: m.video, dpr: devicePixelRatio, viewport: innerWidth + 'x' + innerHeight, ua: navigator.userAgent, videoSwitches: m.videoSwitches || 0, windowStart: m.windowStart, nowMs: performance.now(), pcs: (window.__loadPcs || []).map(p => ({ id: p.__loadId, createdMs: Math.round(p.__loadAt), firstDecodedMs: p.__firstDecoded ? Math.round(p.__firstDecoded.at) : null, state: p.connectionState })) }; })()`);
+  const m = await page.evaluate(`(() => { const m = window.__loadMetrics; return { firstFrameAt: m.firstFrameAt, frames: m.wFrames, freezes: m.wFreezes, freezeMs: m.wFreezeMs, maxGap: m.wMaxGap, width: m.width, height: m.height, lat: m.lat, latBad: m.latBad, tried: m.decodeTried, hit: m.decodeHit, video: m.video, dpr: devicePixelRatio, viewport: innerWidth + 'x' + innerHeight, ua: navigator.userAgent, videoSwitches: m.videoSwitches || 0, windowStart: m.windowStart, nowMs: performance.now(),
+    vq0: m.vq0, vq1: window.__loadVqNow(), vqSwitched: m.vqSwitched, pdt: m.pdt, hlsLat: m.hlsLat, transport: m.transport, level: m.level, rtStalls: m.rtStalls, bufferAhead: m.bufferAhead, bwEstimate: m.bwEstimate, hlsInstances: (window.__loadHls || []).length, pcs: (window.__loadPcs || []).map(p => ({ id: p.__loadId, createdMs: Math.round(p.__loadAt), firstDecodedMs: p.__firstDecoded ? Math.round(p.__firstDecoded.at) : null, state: p.connectionState })) }; })()`);
   // The page may hold more than one peer connection (retries, the viewer's quality switch): use the one that received the
   // most video, and take deltas only against the same connection (matched by id) so a new connection never gives negatives.
   const main = list => list.reduce((best, x, i) => ((x.video?.bytes || 0) > (list[best]?.video?.bytes || 0) ? i : best), 0);
@@ -177,11 +204,19 @@ async function samplePage(page, index, profile) {
   const secs = (w1 - w0) / 1000;
   const switched = !same && s1.length > 0;
   const lost = delta(v0, v1, 'packetsLost'), recv = delta(v0, v1, 'packetsReceived');
+  // Without a peer connection (HLS): decoded frames from the element's getVideoPlaybackQuality over the window (or since
+  // the player replaced its element inside the window).
+  const vqSec = m.vq0 && m.vq1 ? (m.vq1.t - m.vq0.t) / 1000 : 0;
+  const vqFps = !s1.length && vqSec >= 1 ? (m.vq1.total - m.vq0.total) / vqSec : null;
+  const dist = list => (list.length ? { n: list.length, p50: round(percentile(list, 0.5), 0), p95: round(percentile(list, 0.95), 0), min: round(percentile(list, 0), 0), max: round(percentile(list, 1), 0) } : null);
   const jb = delta(v0, v1, 'jbDelay'), jbn = delta(v0, v1, 'jbEmitted');
   return {
     index, profile, viewport: m.viewport, dpr: m.dpr, firstFrameMs: round(m.firstFrameAt, 0), windowSec: round(secs, 1), presentedFps: round(m.frames / secs, 1), freezes: m.freezes, freezeMs: round(m.freezeMs, 0), maxGapMs: round(m.maxGap, 0),
-    decodedWidth: m.width, decodedHeight: m.height, decodedFps: round(rate('framesDecoded'), 1), decodedFpsSpanSec: round(span, 1),
-    decodedFpsBasis: same ? 'window (stats timestamps)' : rateBase ? 'connection created inside the window: from its first decoded frame' : 'no decoded frame', framesDropped: delta(v0, v1, 'framesDropped'),
+    decodedWidth: m.width, decodedHeight: m.height, decodedFps: vqFps !== null ? round(vqFps, 1) : round(rate('framesDecoded'), 1), decodedFpsSpanSec: vqFps !== null ? round(vqSec, 1) : round(span, 1),
+    decodedFpsBasis: vqFps !== null ? `getVideoPlaybackQuality ${m.vqSwitched ? '(since the element switch in the window)' : '(window)'}` : same ? 'window (stats timestamps)' : rateBase ? 'connection created inside the window: from its first decoded frame' : 'no decoded frame',
+    framesDropped: vqFps !== null ? m.vq1.dropped - m.vq0.dropped : delta(v0, v1, 'framesDropped'), droppedVideoFrames: m.vq0 && m.vq1 ? m.vq1.dropped - m.vq0.dropped : null,
+    transport: m.transport || (s1.length ? 'webrtc' : m.hlsInstances ? 'hls.js' : null), level: m.level, hlsStalls: m.rtStalls, bufferAheadS: m.bufferAhead, bandwidthEstimate: m.bwEstimate,
+    pdtDelayMs: dist(m.pdt) || (m.hlsInstances ? 'not measured (no PROGRAM-DATE-TIME position)' : 'not measured (no hls.js player)'), hlsLatencyMs: dist(m.hlsLat) || 'not measured',
     statsFreezeCount: delta(v0, v1, 'freezeCount'), statsFreezeSec: round(delta(v0, v1, 'totalFreezesDuration'), 3), decoder: v1?.decoder ?? null, powerEfficientDecoder: v1?.powerEfficient ?? null,
     videoPacketsLost: lost, videoPacketsReceived: recv, videoLossRatio: lost !== null && recv ? round(lost / (lost + recv), 5) : null, videoJitterMs: v1 ? round(v1.jitter * 1000, 1) : null,
     jitterBufferMs: jb !== null && jbn ? round(jb / jbn * 1000, 1) : null, videoKbps: rate('bytes') === null ? null : round(rate('bytes') * 8 / 1000, 0), nack: delta(v0, v1, 'nack'), pli: delta(v0, v1, 'pli'),
@@ -245,7 +280,9 @@ const result = {
   tool: 'browser-sampler', url: o.url, count: o.count, seconds: o.seconds, startedAt: new Date(t0).toISOString(), browser: version.Browser, headless: o.headless,
   definitions: { firstFrameMs: 'page navigation start -> first presented video frame (requestVideoFrameCallback), includes page load, WHEP/ICE and first keyframe',
     presentedFps: 'presented frames per second in the window (rVFC)', freeze: 'gap > 500 ms between presented frames', latencyMs: 'barcode stamp (source wall clock) -> expected display time; needs a shared clock',
-    decodedFps: 'framesDecoded delta / stats-timestamp delta of the main connection: over the window, or from the first decoded frame when the connection was made inside the window (decodedFpsBasis)',
+    decodedFps: 'WebRTC: framesDecoded delta / stats-timestamp delta of the main connection (over the window, or from its first decoded frame when made inside the window); HLS (no peer connection): getVideoPlaybackQuality totalVideoFrames delta / time (decodedFpsBasis)',
+    pdtDelayMs: 'HLS (hls.js): once a second, now - hls.playingDate of the player on the shown element; the playing position by EXT-X-PROGRAM-DATE-TIME (target MediaMTX ingest clock): excludes capture/encode/publish before MediaMTX, includes buffering and decode; same clock needed',
+    hlsLatencyMs: 'hls.js latency (live edge of the playlist - playing position), once a second',
     profiles: 'desktop = the window as started; mobile = DevTools emulation (390x844, DPR 3, touch, Android UA) in desktop Edge: mobile-like layout and quality choice, not a phone decoder or mobile network' },
   pages,
   summary: { ok: good.length, failed: pages.length - good.length, firstFrameMs: { p50: percentile(good.map(p => p.firstFrameMs), 0.5), p95: percentile(good.map(p => p.firstFrameMs), 0.95) },
@@ -254,6 +291,10 @@ const result = {
     framesDropped: good.reduce((s, p) => s + (p.framesDropped || 0), 0), videoLossRatioMax: good.length ? Math.max(...good.map(p => p.videoLossRatio || 0)) : null,
     resolution: [...new Set(good.map(p => `${p.decodedWidth}x${p.decodedHeight}`))],
     connectionChanges: good.filter(p => p.connectionChangedInWindow).length,
+    transports: [...new Set(good.map(p => p.transport).filter(Boolean))], levels: [...new Set(good.map(p => p.level).filter(Boolean))],
+    pdtDelayMs: good.some(p => typeof p.pdtDelayMs === 'object') ? { p50: percentile(good.filter(p => typeof p.pdtDelayMs === 'object').map(p => p.pdtDelayMs.p50), 0.5), p95: Math.max(...good.filter(p => typeof p.pdtDelayMs === 'object').map(p => p.pdtDelayMs.p95)) } : 'not measured',
+    hlsLatencyMs: good.some(p => typeof p.hlsLatencyMs === 'object') ? { p50: percentile(good.filter(p => typeof p.hlsLatencyMs === 'object').map(p => p.hlsLatencyMs.p50), 0.5) } : 'not measured',
+    droppedVideoFrames: good.reduce((a, p) => a + (p.droppedVideoFrames || 0), 0),
     latencyMs: lat.length ? { p50: percentile(lat.flatMap(p => [p.latencyMs.p50]), 0.5), p95: Math.max(...lat.map(p => p.latencyMs.p95)) } : 'not measured', byProfile },
 };
 const text = JSON.stringify(result, null, 2);

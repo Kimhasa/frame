@@ -1,0 +1,240 @@
+{
+  "GeneratedAt": "2026-11-12T04:54:42.2659531+00:00",
+  "Command": "gradlew.bat test bootJar",
+  "Suite": {
+    "Tests": 99.0,
+    "Failures": 0.0,
+    "Errors": 0.0,
+    "Skipped": 0.0
+  },
+  "Classes": [
+    {
+      "Name": "frame.api.account.AccountIntegrationTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.AccountSessionRecoveryTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ChannelProfileTest",
+      "Tests": 6,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ProductMigrationIntegrationTest",
+      "Tests": 7,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ProductNotificationsTest",
+      "Tests": 5,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ProductStorageDisabledTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ReportManagementTest",
+      "Tests": 6,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ScheduledBroadcastsTest",
+      "Tests": 4,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.WatchHistoryTest",
+      "Tests": 5,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.BlankRelayVariablesTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.broadcast.BroadcastRegistryTest",
+      "Tests": 12,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.chat.ChatHandshakeFilterTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.chat.ChatRulesTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.dvr.DvrRulesTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.mediamtx.MediaMtxPathsTest",
+      "Tests": 2,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.obs.ObsBroadcastsTest",
+      "Tests": 10,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.payments.PaymentsTest",
+      "Tests": 10,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.playback.PlaybackRulesTest",
+      "Tests": 7,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.playback.ViewerSessionsTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.ShutdownTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.StartupGraceTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.stats.StatsRowTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.UpstreamBreakTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.web.JsCompatTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    }
+  ],
+  "JarSha256": "5f0e8cf06d126dbadb0a9ca254dbc92509e52d06952bd8e62be8a165eafcc7c5",
+  "Migrations": [
+    {
+      "Name": "V1__accounts_channels_follows.sql",
+      "Sha256": "09aac64c7d820f3ea8b3229b99b4dca11a1de6c104c7da277846415bf8a39b4f"
+    },
+    {
+      "Name": "V2__signup_consents.sql",
+      "Sha256": "5841a933a3fb672ee4876ebf6a4c36247416a126b7e17555151e9ecc8bb4daad"
+    },
+    {
+      "Name": "V3__broadcast_schedules.sql",
+      "Sha256": "8661aecdd2fadaf14a67a36a2ad5e60811dae1a94b77f09ca62480f8a61bea6d"
+    },
+    {
+      "Name": "V4__watch_history.sql",
+      "Sha256": "e5c93b9231061ec8253b160b7de5f5fbbb14ff3e50754e56ba3e6b65340029ca"
+    },
+    {
+      "Name": "V5__channel_profiles_reports.sql",
+      "Sha256": "b82d405664a182606e35cea5919be5096ffdaea1d8a57223eb3be0c95529a0ee"
+    },
+    {
+      "Name": "V6__report_management.sql",
+      "Sha256": "b282072620ab76027dbed89f4d37179e79199c150233eb8722d0d92d15ee3557"
+    },
+    {
+      "Name": "V7__product_notifications.sql",
+      "Sha256": "88f914cbe4137bab2376f84bb78e1b60402b9c4ec9c2c990f27ec78c9947f4ef"
+    }
+  ],
+  "Database": "Native PostgreSQL verification database only; generated schemas and Redis namespaces cleaned",
+  "DockerContainerExecution": false,
+  "MainDatabaseChanged": false,
+  "ActualBroadcastProcessesChanged": false,
+  "NotificationChecks": [
+    "Authenticated owner list, global unread count and all read/delete mutations; anonymous access rejected",
+    "Each response includes actual recipient userId; optional X-FRAME-USER-ID mismatch rejects reads and writes before notification data access",
+    "B cookie and valid B CSRF with expected A header returns SESSION_CHANGED and leaves B rows/unread count unchanged",
+    "Foreign and missing notification IDs share 404; CSRF, Origin, malformed UUID/cursor/filter/limit checks enforced",
+    "Report terminal change and its generic private recipient notice share a transaction; rollback preserves original report and no notice",
+    "Report result includes public channel-name snapshot, receipt UUID and status, without report details, private review note, reviewer or account credentials",
+    "Existing live streams establish a baseline without historical alerts; only already-enabled followers receive new source starts",
+    "Midstream follow or OFF-to-ON does not create a past-start notification",
+    "Source/session and broadcast-instance markers suppress polling duplicates, deleted-row resurrection and short reconnects",
+    "New instance with the same source reserves its own marker; subsequent reconnect under that instance remains suppressed",
+    "Live body comes from server broadcast title with PostgreSQL NUL normalization",
+    "Live target availability requires current broadcast UUID/path/instance and fresh matching observed source; restart safely disables old targets",
+    "Equal-millisecond UUID keyset pagination, idempotent first-read timestamp, read-all and clear-all preserve exact owner unread totals",
+    "Notification rows survive a fresh Spring Boot instance without reviving old live links",
+    "Product-only isolated worker catches database errors and retries without throwing into media/registry threads",
+    "V7 preserves follow flags/dates, baselines enabled-at time and creates no historical user notifications",
+    "V1 through V6 SQL hashes unchanged; checksum mismatch blocks synthetic pending V8"
+  ],
+  "Notes": [
+    "API integration uses a controlled loopback MediaMTX API fixture; actual FFmpeg/RTMP browser QA is performed separately by the root agent",
+    "All application and database test data stayed inside generated verification schemas and Redis namespaces",
+    "No main API restart, real account grants, Docker execution, OS reboot or changes to active OBS/media processes were performed",
+    "No push/SSE, email, message broker, Redis queue or generic event framework was added"
+  ]
+}

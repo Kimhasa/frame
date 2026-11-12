@@ -1,0 +1,150 @@
+{
+  "startedAt": "2026-11-10T07:49:32.004Z",
+  "kind": "deploy files against frame-api.jar on this PC (no Linux, no systemd)",
+  "checks": [
+    {
+      "name": "1a deploy files are LF-only (no CR, no BOM)",
+      "ok": true,
+      "withCr": []
+    },
+    {
+      "name": "1b unit: java -jar with an absolute java and jar path, exit 143 is success, no Node left",
+      "ok": true,
+      "execStart": "/usr/bin/java -jar /opt/frame-relay/frame-api.jar",
+      "successExitStatus": "143",
+      "timeoutStopSec": "10"
+    },
+    {
+      "name": "1c the install guide puts the jar and the environment file where the unit reads them",
+      "ok": true,
+      "jarPath": "/opt/frame-relay/frame-api.jar",
+      "envFile": "/etc/frame-relay/relay.env"
+    },
+    {
+      "name": "1d relay.env.example: plain NAME=value lines only (no quotes, backslashes, $, %, inline comments)",
+      "ok": true,
+      "variables": 53,
+      "odd": []
+    },
+    {
+      "name": "1e the unit lets the service write only where relay.env.example points the stats, and the guide creates those folders",
+      "ok": true,
+      "readWrite": "-/var/lib/frame-relay/stats",
+      "readOnly": "/var/lib/frame-relay",
+      "stats": "/var/lib/frame-relay/stats",
+      "records": "/var/lib/frame-relay/recordings",
+      "ui": "/opt/frame-relay/ui/index.html",
+      "tokens": "/etc/frame-relay/publisher-tokens"
+    },
+    {
+      "name": "2a the jar starts with the variables of relay.env.example (paths, port and MediaMTX API address replaced; no MediaMTX runs), without a settings warning",
+      "ok": true,
+      "healthzStatus": 503,
+      "startedInS": 2.077,
+      "summary": "FRAME API 0.3.0-spring: 1 publisher token(s); renditions []; DVR on; HLS on; media grace 15000 ms; playback stats /var/lib/frame-relay/stats; legacy page /opt/frame-relay/ui/index.html",
+      "warnings": []
+    },
+    {
+      "name": "2b the JVM options line of relay.env.example is picked up by java",
+      "ok": true,
+      "line": "NOTE: Picked up JDK_JAVA_OPTIONS: -Xmx512m -XX:+ExitOnOutOfMemoryError",
+      "expected": "-Xmx512m -XX:+ExitOnOutOfMemoryError"
+    },
+    {
+      "name": "2c RELAY_LISTEN_HOST=127.0.0.1: the LAN address of this PC refuses the connection",
+      "ok": true,
+      "lan": "<addr>",
+      "answer": "refused"
+    },
+    {
+      "name": "3a /healthz: the Spring backend, MediaMTX reported unreachable (503) rather than a crash",
+      "ok": true,
+      "status": 503,
+      "backend": "spring",
+      "version": "0.3.0-spring"
+    },
+    {
+      "name": "3b the legacy page, its hls.js and font are served from the installed ui folder",
+      "ok": true,
+      "page": {
+        "status": 200,
+        "type": "text/html;charset=utf-8",
+        "cache": "no-store",
+        "bytes": 280330
+      },
+      "pathPage": {
+        "status": 200,
+        "type": "text/html;charset=utf-8",
+        "cache": "no-store",
+        "bytes": 280330
+      },
+      "script": {
+        "status": 200,
+        "type": "text/javascript;charset=utf-8",
+        "cache": "public, max-age=31536000, immutable",
+        "bytes": 415253
+      },
+      "font": {
+        "status": 200,
+        "type": "font/woff2",
+        "cache": "max-age=86400",
+        "bytes": 2057688
+      }
+    },
+    {
+      "name": "3c the token file is read: its token announces (204, media not ready), another token is refused (401)",
+      "ok": true,
+      "announce": 204,
+      "mediaReady": "0",
+      "wrongToken": 401
+    },
+    {
+      "name": "3d a playback report is appended to RELAY_STATS_DIR (one CSV per day, no address in it)",
+      "ok": true,
+      "status": 204,
+      "file": "stats-2026-11-10.csv",
+      "rows": 2,
+      "header": "time,path,session,broadcast,transport,mode,quality,height,fps,loss_pct,jitter_ms,freezes,mbps,abr_switches,last_switch,event,device"
+    },
+    {
+      "name": "3e /info: announced without media -> running, mediaReady false (viewers wait)",
+      "ok": true,
+      "running": true,
+      "mediaReady": false
+    },
+    {
+      "name": "4a a value out of range (RELAY_MAX_VIEWERS_PER_PATH=0): no start, the log names the variable",
+      "ok": true,
+      "exit": 1,
+      "line": "Reason: java.lang.IllegalArgumentException: RELAY_MAX_VIEWERS_PER_PATH must be an integer in 1..100000"
+    },
+    {
+      "name": "4b a malformed rate (RELAY_RATE_ANNOUNCE=fast): no start, the log names the variable",
+      "ok": true,
+      "exit": 1,
+      "line": "Reason: java.lang.IllegalArgumentException: RELAY_RATE_ANNOUNCE must look like 30/5 (burst/perSecond)"
+    },
+    {
+      "name": "4c a switch that is no switch (RELAY_DVR=maybe): no start, the log names the setting frame.… and the value",
+      "ok": true,
+      "exit": 1,
+      "setting": "Failed to bind properties under 'frame.dvr.enabled' to boolean:",
+      "value": "Reason: failed to convert java.lang.String to boolean (caused by java.lang.IllegalArgumentException: Invalid boolean value 'maybe')"
+    },
+    {
+      "name": "4d on/off are read as switches (RELAY_DVR=off, RELAY_HLS=on): the service starts with DVR off",
+      "ok": true,
+      "up": 503,
+      "summary": "FRAME API 0.3.0-spring: 1 publisher token(s); renditions []; DVR off; HLS on; media grace 15000 ms; playback stats <tmp>/var/lib/frame-relay/stats; legacy page <tmp>/opt/frame-relay/ui/index.html"
+    }
+  ],
+  "notes": [],
+  "finishedAt": "2026-11-10T07:49:47.634Z",
+  "passed": 17,
+  "failed": 0,
+  "notCovered": [
+    "systemd on Linux: the sandbox directives with a JVM, SuccessExitStatus=143, stop time, FFmpeg children in the control group",
+    "the distribution java package and /usr/bin/java",
+    "Caddy with deploy/Caddyfile.example (the test Caddyfile is checked by https-check.mjs)"
+  ]
+}

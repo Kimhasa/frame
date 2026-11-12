@@ -1,4 +1,4 @@
-# FRAME 중계 서버 앞단 Caddy 2 예시: HTTPS/WSS 종단, 인증서 자동 발급·갱신, relay.mjs로 역방향 프록시.
+# FRAME 중계 서버 앞단 Caddy 2 예시: HTTPS/WSS 종단, 인증서 자동 발급·갱신, 중계 웹 서비스(frame-api.jar, 127.0.0.1:8080)로 역방향 프록시.
 # /etc/caddy/Caddyfile 로 복사하고 relay.example.com 을 실제 도메인으로 바꾼다(DNS A/AAAA 레코드가 이 서버를 가리켜야 함).
 # 브라우저는 이 주소만 사용한다. MediaMTX의 API·playback·HLS·WHEP 포트는 루프백이라 여기서 직접 노출하지 않는다.
 
@@ -40,12 +40,14 @@ relay.example.com {
 		flush_interval -1
 		# Caddy는 X-Forwarded-For/-Proto/-Host를 직접 채운다(클라이언트가 보낸 값은 버림).
 		# relay.env의 RELAY_TRUSTED_PROXIES=127.0.0.1 과 짝을 이룬다. WebSocket(/<path>/chat)은 자동으로 중계된다.
+		# 중계 웹 서비스를 재시작하는 몇 초 동안은 Caddy가 502로 답한다(플레이어와 채팅은 다시 시도한다).
 		transport http {
 			dial_timeout 5s
-			# relay.mjs keepAliveTimeout(65 s)보다 짧게: 서버가 막 닫은 연결을 재사용해 502가 나는 일을 막는다.
+			# 중계 웹 서비스의 유휴 연결 유지 시간(Tomcat keep-alive-timeout 65 s)보다 짧게: 서버가 막 닫은 연결을 재사용해 502가 나는 일을 막는다.
 			keepalive 60s
-			# relay.mjs의 업스트림 제한(DVR 조각 20 s, WHEP 20 s, LL-HLS 블로킹 15 s)보다 넉넉히 길게: 항상 relay가 먼저
-			# 503/502로 답하고 Caddy가 그 전에 연결을 끊지 않는다.
+			# 중계 웹 서비스의 업스트림 제한(DVR 조각 20 s, WHEP 20 s, LL-HLS 블로킹 15 s, HLS 세션 만들기 30 s, 화질 시작 대기 15 s)보다
+			# 길게 둔다. 보통은 중계 웹 서비스가 먼저 503/502로 답한다. MediaMTX가 한 HLS 요청 안에서 이 대기 여러 개를 연달아 채울
+			# 때만 Caddy가 45 s에 504로 답한다(시간 초과는 504, 연결 실패는 502. Caddy 소스 기준, 미실행).
 			response_header_timeout 45s
 		}
 	}

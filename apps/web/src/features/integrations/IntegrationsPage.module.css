@@ -1,0 +1,24 @@
+.list { margin: 0; padding: 0; overflow: hidden; border: 1px solid #e2e8e4; border-radius: 11px; list-style: none; }
+.row {
+  display: grid; grid-template-columns: 42px minmax(0, 1fr) auto; align-items: center;
+  gap: 14px 16px; min-height: 90px; padding: 16px 18px; background: #fff;
+}
+.row + .row { border-top: 1px solid #e8edea; }
+.row:first-child { border-radius: 10px 10px 0 0; }
+.row:last-child { border-radius: 0 0 10px 10px; }
+.icon {
+  display: grid; width: 42px; height: 42px; place-items: center; border-radius: 10px;
+  background: #edf4ef; color: #547763;
+}
+.summary { display: grid; justify-items: start; gap: 8px; }
+.summary h2 { margin: 0; font-size: 16px; font-weight: 700; line-height: 1.45; }
+.details { display: grid; gap: 12px; margin: 0; padding: 14px; border-radius: 8px; background: #f3f6f4; }
+.details > div { display: grid; grid-template-columns: 72px minmax(0, 1fr); align-items: baseline; gap: 8px; font-size: 14px; line-height: 1.5; }
+.details dt { color: #53675d; font-weight: 650; }
+.details dd { margin: 0; overflow-wrap: anywhere; }
+@container (max-width: 520px) {
+.row { grid-template-columns: 42px minmax(0, 1fr); align-items: start; gap: 8px 12px; padding: 14px; }
+.row .icon { grid-row: 1 / 3; }
+
+
+}

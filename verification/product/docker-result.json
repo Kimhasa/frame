@@ -1,0 +1,56 @@
+{
+  "generatedAt": "2026-11-12T02:33:49.253Z",
+  "results": [
+    {
+      "name": "Private Docker preparation succeeds without an engine",
+      "pass": true
+    },
+    {
+      "name": "Docker endpoints are separate from existing PC databases",
+      "pass": true
+    },
+    {
+      "name": "Redis ACL stores a hash of its password",
+      "pass": true
+    },
+    {
+      "name": "Repeated preparation preserves every credential",
+      "pass": true
+    },
+    {
+      "name": "Preparation output contains no credentials",
+      "pass": true
+    },
+    {
+      "name": "Official Docker Compose validates the configuration",
+      "pass": true
+    },
+    {
+      "name": "Official PostgreSQL and Redis versions are explicit",
+      "pass": true
+    },
+    {
+      "name": "Every published database port binds loopback",
+      "pass": true
+    },
+    {
+      "name": "Both services keep their data in named volumes",
+      "pass": true
+    },
+    {
+      "name": "Rendered Compose contains only secret file references",
+      "pass": true
+    },
+    {
+      "name": "Healthchecks authenticate as the application database role and Redis client",
+      "pass": true
+    },
+    {
+      "name": "Mismatched secrets fail without rotating passwords or rewriting files",
+      "pass": true
+    }
+  ],
+  "composeVersion": "official CLI configuration validation",
+  "containerExecution": false,
+  "actualDatabaseChanged": false
+}

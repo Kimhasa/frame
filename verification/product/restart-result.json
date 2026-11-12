@@ -1,0 +1,17 @@
+{
+  "base": "http://127.0.0.1:18081",
+  "results": [
+    {
+      "name": "Redis session survives API restart",
+      "pass": true
+    },
+    {
+      "name": "PostgreSQL channel changes survive API restart",
+      "pass": true
+    },
+    {
+      "name": "PostgreSQL follows survive API restart",
+      "pass": true
+    }
+  ]
+}

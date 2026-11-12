@@ -1,0 +1,16 @@
+.context { display: flex; align-items: center; gap: 10px; min-height: 46px; margin: -3px 3px 17px; padding: 6px 8px; border: 1px solid #e7ece8; border-radius: 9px; background: #fff; }
+.context:hover { border-color: #cfdfd4; background: #fafcfb; }
+.avatar { display: grid; place-items: center; flex: 0 0 29px; height: 29px; border-radius: 50%; color: var(--frame-green-ink); background: var(--frame-green-soft); font-size: 12px; font-weight: 700; }
+.contextText { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #354d3e; font-size: 13px; font-weight: 650; }
+.channelArrow { flex: none; color: #91a397; }
+.navigation { display: grid; gap: 17px; }
+.group h2 { margin: 0 12px 7px; color: #66786e; font-size: 12px; font-weight: 650; line-height: 1.5; }
+.items { display: grid; gap: 3px; }
+.exit { margin-top: 18px; padding-top: 12px; border-top: 1px solid #edf0ee; }
+@media (min-width: 851px) {
+  :global(.is-compact) .context { justify-content: center; padding-inline: 0; border-color: transparent; }
+  :global(.is-compact) :is(.contextText, .channelArrow, .group h2) { display: none; }
+  :global(.is-compact) .navigation { gap: 12px; }
+  :global(.is-compact) .group + .group { padding-top: 10px; border-top: 1px solid #edf0ee; }
+  :global(.is-compact) .navigation :global(.nav-link), :global(.is-compact) .exit :global(.nav-link) { justify-content: center; padding-inline: 0; }
+}

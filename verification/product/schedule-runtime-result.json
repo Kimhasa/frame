@@ -1,0 +1,25 @@
+{
+  "dateKst": "2026-11-12",
+  "database": "frame_product",
+  "readOnlyHistoryCheck": true,
+  "migrations": [
+    {
+      "version": "1",
+      "script": "V1__accounts_channels_follows.sql",
+      "success": true
+    },
+    {
+      "version": "2",
+      "script": "V2__signup_consents.sql",
+      "success": true
+    },
+    {
+      "version": "3",
+      "script": "V3__broadcast_schedules.sql",
+      "success": true
+    }
+  ],
+  "actualUserFixturesCreated": false,
+  "mediaReceiverPreserved": true,
+  "dockerEngineStarted": false
+}

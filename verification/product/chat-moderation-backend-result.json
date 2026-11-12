@@ -1,0 +1,264 @@
+{
+  "GeneratedAt": "2026-11-12T05:51:23.6330024+00:00",
+  "Command": "gradlew.bat test bootJar",
+  "Suite": {
+    "Tests": 110.0,
+    "Failures": 0.0,
+    "Errors": 0.0,
+    "Skipped": 0.0
+  },
+  "Classes": [
+    {
+      "Name": "frame.api.account.AccountIntegrationTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.AccountSessionRecoveryTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ChannelProfileTest",
+      "Tests": 6,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ChatModerationTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ChatTicketsTest",
+      "Tests": 5,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ProductMigrationIntegrationTest",
+      "Tests": 8,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ProductNotificationsTest",
+      "Tests": 5,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ProductStorageDisabledTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ReportManagementTest",
+      "Tests": 6,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ScheduledBroadcastsTest",
+      "Tests": 4,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.WatchHistoryTest",
+      "Tests": 5,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.BlankRelayVariablesTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.broadcast.BroadcastRegistryTest",
+      "Tests": 12,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.chat.ChatHandshakeFilterTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.chat.ChatRulesTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.chat.ManagedChatHubTest",
+      "Tests": 2,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.dvr.DvrRulesTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.mediamtx.MediaMtxPathsTest",
+      "Tests": 2,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.obs.ObsBroadcastsTest",
+      "Tests": 10,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.payments.PaymentsTest",
+      "Tests": 10,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.playback.PlaybackRulesTest",
+      "Tests": 7,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.playback.ViewerSessionsTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.ShutdownTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.StartupGraceTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.stats.StatsRowTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.UpstreamBreakTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.web.JsCompatTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    }
+  ],
+  "JarSha256": "fe4182caf45c808eeab787af8cb7e697540d40e2c789a681199ac2ee7437ec2b",
+  "Migrations": [
+    {
+      "Name": "V1__accounts_channels_follows.sql",
+      "Sha256": "09aac64c7d820f3ea8b3229b99b4dca11a1de6c104c7da277846415bf8a39b4f"
+    },
+    {
+      "Name": "V2__signup_consents.sql",
+      "Sha256": "5841a933a3fb672ee4876ebf6a4c36247416a126b7e17555151e9ecc8bb4daad"
+    },
+    {
+      "Name": "V3__broadcast_schedules.sql",
+      "Sha256": "8661aecdd2fadaf14a67a36a2ad5e60811dae1a94b77f09ca62480f8a61bea6d"
+    },
+    {
+      "Name": "V4__watch_history.sql",
+      "Sha256": "e5c93b9231061ec8253b160b7de5f5fbbb14ff3e50754e56ba3e6b65340029ca"
+    },
+    {
+      "Name": "V5__channel_profiles_reports.sql",
+      "Sha256": "b82d405664a182606e35cea5919be5096ffdaea1d8a57223eb3be0c95529a0ee"
+    },
+    {
+      "Name": "V6__report_management.sql",
+      "Sha256": "b282072620ab76027dbed89f4d37179e79199c150233eb8722d0d92d15ee3557"
+    },
+    {
+      "Name": "V7__product_notifications.sql",
+      "Sha256": "88f914cbe4137bab2376f84bb78e1b60402b9c4ec9c2c990f27ec78c9947f4ef"
+    },
+    {
+      "Name": "V8__channel_chat_moderation.sql",
+      "Sha256": "c6fd971cfb0dc10dd59bb107dfed6131a1f37ead43f8c1453a071fee03090044"
+    }
+  ],
+  "Database": "Native PostgreSQL verification database only; generated schemas and Redis namespaces cleaned",
+  "DockerContainerExecution": false,
+  "MainDatabaseChanged": false,
+  "ActualBroadcastProcessesChanged": false,
+  "ChatChecks": [
+    "V8 settings and account-block tables preserve existing account, channel, follow and notification state; defaults stored for old and new channels",
+    "Authenticated owner settings and block CRUD use CSRF, Origin and optional expected-user guards; other owners cannot edit or remove rows",
+    "Settings version conflict, exact JSON fields, 100 Unicode words and dedicated 16KB body limit are enforced",
+    "Block durations are 600 seconds, 3600 seconds or permanent; self-block, active duplicate, stale version and foreign/missing row handling are verified",
+    "Block reason is private; name, handle and reason search and active/expired filtering use real rows",
+    "Actual Java WebSockets verify guest read-only mode, server account display name, forged client name/userId rejection and public channel identity fields",
+    "One-time ticket replay is rejected; WebSocket product Origin is strict and broadcast path/instance binding is checked",
+    "Actual message sends enforce links, NFKC/format-normalized banned words, follow-only and account-shared slow mode across sockets",
+    "Blocking immediately prevents sends; unblocking, policy changes and expired rows re-enable actual sends without private reason disclosure",
+    "Logout invalidates old socket sends; unit tests also verify replaced principal, absolute expiry, unavailable Redis/policy storage and reused broadcast identity fail closed",
+    "A deliberately blocked authentication check does not hold the ChatHub global room lock or stop another client joining",
+    "Unblock then settings-change does not resurrect stale block state; old word/link/slow nacks are not re-pushed as current restrictions",
+    "Unlinked product-mode broadcasts stay read-only even for authenticated users",
+    "Settings and expired block records survive a fresh application instance",
+    "V1 through V7 SQL hashes unchanged and checksum mismatch prevents synthetic pending V9 DDL"
+  ],
+  "Notes": [
+    "Backend HTTP/WebSocket integration uses its isolated application, PostgreSQL verification schema, Redis namespace and MediaMTX API fixture; it does not modify an active OBS broadcast",
+    "The previous notification fixture now models distinct OBS broadcasts as old bye, new media snapshot, then new announce; same-ID reconnect and same-source recovery cases remain covered",
+    "Account slow-mode timestamps are process memory and reset on API restart; settings and blocks persist in PostgreSQL",
+    "Browser/product UI verification and actual main application rollout are reported separately by the root agent",
+    "No generic RBAC, message queue, chat message database archive, OS change, Docker execution or production-account operation was added"
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "verificationDatabaseOnly": true,
+  "productionUserDataUntouched": true,
+  "nativeObsReceiverUntouched": true,
+  "complete": true,
+  "results": [
+    {
+      "name": "Notification inbox and real source-session delivery pass browser verification",
+      "pass": true
+    },
+    {
+      "name": "Real RTMP start, API restart with the same publisher and source cleanup complete",
+      "pass": true
+    },
+    {
+      "name": "Read-only development StrictMode and mobile notification dialogs pass",
+      "pass": true
+    },
+    {
+      "name": "Recipient authentication survives API restart",
+      "pass": true
+    },
+    {
+      "name": "New result notification, stored read state and prior deletions persist after restart",
+      "pass": true
+    }
+  ],
+  "fixture": "Dedicated MediaMTX + 320x180 15fps H.264/AAC FFmpeg RTMP source + Spring + production React + headless Edge",
+  "limits": [
+    "Single PC and loopback only",
+    "No browser/OS push, email, external messaging or Caddy HTTPS/WSS",
+    "No mobile physical device or capacity verification"
+  ]
+}

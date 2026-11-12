@@ -1,0 +1,76 @@
+{
+  "counts": {
+    "accounts": 0,
+    "channels": 0,
+    "operators": 0,
+    "polls": 0,
+    "options": 0,
+    "votes": 0,
+    "migrations": [
+      {
+        "version": "1",
+        "success": true
+      },
+      {
+        "version": "2",
+        "success": true
+      },
+      {
+        "version": "3",
+        "success": true
+      },
+      {
+        "version": "4",
+        "success": true
+      },
+      {
+        "version": "5",
+        "success": true
+      },
+      {
+        "version": "6",
+        "success": true
+      },
+      {
+        "version": "7",
+        "success": true
+      },
+      {
+        "version": "8",
+        "success": true
+      },
+      {
+        "version": "9",
+        "success": true
+      }
+    ]
+  },
+  "statuses": {
+    "health": 200,
+    "mediaReady": true,
+    "policies": 200,
+    "pollsPage": 200,
+    "anonymousOwnerList": 401,
+    "publicCurrent": 200,
+    "publicEmptyScope": true,
+    "anonymousCreate": 401,
+    "anonymousVote": 401
+  },
+  "mediaReceiverPid": 39088,
+  "runtimeJarSha256": "23328f29a96cb5689f7193212e822095706ecc876b348bdcaf1d8d985009453d",
+  "migrationHashes": {
+    "V1__accounts_channels_follows.sql": "09aac64c7d820f3ea8b3229b99b4dca11a1de6c104c7da277846415bf8a39b4f",
+    "V2__signup_consents.sql": "5841a933a3fb672ee4876ebf6a4c36247416a126b7e17555151e9ecc8bb4daad",
+    "V3__broadcast_schedules.sql": "8661aecdd2fadaf14a67a36a2ad5e60811dae1a94b77f09ca62480f8a61bea6d",
+    "V4__watch_history.sql": "e5c93b9231061ec8253b160b7de5f5fbbb14ff3e50754e56ba3e6b65340029ca",
+    "V5__channel_profiles_reports.sql": "b82d405664a182606e35cea5919be5096ffdaea1d8a57223eb3be0c95529a0ee",
+    "V6__report_management.sql": "b282072620ab76027dbed89f4d37179e79199c150233eb8722d0d92d15ee3557",
+    "V7__product_notifications.sql": "88f914cbe4137bab2376f84bb78e1b60402b9c4ec9c2c990f27ec78c9947f4ef",
+    "V8__channel_chat_moderation.sql": "c6fd971cfb0dc10dd59bb107dfed6131a1f37ead43f8c1453a071fee03090044",
+    "V9__channel_polls.sql": "65e4689d1b6622b59b541129e6c6742bc8e77458790e53d468dbff8a68721782"
+  },
+  "checkedAt": "2026-11-12",
+  "productionUserDataUntouched": true,
+  "mediaReceiverPreserved": true,
+  "previousMigrationsUnchanged": true
+}

@@ -1019,7 +1019,7 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
   const volumeReadOnly = (() => { const v = document.createElement('video'); try { v.volume = 0.5; } catch { return true; } return Math.abs(v.volume - 0.5) > 0.01; })();
   if (volumeReadOnly) document.documentElement.classList.add('volume-readonly');
   const native = message => { if (bridge) bridge.postMessage(JSON.stringify(message)); };
-  const state = { running: false, starting: false, stopping: false, connected: false, connecting: false, paused: false, source: null, sourceTitle: '', selected: null, windows: [], startedAt: 0, logs: [], viewerEdited: false, playbackQuality: 'auto', stream: null, session: null, video: null, attempt: 0, infoAt: 0, statsTimer: 0, lastBytes: 0, lastBytesAt: 0, failed: '' };
+  const state = { running: false, starting: false, stopping: false, connected: false, connecting: false, paused: false, source: null, sourceTitle: '', selected: null, windows: [], startedAt: 0, logs: [], viewerEdited: false, playbackQuality: 'auto', stream: null, session: null, live: null, transport: null, abort: null, loading: new Set(), mediaLast: null, video: null, attempt: 0, infoAt: 0, statsTimer: 0, lastBytes: 0, lastBytesAt: 0, failed: '' };
   const fields = ['server-host', 'stream-path', 'resolution', 'fps', 'custom-fps', 'quality', 'audio-source', 'bitrate-auto', 'publish-port', 'viewer-port'];
   const resolutions = [
     { value: '426x240', label: '240p', detail: '426 × 240', bitrate: 0.5 },
@@ -1401,22 +1401,138 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
   }
   function stop() { state.stopping = true; senderUI(); native({ cmd: 'stop' }); }
 
-  // ---- Viewer: WHEP playback in the approved player -----------------------------------------------------------
+  // ---- Viewer: playback in the approved player -------------------------------------------------------------------
+  // Every browser page plays the server's low-latency HLS: hls.js where Media Source Extensions (or ManagedMediaSource)
+  // exist, else the browser's own HLS player (Safari). WebRTC (WHEP) stays for the FrameConsole app's own receiver and for
+  // a browser that can play no HLS at all. The transport is decided once per connection and kept for its reconnects.
   const viewerCanvas = $('viewer-canvas');
   viewerCanvas.style.display = 'none';
   function makeVideo() {
     const video = document.createElement('video');
     video.playsInline = true; video.autoplay = true; video.setAttribute('aria-label', '수신 영상');
     video.style.cssText = 'display:block;width:100%;height:100%;object-fit:contain';
+    // The quality label shows the decoded height: a level switch is announced before its first frame is shown, so the
+    // label is written again when the picture's size really changes.
+    video.addEventListener('resize', () => { if (state.video === video && state.stream) { qualityLabel(); if (!$('player-quality-menu').hidden) renderPlayerQuality(); } });
     return video;
   }
+  // A new picture loads in the player, invisible, until its first frame (browser HLS players only load a video that is in
+  // the document, and hls.js sizes its levels to the player); then it replaces the current one.
+  function stage(video) { Object.assign(video.style, { position: 'absolute', inset: '0', opacity: '0', pointerEvents: 'none' }); viewerCanvas.after(video); }
+  function reveal(video) { video.style.position = video.style.inset = video.style.opacity = video.style.pointerEvents = ''; }
   const isLocalStream = () => !remote && state.stream && state.stream.host.toLowerCase() === config().host.toLowerCase() && state.stream.path === config().path;
-  function busyError(response) { const error = new Error('busy'); error.retryAfter = Math.min(30, Math.max(1, Number(response.headers.get('Retry-After')) || 2)); return error; }
-  async function fetchInfo(base, path) {
-    const response = await fetch(base + '/' + encodeURIComponent(path) + '/info', { cache: 'no-store', signal: AbortSignal.timeout(5000) });
-    if (response.status === 503) throw busyError(response);
-    if (!response.ok) throw new Error('info ' + response.status);
+  const retrySeconds = value => Math.min(30, Math.max(1, Number(value) || 2));
+  // HTTP answers that decide what happens next: no permission (stop), gone (ended), busy (wait Retry-After), other.
+  function statusError(status, retryAfter) {
+    if (status === 401 || status === 403) return new Error('denied');
+    if (status === 404 || status === 410) return new Error('not-running');
+    if (status === 429 || status === 503) { const error = new Error('busy'); error.retryAfter = retrySeconds(retryAfter); return error; }
+    return new Error('http ' + status);
+  }
+  const cancelled = () => new Error('cancelled');
+  // Waits end early when the connection is stopped or replaced (its AbortSignal).
+  // A wait that ends on time also lets go of its abort listener (a long connection makes many waits on one signal).
+  const wait = (ms, signal) => new Promise(resolve => { const done = () => { clearTimeout(timer); if (signal) signal.removeEventListener('abort', done); resolve(); }; const timer = setTimeout(done, ms); if (signal) signal.addEventListener('abort', done, { once: true }); });
+  const aborted = signal => new Promise((_, reject) => { if (!signal) return; if (signal.aborted) reject(cancelled()); else signal.addEventListener('abort', () => reject(cancelled()), { once: true }); });
+  const within = (signal, ms) => { const timeout = AbortSignal.timeout(ms); return signal && AbortSignal.any ? AbortSignal.any([signal, timeout]) : timeout; };
+  async function fetchInfo(base, path, signal) {
+    let response;
+    try { response = await fetch(base + '/' + encodeURIComponent(path) + '/info', { cache: 'no-store', signal: within(signal, 5000) }); }
+    catch (error) { throw signal && signal.aborted ? cancelled() : error; }
+    if (!response.ok) { const error = statusError(response.status, response.headers.get('Retry-After')); error.info = true; throw error; }
     return response.json();
+  }
+  const streamUrl = (stream, file) => stream.base + '/' + encodeURIComponent(stream.path) + '/' + file;
+  // Playlist names the server announces in /info (relative to /<stream>/), accepted only as plain file names.
+  const playlistName = value => typeof value === 'string' && /^[a-z0-9][a-z0-9_.-]{0,63}\.m3u8$/i.test(value) ? value : '';
+  const mseAvailable = () => !!(window.ManagedMediaSource || window.MediaSource || window.WebKitMediaSource);
+  const nativeHls = () => !!document.createElement('video').canPlayType('application/vnd.apple.mpegurl');
+  // hls.js 1.5.20 (vendored, deps/manifest.json) is loaded from the viewer server only when an HLS path is used.
+  const HLS_SCRIPT = 'assets/js/hls-1.5.20.min.js';
+  let hlsScript = null;
+  function loadHlsJs(signal) {
+    if (window.Hls && window.Hls.Events) return Promise.resolve(window.Hls);
+    if (!hlsScript) hlsScript = new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      const fail = () => { clearTimeout(timer); script.remove(); hlsScript = null; reject(new Error('script')); };
+      const timer = setTimeout(fail, 15000);
+      script.async = true; script.src = new URL(HLS_SCRIPT, location.href).href;
+      script.addEventListener('load', () => { clearTimeout(timer); if (window.Hls && window.Hls.Events) resolve(window.Hls); else fail(); });
+      script.addEventListener('error', fail);
+      document.head.append(script);
+    });
+    return Promise.race([hlsScript, aborted(signal)]);
+  }
+  // Once per connection: the app's own receiver keeps WebRTC; a browser uses HLS, and WebRTC only without any HLS.
+  async function chooseTransport(info, signal) {
+    if (bridge) return 'webrtc';
+    const master = playlistName(info.hls && info.hls.master);
+    if (master) {
+      if (mseAvailable()) {
+        try { if ((await loadHlsJs(signal)).isSupported()) return 'hls.js'; }
+        catch (error) { if (error.message === 'cancelled' || !nativeHls()) throw error; }
+      }
+      if (nativeHls()) return 'native';
+    }
+    if (typeof RTCPeerConnection === 'function') return 'webrtc';
+    if (!master && nativeHls()) return 'native';  // an older server without live.m3u8: its HLS of the original stream
+    throw new Error('unsupported');
+  }
+  // Viewer counting on the server, independent of media requests: a session with a heartbeat, closed on leave. A server
+  // at its viewer cap answers 503 with Retry-After (handled like any busy answer); one without the endpoint (404 without
+  // the not-running answer, 405, 501) counts by itself. No answer in time, a network error or another server error is
+  // busy too: playing on without a session would get past the cap.
+  async function openViewerSession(stream, signal) {
+    let response;
+    const busy = () => { const error = new Error('busy'); error.retryAfter = 2; error.network = true; return error; };
+    try { response = await fetch(streamUrl(stream, 'session'), { method: 'POST', cache: 'no-store', signal: within(signal, 5000) }); }
+    catch (error) { throw signal && signal.aborted ? cancelled() : busy(); }
+    if (response.status === 200) {
+      const data = await response.json().catch(() => ({}));
+      if (data && typeof data.sid === 'string' && /^[0-9a-f]{16,64}$/.test(data.sid)) stream.viewerSession = { sid: data.sid, heartbeatMs: Math.min(30000, Math.max(5000, Number(data.heartbeatMs) || 15000)), beatAt: Date.now() };
+      else stream.sessionless = true;
+    } else if (response.status === 404) {
+      const data = await response.json().catch(() => ({}));
+      if (data && data.error === 'not-running') throw statusError(404);
+      stream.sessionless = true;
+    } else if (response.status === 405 || response.status === 501) stream.sessionless = true;
+    else if ([401, 403, 429, 503].includes(response.status)) throw statusError(response.status, response.headers.get('Retry-After'));
+    else throw busy();
+  }
+  function beatViewerSession(stream) {
+    const session = stream.viewerSession;
+    if (!session || Date.now() - session.beatAt < session.heartbeatMs) return;
+    session.beatAt = Date.now();
+    fetch(streamUrl(stream, 'session/' + session.sid), { method: 'PUT', cache: 'no-store', keepalive: true })
+      .then(response => { if (response.status === 404 && state.stream === stream && stream.viewerSession === session) stream.viewerSession = null; }).catch(() => {});
+  }
+  // Without a session (it lapsed, pagehide closed it, or opening one failed) the page asks for a new one, backing off at
+  // the server's pace; a viewer that gets none within a minute stops, so playing on never gets past the viewer cap.
+  function renewViewerSession(stream) {
+    if (stream.viewerSession || stream.sessionless || stream.sessionOpening || state.connecting || Date.now() < (stream.sessionRetryAt || 0)) return;
+    stream.sessionOpening = true; stream.sessionLostAt = stream.sessionLostAt || Date.now();
+    openViewerSession(stream, state.abort && state.abort.signal).then(() => {
+      stream.sessionLostAt = 0; stream.sessionTries = 0;
+      if (state.stream !== stream) closeViewerSession(stream);  // the connection ended meanwhile
+    }, error => {
+      if (state.stream !== stream || error.message === 'cancelled') return;
+      if (error.message === 'denied') { denied(stream); return; }
+      if (Date.now() - stream.sessionLostAt >= 60000) {
+        const full = error.message === 'busy' && !error.network;
+        endPlayback(full ? '접속자가 많습니다' : '연결이 끊어졌습니다', full ? '잠시 후 다시 연결하세요.' : '네트워크 상태를 확인한 뒤 다시 연결하세요.');
+        badge('viewer-status', '연결 안 됨'); log('수신', '시청 세션을 열 수 없어 수신 종료 (' + error.message + ')');
+        return;
+      }
+      // The last attempt falls on the minute, so the minute holds whatever the server's Retry-After.
+      stream.sessionRetryAt = Math.min(stream.sessionLostAt + 60000,
+        Date.now() + (error.retryAfter || 2) * 1000 * (stream.sessionTries = (stream.sessionTries || 0) + 1) * (0.7 + Math.random() * 0.6));
+    }).finally(() => { stream.sessionOpening = false; });
+  }
+  function closeViewerSession(stream) {
+    const session = stream && stream.viewerSession;
+    if (!session) return;
+    stream.viewerSession = null;
+    fetch(streamUrl(stream, 'session/' + session.sid), { method: 'DELETE', keepalive: true }).catch(() => {});
   }
   function gathered(pc, timeout) {
     if (pc.iceGatheringState === 'complete') return Promise.resolve();
@@ -1431,8 +1547,8 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
       await pc.setLocalDescription(await pc.createOffer());
       await gathered(pc, 2000);
       const response = await fetch(base + '/' + path + '/whep', { method: 'POST', headers: { 'Content-Type': 'application/sdp' }, body: pc.localDescription.sdp });
-      if (response.status === 503) throw busyError(response);
-      if (response.status !== 201) throw new Error(response.status === 404 ? 'not-running' : 'whep ' + response.status);
+      if ([401, 403, 404, 429, 503].includes(response.status)) throw statusError(response.status, response.headers.get('Retry-After'));
+      if (response.status !== 201) throw new Error('whep ' + response.status);
       const resource = response.headers.get('Location');
       await pc.setRemoteDescription({ type: 'answer', sdp: await response.text() });
       return { pc, media, resource: resource ? new URL(resource, base + '/').href : '' };
@@ -1444,13 +1560,15 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
     try { session.pc.close(); } catch {}
     if (session.resource) fetch(session.resource, { method: 'DELETE', keepalive: true }).catch(() => {});
   }
-  // A hidden page (minimised browser) does not decode video, so there the stream metadata is enough to proceed.
+  // A hidden page (minimised browser) does not decode video, so there the stream metadata is enough to proceed. The
+  // listeners go on a timeout too: a load that lost its race (closed player, no src) would otherwise keep its video alive.
   function waitFrames(video, timeout) {
     return new Promise((resolve, reject) => {
       const ready = () => video.readyState >= 2 || (document.hidden && video.readyState >= 1);
       if (ready()) { resolve(); return; }
-      const timer = setTimeout(() => reject(new Error('timeout')), timeout);
-      const check = () => { if (!ready()) return; clearTimeout(timer); for (const name of ['loadedmetadata', 'loadeddata']) video.removeEventListener(name, check); document.removeEventListener('visibilitychange', check); resolve(); };
+      const cleanup = () => { clearTimeout(timer); for (const name of ['loadedmetadata', 'loadeddata']) video.removeEventListener(name, check); document.removeEventListener('visibilitychange', check); };
+      const timer = setTimeout(() => { cleanup(); reject(new Error('timeout')); }, timeout);
+      const check = () => { if (!ready()) return; cleanup(); resolve(); };
       for (const name of ['loadedmetadata', 'loadeddata']) video.addEventListener(name, check);
       document.addEventListener('visibilitychange', check);
     });
@@ -1465,7 +1583,8 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
   const renditionPath = (path, quality) => quality === 'auto' || quality === sourceQuality() ? path : path + '/' + resolutions.find(item => item.value === quality).label;
   const sourceQuality = () => state.stream ? state.stream.info.width + 'x' + state.stream.info.height : config().resolution;
   // The quality to (re)open live: the manual choice, or in automatic mode the one that was last playing.
-  const liveQuality = () => state.playbackQuality === 'auto' ? state.playing || 'auto' : state.playbackQuality;
+  // (The browser's own HLS player chooses by itself in automatic mode: it reopens the whole live.m3u8.)
+  const liveQuality = () => state.playbackQuality === 'auto' && state.transport !== 'native' ? state.playing || 'auto' : state.playbackQuality;
   // Starts a WHEP session and swaps it into the player once its first frame is decoded; the old session keeps playing until then.
   async function attach(quality) {
     const stream = state.stream, session = await openSession(stream.base, renditionPath(stream.path, quality), stream.info.iceServers);
@@ -1473,51 +1592,261 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
     const video = makeVideo(); video.srcObject = session.media; video.muted = true;
     // play() of a live stream settles only with its first frame: not awaited, so the 15 s limit always applies (a
     // switch that never gets a frame used to hang here and stop automatic quality; tools/netem measured 219 s).
-    try { video.play().catch(() => {}); await waitFrames(video, 15000); }
+    try { video.play().catch(() => {}); await Promise.race([waitFrames(video, 15000), aborted(state.abort && state.abort.signal)]); }
     catch (error) { closeSession(session); throw error; }
     if (state.stream !== stream) { closeSession(session); return false; }
-    const previous = state.session, oldVideo = state.video, oldHistory = state.history;
-    state.session = session; state.video = video; state.history = null; state.playing = quality === 'auto' ? sourceQuality() : quality; state.lastBytes = 0; abrReset();
-    if (oldVideo && document.pictureInPictureElement === oldVideo) document.exitPictureInPicture().catch(() => {});
-    if (oldVideo) oldVideo.replaceWith(video); else viewerCanvas.after(video);
-    closeSession(previous); closeHistory(oldHistory);
-    applyPlayerVolume(video);
-    if (!video.muted) await video.play().catch(error => { if (error.name !== 'NotAllowedError') return; mutedByBrowser(video); });
-    if (state.paused) video.pause();
-    document.dispatchEvent(new CustomEvent('frame:media')); 
+    state.playing = quality === 'auto' ? sourceQuality() : quality; abrReset();
+    swapIn(video, { session });
+    await shown(video);
     session.pc.addEventListener('connectionstatechange', () => { if (state.session === session && ['failed', 'closed'].includes(session.pc.connectionState)) lost(); else if (state.session === session && session.pc.connectionState === 'disconnected') setTimeout(() => { if (state.session === session && session.pc.connectionState === 'disconnected') lost(); }, 3000); });
     return true;
   }
-  // Fallback when this browser or network cannot use WebRTC: the server's low-latency HLS of the original stream, played
-  // by the browser itself (Safari and other browsers with native HLS). Longer delay than WebRTC, one quality, and no
-  // rewind bar where Media Source Extensions are missing. Chosen per connection and kept for its reconnects.
-  const nativeHls = () => !!document.createElement('video').canPlayType('application/vnd.apple.mpegurl');
-  async function attachHls() {
-    const stream = state.stream, video = makeVideo(); video.muted = true;
-    // Native HLS players only load a video that is in the document: it waits in the player, invisible, until its first frame.
-    const stop = () => { video.removeAttribute('src'); video.load(); video.remove(); };
-    video.style.position = 'absolute'; video.style.inset = '0'; video.style.opacity = '0'; viewerCanvas.after(video);
-    const variants = stream.info.hlsVariants || {}, safe = v => typeof v === 'string' && /^[a-z0-9_-]+(\/[a-z0-9_-]+)*\/index\.m3u8$/i.test(v) ? v : '';
-    const needsAac = stream.info.audio && stream.info.audio !== 'none' && !video.canPlayType('audio/mp4; codecs="opus"');
-    video.src = stream.base + '/' + encodeURIComponent(stream.path) + '/' + ((needsAac && safe(variants.aac)) || safe(variants.opus) || 'hls/index.m3u8');
-    try { video.play().catch(() => {}); await waitFrames(video, 20000); }
-    catch (error) { stop(); throw error; }
-    if (state.stream !== stream) { stop(); return false; }
-    const previous = state.session, oldVideo = state.video, oldHistory = state.history;
-    state.session = null; state.video = video; state.history = null; state.playing = sourceQuality(); state.lastBytes = 0;
-    if (oldVideo && document.pictureInPictureElement === oldVideo) document.exitPictureInPicture().catch(() => {});
-    video.style.position = video.style.inset = video.style.opacity = '';
-    if (oldVideo) oldVideo.remove();
-    closeSession(previous); closeHistory(oldHistory);
+  // The new picture takes the player's place: the previous WebRTC session, HLS player or recording player is closed now,
+  // so there is only ever one soundtrack; volume, mute and pause carry over.
+  function swapIn(video, next) {
+    const oldVideo = state.video, oldSession = state.session, oldLive = state.live, oldHistory = state.history;
+    state.video = video; state.session = next.session || null; state.live = next.live || null; state.history = next.history || null;
+    state.lastBytes = 0; state.mediaLast = null;
+    if (oldVideo && oldVideo !== video && document.pictureInPictureElement === oldVideo) document.exitPictureInPicture().catch(() => {});
+    reveal(video);
+    if (!oldVideo || oldVideo === video) { if (!video.isConnected) viewerCanvas.after(video); }
+    else if (video.isConnected) oldVideo.remove(); else oldVideo.replaceWith(video);
+    if (oldSession && oldSession !== state.session) closeSession(oldSession);
+    if (oldLive && oldLive !== state.live) closePlayer(oldLive);
+    if (oldHistory && oldHistory !== state.history) closeHistory(oldHistory);
     applyPlayerVolume(video);
+  }
+  async function shown(video) {
     if (!video.muted) await video.play().catch(error => { if (error.name === 'NotAllowedError') mutedByBrowser(video); });
     if (state.paused) video.pause();
-    video.addEventListener('error', () => { if (state.video === video) lost(); });
     document.dispatchEvent(new CustomEvent('frame:media'));
+  }
+  // ---- HLS players (hls.js, or the browser's own HLS) ---------------------------------------------------------------
+  // One player per picture: { kind, video, hls, closed, started }. Live plays live.m3u8 (all qualities, hls.js picks the
+  // level), recorded playback plays dvr.m3u8. A player still loading is closed by a newer connect, stop or seek.
+  function liveUrl(stream, quality) {
+    const master = playlistName(stream.info.hls && stream.info.hls.master);
+    if (!master) {
+      // Older server: its low-latency HLS of the original stream (AAC variant where Opus in MP4 does not play).
+      const variants = stream.info.hlsVariants || {}, safe = v => typeof v === 'string' && /^[a-z0-9_-]+(\/[a-z0-9_-]+)*\/index\.m3u8$/i.test(v) ? v : '';
+      const needsAac = stream.info.audio && stream.info.audio !== 'none' && !document.createElement('video').canPlayType('audio/mp4; codecs="opus"');
+      return streamUrl(stream, (needsAac && safe(variants.aac)) || safe(variants.opus) || 'hls/index.m3u8');
+    }
+    // The browser's own player chooses among all qualities by itself; a manual choice asks for that one quality only.
+    if (state.transport !== 'native' || !quality || quality === 'auto') return streamUrl(stream, master);
+    const name = quality === sourceQuality() ? 'source' : (resolutions.find(item => item.value === quality) || {}).label;
+    return streamUrl(stream, master) + (name ? '?q=' + name : '');
+  }
+  const HLS_RETRY_DELAY = { retryDelayMs: 1000, maxRetryDelayMs: 4000 };
+  // 429/503 are not retried inside hls.js: the page waits the server's Retry-After itself (bounded).
+  const retryNotBusy = (config, count, timeout, response, retry) => retry && !(response && (response.code === 429 || response.code === 503));
+  const loadPolicy = (firstByteMs, loadMs, timeouts, errors) => ({ default: { maxTimeToFirstByteMs: firstByteMs, maxLoadTimeMs: loadMs,
+    timeoutRetry: { maxNumRetry: timeouts, retryDelayMs: 0, maxRetryDelayMs: 0 }, errorRetry: { maxNumRetry: errors, ...HLS_RETRY_DELAY, shouldRetry: retryNotBusy } } });
+  function hlsConfig(extra) {
+    return Object.assign({ enableWorker: true, lowLatencyMode: true, backBufferLength: 30, maxBufferLength: 10, maxMaxBufferLength: 20, capLevelToPlayerSize: true,
+      // First choice before any measurement: as if 2.5 Mb/s were available (about 480p-720p, not the lowest level); every
+      // quality is already being encoded by the shared ladder, so whichever is chosen starts at once.
+      startLevel: -1, abrEwmaDefaultEstimate: 2500000, abrBandWidthFactor: 0.9, abrBandWidthUpFactor: 0.6, preferManagedMediaSource: true,
+      manifestLoadPolicy: loadPolicy(10000, 10000, 1, 1), playlistLoadPolicy: loadPolicy(10000, 10000, 2, 2), fragLoadPolicy: loadPolicy(10000, 20000, 2, 3) }, extra);
+  }
+  function hlsFailure(Hls, data) {
+    const code = data.response && data.response.code;
+    if (code === 401 || code === 403) return new Error('denied');
+    if (code === 409) return new Error('changed');  // recording of another broadcast on the same path
+    if (code === 429 || code === 503) {
+      let after = null; const details = data.networkDetails;
+      try { after = details && (details.getResponseHeader ? details.getResponseHeader('Retry-After') : details.headers && details.headers.get('Retry-After')); } catch {}
+      return statusError(code, after);
+    }
+    if (code === 404 && data.details === Hls.ErrorDetails.MANIFEST_LOAD_ERROR) return new Error('not-running');
+    return new Error(data.type === Hls.ErrorTypes.MEDIA_ERROR ? 'media' : 'network');
+  }
+  function closePlayer(p) {
+    if (!p || p.closed) return;
+    p.closed = true;
+    if (p.fail) p.fail(new Error('closed'));  // a load still waiting for its first frame ends now
+    try { if (p.hls) p.hls.destroy(); } catch {}
+    try { p.video.pause(); p.video.removeAttribute('src'); p.video.load(); } catch {}
+    if (p.video !== state.video) p.video.remove();
+  }
+  function newPlayer(kind, stream) {
+    const video = makeVideo(); video.muted = true; stage(video);
+    const p = { kind, stream, video, hls: null, closed: false, started: false, recover: 0, recoverAt: 0, stalls: 0, bytes: 0, levelIndex: -1, sizeCap: -1, holdCap: -1 };
+    p.failed = new Promise((_, reject) => { p.fail = reject; }); p.failed.catch(() => {});
+    return p;
+  }
+  // hls.js player on its own video. Fatal errors before the first frame end the load; later ones go to onFatal. A media
+  // (decoder/buffer) error is recovered in place once, then once more with the other audio codec signalling.
+  function hlsPlayer(Hls, stream, url, config, onFatal) {
+    const p = newPlayer('hls.js', stream), hls = p.hls = new Hls(config);
+    hls.on(Hls.Events.ERROR, (event, data) => {
+      if (p.closed) return;
+      if (!data.fatal) { if (data.details === Hls.ErrorDetails.BUFFER_STALLED_ERROR) p.stalls++; return; }
+      if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
+        if (performance.now() - p.recoverAt > 60000) p.recover = 0;
+        if (p.recover < 2) { p.recoverAt = performance.now(); if (p.recover++ === 1) hls.swapAudioCodec(); hls.recoverMediaError(); noteEvent('hls-media-recover'); return; }
+      }
+      const error = hlsFailure(Hls, data); error.detail = data.details;
+      if (!p.started) p.fail(error); else onFatal(p, error);
+    });
+    hls.on(Hls.Events.FRAG_LOADED, (event, data) => { p.bytes += (data.payload && data.payload.byteLength) || (data.frag && data.frag.stats && data.frag.stats.loaded) || 0; });
+    hls.attachMedia(p.video); hls.loadSource(url);
+    p.video.play().catch(() => {});
+    return p;
+  }
+  // The browser's own HLS player (no HTTP status reaches the page: a playlist request first tells permission, load and end apart).
+  async function nativePlayer(stream, url, signal, check) {
+    if (check) {
+      let response;
+      try { response = await fetch(url, { cache: 'no-store', signal: within(signal, 8000) }); }
+      catch (error) { throw signal && signal.aborted ? cancelled() : new Error('network'); }
+      if (!response.ok) throw statusError(response.status, response.headers.get('Retry-After'));
+    }
+    const p = newPlayer('native', stream);
+    p.video.addEventListener('error', () => { if (!p.started) p.fail(new Error('network')); }, { once: true });
+    p.video.src = url; p.video.play().catch(() => {});
+    return p;
+  }
+  async function firstFrame(p, timeout, signal) {
+    state.loading.add(p);
+    try { await Promise.race([waitFrames(p.video, timeout), p.failed, aborted(signal)]); }
+    catch (error) { closePlayer(p); throw error; }
+    finally { state.loading.delete(p); }
+    if (p.closed) throw new Error('closed');
+    p.started = true;
+  }
+  function livePlayerFailed(p, error) {
+    if (state.live !== p) { closePlayer(p); return; }
+    noteEvent('hls-' + (error.detail || error.message)); log('수신', 'HLS 재생 오류 (' + (error.detail || error.message) + ')');
+    if (error.message === 'denied') denied(state.stream); else lost();
+  }
+  async function attachHlsLive(quality) {
+    const stream = state.stream, signal = state.abort && state.abort.signal, Hls = await loadHlsJs(signal);
+    if (state.stream !== stream) return false;
+    // Live target 1.5 s behind the playlist edge instead of MediaMTX's PART-HOLD-BACK (0.5 s): with less than two parts
+    // buffered hls.js weighs levels by their peak BANDWIDTH (the VBR cap) against an estimate that small parts keep low,
+    // and stays at the lowest level (measured: 240p on loopback). Parts and blocking reloads stay on (lowLatencyMode); a
+    // viewer that fell behind (start, stall) catches up at up to 1.1x speed.
+    const p = hlsPlayer(Hls, stream, liveUrl(stream, 'auto'), hlsConfig({ liveSyncDuration: 1.5, maxLiveSyncPlaybackRate: 1.1 }), livePlayerFailed);
+    p.live = true; hlsLevels(Hls, p, quality);
+    await firstFrame(p, 20000, signal);
+    if (state.stream !== stream) { closePlayer(p); return false; }
+    const level = p.hls.levels[p.levelIndex];
+    state.playing = level ? levelValue(level) : sourceQuality();
+    swapIn(p.video, { live: p });
+    await shown(p.video);
+    // A start that took long (a quality's encoder starting on demand) begins seconds behind the edge, beyond the range in
+    // which hls.js catches up by speed (measured +3.7 s that never went away): once, move to its live position.
+    setTimeout(() => {
+      const hls = p.hls, target = hls ? hls.targetLatency : null;
+      if (state.live !== p || state.paused || !Number.isFinite(target) || !(hls.latency > target + 1.5) || !Number.isFinite(hls.liveSyncPosition)) return;
+      noteEvent('hls-start-resync'); log('수신', '실시간 지점으로 이동 (지연 ' + hls.latency.toFixed(1) + '초)');
+      p.video.currentTime = hls.liveSyncPosition;
+    }, 2500);
+    return true;
+  }
+  async function attachNativeLive(quality) {
+    const stream = state.stream, signal = state.abort && state.abort.signal, master = playlistName(stream.info.hls && stream.info.hls.master);
+    const p = await nativePlayer(stream, liveUrl(stream, quality), signal, !!master);
+    p.live = true;
+    await firstFrame(p, 20000, signal);
+    if (state.stream !== stream) { closePlayer(p); return false; }
+    state.playing = !quality || quality === 'auto' ? sourceQuality() : quality;
+    swapIn(p.video, { live: p });
+    for (const name of ['error', 'ended']) p.video.addEventListener(name, () => { if (state.live === p) livePlayerFailed(p, new Error(name === 'error' ? 'network' : 'ended')); });
+    await shown(p.video);
     return true;
   }
   // Opens live playback for the current connection with the transport it settled on.
-  const openLive = quality => state.useHls ? attachHls() : attach(quality);
+  const openLive = quality => state.transport === 'hls.js' ? attachHlsLive(quality) : state.transport === 'native' ? attachNativeLive(quality) : attach(quality);
+  // ---- Quality levels with hls.js: its own bandwidth/buffer choice, kept from flipping back and forth --------------------
+  // Levels are hls.js's (from live.m3u8, lowest first). A manual choice survives reconnects until 자동 is chosen. On top of
+  // hls.js: an up-switch followed by a down-switch within 15 s (not one the player-size cap made) holds automatic choice
+  // at the lower level (hls.js autoLevelCapping, combined with its own player-size cap) for 15 s, doubling up to 120 s;
+  // 60 s without a switch resets it.
+  const HLS_ABR = { flipMs: 15000, minHoldMs: 15000, maxHoldMs: 120000, calmMs: 60000 };
+  const hlsAbr = { holdMs: HLS_ABR.minHoldMs, upAt: 0, holdUntil: 0, holdHeight: 0, lastSwitchAt: 0 };
+  function hlsAbrReset() { Object.assign(hlsAbr, { holdMs: HLS_ABR.minHoldMs, upAt: 0, holdUntil: 0, holdHeight: 0, lastSwitchAt: 0 }); }
+  const levelValue = level => level.height === Number(state.stream && state.stream.info.height) ? sourceQuality() : ((resolutions.find(item => item.label === level.height + 'p') || {}).value || level.width + 'x' + level.height);
+  function levelIndexFor(hls, quality) {
+    if (!quality || quality === 'auto') return -1;
+    const height = Number(String(quality).split('x')[1]);
+    return hls.levels.findIndex(level => level.height === height);
+  }
+  function bufferAhead(video) {
+    const b = video.buffered, t = video.currentTime;
+    for (let i = 0; i < b.length; i++) if (b.start(i) <= t + 0.1 && b.end(i) > t) return b.end(i) - t;
+    return 0;
+  }
+  function hlsLevels(Hls, p, quality) {
+    const hls = p.hls, proto = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(hls), 'autoLevelCapping');
+    // hls.js's player-size cap (capLevelToPlayerSize) writes autoLevelCapping every second; the hold cap is combined with it.
+    p.applyCap = () => { const a = p.sizeCap, b = p.holdCap, value = a < 0 ? b : b < 0 ? a : Math.min(a, b); if (proto && proto.set) proto.set.call(hls, value); else hls.autoLevelCapping = value; };
+    if (proto && proto.get && proto.set) Object.defineProperty(hls, 'autoLevelCapping', { configurable: true, get: () => proto.get.call(hls), set: value => { p.sizeCap = value; p.applyCap(); } });
+    hls.on(Hls.Events.MANIFEST_PARSED, () => {
+      // Manual: that level, fixed. Automatic: hls.js chooses (startLevel -1); a reconnect starts at the level that was playing.
+      const manual = state.playbackQuality !== 'auto' ? levelIndexFor(hls, state.playbackQuality) : -1, resume = levelIndexFor(hls, quality);
+      if (manual >= 0) { hls.startLevel = manual; hls.loadLevel = manual; } else if (resume >= 0) hls.startLevel = resume;
+      if (hlsAbr.holdUntil > performance.now()) { p.holdCap = hls.levels.findIndex(level => level.height === hlsAbr.holdHeight); p.applyCap(); }
+    });
+    // A manual level that fails to load (e.g. its encoder still starting on demand) makes hls.js fall back to automatic by
+    // itself. The manual choice is not given up silently: it is asked for again (3 times, 1.5 s apart); if it still cannot
+    // play, the viewer is told and the menu shows 자동.
+    p.manualRetries = 0;
+    hls.on(Hls.Events.ERROR, (event, data) => {
+      p.lastError = data.details + (data.response && data.response.code ? ' ' + data.response.code : '');
+      if (data.fatal || p.closed || state.playbackQuality === 'auto' || p.manualTimer) return;
+      p.manualTimer = setTimeout(() => {
+        p.manualTimer = 0;
+        const manual = levelIndexFor(hls, state.playbackQuality);
+        if (p.closed || state.live !== p || state.playbackQuality === 'auto' || !hls.autoLevelEnabled) return;
+        if (manual >= 0 && p.manualRetries++ < 3) { log('화질', qualityName(state.playbackQuality) + ' 다시 요청 (' + p.lastError + ')'); hls.currentLevel = manual; return; }
+        toast('선택한 화질을 지금 재생할 수 없어 자동으로 바꿨습니다.'); log('화질', qualityName(state.playbackQuality) + ' 재생 불가 (' + p.lastError + '), 자동으로 전환');
+        state.playbackQuality = 'auto'; qualityLabel(); if (!$('player-quality-menu').hidden) renderPlayerQuality();
+      }, 1500);
+    });
+    // The choice (LEVEL_SWITCHING, with what hls.js knew then) is kept per level until playback reaches that level.
+    p.switching = {};
+    hls.on(Hls.Events.LEVEL_SWITCHING, (event, data) => { p.switching[data.level] = { at: performance.now(), auto: hls.autoLevelEnabled, bw: hls.bandwidthEstimate, buffer: bufferAhead(p.video), stalls: p.stalls }; });
+    hls.on(Hls.Events.LEVEL_SWITCHED, (event, data) => levelSwitched(p, data.level));
+  }
+  function levelSwitched(p, index) {
+    const levels = p.hls.levels, level = levels[index], previous = p.levelIndex, switching = p.switching[index];
+    if (!level) return;
+    p.levelIndex = index; delete p.switching[index];
+    if (state.live === p) state.playing = levelValue(level);
+    if (state.playbackQuality !== 'auto' && levelIndexFor(p.hls, state.playbackQuality) === index) p.manualRetries = 0;
+    // Only hls.js's own automatic choices count; playback crossing fragments that were already buffered at another level
+    // (no choice of its own) changes the label but is neither logged as a switch nor counted as flipping.
+    if (previous >= 0 && previous !== index && switching && switching.auto) {
+      const now = performance.now(), up = index > previous, from = levels[previous], ms = Math.round(now - switching.at), parts = [up ? '상향' : '하향'];
+      // A step down only because the player got smaller (full screen left, rotation) is not flipping: no hold for it.
+      const sizeDown = !up && p.sizeCap >= 0 && index <= p.sizeCap && previous > p.sizeCap;
+      if (sizeDown) parts.push('표시 크기 ' + Math.round(shownHeight()) + 'px');
+      if (Number.isFinite(switching.bw)) parts.push('대역폭 추정 ' + (switching.bw / 1e6).toFixed(1) + 'Mbps');
+      parts.push('버퍼 ' + switching.buffer.toFixed(1) + '초');
+      if (switching.stalls > (p.stallsAtSwitch || 0)) parts.push('끊김 ' + (switching.stalls - (p.stallsAtSwitch || 0)) + '회');
+      p.stallsAtSwitch = p.stalls;
+      if (up) hlsAbr.upAt = now;
+      else if (sizeDown) hlsAbr.upAt = 0;
+      else if (hlsAbr.upAt && now - hlsAbr.upAt <= HLS_ABR.flipMs) {
+        // Up, then down again soon: hold automatic choice at this level for a while, longer each time it happens.
+        p.holdCap = index; p.applyCap(); hlsAbr.holdUntil = now + hlsAbr.holdMs; hlsAbr.holdHeight = level.height; hlsAbr.upAt = 0;
+        parts.push('상향 ' + Math.round(hlsAbr.holdMs / 1000) + '초 보류');
+        hlsAbr.holdMs = Math.min(HLS_ABR.maxHoldMs, hlsAbr.holdMs * 2);
+      }
+      hlsAbr.lastSwitchAt = now;
+      const reason = parts.join(', ');
+      abr.decisions.push({ at: Date.now(), from: from.height + 'p', to: level.height + 'p', reason, ms }); if (abr.decisions.length > 50) abr.decisions.shift();
+      log('화질', '자동 ' + from.height + 'p → ' + level.height + 'p (' + reason + ', 전환 ' + (ms / 1000).toFixed(1) + '초)');
+    }
+    if (state.live === p) { qualityLabel(); if (!$('player-quality-menu').hidden) renderPlayerQuality(); }
+  }
+  function hlsAbrTick(p) {
+    const now = performance.now();
+    if (p.holdCap >= 0 && now >= hlsAbr.holdUntil) { p.holdCap = -1; p.applyCap(); log('화질', '자동 화질 상향 보류 해제'); }
+    if (p.holdCap < 0 && hlsAbr.holdMs > HLS_ABR.minHoldMs && now - hlsAbr.lastSwitchAt >= HLS_ABR.calmMs) hlsAbr.holdMs = HLS_ABR.minHoldMs;
+  }
   function infoText() {
     const info = state.stream?.info;
     if (!info) return;
@@ -1584,14 +1913,25 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
     const stream = state.stream;
     chatClose('viewer');
     if (document.pictureInPictureElement) document.exitPictureInPicture().catch(() => {});
+    if (state.abort) { state.abort.abort(); state.abort = null; }  // ends every wait and load of this connection
+    for (const p of [...state.loading]) closePlayer(p);
+    state.loading.clear();
     state.stream = null; state.connecting = false; clearInterval(state.statsTimer);
     closeSession(state.session); state.session = null;
+    closePlayer(state.live); state.live = null;
     closeHistory(state.history); state.history = null; state.pausedLive = null; dvrStop(); state.mutedByBrowser = false;
     if (state.video) { state.video.srcObject = null; if (state.video.getAttribute('src')) { state.video.removeAttribute('src'); state.video.load(); } state.video.remove(); state.video = null; }
-    state.useHls = false;
+    closeViewerSession(stream);
+    state.useHls = false; state.transport = null; state.mediaLast = null;
     controlsActive();
     if (heading) receiver(false, heading, description, retry);
     return stream;
+  }
+  // 401/403 from the server: this viewer may not watch; stop without trying another way.
+  function denied(stream) {
+    if (stream && state.stream !== stream) return;
+    endPlayback('시청 권한이 없습니다', '이 방송을 볼 수 있는 권한이 있는지 확인한 뒤 다시 연결하세요.');
+    badge('viewer-status', '연결 안 됨'); log('수신', '시청 권한 없음 (401/403)');
   }
   // target: { base, host, port, path } from a list card, "시청하기" or a retry; without it the manual form's fields are used.
   async function connect(target) {
@@ -1607,48 +1947,53 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
     if (!validHost(host) || !validPath(path) || !validPort(port)) { if (!state.connected) receiver(false, '입력한 주소를 확인하세요', '연결 설정을 수정하세요.'); if (manual) (!validHost(host) ? $('viewer-host') : $('viewer-stream')).focus(); return; }
     if (state.connecting) return;
     endPlayback();
-    const connectionVersion = state.connectionVersion;
+    const connectionVersion = state.connectionVersion, signal = (state.abort = new AbortController()).signal;
     state.connecting = true; $('viewer-host').disabled = true; $('viewer-stream').disabled = true; badge('viewer-status', '연결 중'); $('retry-button').hidden = true;
     document.dispatchEvent(new CustomEvent('frame:connecting'));
     const base = manual ? (remote ? location.protocol : 'http:') + '//' + host + ':' + port : target.base;
     state.lastTarget = { base, host, port, path };
     try {
       let info = null;
-      for (let attempt = 0; ; attempt++) {
+      // Signal not ready yet (the sender is starting): keep asking for up to 45 s, like a reconnect.
+      const giveUpAt = Date.now() + 45000;
+      for (let attempt = 0; ; ) {
         try {
-          info = await fetchInfo(base, path);
+          info = await fetchInfo(base, path, signal);
           if (connectionVersion !== state.connectionVersion) return;
           if (!info.running) throw new Error('not-running');
-          state.stream = { base, host, path, info, infoAt: Date.now() }; state.playbackQuality = 'auto'; state.playing = null; abr.holdUpMs = ABR.minHoldUpMs; abr.failed = {};
-          state.useHls = typeof RTCPeerConnection !== 'function';
-          if (state.useHls && !nativeHls()) throw new Error('unsupported');
-          try { await openLive('auto'); }
-          catch (error) {
-            // WebRTC could not deliver media (blocked UDP/TCP media ports, no TURN): try HTTP-delivered HLS where the browser plays it.
-            if (state.useHls || error.message === 'busy' || error.message === 'not-running' || !nativeHls()) throw error;
-            state.useHls = true; noteEvent('hls-fallback'); log('수신', 'WebRTC 연결 실패, HLS로 재생합니다'); await attachHls();
-          }
+          state.stream = { base, host, path, info, infoAt: Date.now(), viewerSession: state.stream && state.stream.viewerSession };
+          state.playbackQuality = 'auto'; state.playing = null; abr.holdUpMs = ABR.minHoldUpMs; abr.failed = {}; hlsAbrReset();
+          if (!state.transport) state.transport = await chooseTransport(info, signal);
+          state.useHls = state.transport !== 'webrtc';
+          if (connectionVersion !== state.connectionVersion) return;
+          if (info.mediaReady === false) throw new Error('media-wait');
+          if (state.useHls && !state.stream.viewerSession) await openViewerSession(state.stream, signal);
+          await openLive('auto');
           break;
         } catch (error) {
-          if (error.message !== 'busy' || attempt >= 4 || connectionVersion !== state.connectionVersion) throw error;
-          const wait = error.retryAfter * 1000 * (attempt + 1) * (0.7 + Math.random() * 0.6);
-          noteEvent('busy-retry'); badge('viewer-status', '대기 중'); toast('접속자가 많아 ' + Math.ceil(wait / 1000) + '초 뒤 다시 연결합니다.'); log('수신', '서버 혼잡(503), ' + Math.ceil(wait / 1000) + '초 뒤 재시도');
-          await sleep(wait);
+          if (connectionVersion !== state.connectionVersion || error.message === 'cancelled') return;
+          if (error.message === 'media-wait' && Date.now() + 1500 < giveUpAt) { badge('viewer-status', '신호 대기'); await wait(1500, signal); continue; }
+          if (error.message !== 'busy' || attempt >= 4) throw error;
+          const pauseMs = error.retryAfter * 1000 * ++attempt * (0.7 + Math.random() * 0.6);
+          noteEvent('busy-retry'); badge('viewer-status', '대기 중'); toast('접속자가 많아 ' + Math.ceil(pauseMs / 1000) + '초 뒤 다시 연결합니다.'); log('수신', '서버 혼잡(503), ' + Math.ceil(pauseMs / 1000) + '초 뒤 재시도');
+          await wait(pauseMs, signal);
           if (connectionVersion !== state.connectionVersion) return;
         }
       }
       if (connectionVersion !== state.connectionVersion) return;
       state.connecting = false; state.attempt = 0;
-      receiver(true); log('수신', path + ' 연결'); dvrStart();
+      receiver(true); log('수신', path + ' 연결 (' + ({ 'hls.js': 'HLS', native: 'HLS', webrtc: 'WebRTC' }[state.transport] || state.transport) + ')'); dvrStart();
       if (manual) rememberManual({ host, port, path });
       if (info.broadcastId) chatOpen('viewer', base, path, info.broadcastId);
       state.statsTimer = setInterval(viewerStats, 1000);
     } catch (error) {
       if (connectionVersion !== state.connectionVersion) return;
-      state.connecting = false; endPlayback();
-      const ended = error.message === 'not-running', busy = error.message === 'busy', unsupported = error.message === 'unsupported';
-      receiver(false, busy ? '접속자가 많습니다' : '연결할 수 없습니다', ended ? '송출 상태와 주소를 확인한 뒤 다시 연결하세요.' : busy ? '잠시 후 다시 연결하세요.' : unsupported ? '이 브라우저는 실시간 재생 방식(WebRTC, HLS)을 지원하지 않습니다.' : '서버 주소와 방화벽 설정을 확인한 뒤 다시 연결하세요.', true);
-      badge('viewer-status', '연결 안 됨'); log('수신', '연결 실패: ' + host + ' ' + path);
+      state.connecting = false;
+      const kind = error.message, ended = kind === 'not-running', busy = kind === 'busy';
+      if (kind === 'denied') { denied(); return; }
+      endPlayback();
+      receiver(false, busy ? '접속자가 많습니다' : '연결할 수 없습니다', ended ? '송출 상태와 주소를 확인한 뒤 다시 연결하세요.' : busy ? '잠시 후 다시 연결하세요.' : kind === 'unsupported' ? '이 브라우저는 실시간 재생 방식(HLS, WebRTC)을 지원하지 않습니다.' : kind === 'media-wait' ? '송출 화면이 아직 준비되지 않았습니다. 잠시 후 다시 연결하세요.' : '서버 주소와 방화벽 설정을 확인한 뒤 다시 연결하세요.', true);
+      badge('viewer-status', '연결 안 됨'); log('수신', '연결 실패: ' + host + ' ' + path + ' (' + kind + ')');
     }
   }
   const manualKey = 'frame.manualTarget';
@@ -1670,15 +2015,18 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
   async function lost() {
     if (!state.stream || state.connecting) return;
     noteEvent('reconnect');
-    const stream = state.stream;
+    const stream = state.stream, signal = state.abort && state.abort.signal;
     state.connecting = true; badge('viewer-status', '재연결 중');
     dvr.token++; closeHistory(dvr.pending); dvr.pending = null;
     const giveUpAt = Date.now() + 45000;
+    let ended = false;
+    // Bounded: about 45 s of attempts (longer waits only when the server asks for them), each cancelled by a new connect or stop.
     for (let attempt = 1; state.stream === stream; attempt++) {
-      let wait = Math.min(8000, 1500 * attempt);
+      let pauseMs = Math.min(8000, 1500 * attempt);
       try {
-        const info = await fetchInfo(stream.base, stream.path);
-        if (!info.running) break;
+        const info = await fetchInfo(stream.base, stream.path, signal);
+        if (state.stream !== stream) return;
+        if (!info.running) { ended = true; break; }
         const previousId = stream.info.broadcastId;
         stream.info = info; stream.infoAt = Date.now();
         if (info.mediaReady === false) { badge('viewer-status', '신호 대기'); throw new Error('media not ready'); }
@@ -1687,14 +2035,18 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
         if (info.broadcastId !== previousId) { if (info.broadcastId) chatOpen('viewer', stream.base, stream.path, info.broadcastId); dvrStart(); }
         return;
       } catch (error) {
-        if (error && error.message === 'busy') { noteEvent('busy-retry'); wait = error.retryAfter * 1000 * (0.7 + Math.random() * 0.6); }
+        if (state.stream !== stream || (error && error.message === 'cancelled')) return;
+        if (error && error.message === 'denied') { state.connecting = false; denied(stream); return; }
+        if (error && error.message === 'not-running' && error.info) { ended = true; break; }
+        if (error && error.message === 'busy') { noteEvent('busy-retry'); pauseMs = error.retryAfter * 1000 * (0.7 + Math.random() * 0.6); }
       }
-      if (Date.now() + wait > giveUpAt) break;
-      await sleep(wait);
+      if (Date.now() + pauseMs > giveUpAt) break;
+      await wait(pauseMs, signal);
     }
     if (state.stream !== stream) return;
     let running = false;
-    try { running = (await fetchInfo(stream.base, stream.path)).running; } catch {}
+    if (!ended) try { running = (await fetchInfo(stream.base, stream.path, signal)).running; } catch {}
+    if (state.stream !== stream) return;
     endPlayback(running ? '연결이 끊어졌습니다' : '송출이 종료되었습니다', running ? '네트워크 상태를 확인한 뒤 다시 연결하세요.' : '송출을 다시 시작한 뒤 연결하세요.');
     log('수신', stream.path + (running ? ' 연결 끊김' : ' 송출 종료'));
   }
@@ -1708,7 +2060,8 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
     const d = abr.decisions.at(-1);
     const body = { sid: statsSession, broadcast: stream.info.broadcastId || '', transport: state.history ? 'dvr' : state.useHls ? 'hls' : 'webrtc', mode: state.playbackQuality === 'auto' ? 'auto' : 'manual',
       quality: (state.playing || '').split('x')[1] ? state.playing.split('x')[1] + 'p' : '', height: v.videoHeight || 0, fps: last ? +last.fps.toFixed(1) : undefined,
-      lossPct: last ? +(last.loss * 100).toFixed(2) : undefined, jitterMs: last && last.jitterMs != null ? Math.round(last.jitterMs) : undefined,
+      // HLS has no packet loss or jitter buffer to report: left out (not measured), never sent as 0.
+      lossPct: last && last.loss != null ? +(last.loss * 100).toFixed(2) : undefined, jitterMs: last && last.jitterMs != null ? Math.round(last.jitterMs) : undefined,
       freezes: abr.samples.filter(x => x.freeze).length, mbps: Number($('info-bitrate').dataset.measured ? parseFloat($('info-bitrate').textContent) : 0) || undefined,
       abrSwitches: abr.decisions.length, lastSwitch: d ? d.from + '>' + d.to + ' ' + d.reason : '', event: state.lastEvent || '',
       device: matchMedia('(pointer: coarse)').matches ? 'touch' : 'desktop' };
@@ -1717,17 +2070,24 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
   }
   async function viewerStats() {
     const session = state.session, stream = state.stream, history = state.history;
-    if (!stream || (!session && !history && !state.useHls)) return;
+    if (!stream || (!session && !history && !state.live)) return;
     if ((state.statsTick = (state.statsTick || 0) + 1) % 15 === 0) reportStats();
+    if (state.useHls) { beatViewerSession(stream); renewViewerSession(stream); }
     $('viewer-clock').textContent = clock((stream.info.elapsedMs || 0) + Date.now() - stream.infoAt);
-    if (Date.now() - stream.infoAt > 5000 && !state.connecting) {
-      try { const info = await fetchInfo(stream.base, stream.path); state.infoFailures = 0; if (!info.running || info.mediaReady === false) { lost(); return; } if (info.elapsedMs < stream.info.elapsedMs) { lost(); return; } stream.info = info; stream.infoAt = Date.now(); infoText(); }
-      catch { if (history && ++state.infoFailures >= 3) { state.infoFailures = 0; lost(); return; } }
+    // One /info request at a time (an older answer arriving late would look like a restarted broadcast); after a failure
+    // the next one waits the server's Retry-After, else 5 s.
+    if (!stream.infoBusy && Date.now() >= (stream.infoNextAt || 0) && Date.now() - stream.infoAt > 5000 && !state.connecting) {
+      stream.infoBusy = true;
+      try { const info = await fetchInfo(stream.base, stream.path); state.infoFailures = 0; if (state.stream !== stream) return; if (!info.running || info.mediaReady === false) { lost(); return; } if (info.elapsedMs < stream.info.elapsedMs) { lost(); return; } stream.info = info; stream.infoAt = Date.now(); infoText(); }
+      catch (error) { stream.infoNextAt = Date.now() + (error && error.retryAfter ? error.retryAfter * 1000 : 5000); if (error && error.message === 'denied') { denied(stream); return; } if (history && ++state.infoFailures >= 3) { state.infoFailures = 0; lost(); return; } }
+      finally { stream.infoBusy = false; }
     }
-    if (!session && !history) { qualityLabel(); return; }  // HLS: the browser's own player has no WebRTC statistics
     if (!session) {
-      // Recorded playback: the average bitrate of the recording actually loaded, not a WebRTC measurement.
-      if (history && history.mediaMs > 1000) { $('info-bitrate').textContent = (history.bytes * 8 / (history.mediaMs / 1000) / 1e6).toFixed(1) + ' Mbps'; $('info-bitrate').dataset.measured = '1'; }
+      // HLS and recorded playback: decoded frames, stalls and the bytes really downloaded (no WebRTC statistics here).
+      mediaSample();
+      if (history && !history.kind && history.mediaMs > 1000) { $('info-bitrate').textContent = (history.bytes * 8 / (history.mediaMs / 1000) / 1e6).toFixed(1) + ' Mbps'; $('info-bitrate').dataset.measured = '1'; }
+      if (state.live && state.live.hls && !history) hlsAbrTick(state.live);
+      if (history && history.kind === 'native') refreshHistoryMap(history);
       qualityLabel(); return;
     }
     try {
@@ -1743,6 +2103,25 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
       abrStep(report, session);
       native({ cmd: 'viewerStats', stats: sample });
     } catch {}
+  }
+  // One sample per second of HLS or recorded playback: decoded frame rate, frames the device dropped, a stall (playing but
+  // the position did not move), the buffer ahead, hls.js's live latency and the downloaded rate (bytes of fragments).
+  function mediaSample() {
+    const v = state.video, p = state.history && state.history.kind ? state.history : state.live;
+    if (!v) return;
+    const q = v.getVideoPlaybackQuality ? v.getVideoPlaybackQuality() : null, now = performance.now();
+    const cur = { t: now, frames: q ? q.totalVideoFrames : 0, dropped: q ? q.droppedVideoFrames : 0, time: v.currentTime, bytes: p ? p.bytes : 0, video: v };
+    const prev = state.mediaLast; state.mediaLast = cur;
+    if (!prev || prev.video !== v || state.paused || document.hidden || v.seeking) return;
+    const dt = (now - prev.t) / 1000;
+    if (dt <= 0) return;
+    const sample = { t: now, fps: Math.max(0, cur.frames - prev.frames) / dt, loss: null, jitterMs: null, freeze: !v.paused && cur.time === prev.time && dt >= 0.9,
+      decodeDrop: Math.max(0, cur.dropped - prev.dropped), bufferS: +bufferAhead(v).toFixed(2), latencyS: p && p.hls && Number.isFinite(p.hls.latency) ? +p.hls.latency.toFixed(2) : null,
+      mbps: cur.bytes >= prev.bytes ? (cur.bytes - prev.bytes) * 8 / dt / 1e6 : null };
+    abr.samples.push(sample); if (abr.samples.length > 60) abr.samples.shift();
+    // Received rate over the last 5 s (fragments arrive in bursts).
+    const recent = abr.samples.slice(-5).filter(x => x.mbps != null);
+    if (p && recent.length >= 3) { $('info-bitrate').textContent = (recent.reduce((a, x) => a + x.mbps, 0) / recent.length).toFixed(1) + ' Mbps'; $('info-bitrate').dataset.measured = '1'; }
   }
   // ---- Automatic playback quality, per viewer ----------------------------------------------------------------------
   // Chooses among the qualities the server really encodes (the original and its shared lower renditions) from this
@@ -1843,8 +2222,9 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
   function pause() {
     if (!state.connected) return;
     state.paused = !state.paused; $('pause-overlay').hidden = !state.paused;
-    const resumeAt = !state.paused && !state.history && state.pausedLive && performance.now() - state.pausedLive.at > 3000 ? state.pausedLive.positionMs : null;
-    state.pausedLive = state.paused && !state.history && dvr.index && dvrSupported(state.stream.info) ? { at: performance.now(), positionMs: liveEdge() + Math.min(2500, performance.now() - dvr.at) } : null;
+    // A seek still loading is newer than the paused moment: it is not replaced by a seek back there.
+    const resumeAt = !state.paused && !state.history && !dvr.seeking && !(dvr.pending && !dvr.pending.closed) && state.pausedLive && performance.now() - state.pausedLive.at > 3000 ? state.pausedLive.positionMs : null;
+    state.pausedLive = state.paused && !state.history && dvr.index && dvrSupported(state.stream.info) ? { at: performance.now(), positionMs: livePositionMs() } : null;
     if (state.video) {
       const playLive = () => { if (!state.paused && state.video) state.video.play().catch(() => {}); };
       if (state.paused) state.video.pause();
@@ -1868,18 +2248,82 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
   if (!(document.fullscreenEnabled || document.webkitFullscreenEnabled) && !('webkitEnterFullscreen' in HTMLVideoElement.prototype)) $('viewer-fullscreen').hidden = true;
 
   // ---- DVR: the whole broadcast from the server's recording, and the return to live -------------------------------
-  // Each viewer plays its own position: recorded fMP4 chunks of a few seconds (aligned to the keyframe grid of the
-  // segment files) are appended to a MediaSource, and only a window around the playback position stays in memory.
-  // Positions are the broadcasting PC's epoch milliseconds, the axis of the server's index; the live WebRTC session is
-  // closed while history plays so there is only one soundtrack.
-  const dvr = { index: null, at: 0, timer: 0, loading: false, dragging: false, token: 0, pending: null };
+  // Each viewer plays its own position from the current broadcast's recording, as the HLS playlist dvr.m3u8 (byte ranges
+  // of the recorded files), with hls.js or the browser's own HLS player: players fetch only the ranges they need. Positions
+  // are the broadcasting PC's epoch milliseconds, the axis of the server's index (/dvr, also the timeline's ranges and
+  // gaps); a playlist position maps to it by each segment's PROGRAM-DATE-TIME. Seeking starts only on a user action, the
+  // last seek wins, and the live picture is closed while history plays so there is only one soundtrack. Servers without
+  // dvr.m3u8 keep the older player: recorded fMP4 chunks appended to a MediaSource.
+  const dvr = { index: null, at: 0, timer: 0, loading: false, dragging: false, token: 0, pending: null, seeking: 0 };
   const KEY_EPS = 2;  // request just after a keyframe so the server starts the chunk on it, not one GOP earlier
+  const HLS_EDGE_MS = 6000;  // dvr.m3u8 ends a few seconds behind live: a position this close to the edge plays live
   const dvrUrl = (stream, suffix) => stream.base + '/' + encodeURIComponent(stream.path) + '/dvr' + suffix;
   const liveEdge = () => { const ranges = dvr.index?.ranges; return ranges && ranges.length ? ranges[ranges.length - 1].endMs : 0; };
-  const historyPosition = h => h.base + h.video.currentTime * 1000;
+  // Segment map of the recording: { pdt (epoch ms), start (media s), dur (s) }, from hls.js's fragments or the playlist.
+  function parseDvrPlaylist(text) {
+    const map = []; let pdt = null, dur = null, start = 0;
+    for (const raw of text.split('\n')) {
+      const line = raw.trim();
+      if (line.startsWith('#EXT-X-PROGRAM-DATE-TIME:')) pdt = Date.parse(line.slice(25));
+      else if (line.startsWith('#EXTINF:')) dur = parseFloat(line.slice(8));
+      else if (line && !line.startsWith('#') && Number.isFinite(dur)) { if (Number.isFinite(pdt)) map.push({ pdt, start, dur }); start += dur; pdt = Number.isFinite(pdt) ? pdt + dur * 1000 : null; dur = null; }
+    }
+    return map;
+  }
+  async function dvrPlaylist(stream, signal) {
+    let response;
+    try { response = await fetch(streamUrl(stream, playlistName(stream.info.hls && stream.info.hls.dvr)), { cache: 'no-store', signal: within(signal, 8000) }); }
+    catch (error) { throw signal && signal.aborted ? cancelled() : new Error('network'); }
+    if (response.status === 409) throw new Error('changed');
+    if (!response.ok) throw statusError(response.status, response.headers.get('Retry-After'));
+    return parseDvrPlaylist(await response.text());
+  }
+  function historyMap(h) {
+    const details = h.hls && h.hls.levels[0] && h.hls.levels[0].details, fragments = details ? details.fragments : null;
+    if (fragments && fragments.length) {
+      const map = fragments.filter(f => Number.isFinite(f.programDateTime)).map(f => ({ pdt: f.programDateTime, start: f.start, dur: f.duration }));
+      if (map.length) return map;
+    }
+    return h.map || [];
+  }
+  // Media time of a wall-clock moment; inside a gap (recording paused) the next recorded moment.
+  function mediaAt(map, wallMs) {
+    let i = -1;
+    for (let k = 0; k < map.length && map[k].pdt <= wallMs; k++) i = k;
+    if (i < 0) return map.length ? map[0].start : null;
+    const e = map[i];
+    if (wallMs < e.pdt + e.dur * 1000) return e.start + (wallMs - e.pdt) / 1000;
+    return i + 1 < map.length ? map[i + 1].start : e.start + e.dur;
+  }
+  function wallAt(map, t) {
+    let e = null;
+    for (let k = 0; k < map.length && map[k].start <= t + 1e-3; k++) e = map[k];
+    return e ? e.pdt + (t - e.start) * 1000 : null;
+  }
+  function historyPosition(h) {
+    if (!h.kind) return h.base + h.video.currentTime * 1000;
+    const at = wallAt(historyMap(h), h.video.currentTime);
+    if (at !== null) h.lastPositionMs = at;
+    return at !== null ? at : h.lastPositionMs || h.targetMs;
+  }
+  // The moment the live picture shows (hls.js: its fragment's PROGRAM-DATE-TIME), for resuming a pause from the recording.
+  function livePositionMs() {
+    const p = state.live, date = p && p.hls ? p.hls.playingDate : null;
+    if (date && Number.isFinite(date.getTime())) return date.getTime();
+    return liveEdge() + Math.min(2500, performance.now() - dvr.at);
+  }
+  // The browser's own player keeps reloading the playlist; the page refreshes its copy of the map now and then.
+  function refreshHistoryMap(h) {
+    const map = h.map || [], last = map[map.length - 1];
+    if (h.mapLoading || (last && h.video.currentTime < last.start + last.dur - 2) || performance.now() - (h.mapAt || 0) < 10000) return;
+    h.mapLoading = true; h.mapAt = performance.now();
+    dvrPlaylist(h.stream).then(next => { if (!h.closed && next.length >= map.length) h.map = next; }, () => {}).finally(() => { h.mapLoading = false; });
+  }
   const mseType = info => 'video/mp4; codecs="avc1.640028' + (info.audio && info.audio !== 'none' ? ',opus' : '') + '"';
-  // Recorded playback needs Media Source Extensions; browsers without it (e.g. iPhone Safari) keep live playback only.
-  const dvrSupported = info => typeof MediaSource === 'function' && MediaSource.isTypeSupported(mseType(info));
+  // Recorded playback as HLS (dvr.m3u8) with hls.js or the browser's own HLS; older servers: Media Source Extensions with
+  // the recording's own codecs (browsers without either keep live playback only).
+  const dvrHls = info => !!(info && info.hls && playlistName(info.hls.dvr)) && (mseAvailable() || nativeHls());
+  const dvrSupported = info => dvrHls(info) || (!info.hls && typeof MediaSource === 'function' && MediaSource.isTypeSupported(mseType(info)));
   async function dvrRefresh() {
     const stream = state.stream;
     if (!stream || !stream.info.dvr || dvr.loading || !dvrSupported(stream.info)) return;
@@ -1919,6 +2363,7 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
   }
   function closeHistory(h) {
     if (!h || h.closed) return;
+    if (h.kind) { closePlayer(h); return; }
     h.closed = true;
     if (!h.started && h.fail) h.fail(new Error('closed'));  // a seek still waiting for its first chunk ends now
     try { h.abort?.abort(); } catch {}
@@ -2008,17 +2453,97 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
     if (error.message === 'changed') { lost(); return; }
     toast('지난 구간을 더 불러올 수 없어 실시간으로 돌아갑니다.'); goLive(true);
   }
-  // Starts playback at positionMs from the recording; the current picture keeps playing until the first chunk is decoded.
+  function historyPlayerFailed(p, error) {
+    if (state.history !== p) { closePlayer(p); return; }
+    noteEvent('dvr-' + (error.detail || error.message)); log('수신', '지난 구간 재생 오류 (' + (error.detail || error.message) + ')');
+    if (error.message === 'denied') { denied(state.stream); return; }
+    if (error.message === 'media') { historyFailed(error); return; }
+    // Network, busy server or a new broadcast: check the stream (/info) and continue live, within the reconnect bounds.
+    if (error.message !== 'changed') toast('지난 구간을 더 불러올 수 없어 실시간으로 돌아갑니다.');
+    lost();
+  }
+  // A recording player starting at media time t (wall-clock targetMs), invisible until its first frame there.
+  async function hlsHistory(stream, map, t, targetMs, token) {
+    const signal = state.abort && state.abort.signal, url = streamUrl(stream, playlistName(stream.info.hls.dvr));
+    let p, seeked = null;
+    if (state.transport !== 'native' && mseAvailable()) {
+      const Hls = await loadHlsJs(signal);
+      if (token !== dvr.token) return null;
+      // An explicit start position: an EVENT playlist would otherwise open at its newest end. Small buffers ahead and behind.
+      p = hlsPlayer(Hls, stream, url, hlsConfig({ lowLatencyMode: false, capLevelToPlayerSize: false, startPosition: t, maxBufferLength: 15, maxMaxBufferLength: 30 }), historyPlayerFailed);
+    } else {
+      p = await nativePlayer(stream, url, signal, false);
+      // The browser's player also opens at the newest end: move to the position once its timeline is known.
+      seeked = new Promise(resolve => p.video.addEventListener('seeked', resolve, { once: true }));
+      p.video.addEventListener('loadedmetadata', () => { try { p.video.currentTime = t; } catch {} }, { once: true });
+      p.video.addEventListener('error', () => { if (p.started) historyPlayerFailed(p, new Error('network')); });
+    }
+    p.history = true; p.map = map; p.token = token; p.targetMs = targetMs; p.mapAt = performance.now();
+    dvr.pending = p;
+    p.video.addEventListener('timeupdate', () => { if (state.history === p) showTimeline(); });
+    await firstFrame(p, 15000, signal);
+    if (seeked) await Promise.race([seeked, wait(5000, signal)]);
+    return p;
+  }
+  // Within the running recording player: its player loads what the new position needs by itself (the last seek wins).
+  async function seekWithin(current, stream, ranges, target, token) {
+    let map = historyMap(current), last = map[map.length - 1];
+    if (!last || target > last.pdt + last.dur * 1000) {
+      try { current.map = await dvrPlaylist(stream); current.mapAt = performance.now(); } catch {}
+      if (token !== dvr.token || state.history !== current) return false;
+      map = historyMap(current);
+    }
+    const t = mediaAt(map, target);
+    if (t === null) { toast('선택한 시점을 재생할 수 없습니다.'); showTimeline(); return false; }
+    current.targetMs = current.lastPositionMs = target;
+    current.video.currentTime = t;
+    showTimeline(); log('수신', '지난 구간 재생 ' + clock(target - ranges[0].startMs));
+    return true;
+  }
+  async function seekHls(stream, ranges, target, token) {
+    const current = state.history;
+    if (current && current.kind && !current.closed) return seekWithin(current, stream, ranges, target, token);
+    let p = null;
+    try {
+      const map = await dvrPlaylist(stream, state.abort && state.abort.signal);
+      if (token !== dvr.token || state.stream !== stream) return false;
+      const t = mediaAt(map, target);
+      if (t === null) throw new Error('no-data');
+      p = await hlsHistory(stream, map, t, target, token);
+      if (!p || token !== dvr.token || state.stream !== stream || !state.connected || state.switching) { closePlayer(p); return false; }
+      // Failed after its first frame, while still moving to the position (browser's own player): never swap in a dead picture.
+      if (p.closed) throw new Error('network');
+    } catch (error) {
+      closePlayer(p);
+      if (dvr.pending && dvr.pending.closed) dvr.pending = null;
+      if (token === dvr.token && state.stream === stream) {
+        if (error.message === 'changed') lost(); else if (error.message === 'denied') denied(stream);
+        else if (!['cancelled', 'closed'].includes(error.message)) toast('선택한 시점을 재생할 수 없습니다.');
+        showTimeline();
+      }
+      return false;
+    }
+    dvr.pending = null;
+    swapIn(p.video, { history: p }); state.pausedLive = null;
+    await shown(p.video);
+    qualityLabel(); showTimeline(); log('수신', '지난 구간 재생 ' + clock(target - ranges[0].startMs));
+    return true;
+  }
+  // Starts playback at positionMs from the recording; the current picture keeps playing until the first frame there.
+  // Not while reconnecting: the reconnect's live picture would replace the seek's afterwards.
   async function seekTo(positionMs) {
     const stream = state.stream, ranges = dvr.index?.ranges;
-    if (!stream || !state.connected || !ranges || !ranges.length || state.switching || !dvrSupported(stream.info)) { showTimeline(); return false; }
-    const token = ++dvr.token;
+    if (!stream || !state.connected || state.connecting || !ranges || !ranges.length || state.switching || !dvrSupported(stream.info)) { showTimeline(); return false; }
+    const token = ++dvr.token, hlsDvr = dvrHls(stream.info);
     closeHistory(dvr.pending); dvr.pending = null;
     let target = Math.max(ranges[0].startMs, positionMs);
     if (!ranges.some(r => target >= r.startMs && target < r.endMs)) { const after = nextRangeStart(target); if (after === null) { if (state.history) goLive(); else showTimeline(); return false; } target = after; }
-    if (liveEdge() - target < 1500) { if (state.history) goLive(); else showTimeline(); return false; }
+    if (liveEdge() - target < (hlsDvr ? HLS_EDGE_MS : 1500)) { if (state.history) goLive(); else showTimeline(); return false; }
+    // While an HLS seek still loads the recording's playlist (before its player exists), Play must not resume the paused
+    // live moment over the position the viewer just chose.
+    if (hlsDvr) { dvr.seeking = token; try { return await seekHls(stream, ranges, target, token); } finally { if (dvr.seeking === token) dvr.seeking = 0; } }
     const current = state.history;
-    if (current && current.started) {
+    if (current && !current.kind && current.started) {
       const t = (target - current.base) / 1000, b = current.buffer.buffered;
       for (let i = 0; i < b.length; i++) if (t >= b.start(i) && t < b.end(i) - 0.5) { current.video.currentTime = t; showTimeline(); return true; }
     }
@@ -2035,22 +2560,17 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
       return false;
     }
     dvr.pending = null;
-    const oldVideo = state.video, oldHistory = state.history, oldSession = state.session;
-    state.history = h; state.video = h.video; state.session = null; state.pausedLive = null;
-    if (oldVideo && document.pictureInPictureElement === oldVideo) document.exitPictureInPicture().catch(() => {});
-    if (oldVideo) oldVideo.replaceWith(h.video); else viewerCanvas.after(h.video);
-    closeSession(oldSession); closeHistory(oldHistory);
-    applyPlayerVolume(h.video);
-    if (state.paused) h.video.pause();
-    else if (!h.video.muted) await h.video.play().catch(error => { if (error.name !== 'NotAllowedError') return; mutedByBrowser(h.video); });
-    document.dispatchEvent(new CustomEvent('frame:media'));
+    swapIn(h.video, { history: h }); state.pausedLive = null;
+    await shown(h.video);
     qualityLabel(); showTimeline(); log('수신', '지난 구간 재생 ' + clock(target - ranges[0].startMs));
     return true;
   }
   async function goLive(afterFailure = false) {
     if (!state.stream || state.switching) return;
     if (!state.history) {
-      // Paused on live: forget the paused moment and continue with the live picture.
+      // On live: a seek still loading is cancelled (the last action wins). Paused on live: forget the paused moment and
+      // continue with the live picture.
+      dvr.token++; closeHistory(dvr.pending); dvr.pending = null;
       if (state.pausedLive) { state.pausedLive = null; if (state.paused) pause(); else showTimeline(); }
       return;
     }
@@ -2106,9 +2626,15 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
       chatRetry(entry);
     });
   }
+  // Attempts that close before the server's 'state' (a refused upgrade, e.g. a full chat, has no message and its
+  // Retry-After is not readable here) back off from 1 s doubling to 30 s, with jitter; after 6 of them only every 5 minutes,
+  // so viewers over the chat limit do not knock again every few seconds for the whole broadcast.
+  const CHAT_RETRY = { tries: 6, maxMs: 30000, longMs: 300000 };
   function chatRetry(entry) {
     if (entry.closed) return;
-    const delay = Math.min(10000, 1000 * Math.pow(2, entry.retry++));
+    const attempt = entry.retry++;
+    if (attempt === CHAT_RETRY.tries) log('채팅', '채팅 서버에 연결할 수 없어 5분마다 다시 시도합니다');
+    const delay = (attempt >= CHAT_RETRY.tries ? CHAT_RETRY.longMs : Math.min(CHAT_RETRY.maxMs, 1000 * 2 ** attempt)) * (0.7 + Math.random() * 0.6);
     entry.timer = setTimeout(() => chatConnect(entry), delay);
   }
   function chatEvent(entry, data) {
@@ -2191,13 +2717,24 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
   function toggleVolume(channel) { const range = $(channel + '-volume'); range.value = Number(range.value) > 0 ? 0 : lastVolumes[channel] || 80; volumeUI(channel, true); }
   for (const channel of ['system', 'mic', 'player']) { $(channel + '-volume').addEventListener('input', () => volumeUI(channel, true)); $(channel + '-mute').addEventListener('click', () => toggleVolume(channel)); volumeUI(channel); }
   function closePlayerQuality(restore = false) { $('player-quality-menu').hidden = true; $('player-settings').setAttribute('aria-expanded', 'false'); controlsActive(); if (restore) $('player-settings').focus({ preventScroll: true }); }
-  // Only qualities the server actually encodes are listed: the original stream and its on-demand lower renditions.
+  // Only qualities the server actually encodes are listed: the original stream and its on-demand lower renditions (with
+  // hls.js: the levels it parsed from live.m3u8, highest first).
+  function qualityChoices() {
+    const source = sourceQuality(), info = state.stream?.info, p = state.live;
+    if (!state.history && p && p.hls && p.hls.levels.length) {
+      const heights = [...new Set(p.hls.levels.map(level => level.height))].sort((a, b) => b - a);
+      return heights.map(height => ({ value: levelValue(p.hls.levels.find(level => level.height === height)), label: height + 'p' }));
+    }
+    const names = (info?.renditions || []).map(item => item.name);
+    const lower = state.history || (state.transport === 'native' && !playlistName(info?.hls?.master)) ? [] : resolutions.filter(item => item.value !== source && names.includes(item.label) && Number(item.value.split('x')[1]) < Number(info?.height || 0));
+    return [{ value: source, label: (info ? info.height : source.split('x')[1]) + 'p' }].concat(lower.reverse());
+  }
   function renderPlayerQuality() {
-    const source = sourceQuality(), sourceHeight = Number(source.split('x')[1]), names = (state.stream?.info.renditions || []).map(item => item.name);
+    const source = sourceQuality(), sourceHeight = Number(source.split('x')[1]);
     // The recording keeps the original stream only, so past parts play in the original quality.
     const playingHeight = state.video?.videoHeight || Number((state.playing || source).split('x')[1]);
-    const detail = state.history ? sourceHeight + 'p 원본 (녹화)' : '현재 ' + playingHeight + 'p' + ((state.playing || source) === source ? ' 원본' : '');
-    const choices = [{ value: 'auto', label: '자동', detail }].concat(resolutions.filter(item => item.value === source || (!state.history && !state.useHls && names.includes(item.label))).reverse());
+    const detail = state.history ? sourceHeight + 'p 원본 (녹화)' : '현재 ' + playingHeight + 'p' + (playingHeight === sourceHeight ? ' 원본' : '');
+    const choices = [{ value: 'auto', label: '자동', detail }].concat(qualityChoices());
     $('player-quality-options').replaceChildren();
     for (const choice of choices) {
       const button = document.createElement('button'); button.type = 'button'; button.className = 'quality-menu-option'; button.setAttribute('role', 'menuitemradio'); button.setAttribute('aria-checked', String(state.playbackQuality === choice.value));
@@ -2207,17 +2744,31 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
       button.addEventListener('click', () => { applyPlaybackQuality(choice.value); closePlayerQuality(true); }); $('player-quality-options').append(button);
     }
   }
+  const qualityName = value => value === sourceQuality() ? (state.stream ? state.stream.info.height + 'p' : value) : ((resolutions.find(item => item.value === value) || {}).label || String(value).split('x')[1] + 'p');
   async function applyPlaybackQuality(value) {
     if (!state.connected || value === state.playbackQuality || state.switching) return;
-    if (state.history || state.useHls || value === 'auto') {
+    const p = state.live, legacyNative = state.transport === 'native' && !playlistName(state.stream.info.hls && state.stream.info.hls.master);
+    if (state.history || legacyNative || (state.transport === 'webrtc' && value === 'auto')) {
       // Automatic mode starts from what is playing now; recorded playback is the original only (live keeps the choice).
       state.playbackQuality = value; abr.holdUpMs = ABR.minHoldUpMs; abr.lastSwitchAt = performance.now(); qualityLabel(); renderPlayerQuality();
       if (!state.history) log('화질', '재생 화질 자동');
       return;
     }
+    if (p && p.hls) {
+      // hls.js: a manual level replaces the buffer at once (currentLevel, same picture, no reconnect). 자동 hands the choice
+      // back to hls.js without flushing (loadLevel -1): with currentLevel -1 the emptied buffer made hls.js restart at the
+      // lowest level (measured 720p -> 240p on loopback), so 자동 now continues from the buffered picture.
+      const index = levelIndexFor(p.hls, value);
+      if (value !== 'auto' && index < 0) { toast('선택한 화질로 바꿀 수 없습니다.'); return; }
+      state.playbackQuality = value;
+      if (value === 'auto') p.hls.loadLevel = -1; else p.hls.currentLevel = index;
+      log('화질', value === 'auto' ? '재생 화질 자동' : '재생 화질 ' + qualityName(value) + ' (수동)'); qualityLabel(); renderPlayerQuality();
+      return;
+    }
+    // WebRTC manual quality, or the browser's own HLS (자동 = live.m3u8, manual = live.m3u8?q=): a new picture at the live edge.
     dvr.token++; closeHistory(dvr.pending); dvr.pending = null;
     state.switching = true;
-    try { await attach(value); state.playbackQuality = value; qualityLabel(); renderPlayerQuality(); log('화질', '재생 화질 ' + resolutions.find(item => item.value === value).label + ' (수동)'); }
+    try { if (!(await openLive(value))) return; state.playbackQuality = value; qualityLabel(); renderPlayerQuality(); log('화질', value === 'auto' ? '재생 화질 자동' : '재생 화질 ' + qualityName(value) + ' (수동)'); }
     catch { toast('선택한 화질로 바꿀 수 없습니다.'); }
     finally { state.switching = false; }
   }
@@ -2231,7 +2782,7 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
   document.addEventListener('pointerdown', event => { if (!$('player-quality-menu').hidden && !$('player-quality-menu').contains(event.target) && !$('player-settings').contains(event.target)) closePlayerQuality(); });
   document.addEventListener('visibilitychange', () => native({ cmd: 'previewVisible', visible: !document.hidden && !$('sender-view').hidden }));
   setInterval(() => { if (state.running) $('metric-duration').textContent = clock(Date.now() - state.startedAt); else if (!state.starting) $('metric-duration').textContent = '00:00:00'; }, 250);
-  window.addEventListener('pagehide', () => closeSession(state.session));
+  window.addEventListener('pagehide', () => { closeSession(state.session); closeViewerSession(state.stream); });
 
   if (bridge) {
     bridge.addEventListener('message', ({ data: event }) => {
@@ -2265,8 +2816,23 @@ input[type='range']:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #008
     get remote() { return remote; }, get running() { return state.running; },
     get video() { return state.video; }, get stream() { return state.stream; },
     // Playback position source for measurements: the recording's time axis while history plays.
-    get abr() { return { mode: state.playbackQuality, playing: state.playing, holdUpMs: abr.holdUpMs, decisions: abr.decisions.slice(-20), last: abr.samples.at(-1) || null }; },
-    get playback() { return { mode: state.history ? 'history' : 'live', base: state.history ? state.history.base : null, ranges: dvr.index ? dvr.index.ranges : null }; },
+    get abr() { return { mode: state.playbackQuality, playing: state.playing, holdUpMs: state.transport === 'hls.js' ? hlsAbr.holdMs : abr.holdUpMs, decisions: abr.decisions.slice(-20), last: abr.samples.at(-1) || null }; },
+    get playback() {
+      const h = state.history, positionMs = h ? historyPosition(h) : null;
+      return { mode: h ? 'history' : 'live', base: h ? (h.kind ? positionMs - h.video.currentTime * 1000 : h.base) : null, positionMs, ranges: dvr.index ? dvr.index.ranges : null };
+    },
+    // HLS playback state for measurements: transport, the level really playing, hls.js's levels, live latency, buffer ahead.
+    get hls() {
+      const p = state.history && state.history.kind ? state.history : state.live, v = state.video, hls = p && p.hls;
+      const level = hls && hls.levels[p.levelIndex] ? hls.levels[p.levelIndex] : null;
+      const edge = v && v.seekable && v.seekable.length ? v.seekable.end(v.seekable.length - 1) - v.currentTime : null;
+      return { transport: p ? p.kind : state.transport || null, connection: state.transport || null, mode: state.history ? 'history' : 'live', auto: hls ? hls.autoLevelEnabled : state.playbackQuality === 'auto',
+        level: level ? { index: p.levelIndex, width: level.width, height: level.height, bitrate: level.bitrate } : v && v.videoHeight ? { index: -1, width: v.videoWidth, height: v.videoHeight } : null,
+        levels: hls ? hls.levels.map(item => ({ width: item.width, height: item.height, bitrate: item.bitrate, averageBitrate: item.averageBitrate, errors: (item.loadError || 0) + (item.fragmentError || 0) })) : [],
+        latency: hls && Number.isFinite(hls.latency) && hls.latency > 0 ? +hls.latency.toFixed(3) : edge !== null && p && !hls ? +edge.toFixed(3) : null,
+        bufferAhead: v ? +bufferAhead(v).toFixed(3) : null, bandwidthEstimate: hls && Number.isFinite(hls.bandwidthEstimate) ? Math.round(hls.bandwidthEstimate) : null,
+        cap: p && hls ? { size: p.sizeCap, hold: p.holdCap, holdMs: hlsAbr.holdMs } : null, stalls: p ? p.stalls : 0, lastError: p ? p.lastError || null : null };
+    },
     prepareManual,
     get catalogBase() { return remote ? '' : state.viewerServerPort ? 'http://127.0.0.1:' + state.viewerServerPort : null; }
   };

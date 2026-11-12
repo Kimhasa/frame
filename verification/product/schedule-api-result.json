@@ -1,0 +1,102 @@
+{
+  "base": "http://127.0.0.1:18081",
+  "verificationDatabaseOnly": true,
+  "results": [
+    {
+      "name": "Schedule owner signs up in the verification database",
+      "pass": true
+    },
+    {
+      "name": "A separate schedule owner has a separate channel",
+      "pass": true
+    },
+    {
+      "name": "Private schedule list requires authentication",
+      "pass": true
+    },
+    {
+      "name": "Anonymous schedule creation is rejected",
+      "pass": true
+    },
+    {
+      "name": "Schedule writes require CSRF",
+      "pass": true
+    },
+    {
+      "name": "Schedule writes reject another Origin",
+      "pass": true
+    },
+    {
+      "name": "New channel starts with no fabricated schedules",
+      "pass": true
+    },
+    {
+      "name": "Create returns a server ID and trimmed title with the exact timestamp",
+      "pass": true
+    },
+    {
+      "name": "Duplicate channel and start time are rejected",
+      "pass": true
+    },
+    {
+      "name": "Different channels may schedule the same time",
+      "pass": true
+    },
+    {
+      "name": "New reservations must be in the future",
+      "pass": true
+    },
+    {
+      "name": "Fractional timestamps are rejected",
+      "pass": true
+    },
+    {
+      "name": "Blank titles are rejected",
+      "pass": true
+    },
+    {
+      "name": "Another account cannot edit the reservation",
+      "pass": true
+    },
+    {
+      "name": "Another account cannot cancel the reservation",
+      "pass": true
+    },
+    {
+      "name": "Owner edit is saved to PostgreSQL",
+      "pass": true
+    },
+    {
+      "name": "Another future reservation can be created",
+      "pass": true
+    },
+    {
+      "name": "Public schedules are readable anonymously in date order",
+      "pass": true
+    },
+    {
+      "name": "Public schedule contains no account or stream credentials",
+      "pass": true
+    },
+    {
+      "name": "Schedule lists stay isolated per channel",
+      "pass": true
+    },
+    {
+      "name": "Owner can cancel a future reservation",
+      "pass": true
+    },
+    {
+      "name": "Private list reflects the cancellation",
+      "pass": true
+    },
+    {
+      "name": "Public list reflects the cancellation",
+      "pass": true
+    },
+    {
+      "name": "Missing public channel is a genuine 404",
+      "pass": true
+    }
+  ]
+}

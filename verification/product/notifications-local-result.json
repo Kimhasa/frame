@@ -1,0 +1,23 @@
+{
+  "migrations": [
+    "1:true",
+    "2:true",
+    "3:true",
+    "4:true",
+    "5:true",
+    "6:true",
+    "7:true"
+  ],
+  "notificationTablesPresent": true,
+  "status": {
+    "health": 200,
+    "policies": 200,
+    "notificationsPage": 200,
+    "anonymousList": 401,
+    "anonymousCount": 401,
+    "anonymousReadAll": 401
+  },
+  "testAccountsNotificationsAndStreamsNotInsertedIntoProduction": true,
+  "operatorAssignmentUnchanged": true,
+  "mediaReceiverPreserved": true
+}

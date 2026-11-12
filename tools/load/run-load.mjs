@@ -1,6 +1,7 @@
 // Staged load runner for ONE broadcast. Counts only viewers that really receive media: every viewer is a WebRTC peer in a
-// separate generator MediaMTX (lib/generator.mjs) pulling the target's WHEP URL, and a viewer is "receiving" only while
-// its received byte count keeps growing. HTTP 200 / WHEP 201 alone never count. Optional chat sockets, DVR readers,
+// separate generator MediaMTX (lib/generator.mjs) pulling the target's WHEP URL (receiver "whep", default), or a light Node
+// LL-HLS client (lib/hls-pool.mjs, receiver "hls": live.m3u8 -> variant -> blocking reloads -> parts), and a viewer is
+// "receiving" only while its received byte count keeps growing. HTTP 200 / WHEP 201 alone never count. Optional chat sockets, DVR readers,
 // churn, quality mix and mid-session quality changes, real-browser samplers (desktop / mobile-like), resource sampling of
 // generator and target, target statistics (standalone MediaMTX API or the app's /api/stats), and stop rules.
 // usage: node tools/load/run-load.mjs --plan tools/load/plans/smoke-local.json [--stages 1,10 --hold 60 --name x --out <dir> ...]
@@ -18,18 +19,29 @@ import { Resources } from './lib/resources.mjs';
 import { ChatPool, chatName } from './lib/chat.mjs';
 import { DvrPool } from './lib/dvr.mjs';
 import { WhepTap } from './lib/whep-tap.mjs';
+import { HlsPool } from './lib/hls-pool.mjs';
 
 const NOT = 'not measured';
 const CLOCK_TOL_MS = 50;  // generator MediaMTX and this runner read the same OS clock; a ready time earlier than this before the request is stale
 const defaults = {
   name: 'run',
+  // "whep": WebRTC peers in a generator MediaMTX; "hls": Node LL-HLS clients (what every browser page now plays).
+  receiver: 'whep',
+  // HLS receiver: workers = worker threads of this process (0 = the runner's thread); parts false = whole segments only (a
+  // player or CDN without LL-HLS parts); session = POST /<path>/session + PUT heartbeat + DELETE on leave (as the page);
+  // audio = also follow the AAC rendition; skip = delta playlists (_HLS_skip=YES) when the server offers them (hls.js does);
+  // startBehindSec = start position behind the newest media (the page's liveSyncDuration 1.5 s); stallMs = no new media
+  // for longer than this is a stall; keepAlive false = a new connection per request.
+  hls: { workers: 2, parts: true, audio: true, session: false, skip: true, startBehindSec: 1.5, stallMs: 3000, keepAlive: true, insecure: false },
   // Prefix of the chat display names (부하-<id>-v00012). The app refuses a name that another machine already holds, so each
   // generator PC needs its own id; default: 4 hex characters of this PC's host name hash.
   generatorId: null,
   // No default target: a plan, --whep/--base or --target-state must name it (never an app that happens to run on this PC).
   // appStats: the app's read-only statistics (GET /api/stats, contract v 1). requireAppStats: refuse to start without it.
   // useApi: read the standalone target's MediaMTX API when the state file names one.
-  target: { whep: null, base: null, path: 'screen-01', stateFile: null, api: null, useApi: true, appStats: null, requireAppStats: false,
+  // hls: the multivariant playlist URL (default <base>/<path>/<info.hls.master>); relayHealth: the relay's /healthz (HLS
+  // session count of a relay target).
+  target: { whep: null, base: null, hls: null, relayHealth: null, path: 'screen-01', stateFile: null, api: null, useApi: true, appStats: null, requireAppStats: false,
     pids: [], tree: [], names: [], pathLike: [], criticalNames: ['FrameConsole', 'mediamtx'] },
   stages: [1, 10, 50, 100, 300, 500, 1000],
   rampPerSec: 10, burst: false, burstConcurrency: 32, holdSec: 300, settleSec: null, keepBetweenStages: true, emptyWaitSec: 30,
@@ -52,7 +64,10 @@ const defaults = {
   whepTap: { enabled: true, port: 21950 },
   limits: { generatorCpuPct: 90, hostCpuPct: 95, targetCpuPct: 90, sustainSec: 30, minSuccess: 0.9, successGraceSec: 20, minFullRate: 0.9, abortOnDegraded: true,
     maxTrafficGB: 50, projectTraffic: true, minFreeMemMB: 300, memSustainSec: 10, eventLoopLagMs: 1000, nicUtil: 0.8,
-    max503Share: 0.1, min503Requests: 20, window503Sec: 30, sustain503Sec: 10, externalCpuPct: 25 },
+    max503Share: 0.1, min503Requests: 20, window503Sec: 30, sustain503Sec: 10, externalCpuPct: 25,
+    // HLS receiver: share of all its requests (session, playlists, media) answered 429/503 in window503Sec (>= minBusyRequests),
+    // and generator threads all busy (process CPU >= genThreadsBusy x (workers + 1) cores) for sustainSec.
+    minBusyRequests: 50, genThreadsBusy: 0.9 },
   // mode "separate": the browser pages run in their own short phase after a stage's hold (the protocol viewers stay), so
   // they never disturb the hold's numbers; "inline": during the hold (startDelaySec after it starts).
   browser: { count: 0, url: null, seconds: 30, stages: null, devtoolsPort: 21222, headless: true, startDelaySec: 5, mode: 'separate', profiles: ['desktop'] },
@@ -70,6 +85,16 @@ const stagesFromCli = args.stages !== undefined;
 if (stagesFromCli) plan.stages = String(args.stages).split(',').map(Number).filter(n => Number.isFinite(n) && n > 0);
 for (const k of ['hold', 'holdSec']) if (args[k] !== undefined) plan.holdSec = Number(args[k]);
 for (const k of ['name', 'rampPerSec', 'burst', 'calibrate', 'stallKbps', 'firstMediaTimeoutMs', 'generatorId']) if (args[k] !== undefined) plan[k] = args[k];
+if (args.receiver) plan.receiver = String(args.receiver);
+// --qualities source=0.7,720p=0.3 (weights of the planned quality mix; a viewer keeps its quality unless qualitySwitch moves it)
+if (args.qualities) plan.qualities = Object.fromEntries(String(args.qualities).split(',').map(x => x.split('=')).map(([q, w]) => [q.trim(), w === undefined ? 1 : Number(w)]));
+if (args.hlsWorkers !== undefined) plan.hls.workers = Number(args.hlsWorkers);
+if (args.hlsSession !== undefined) plan.hls.session = args.hlsSession !== false && args.hlsSession !== 'false';
+if (args.hlsParts !== undefined) plan.hls.parts = args.hlsParts !== false && args.hlsParts !== 'false';
+if (args.hlsUrl) plan.target.hls = String(args.hlsUrl);
+if (args.relayHealth !== undefined) plan.target.relayHealth = args.relayHealth === 'none' ? null : args.relayHealth;
+const HLS = plan.receiver === 'hls';
+if (!['whep', 'hls'].includes(plan.receiver)) { console.error('--receiver must be whep or hls'); process.exit(2); }
 if (args.whep) plan.target.whep = args.whep;
 if (args.base !== undefined) plan.target.base = args.base === 'none' ? null : args.base;
 if (args.targetState) plan.target.stateFile = args.targetState;
@@ -99,7 +124,7 @@ plan.referenceKbps = (() => {
 // {host} in the plan's URLs is the sender PC (--host 192.168.0.10), so one plan file serves any address.
 plan.target.host = args.host || plan.target.host || '127.0.0.1';
 if (args.path) plan.target.path = String(args.path);  // the app's stream path (default screen-01)
-for (const [obj, key] of [[plan.target, 'whep'], [plan.target, 'base'], [plan.target, 'appStats'], [plan.browser, 'url']]) if (typeof obj[key] === 'string') obj[key] = obj[key].replaceAll('{host}', plan.target.host);
+for (const [obj, key] of [[plan.target, 'whep'], [plan.target, 'base'], [plan.target, 'appStats'], [plan.target, 'hls'], [plan.target, 'relayHealth'], [plan.browser, 'url']]) if (typeof obj[key] === 'string') obj[key] = obj[key].replaceAll('{host}', plan.target.host).replaceAll('{path}', plan.target.path);
 
 let targetState = null;
 if (plan.target.stateFile) {
@@ -116,7 +141,9 @@ if (plan.target.stateFile) {
 }
 if (!plan.target.useApi) plan.target.api = null;
 
-if (plan.media && !plan.target.whep) { console.error('target.whep is not set (plan target.whep, --whep or --target-state)'); process.exit(2); }
+if (plan.media && !HLS && !plan.target.whep) { console.error('target.whep is not set (plan target.whep, --whep or --target-state)'); process.exit(2); }
+if (plan.media && HLS && !plan.target.hls && !plan.target.base) { console.error('the HLS receiver needs target.base or target.hls (plan, --base, --hls-url or --target-state)'); process.exit(2); }
+if (HLS) plan.whepTap.enabled = false;  // no WHEP offers; the pool counts its own 429/503 answers
 if (!plan.media && !plan.target.base) { console.error('target.base is not set (chat-only run)'); process.exit(2); }
 
 // The app's statistics are what make the degraded-quality stop and the reference rate work on a real-app run.
@@ -162,6 +189,10 @@ const qualityOfPath = name => (name === plan.target.path ? 'source' : name.start
 const upstreamWhep = q => plan.target.whep.replace('{stream}', streamFor(q)).replace('{path}', plan.target.path);
 let tap = null;
 const sourceUrlFor = (v, q) => (tap ? tap.urlFor(v.name, upstreamWhep(q)) : upstreamWhep(q));
+// What the receiver gets for a viewer of quality q: a WHEP URL, or the multivariant playlist and the quality to pick in it.
+let hlsMaster = plan.target.hls;
+const mediaSpec = (v, q) => (HLS ? { master: hlsMaster, quality: isSourceQ(q) ? 'source' : q, base: plan.target.base || new URL(hlsMaster).origin, path: plan.target.path } : sourceUrlFor(v, q));
+const masterRef = {};  // quality -> { kbps, from } AVERAGE-BANDWIDTH of live.m3u8 (HLS, last fallback reference)
 function linkMbps(s) { const m = String(s || '').match(/([\d.]+)\s*(G|M|K)bps/i); return m ? Number(m[1]) * { g: 1000, m: 1, k: 0.001 }[m[2].toLowerCase()] : null; }
 // MediaMTX reports "0001-01-01T00:00:00Z" (or null) before a source is ready: only real times are times.
 const validTime = s => typeof s === 'string' && !s.startsWith('0001-') && Number.isFinite(Date.parse(s)) && Date.parse(s) > Date.UTC(2000, 0, 1);
@@ -200,7 +231,10 @@ const resources = new Resources({ controlFile: join(tmp, 'sampler-control.json')
 const critical = new Set();
 resources.on(r => { lastRes = r; });
 
-const generator = new Generator({ ...plan.generator, dir: outDir });
+const generator = HLS
+  ? new HlsPool({ workers: plan.hls.workers, dir: outDir, options: { partsMode: plan.hls.parts, audio: plan.hls.audio, session: plan.hls.session, skip: plan.hls.skip, startBehindSec: plan.hls.startBehindSec,
+    liveSyncSec: plan.hls.startBehindSec, stallMs: plan.hls.stallMs, keepAlive: plan.hls.keepAlive, insecure: plan.hls.insecure } })
+  : new Generator({ ...plan.generator, dir: outDir });
 let info = null, chat = null, dvr = null, dvrSkipped = null;
 
 function newViewer(requestedAt = Date.now()) {
@@ -212,7 +246,7 @@ function newViewer(requestedAt = Date.now()) {
     requestedAt, addedAt: 0, addDoneAt: null, addOk: null, addStatus: null, apiMs: null, addError: null, addP: null,
     sessionStart: 0, firstAt: null, firstMs: null, firstBasis: null, firstBracketMs: null, staleReadyTimes: 0,
     ready: false, readyTime: null, mediaAt: null, lastBytes: 0, lastT: 0, totalBytes: 0, hist: [],
-    disconnects: 0, reconnects: 0, removed: false, removedAt: null, h: null, sw: null };
+    disconnects: 0, reconnects: 0, removed: false, removedAt: null, h: null, sw: null, hlsLast: null };
   viewers.set(v.name, v);
   return v;
 }
@@ -222,8 +256,9 @@ function addViewer(v) {
     v.addedAt = Date.now();
     v.sessionStart = v.addedAt;
     if (plan.media) {
-      const r = await generator.add(v.name, sourceUrlFor(v, v.quality), v.inst);
+      const r = await generator.add(v.name, mediaSpec(v, v.quality), v.inst);
       Object.assign(v, { addOk: r.ok, addStatus: r.status, apiMs: r.apiMs, addError: r.error, addDoneAt: Date.now() });
+      if (HLS && r.variants && !Object.keys(masterRef).length) noteMasterRef(r.variants);
     }
     if (v.chat && chat) chat.open(v.name, v.sender);
     if (v.dvr && dvr) dvr.add(v.name);
@@ -269,11 +304,24 @@ async function sleepUnlessAbort(ms) { for (const end = Date.now() + ms; Date.now
 
 // ---------- sampling ----------
 const newSeg = q => ({ quality: q, windows: 0, observedMs: 0, bytes: 0 });
-function holdWindowStart(v) { v.h = { stage: stageN, windows: 0, receiving: 0, low: 0, stalls: 0, stallMs: 0, observedMs: 0, bytes: 0, stallEvents: 0, inStall: false, switchGapMs: 0, segs: [], seg: newSeg(v.quality) }; }
+function holdWindowStart(v) {
+  v.h = { stage: stageN, windows: 0, receiving: 0, low: 0, stalls: 0, stallMs: 0, observedMs: 0, bytes: 0, stallEvents: 0, inStall: false, switchGapMs: 0, segs: [], seg: newSeg(v.quality),
+    // HLS: counters at the hold start (deltas at its end) and the delay estimate of every sample in the hold.
+    hls0: v.hlsLast ? { ...v.hlsLast } : null, delays: [], buffers: [] };
+}
+// AVERAGE-BANDWIDTH per quality from the first live.m3u8 a viewer read (the server's own measured average, video + AAC).
+function noteMasterRef(variants) {
+  const sorted = [...variants].sort((a, b) => b.height - a.height);
+  for (const x of sorted) {
+    const q = x === sorted[0] ? 'source' : `${x.height}p`;
+    const bps = x.average || x.bandwidth;
+    if (bps > 0 && !masterRef[q]) masterRef[q] = { kbps: bps / 1000, from: `live.m3u8 ${x.average ? 'AVERAGE-BANDWIDTH' : 'BANDWIDTH (peak)'}` };
+  }
+}
 
 // Target statistics, normalised: the standalone target's MediaMTX API and/or the app's /api/stats (contract v 1).
 async function targetStatsSample() {
-  const out = { t: Date.now(), via: [], sessions: null, established: null, perSession: null, pathsIn: null, sendBytes: null, app: null };
+  const out = { t: Date.now(), via: [], sessions: null, established: null, perSession: null, pathsIn: null, sendBytes: null, app: null, hlsSessions: null, hlsViewers: null, hlsSendBytes: null };
   if (plan.target.api) {
     try {
       const items = [];
@@ -288,6 +336,11 @@ async function targetStatsSample() {
       out.perSession = new Map(items.map(s => [s.id, { discarded: s.outboundFramesDiscarded || 0, out: s.outboundBytes ?? s.bytesSent ?? 0 }]));
       const p = await fetchJson(`${plan.target.api}/v3/paths/list?itemsPerPage=1000`, {}, 3000);
       if (p.ok) out.pathsIn = new Map((p.body.items || []).map(x => [x.name, x.inboundBytes ?? x.bytesReceived ?? 0]));
+      if (HLS) {
+        // Bytes the target MediaMTX sent to HLS readers (through the viewer server's proxy: one request per viewer request).
+        const h = await fetchJson(`${plan.target.api}/v3/hlsmuxers/list?itemsPerPage=1000`, {}, 3000).catch(() => null);
+        if (h?.ok) out.hlsSendBytes = (h.body.items || []).reduce((a, x) => a + (x.outboundBytes ?? x.bytesSent ?? 0), 0);
+      }
       out.via.push('mediamtx-api');
     } catch {}
   }
@@ -303,9 +356,18 @@ async function targetStatsSample() {
         if (out.sessions === null) out.sessions = r.body.webrtc?.sessions ?? null;
         if (out.pathsIn === null) out.pathsIn = new Map(Object.entries(r.body.paths || {}).map(([name, x]) => [name, x.bytesReceived ?? null]));
         out.sendBytes = r.body.webrtc?.bytesSent ?? null;
+        out.hlsSessions = r.body.hls?.sessions ?? null;
       }
     } catch {}
   }
+  if (plan.target.relayHealth) {
+    try {
+      const r = await fetchJson(plan.target.relayHealth, {}, 3000);
+      if (r.body && typeof r.body === 'object') { out.via.push('relay-healthz'); out.hlsSessions = r.body.hlsSessions ?? null; out.hlsViewers = r.body.hlsViewers ?? null; }
+    } catch {}
+  }
+  // HLS receiver: the target's session count is its HLS viewer sessions; its send rate the MediaMTX HLS muxers' output.
+  if (HLS && out.via.length) { out.sessions = out.hlsSessions; out.perSession = null; out.sendBytes = out.hlsSendBytes; }
   return out.via.length ? out : null;
 }
 
@@ -314,7 +376,7 @@ function liveRef(q) {
   const h = refHist[q];
   // An idle path (on-demand quality nobody watches yet) has ingest 0: that is no reference, never a pass for everything.
   if (h && h.length >= 2) { const a = h[0], b = h[h.length - 1]; if (b.t - a.t >= plan.rateWindowSec * 800) { const k = (b.b - a.b) * 8 / (b.t - a.t); if (k > 0) return k; } }
-  return plan.referenceKbps?.[q] ?? measuredRef[q]?.kbps ?? null;
+  return plan.referenceKbps?.[q] ?? measuredRef[q]?.kbps ?? masterRef[q]?.kbps ?? null;
 }
 function liveKbps(v) {
   const h = v.hist;
@@ -396,6 +458,7 @@ async function sampleOnce() {
     if (v.removed || !v.addedAt) continue;
     if (failed.has(v.inst % generator.instances.length)) continue;  // no list from its generator instance in this sample
     const { delta, dt, readyNow } = updateViewer(v, items.get(v.name), now);
+    if (HLS) v.hlsLast = items.get(v.name)?.hls || v.hlsLast;
     if (readyNow) readyCount++;
     if (!dt) continue;
     trafficBytes += delta;
@@ -414,6 +477,10 @@ async function sampleOnce() {
       const lk = liveKbps(v), ref = liveRef(v.quality);
       if (lk !== null && ref) { frJudged++; if (lk >= plan.fullRateFraction * ref) frOk++; }
     }
+    if (HLS && v.h && phase === 'hold' && full && v.hlsLast) {
+      if (Number.isFinite(v.hlsLast.delayMs)) v.h.delays.push(v.hlsLast.delayMs);
+      if (Number.isFinite(v.hlsLast.bufferMs)) v.h.buffers.push(v.hlsLast.bufferMs);
+    }
     if (v.h && phase === 'hold') {
       if (gap) { v.h.switchGapMs += dt; continue; }
       if (!full) continue;
@@ -429,7 +496,8 @@ async function sampleOnce() {
     const c = chat.counts();
     receivingNow = c.joined; eligible = active().filter(v => now - v.addedAt >= plan.firstMediaTimeoutMs).length; receivingEligible = Math.min(eligible, c.joined);
   }
-  const lagP99 = lag.percentile(99) / 1e6, lagMax = lag.max / 1e6;
+  // HLS: the worst event-loop delay of this thread and of the receiver's worker threads.
+  const lagP99 = Math.max(lag.percentile(99) / 1e6, HLS ? generator.lag.p99 ?? 0 : 0), lagMax = Math.max(lag.max / 1e6, HLS ? generator.lag.max ?? 0 : 0);
   lag.reset();
   const ts = await targetStatsSample();
   let send = null, disc = null, sessions = null, appRows = {};
@@ -488,7 +556,8 @@ async function sampleOnce() {
     ...appRows,
     whepPosts: tapWin ? tapWin.posts : null, whep503: tapWin ? tapWin.status503 : null, whep503ShareRolling: tapRoll ? tapRoll.share503 : null, whepPostsRolling: tapRoll ? tapRoll.posts : null,
     chatOpen: chat ? chat.counts().open : null, chatJoined: chat ? chat.counts().joined : null, dvrChunks: dvr ? dvr.w.chunks : null, dvrErrors: dvr ? dvr.w.errors : null,
-    lostPackets: lossTotal(),
+    lostPackets: HLS ? null : lossTotal(),
+    ...(HLS ? hlsRow(now) : {}),
   };
   samples.push(row);
   lastSampleAt = now;
@@ -497,6 +566,17 @@ async function sampleOnce() {
 }
 
 function freeMB() { return freemem() / 2 ** 20; }
+
+let lastHlsTotals = null;
+function hlsRow(now) {
+  const t = generator.totals || { requests: 0, busy: 0 }, prev = lastHlsTotals;
+  lastHlsTotals = { requests: t.requests, busy: t.busy };
+  const roll = generator.window(now - plan.limits.window503Sec * 1000, now);
+  const delays = active().map(v => v.hlsLast?.delayMs).filter(Number.isFinite);
+  return { hlsRequests: prev ? t.requests - prev.requests : null, hlsBusy: prev ? t.busy - prev.busy : null, hlsRequestsRolling: roll.requests, hlsBusyShareRolling: roll.share,
+    hlsDelayP50Ms: round(percentile(delays, 0.5), 0), hlsDelayP95Ms: round(percentile(delays, 0.95), 0), hlsInStall: active().filter(v => v.hlsLast?.inStall).length,
+    hlsLagP99Ms: round(generator.lag.p99, 1) };
+}
 
 function lossTotal() { let s = 0; for (const n of generator.loss.values()) s += n; return s; }
 
@@ -527,6 +607,18 @@ function checkLimits(row, r, nicMax) {
   const busy = row.whepPostsRolling >= L.min503Requests && row.whep503ShareRolling >= L.max503Share;
   if (busy) noteSaturation('whep-503', { share: row.whep503ShareRolling, posts: row.whepPostsRolling });
   if (sustain('503', busy, L.sustain503Sec)) setAbort('whep-503-share', { share: row.whep503ShareRolling, posts: row.whepPostsRolling, max: L.max503Share, windowSec: L.window503Sec });
+  if (HLS) {
+    const busyH = row.hlsRequestsRolling >= L.minBusyRequests && row.hlsBusyShareRolling >= L.max503Share;
+    if (busyH) noteSaturation('hls-429-503', { share: row.hlsBusyShareRolling, requests: row.hlsRequestsRolling });
+    if (sustain('hls503', busyH, L.sustain503Sec)) setAbort('hls-busy-share', { share: row.hlsBusyShareRolling, requests: row.hlsRequestsRolling, max: L.max503Share, windowSec: L.window503Sec });
+    // A Node receiver saturates per thread long before the machine's CPU is full: all of its threads busy = generator limit.
+    const threads = Math.max(0, plan.hls.workers) + 1;
+    if (r && r.gen.cores !== null) {
+      const full = r.gen.cores >= L.genThreadsBusy * threads;
+      if (full) noteSaturation('generator-threads', { genCores: r.gen.cores, threads });
+      if (sustain('gen-threads', full, L.sustainSec)) setAbort('generator-cpu', { genCores: r.gen.cores, threads, note: 'every receiver thread busy (HLS)' });
+    }
+  }
   const measuring = phase === 'hold' || phase === 'settle';
   if (measuring && row.receivingRatio !== null && row.receivingRatio < L.minSuccess) noteSaturation('receiving-below-min', { ratio: row.receivingRatio, eligible: row.eligible });
   // Degraded quality: share of viewers whose rolling rate is >= fullRateFraction of their quality's reference.
@@ -549,6 +641,7 @@ function refFor(q, hr) {
   if (vals.length) return { kbps: mean(vals), from: `target ingest rate of ${streamFor(q)} (${hr.find(r => r.statsVia)?.statsVia})`, samples: vals.length };
   if (plan.referenceKbps?.[q]) return { kbps: plan.referenceKbps[q], from: 'plan.referenceKbps' };
   if (measuredRef[q]) return measuredRef[q];
+  if (masterRef[q]) return masterRef[q];
   return null;
 }
 
@@ -637,7 +730,7 @@ function summarize(stage, holdFrom, holdTo, rows, extra) {
     totalMbps: { mean: round(mean(pick('totalMbps')), 1), max: round(Math.max(0, ...pick('totalMbps')), 1) },
     sourceKbps: ref.source && ref.source.samples ? round(ref.source.kbps, 0) : NOT,
     rateVsSource: ref.source ? { p5: round(percentile(srcRatios, 0.05), 3), p50: round(percentile(srcRatios, 0.5), 3), degradedViewers: srcRatios.filter(x => x < plan.fullRateFraction).length } : NOT,
-    rtpPacketsLost: lossInHold, lostPerViewerMinute: round(lossPerViewerMin, 1), lossRatioEst: estPackets ? round(lossInHold / (estPackets + lossInHold), 5) : null,
+    rtpPacketsLost: HLS ? NOT : lossInHold, lostPerViewerMinute: HLS ? NOT : round(lossPerViewerMin, 1), lossRatioEst: HLS ? NOT : estPackets ? round(lossInHold / (estPackets + lossInHold), 5) : null,
     processingErrors: [...generator.procErrors.values()].reduce((a, b) => a + b, 0) - extra.procStart,
     iceCandidatePairs: pairs,
     churn: churning ? { leaves: extra.churnLeaves, joins: churnJoins.length, rejoinsSkippedAtHoldEnd: extra.churnSkipped, joinFirstMediaMs: { p50: percentile(churnJoins.map(v => v.firstMs), 0.5), p95: percentile(churnJoins.map(v => v.firstMs), 0.95) },
@@ -648,6 +741,8 @@ function summarize(stage, holdFrom, holdTo, rows, extra) {
       definition: 'switch request (source replaced in the generator) -> first media of the new quality (ready time); the gap windows are left out of stall and rate numbers' } : null,
     qualityMix: Object.fromEntries(qualities.map(q => [q, inHold.filter(v => v.initialQuality === q).length])),
     chat: chatS, dvr: dvrS,
+    receiver: plan.receiver,
+    hls: HLS ? hlsSummary(stage, inHold, joined, hr, extra, holdTo - holdFrom) : null,
     errors: { generatorErrorKinds: errorDelta(extra.errStart), lossLogLines: generator.lossLines - extra.errStart.lossLines, whep: tapStage },
     externalLoad: { unattributedCpuPctMean: round(extMean), unattributedCpuPctMax: unattr.length ? Math.max(...unattr) : null, samplesAbove: unattr.filter(x => x > plan.limits.externalCpuPct).length, samples: unattr.length,
       flagged: extMean !== null && extMean > plan.limits.externalCpuPct, thresholdPct: plan.limits.externalCpuPct },
@@ -668,6 +763,41 @@ function summarize(stage, holdFrom, holdTo, rows, extra) {
     decodedFps: NOT, renderedFps: NOT, avSync: NOT, liveLatencyMs: NOT, rebuffering: 'stall windows only (byte growth); player rebuffering not measured',
     browser: extra.browser || null, browserPhase: null, traffic: null,
     abortReason: abort && abort.stage === stage ? abort.reason : null,
+  };
+}
+
+// HLS receiver numbers of one hold: delay estimate (PROGRAM-DATE-TIME), stalls (> hls.stallMs without new media), requests
+// and their answers (429/503 share, Retry-After), first-media components, sessions, variants, request timings.
+function countDelta(a = {}, b = {}) { const out = {}; for (const [k, v] of Object.entries(b)) { const d = v - (a[k] || 0); if (d) out[k] = d; } return out; }
+function hlsSummary(stage, inHold, joined, hr, extra, holdMs) {
+  const a = extra.hlsStart || {}, b = generator.totals || {}, m = generator.takeMetrics();
+  const d = k => (b[k] || 0) - (a[k] || 0);
+  const delta = (v, k) => (v.hlsLast?.[k] ?? 0) - (v.h.hls0?.[k] ?? 0);
+  const delays = inHold.flatMap(v => v.h.delays), perViewer = inHold.map(v => percentile(v.h.delays, 0.5)).filter(Number.isFinite);
+  const stallEvents = inHold.reduce((s, v) => s + delta(v, 'stallEvents') + (v.hlsLast?.inStall ? 1 : 0), 0);
+  const requests = d('requests'), busy = d('busy'), viewerSec = inHold.length * holdMs / 1000;
+  const first = k => pcts(joined.map(v => v.hlsLast?.first?.[k]).filter(Number.isFinite));
+  const variants = {};
+  for (const v of inHold) { const k = v.hlsLast?.variant || 'none'; variants[k] = (variants[k] || 0) + 1; }
+  const states = {};
+  for (const v of joined) { const k = v.hlsLast?.state || 'no answer'; states[k] = (states[k] || 0) + 1; }
+  const pick = k => hr.map(r => r[k]).filter(Number.isFinite);
+  return {
+    delayEstimateMs: { ...pcts(delays), perViewerP50: pcts(perViewer), basis: 'sample clock - virtual playhead (EXT-X-PROGRAM-DATE-TIME of the media being played), see definitions.hls.delay' },
+    bufferAheadMs: pcts(inHold.flatMap(v => v.h.buffers)),
+    receiveDelayMs: { ...pcts(m.recvDelayMs), basis: 'arrival of a part/segment - PROGRAM-DATE-TIME of its end' },
+    stalls: { events: stallEvents, viewersWithStall: inHold.filter(v => delta(v, 'stallEvents') > 0 || v.hlsLast?.inStall).length, stallMs: inHold.reduce((s, v) => s + delta(v, 'stallMs'), 0),
+      rebufferMs: inHold.reduce((s, v) => s + delta(v, 'rebufferMs'), 0), fellBehind: inHold.reduce((s, v) => s + delta(v, 'fellBehind'), 0), skippedUnits: inHold.reduce((s, v) => s + delta(v, 'skippedUnits'), 0),
+      restarts: inHold.reduce((s, v) => s + delta(v, 'restarts'), 0), definition: `no new video media for > ${plan.hls.stallMs} ms` },
+    requests: { total: requests, perViewerSec: viewerSec ? round(requests / viewerSec, 2) : null, byKind: countDelta(a.byKind, b.byKind), status: countDelta(a.status, b.status), errors: countDelta(a.errors, b.errors),
+      busy429or503: busy, busyShare: requests ? round(busy / requests, 4) : null, retryAfter: countDelta(a.retryAfter, b.retryAfter), abortedByViewers: d('aborted'),
+      playlistBytesPerMediaByte: d('mediaBytes') ? round(d('playlistBytes') / d('mediaBytes'), 4) : null },
+    timingsMs: { blockingReload: pcts(m.holdMs), unitFetch: pcts(m.unitMs), master: pcts(m.masterMs) },
+    firstMediaComponentsMs: { session: first('sessionMs'), master: first('masterMs'), playlist: first('playlistMs'), init: first('initMs'), firstMedia: first('firstMediaMs'),
+      note: 'from the start of the viewer in the receiver (no ramp queue); firstMediaMs of the stage counts from the join request' },
+    // Sessions over the whole stage (its joins happen in the ramp), the rest over the hold.
+    sessions: { opened: (b.sessionOpened || 0) - (extra.hlsStageStart?.sessionOpened || 0), refused429or503: (b.sessionRefused || 0) - (extra.hlsStageStart?.sessionRefused || 0), viewersWithSession: joined.filter(v => v.hlsLast?.sid).length, targetSessionsMax: pick('targetSessions').length ? Math.max(...pick('targetSessions')) : null },
+    variants, viewerStates: states, generatorLagP99MsMax: pick('hlsLagP99Ms').length ? Math.max(...pick('hlsLagP99Ms')) : null,
   };
 }
 
@@ -698,7 +828,7 @@ function startSwitches() {
     v.sw = { from: v.quality, to, requestedAt: Date.now(), doneAt: null, ms: null, failed: false, stage: stageN };
     if (v.h) { v.h.segs.push(v.h.seg); v.h.seg = newSeg(to); }
     Object.assign(v, { quality: to, sessionStart: v.sw.requestedAt, mediaAt: null, ready: false, readyTime: null, hist: [] });
-    generator.setSource(v.name, sourceUrlFor(v, to), v.inst).then(r => { v.sw.apiOk = r.ok; v.sw.apiMs = r.apiMs; if (!r.ok) v.sw.error = r.error; });
+    generator.setSource(v.name, mediaSpec(v, to), v.inst).then(r => { v.sw.apiOk = r.ok; v.sw.apiMs = r.apiMs; if (!r.ok) v.sw.error = r.error; });
   }
 }
 
@@ -764,7 +894,9 @@ const stageCols = ['stage', 'requested', 'measuredViewers', 'joined', 'addFailed
   'chatJoined', 'chatLatencyP50Ms', 'chatLatencyP95Ms', 'chatDeliveryRatio', 'chatConnectFail', 'chatNameRejected', 'dvrChunks', 'dvrErrors', 'dvrErrorRate',
   'genCpuPctMean', 'genCpuPctMax', 'genRssMBMax', 'targetCpuPctMean', 'targetCpuPctMax', 'targetRssMBMax', 'hostCpuPctMax', 'unattributedCpuPctMean', 'externalLoad', 'freeMemMBMin',
   'statsVia', 'targetSessionsMax', 'targetSendMbps', 'targetDiscardedFrames', 'appDiscardWarnings', 'appHttpRefused', 'sourceKbps', 'rateVsSourceP5', 'degradedViewers', 'trafficStageGB', 'trafficCumulativeGB',
-  'browserMode', 'browserFirstFrameP50Ms', 'browserFpsMean', 'browserDecodedFps', 'browserFreezes', 'browserResolution', 'browserLatencyP50Ms', 'abortReason'];
+  'receiver', 'hlsDelayP50Ms', 'hlsDelayP95Ms', 'hlsRecvDelayP95Ms', 'hlsStallEvents', 'hlsViewersWithStall', 'hlsRestarts', 'hlsReqPerViewerSec', 'hlsBusy', 'hlsBusyShare', 'hlsRetryAfter', 'hlsErrors',
+  'hlsSessionsOpened', 'hlsVariants', 'hlsBlockingReloadP50Ms', 'hlsUnitFetchP95Ms', 'hlsPlaylistOverhead', 'hlsGenLagP99Ms',
+  'browserMode', 'browserTransport', 'browserFirstFrameP50Ms', 'browserFpsMean', 'browserDecodedFps', 'browserFreezes', 'browserResolution', 'browserLatencyP50Ms', 'browserPdtDelayP50Ms', 'abortReason'];
 function stageRow(s) {
   const bp = s.browserPhase || s.browser;
   const b = bp && !bp.error ? bp.summary : null;
@@ -790,15 +922,23 @@ function stageRow(s) {
     rateVsSourceP5: typeof s.rateVsSource === 'object' ? s.rateVsSource.p5 : NOT, degradedViewers: typeof s.rateVsSource === 'object' ? s.rateVsSource.degradedViewers : NOT,
     trafficStageGB: s.traffic?.stageGB ?? NOT, trafficCumulativeGB: s.traffic?.cumulativeGB ?? NOT,
     browserMode: bp ? bp.mode || 'inline' : '', browserFirstFrameP50Ms: b ? b.firstFrameMs.p50 : NOT, browserFpsMean: b ? b.presentedFps.mean : NOT, browserDecodedFps: b ? b.decodedFps.mean : NOT, browserFreezes: b ? b.freezes : NOT,
-    browserResolution: b ? b.resolution.join(' ') : NOT, browserLatencyP50Ms: b ? b.latencyMs.p50 ?? NOT : NOT, abortReason: s.abortReason || '' };
+    browserResolution: b ? b.resolution.join(' ') : NOT, browserLatencyP50Ms: b ? b.latencyMs.p50 ?? NOT : NOT, abortReason: s.abortReason || '',
+    browserTransport: b ? (b.transports || []).join(' ') : NOT, browserPdtDelayP50Ms: b && typeof b.pdtDelayMs === 'object' ? b.pdtDelayMs.p50 : NOT,
+    receiver: s.receiver || 'whep', ...(s.hls ? { hlsDelayP50Ms: s.hls.delayEstimateMs.p50, hlsDelayP95Ms: s.hls.delayEstimateMs.p95, hlsRecvDelayP95Ms: s.hls.receiveDelayMs.p95, hlsStallEvents: s.hls.stalls.events,
+      hlsViewersWithStall: s.hls.stalls.viewersWithStall, hlsRestarts: s.hls.stalls.restarts, hlsReqPerViewerSec: s.hls.requests.perViewerSec, hlsBusy: s.hls.requests.busy429or503, hlsBusyShare: s.hls.requests.busyShare,
+      hlsRetryAfter: Object.entries(s.hls.requests.retryAfter).map(([k, n]) => `${k}s x${n}`).join(' '), hlsErrors: Object.entries(s.hls.requests.errors).map(([k, n]) => `${n}x ${k}`).join(' | ').slice(0, 300),
+      hlsSessionsOpened: s.hls.sessions.opened, hlsVariants: Object.entries(s.hls.variants).map(([k, n]) => `${k}:${n}`).join(' '), hlsBlockingReloadP50Ms: s.hls.timingsMs.blockingReload.p50,
+      hlsUnitFetchP95Ms: s.hls.timingsMs.unitFetch.p95, hlsPlaylistOverhead: s.hls.requests.playlistBytesPerMediaByte, hlsGenLagP99Ms: s.hls.generatorLagP99MsMax } : {}) };
 }
-const browserCols = ['stage', 'mode', 'index', 'profile', 'viewport', 'dpr', 'error', 'firstFrameMs', 'presentedFps', 'decodedFps', 'decodedFpsBasis', 'decodedWidth', 'decodedHeight', 'freezes', 'maxGapMs', 'videoKbps', 'videoLossRatio', 'jitterBufferMs', 'peerConnections', 'connectionChangedInWindow', 'latencyP50Ms'];
-const browserRows = () => stages.flatMap(s => { const bp = s.browserPhase || s.browser; return (bp?.pages || []).map(p => ({ stage: s.stage, mode: bp.mode || 'inline', ...p, latencyP50Ms: typeof p.latencyMs === 'object' ? p.latencyMs.p50 : '' })); });
+const browserCols = ['stage', 'mode', 'index', 'profile', 'viewport', 'dpr', 'error', 'transport', 'level', 'firstFrameMs', 'presentedFps', 'decodedFps', 'decodedFpsBasis', 'droppedVideoFrames', 'pdtDelayP50Ms', 'hlsLatencyP50Ms', 'hlsStalls', 'decodedWidth', 'decodedHeight', 'freezes', 'maxGapMs', 'videoKbps', 'videoLossRatio', 'jitterBufferMs', 'peerConnections', 'connectionChangedInWindow', 'latencyP50Ms'];
+const browserRows = () => stages.flatMap(s => { const bp = s.browserPhase || s.browser; return (bp?.pages || []).map(p => ({ stage: s.stage, mode: bp.mode || 'inline', ...p, latencyP50Ms: typeof p.latencyMs === 'object' ? p.latencyMs.p50 : '',
+  pdtDelayP50Ms: typeof p.pdtDelayMs === 'object' ? p.pdtDelayMs.p50 : '', hlsLatencyP50Ms: typeof p.hlsLatencyMs === 'object' ? p.hlsLatencyMs.p50 : '' })); });
 const sampleCols = ['t', 'elapsedS', 'stage', 'phase', 'requested', 'ready', 'receiving', 'receivingRatio', 'eligible', 'stalled', 'inSwitch', 'fullRateLive', 'fullRateJudged', 'refSourceKbps', 'totalMbps', 'perViewerKbpsP50', 'perViewerKbpsP5', 'perViewerKbpsSrcP50', 'trafficGB',
   'lostPackets', 'genCpuPct', 'genCores', 'genRssMB', 'browserCpuPct', 'targetCpuPct', 'targetCores', 'targetRssMB', 'targetProcs', 'hostCpuPct', 'unattributedCpuPct', 'hostMemUsedPct', 'freeMemMB',
   'nicRxMbps', 'nicTxMbps', 'gpuPct', 'gpuEncPct', 'gpuDecPct', 'statsVia', 'targetSessions', 'targetSendMbps', 'targetDiscardedFrames', 'sourceKbps', 'ingestKbpsAll',
   'appRunning', 'appHttpThreads', 'appHttpRequests', 'appHttpRefused', 'appChatClients', 'appChatJoined', 'appChatRefused', 'appSourceReaders', 'appSourceReady', 'appDiscardWarnings', 'whepPosts', 'whep503', 'whepPostsRolling', 'whep503ShareRolling',
-  'chatOpen', 'chatJoined', 'dvrChunks', 'dvrErrors', 'genListMs', 'genApiOk', 'lagP99Ms', 'lagMaxMs'];
+  'chatOpen', 'chatJoined', 'dvrChunks', 'dvrErrors', 'genListMs', 'genApiOk', 'lagP99Ms', 'lagMaxMs',
+  'hlsRequests', 'hlsBusy', 'hlsRequestsRolling', 'hlsBusyShareRolling', 'hlsDelayP50Ms', 'hlsDelayP95Ms', 'hlsInStall', 'hlsLagP99Ms'];
 
 let hostBaseline = null, cleanup = null, calibration = null, plannedTraffic = null;
 function write(final = false) {
@@ -808,7 +948,14 @@ function write(final = false) {
     target: { whep: plan.target.whep, base: plan.target.base, path: plan.target.path, api: plan.target.api, appStats: plan.target.appStats, appStatsCheck, info,
       standalone: targetState ? { dir: targetState.dir, options: targetState.options, pids: targetState.pids, urls: targetState.urls, shimLimits: targetState.shimLimits ?? null } : null },
     definitions: {
-      viewer: 'one WebRTC peer (MediaMTX WHEP source in the generator process): ICE + DTLS-SRTP + RTCP, receives and depacketizes H.264/Opus, no decoding or rendering',
+      viewer: HLS ? `one Node LL-HLS client (lib/hls-client.mjs, ${plan.hls.workers} worker threads): live.m3u8 -> the variant of its quality -> init -> ${plan.hls.parts ? 'parts with blocking playlist reloads (_HLS_msn/_HLS_part)' : 'whole segments, reload every target duration'}${plan.hls.audio ? ' + the AAC rendition' : ''}${plan.hls.session ? ', viewer session with heartbeat' : ''}; no decoding or rendering`
+        : 'one WebRTC peer (MediaMTX WHEP source in the generator process): ICE + DTLS-SRTP + RTCP, receives and depacketizes H.264/Opus, no decoding or rendering',
+      ...(HLS ? { hls: {
+        firstMedia: 'the first part/segment of every followed track (video and AAC) received completely after init; readyTime = that moment on the receiver clock',
+        delay: `estimated delay = now - position of a virtual player that starts at the first unit it received (${plan.hls.startBehindSec} s behind the newest media, like the page liveSyncDuration), plays in real time while media is buffered, catches up at 1.1x when more than liveSync + 0.5 s is buffered, and stops at the buffer end; positions come from EXT-X-PROGRAM-DATE-TIME (the target MediaMTX clock at ingest). Needs the generator and target clocks in sync; excludes capture, encode and publish before MediaMTX, and decode/render after. The real delay is the browser sampler one (barcode / hls.js playingDate).`,
+        stall: `no new video part/segment for more than ${plan.hls.stallMs} ms (counted when media resumes, plus one per viewer still stalled at the hold end)`,
+        busy: 'requests answered 429 or 503 (session, live.m3u8, playlists, init, parts, segments); waits follow Retry-After (1-30 s, jitter), at most 6 in a row before the viewer restarts',
+        traffic: 'media bytes (init, parts, segments) of video and AAC; playlist bytes are counted separately (playlistBytesPerMediaByte)' } } : {}),
       receiving: `received bytes grew by more than ${plan.stallKbps} kbit/s in a ${plan.sampleMs} ms sample window`,
       firstMedia: 'join requested (ramp slot, burst start or churn re-join; queueing included) -> the viewer\'s generator path has media: ready, with tracks and received bytes. ' +
         'The time is the path ready time (tracks gathered = first RTP) when it is a real time not before the request; MediaMTX\'s zero-year placeholder and earlier times are ignored. ' +
@@ -826,14 +973,15 @@ function write(final = false) {
       network: 'generator and target location are recorded in host/target; loopback or same-PC traffic does not cross the NIC',
     },
     notMeasured: ['decoded FPS, rendering, A/V sync, player rebuffering and live latency are not measured by protocol viewers (see browser sampler fields)',
+      ...(HLS ? ['HLS: the delay estimate is not the player delay (no decode/render, MediaMTX ingest clock); RTP loss and ICE do not apply', 'HLS: requests the target refused are seen only as the answers the receiver got'] : []),
       ...(plan.target.api ? [] : [plan.target.appStats ? 'target-side dropped frame counts: only the app count of MediaMTX "too slow, discarding" warnings (appDiscardWarnings)' : 'target-side dropped frames (no access to the target MediaMTX API)']),
       ...(plan.target.api || plan.target.appStats ? [] : ['target-side session count and ingest rate (no target statistics)']),
       ...(dvrSkipped ? [`DVR readers (${dvrSkipped})`] : [])],
     trafficPlan: plannedTraffic,
     stages, abort, saturation, calibration, cleanup,
-    errors: { generatorErrorKinds: generator.errorKinds, lossLogLines: generator.lossLines, whep: tap ? tap.summary() : NOT,
+    errors: { generatorErrorKinds: generator.errorKinds, lossLogLines: generator.lossLines, whep: tap ? tap.summary() : NOT, hls: HLS ? generator.totals : NOT,
       sourceErrorsSample: Object.fromEntries([...generator.sourceErrors.entries()].slice(0, 20)) },
-    files: { stagesCsv: 'stages.csv', samplesCsv: 'samples.csv', browserCsv: 'browser.csv', generatorLogs: generator.instances.map(i => `generator-${i.index}.log`) },
+    files: { stagesCsv: 'stages.csv', samplesCsv: 'samples.csv', browserCsv: 'browser.csv', generatorLogs: HLS ? ['hls-errors.json'] : generator.instances.map(i => `generator-${i.index}.log`) },
   };
   writeFileSync(join(outDir, 'results.json'), JSON.stringify(results, null, 2));
   writeFileSync(join(outDir, 'stages.csv'), '﻿' + csv(stages.map(stageRow), stageCols));
@@ -864,6 +1012,12 @@ if (plan.target.base) {
   const planned = Object.entries(plan.qualities).filter(([q, w]) => w > 0 && !isSourceQ(q)).map(([q]) => q);
   const missing = offered ? planned.filter(q => !offered.includes(q)) : [];
   if (plan.media && info?.running && missing.length) { log(`qualities ${missing.join(', ')} are not offered by the broadcast (renditions: ${offered.join(', ') || 'none'})`); setAbort('quality-not-offered', { missing, offered }); }
+  // HLS: the broadcast must offer live.m3u8 (/info hls.master), unless the plan names the playlist URL itself.
+  if (HLS && !hlsMaster) {
+    const name = typeof info?.hls?.master === 'string' && /^[a-z0-9][a-z0-9_.-]{0,63}\.m3u8$/i.test(info.hls.master) ? info.hls.master : null;
+    if (name) hlsMaster = `${plan.target.base}/${plan.target.path}/${name}`;
+    else if (info?.running) { log('the broadcast offers no HLS (/info hls.master)'); setAbort('hls-not-offered', { hls: info?.hls ?? null }); }
+  }
   if (plan.dvr.fraction > 0 && info?.running && info.dvr === false) { log('the broadcast has no DVR: DVR readers are not started'); dvrSkipped = 'broadcast reports dvr: false'; }
 }
 if (plan.media && plan.whepTap.enabled) {
@@ -872,6 +1026,8 @@ if (plan.media && plan.whepTap.enabled) {
 }
 await generator.start();
 resources.set({ gen: [process.pid, ...generator.pids()] });
+if (HLS && !hlsMaster && !abort) setAbort('hls-not-offered', { note: 'no target.hls and no /info' });
+if (HLS) log(`HLS receiver: ${hlsMaster} (${plan.hls.workers} workers, ${plan.hls.parts ? 'parts' : 'segments'}${plan.hls.audio ? ' + AAC' : ''}${plan.hls.session ? ', sessions' : ''})`);
 if (plan.chat.fraction > 0 && info?.broadcastId) chat = new ChatPool({ ...plan.chat, generatorId: plan.generatorId, wsUrl: `${plan.target.base.replace(/^http/, 'ws')}/${plan.target.path}/chat`, broadcastId: info.broadcastId });
 if (plan.dvr.fraction > 0 && plan.target.base && !dvrSkipped) dvr = new DvrPool({ ...plan.dvr, base: plan.target.base, path: plan.target.path });
 plannedTraffic = trafficPlan(planKbps());
@@ -909,7 +1065,7 @@ let prevN = 0;
 for (const [k, n] of plan.stages.entries()) {
   if (abort) break;
   stageIndex = k; stageN = n;
-  const stageStart = Date.now(), trafficStageStart = trafficBytes, errStart = errorSnapshot();
+  const stageStart = Date.now(), trafficStageStart = trafficBytes, errStart = errorSnapshot(), hlsStageStart = HLS ? structuredClone(generator.totals || {}) : null;
   // Stop before a stage that cannot finish inside the traffic cap (instead of cutting it in the middle).
   const estKbps = mean(stages.map(s => s.perViewerKbps.mean)) || planKbps() || measuredRef.source?.kbps || null;
   if (plan.media && plan.limits.projectTraffic && estKbps) {
@@ -929,6 +1085,8 @@ for (const [k, n] of plan.stages.entries()) {
   phase = 'hold';
   const holdFrom = Date.now(), rows0 = samples.length, lossStart = lossTotal(), procStart = [...generator.procErrors.values()].reduce((a, b) => a + b, 0), trafficHoldStart = trafficBytes;
   for (const v of active()) holdWindowStart(v);
+  const hlsStart = HLS ? structuredClone(generator.totals || {}) : null;
+  if (HLS) generator.takeMetrics();  // timing samples of the hold only
   dvr?.reset();
   const inlineBrowser = plan.browser.mode === 'inline' && wantBrowser(n) ? sleep(plan.browser.startDelaySec * 1000).then(() => (abort ? null : startBrowser(n))) : null;
   const holdEpoch = ++epoch, churnPending = new Set();
@@ -962,9 +1120,10 @@ for (const [k, n] of plan.stages.entries()) {
   if (browser) browser.mode = 'inline';
   const holdTo = Date.now();
   const trafficHoldEnd = trafficBytes;
-  const s = summarize(n, holdFrom, holdTo, samples.slice(rows0), { lossStart, lossEnd: lossTotal(), procStart, churnLeaves, churnSkipped, browser, stageStart, errStart });
+  const s = summarize(n, holdFrom, holdTo, samples.slice(rows0), { lossStart, lossEnd: lossTotal(), procStart, churnLeaves, churnSkipped, browser, stageStart, errStart, hlsStart, hlsStageStart });
   stages.push(s);
   if (s.lowRateWindowRatio > 0.5) log(`warning: ${Math.round(s.lowRateWindowRatio * 100)}% of windows below ${plan.lowRateKbps} kbit/s (audio only? check the source)`);
+  if (s.hls) log(`stage ${n} HLS: delay p50/p95 ${s.hls.delayEstimateMs.p50}/${s.hls.delayEstimateMs.p95} ms, stalls ${s.hls.stalls.events} (${s.hls.stalls.viewersWithStall} viewers), requests ${s.hls.requests.perViewerSec}/viewer/s, 429/503 ${s.hls.requests.busy429or503} (${s.hls.requests.busyShare}), sessions ${s.hls.sessions.opened}, target sessions max ${s.hls.sessions.targetSessionsMax ?? NOT}, variants ${JSON.stringify(s.hls.variants)}`);
   log(`stage ${n} done: success ${s.successRate} fullRate ${s.fullRateSuccessRate} (ref ${s.referenceKbps} from ${s.referenceFrom}) firstMedia p50/p95 ${s.firstMediaMs.p50 ?? NOT}/${s.firstMediaMs.p95 ?? NOT} ms timeouts ${s.firstMediaTimeouts} pending ${s.firstMediaPending} stall ${s.stallTimeRatio} kbps p50 ${s.perViewerKbps.p50} gen ${s.resources.genCpuPct.mean}% target ${s.resources.targetCpuPct.mean}% other ${s.externalLoad.unattributedCpuPctMean}%${s.externalLoad.flagged ? ' EXTERNAL LOAD' : ''}`);
   // A first stage with <= 2 viewers of a quality gives that quality a measured reference when nothing better exists.
   if (k === 0 && s.successRate === 1 && typeof s.fullRateByQuality === 'object') for (const [q, x] of Object.entries(s.fullRateByQuality)) if (x.segments > 0 && x.segments <= 2 && x.kbpsP50) measuredRef[q] = { kbps: x.kbpsP50, from: `per-viewer rate at stage ${n} (VBR content may vary)` };

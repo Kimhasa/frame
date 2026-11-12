@@ -1,6 +1,8 @@
-// LAN-facing HTTP server on the viewer port: the approved UI (list and viewer), the broadcast list and announcements from
-// other FRAME PCs, list thumbnails, read-only stream info, WHEP (WebRTC playback) forwarding to the loopback-only MediaMTX,
-// recorded-media (DVR) forwarding and the chat WebSocket. It exposes no sender controls and no MediaMTX management API.
+// LAN-facing HTTP server on the viewer port: the approved UI (list and viewer) and its scripts, the broadcast list and
+// announcements from other FRAME PCs, list thumbnails, read-only stream info, LL-HLS (the multivariant live.m3u8 and the
+// forwarded MediaMTX playlists and parts), HLS viewer sessions (counting), WHEP (WebRTC playback) forwarding to the
+// loopback-only MediaMTX, the recorded broadcast (dvr.m3u8, read-only recording files, the older DVR index and chunks)
+// and the chat WebSocket. It exposes no sender controls and no MediaMTX management API.
 #pragma once
 
 #include "common.h"
@@ -34,6 +36,9 @@ class HttpServer {
   void AcceptLoop();
   void Handle(SOCKET client, std::string peer);
   void RecordViewerStats(const std::string& path, const std::string& body, const std::string& peer);
+  // MediaMTX HLS session shared by all viewers of one stream/quality (made by requesting its index.m3u8); stale names a
+  // session MediaMTX no longer knows, which is replaced. Empty when MediaMTX could not make one.
+  std::string UpstreamHlsSession(int port, const std::string& stream, const std::string& stale);
 
   Streamer& streamer_;
   Directory& directory_;
@@ -44,6 +49,9 @@ class HttpServer {
   std::atomic<int> active_{0}, requests_{0}, refused_{0};
   std::mutex statsMutex_;
   std::map<std::string, int64_t> statsLast_;
+  std::mutex hlsSessionMutex_;
+  std::map<std::string, std::string> hlsSessions_;                   // "<port>|<stream>" -> MediaMTX HLS session id
+  std::map<std::string, std::shared_ptr<std::mutex>> hlsRefresh_;   // one session request at a time per stream
   std::atomic<bool> stopping_{false};
 };
 

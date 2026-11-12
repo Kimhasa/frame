@@ -1,0 +1,42 @@
+{
+  "origin": "http://127.0.0.1:5360",
+  "results": [
+    {
+      "name": "1440px has no overflow",
+      "pass": true
+    },
+    {
+      "name": "1440px has centered title and custom agreement controls",
+      "pass": true
+    },
+    {
+      "name": "1440px dialog stays open under development StrictMode",
+      "pass": true
+    },
+    {
+      "name": "1440px Escape restores focus without consent",
+      "pass": true
+    },
+    {
+      "name": "390px has no overflow",
+      "pass": true
+    },
+    {
+      "name": "390px has centered title and custom agreement controls",
+      "pass": true
+    },
+    {
+      "name": "390px dialog stays open under development StrictMode",
+      "pass": true
+    },
+    {
+      "name": "390px Escape restores focus without consent",
+      "pass": true
+    },
+    {
+      "name": "No account created in the actual database",
+      "pass": true
+    }
+  ],
+  "noAccountsCreated": true
+}

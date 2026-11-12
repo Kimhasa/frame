@@ -1,0 +1,14 @@
+{
+  "kind": "Actual persistent loopback backend + real H264/AAC RTMP sender + Edge studio video/chat",
+  "checks": [
+    "실제 서버 송출 주소·키·대기 상태",
+    "키는 브라우저 환경변수·저장소 없이 복사",
+    "실제 서버에 방송 제목 저장",
+    "송출 시작→실제 영상·AAC 디코딩·자동 방송 상태",
+    "실제 WebSocket 채팅 전송",
+    "실제 방송 공유 링크",
+    "390px 실제 수신 레이아웃",
+    "송출 중단→재연결 유예→실제 대기 복귀"
+  ],
+  "errors": []
+}

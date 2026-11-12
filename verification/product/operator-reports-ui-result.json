@@ -1,0 +1,168 @@
+{
+  "origin": "http://127.0.0.1:5365",
+  "api": "http://127.0.0.1:18083",
+  "verificationDatabaseOnly": true,
+  "checks": 36,
+  "passed": 36,
+  "seededReports": 15,
+  "faultInjection": [
+    "List GET 503",
+    "Detail GET 503",
+    "Review PATCH 503",
+    "Delayed review PATCH"
+  ],
+  "realEdges": [
+    "Stale version HTTP 409",
+    "DB operator revocation HTTP 403",
+    "Anonymous HTTP 401",
+    "Channel owner HTTP 403"
+  ],
+  "results": [
+    {
+      "name": "All real signups begin without operator privileges",
+      "pass": true
+    },
+    {
+      "name": "Three independent accounts create fifteen real reports without bypassing per-account limits",
+      "pass": true
+    },
+    {
+      "name": "Anonymous list, detail and review requests are denied with 401",
+      "pass": true
+    },
+    {
+      "name": "A channel owner cannot read or review even a report targeting their own channel",
+      "pass": true
+    },
+    {
+      "name": "A normal account has no operator report management menu",
+      "pass": true
+    },
+    {
+      "name": "Direct operator navigation gives a normal user no report rows or details",
+      "pass": true
+    },
+    {
+      "name": "An existing Redis session observes the explicit database operator grant",
+      "pass": true
+    },
+    {
+      "name": "Real two-row cursor pages return all fifteen fixtures once without duplicates",
+      "pass": true
+    },
+    {
+      "name": "List and detail expose no emails, credentials or tokens, and private review notes stay out of list rows",
+      "pass": true
+    },
+    {
+      "name": "Combined server query, status and reason filters select only matching real reports",
+      "pass": true
+    },
+    {
+      "name": "The operator session exposes report management in the profile menu",
+      "pass": true
+    },
+    {
+      "name": "List 503 is a retryable error rather than a misleading empty state",
+      "pass": true
+    },
+    {
+      "name": "List retry displays the fifteen stored reports without fixture or preview substitutions",
+      "pass": true
+    },
+    {
+      "name": "UI search, status and reason filters persist in the URL and survive reload",
+      "pass": true
+    },
+    {
+      "name": "Handle search submits to the server and selects reports for the requested channel",
+      "pass": true
+    },
+    {
+      "name": "Rendered rows reveal no emails and channel links open with safe relation attributes",
+      "pass": true
+    },
+    {
+      "name": "Operator filters and report rows fit the 390px viewport",
+      "pass": true
+    },
+    {
+      "name": "Operator filters and report rows fit the 320px viewport",
+      "pass": true
+    },
+    {
+      "name": "Detail 503 shows no stale report body or editable review form",
+      "pass": true
+    },
+    {
+      "name": "Detail retry opens the selected real report with the expected initial transition",
+      "pass": true
+    },
+    {
+      "name": "Terminal review requires a note and focuses the note before any write",
+      "pass": true
+    },
+    {
+      "name": "Review PATCH 503 preserves the selected transition, note and open dialog",
+      "pass": true
+    },
+    {
+      "name": "Pending review locks its controls and Escape, Enter or resubmit cannot close or duplicate it",
+      "pass": true
+    },
+    {
+      "name": "Actual received-to-reviewing update persists its version, note and server-selected operator",
+      "pass": true
+    },
+    {
+      "name": "Reviewing-to-resolved persists once and the closed report has no editable review form",
+      "pass": true
+    },
+    {
+      "name": "The terminal review note survives a full browser reload",
+      "pass": true
+    },
+    {
+      "name": "Received-to-dismissed persists an independent terminal outcome",
+      "pass": true
+    },
+    {
+      "name": "Actual stale-version 409 preserves the unsaved note and requires explicit refresh without auto-resubmitting",
+      "pass": true
+    },
+    {
+      "name": "Explicit conflict refresh loads the latest server version and re-enables a deliberate next action",
+      "pass": true
+    },
+    {
+      "name": "Report details and review controls fit the 390px viewport",
+      "pass": true
+    },
+    {
+      "name": "Report details and review controls fit the 320px viewport",
+      "pass": true
+    },
+    {
+      "name": "Permission revocation clears existing private rows and dialog and removes operator navigation",
+      "pass": true
+    },
+    {
+      "name": "The same existing API session immediately loses DB-backed operator authority",
+      "pass": true
+    },
+    {
+      "name": "The rejected revoked write leaves the previously stored version and note unchanged",
+      "pass": true
+    },
+    {
+      "name": "Report review changes only moderation records and does not fabricate a channel ban",
+      "pass": true
+    },
+    {
+      "name": "No browser runtime or request interception errors",
+      "pass": true
+    }
+  ],
+  "runtimeErrors": [],
+  "confirmedCanceledInterceptions": []
+}

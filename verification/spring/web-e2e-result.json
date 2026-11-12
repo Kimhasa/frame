@@ -1,0 +1,867 @@
+{
+  "startedAt": "2026-11-10T07:52:05.748Z",
+  "host": {
+    "logicalCpus": 16,
+    "cpuLoadPct": {
+      "samples": 47,
+      "min": 17,
+      "avg": 29,
+      "max": 54
+    }
+  },
+  "tools": {
+    "node": "v24.22.1",
+    "mediamtx": "v1.21.3",
+    "ffmpeg": "ffmpeg version 9.0.2-essentials_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers",
+    "edge": "157.0.4341.42"
+  },
+  "ports": {
+    "rtsp": 25554,
+    "rtsps": 25322,
+    "rtp": 25000,
+    "rtcp": 25001,
+    "webrtc": 25889,
+    "ice": 25189,
+    "hls": 25888,
+    "api": 25997,
+    "playback": 25996,
+    "metrics": 25998,
+    "relay": 25070,
+    "web": 25080,
+    "control": 25081,
+    "edge": 25222
+  },
+  "web": {
+    "url": "http://127.0.0.1:25080/_frame/",
+    "secondOrigin": "http://localhost:25080/_frame/",
+    "dist": "<repo>\\apps\\web\\dist",
+    "assets": [
+      "adapter-BNi8PGZZ.js",
+      "frame-symbol-D-4U2svL.svg",
+      "hls-D4n1qvN7.js",
+      "index-D1oq-Svy.js",
+      "index-DsvYxygX.css",
+      "preload-helper-CiOlTL8J.js",
+      "PretendardVariable-CJuje-Rk.woff2"
+    ]
+  },
+  "broadcasts": {
+    "path": "screen-01",
+    "A": "bab54f34506ea4f9f927ae5291387fd4",
+    "B": "52b7eddd029baabf4f29d36590f9ee90"
+  },
+  "checks": [
+    {
+      "name": "setup: relay MediaMTX starts with deploy/mediamtx-relay.yml",
+      "ok": true,
+      "log": [
+        "2026/11/10 16:52:06 INF MediaMTX v1.21.3, windows, amd64",
+        "2026/11/10 16:52:06 INF configuration loaded from <home>\\AppData\\Local\\Temp\\frame-web-e2e-1794297125747\\mediamtx\\mediamtx.yml",
+        "2026/11/10 16:52:06 INF [metrics] started with listener on 127.0.0.1:25998 (TCP/HTTP)"
+      ]
+    },
+    {
+      "name": "setup: relay /healthz",
+      "ok": true,
+      "log": [
+        "NOTE: Picked up JDK_JAVA_OPTIONS: -Xmx256m -XX:+ExitOnOutOfMemoryError",
+        "2026-11-10T16:52:08.097+09:00  INFO 14828 --- [frame-api] [           main] frame.api.FrameApiApplication            : Starting FrameApiApplication v0.1.0 using Java 21.0.13 with PID 14828 (<repo>\\apps\\api\\build\\libs\\frame-api.jar started by <user> in <repo>)"
+      ]
+    },
+    {
+      "name": "setup: web-proxy serves /_frame/ (SPA index for pages, 404 for a missing asset) and passes the rest to the relay",
+      "ok": true,
+      "page": 200,
+      "pageCache": "no-cache",
+      "missingAsset": 404,
+      "relayHealthz": 200,
+      "secondOrigin": 200
+    },
+    {
+      "name": "setup: headless Edge DevTools up",
+      "ok": true
+    },
+    {
+      "name": "1a list: no broadcast -> empty state (200 + [])",
+      "ok": true,
+      "emptyShown": true,
+      "status": 200,
+      "items": 0
+    },
+    {
+      "name": "1b list: /api/broadcasts 500 -> error state, not the empty state",
+      "ok": true,
+      "errorShown": true,
+      "emptyShown": false,
+      "faultedRequests": 1,
+      "rule": 1
+    },
+    {
+      "name": "1c list: card for A; clicking it opens /_frame/watch/screen-01/<A>",
+      "ok": true,
+      "publisherReady": true,
+      "announce": 204,
+      "thumbnailUpload": 204,
+      "listed": true,
+      "retryButton": true,
+      "cardShown": true,
+      "thumbnailShown": false,
+      "href": "/_frame/watch/screen-01/bab54f34506ea4f9f927ae5291387fd4",
+      "opened": true
+    },
+    {
+      "name": "2 playback: A plays via hls.js, 1280x720 with audio, no RTCPeerConnection, media only under /screen-01/b/<A>/",
+      "ok": true,
+      "firstFrameMs": 7874,
+      "size": "1280x720",
+      "advancedS": 3.98,
+      "frames": 121,
+      "audioBytes": 65843,
+      "transport": "hls.js",
+      "pcs": 0,
+      "adapter": "relay",
+      "watch": {
+        "kind": "ready",
+        "broadcastId": "bab54f34506ea4f9f927ae5291387fd4",
+        "path": "screen-01"
+      },
+      "mediaRequests": 106,
+      "outsideScope": [],
+      "session": "POST /screen-01/b/bab54f34506ea4f9f927ae5291387fd4/session 200",
+      "sessionBeforeMedia": true,
+      "level": {
+        "height": 720,
+        "width": 1280,
+        "bitrate": 3128000
+      },
+      "latencyS": 1.275,
+      "muted": false,
+      "sample": [
+        "GET /screen-01/b/bab54f34506ea4f9f927ae5291387fd4/live.m3u8 200",
+        "GET /screen-01/b/bab54f34506ea4f9f927ae5291387fd4/480p/hls/video1_stream.m3u8 200",
+        "GET /screen-01/b/bab54f34506ea4f9f927ae5291387fd4/480p/hls/audio3_stream.m3u8 200",
+        "GET /screen-01/b/bab54f34506ea4f9f927ae5291387fd4/480p/hls/video1_stream.m3u8?_HLS_msn=8&_HLS_part=0&_HLS_skip=YES failed"
+      ],
+      "adapterRequests": [
+        "/api/broadcasts",
+        "/api/broadcasts",
+        "/screen-01/info",
+        "/screen-01/chat",
+        "/screen-01/b/bab54f34506ea4f9f927ae5291387fd4/session",
+        "/screen-01/b/bab54f34506ea4f9f927ae5291387fd4/live.m3u8",
+        "/screen-01/b/bab54f34506ea4f9f927ae5291387fd4/480p/hls/video1_stream.m3u8",
+        "/screen-01/b/bab54f34506ea4f9f927ae5291387fd4/480p/hls/audio3_stream.m3u8",
+        "/screen-01/b/bab54f34506ea4f9f927ae5291387fd4/480p/hls/video1_stream.m3u8?_HLS_msn=8&_HLS_part=0&_HLS_skip=YES",
+        "/screen-01/b/bab54f34506ea4f9f927ae5291387fd4/src/hls/audio3_stream.m3u8",
+        "/screen-01/b/bab54f34506ea4f9f927ae5291387fd4/src/hls/video1_stream.m3u8",
+        "/screen-01/b/bab54f34506ea4f9f927ae5291387fd4/src/hls/video1_stream.m3u8?_HLS_msn=8&_HLS_part=0&_HLS_skip=YES"
+      ]
+    },
+    {
+      "name": "2b relay: /info hls.scope, scoped live.m3u8 with relative URIs, media playlist max-age=1 and media public max-age=60 (no cookie), other id -> 409 no-store, scoped session",
+      "ok": true,
+      "infoScope": "b/bab54f34506ea4f9f927ae5291387fd4/",
+      "infoBroadcast": true,
+      "live": {
+        "status": 200,
+        "cache": "max-age=2",
+        "uris": [
+          "src/hls/video1_stream.m3u8",
+          "480p/hls/video1_stream.m3u8"
+        ],
+        "media": [
+          "src/hls/audio3_stream.m3u8",
+          "480p/hls/audio3_stream.m3u8"
+        ]
+      },
+      "q480": {
+        "status": 200,
+        "uris": [
+          "480p/hls/video1_stream.m3u8"
+        ]
+      },
+      "mediaPlaylist": {
+        "status": 200,
+        "cache": "max-age=1",
+        "setCookie": false
+      },
+      "init": {
+        "uri": "218b566cae2b_video1_init.mp4",
+        "status": 200,
+        "cache": "public, max-age=60",
+        "setCookie": false
+      },
+      "wrongId": {
+        "status": 409,
+        "cache": "no-store",
+        "body": {
+          "error": "broadcast-changed"
+        }
+      },
+      "session": {
+        "post": 200,
+        "heartbeatMs": 15000,
+        "delete": 204
+      },
+      "wrongIdSession": 409
+    },
+    {
+      "name": "3a quality: 480p from the menu -> videoHeight 480 within 10 s, keeps playing",
+      "ok": true,
+      "switchMs": 528,
+      "options": [
+        "auto:자동720p",
+        "720p:720p (원본)",
+        "480p:480p"
+      ],
+      "chosen": "480p",
+      "heightBefore": 720,
+      "quality": "480p",
+      "level": {
+        "height": 480,
+        "width": 854,
+        "bitrate": 1928000
+      },
+      "advancedS": 3.02,
+      "scopedVariantRequests": 85
+    },
+    {
+      "name": "3b quality: 자동 -> back to 720",
+      "ok": true,
+      "backMs": 1020,
+      "chosen": "auto",
+      "quality": "auto",
+      "activeQualityLabel": "720p",
+      "advancedS": 2
+    },
+    {
+      "name": "4a chat: nickname set, message sent and acknowledged (pending clears)",
+      "ok": true,
+      "nickname": {
+        "ok": true,
+        "submit": "설정하기"
+      },
+      "clicked": true,
+      "shownTimes": 1,
+      "ackMs": 74,
+      "ack": {
+        "ok": true,
+        "id": "bab54f34-1"
+      },
+      "lastAckId": "bab54f34-1",
+      "joinBroadcastIsA": true,
+      "sockets": [
+        "/screen-01/chat"
+      ]
+    },
+    {
+      "name": "4b chat: a second page on A (other origin) receives it exactly once",
+      "ok": true,
+      "p2Connected": true,
+      "shownTimes": 1,
+      "messageFrames": 1,
+      "shownAfterMs": 125
+    },
+    {
+      "name": "5a DVR: seek near the start -> history mode, position within ~5 s of the target",
+      "ok": true,
+      "range": {
+        "min": 1221,
+        "max": 22696
+      },
+      "target": 3221,
+      "positionMs": 4181.31005859375,
+      "offsetMs": 960.31005859375,
+      "toHistoryMs": 8,
+      "dvrRequests": 11,
+      "fileRequests": 6,
+      "outsideScope": [],
+      "sample": [
+        "GET /screen-01/b/bab54f34506ea4f9f927ae5291387fd4/dvr.m3u8 200",
+        "GET /screen-01/b/bab54f34506ea4f9f927ae5291387fd4/dvr.m3u8 200",
+        "GET /screen-01/b/bab54f34506ea4f9f927ae5291387fd4/dvr.m3u8 200"
+      ],
+      "ranges": 1
+    },
+    {
+      "name": "5b DVR: 실시간 복귀 -> live again, latency < 4 s",
+      "ok": true,
+      "pressed": true,
+      "backMs": 214,
+      "latencyS": 1.738,
+      "latencyAfter2sS": 1.654,
+      "mode": "live",
+      "advancedS": 2.16
+    },
+    {
+      "name": "5c relay: scoped DVR index and dvr.m3u8 (relative dvr/file URIs with id=<A>); another id -> 409",
+      "ok": true,
+      "indexId": true,
+      "ranges": 1,
+      "playlist": 200,
+      "segments": 6,
+      "first": "dvr/file.mp4?id=bab54f34506ea4f9f927ae5291387fd4&f=1794297133114&s=0",
+      "map": "dvr/file.mp4?id=bab54f34506ea4f9f927ae5291387fd4&f=1794297133114",
+      "otherIdStatus": 409
+    },
+    {
+      "name": "6a0 relay: right after A's bye (nothing on the path) /screen-01/b/<A>/live.m3u8 -> 404 not-running, no-store; /info running:false",
+      "ok": true,
+      "bye": 204,
+      "status": 404,
+      "cache": "no-store",
+      "body": {
+        "error": "not-running"
+      },
+      "infoRunning": false
+    },
+    {
+      "name": "6a path reuse: B announced while A still publishes -> B scoped live.m3u8 waits (503 + Retry-After), then serves B",
+      "ok": true,
+      "bye": 204,
+      "announceB": 204,
+      "scopedWhileAPublishes": {
+        "status": 503,
+        "retryAfter": "2",
+        "body": "Media is not ready yet"
+      },
+      "infoWhileAPublishes": {
+        "running": true,
+        "mediaReady": true,
+        "broadcastIsB": true
+      },
+      "bReadyAfterMs": 2107,
+      "thumbnailB": 204
+    },
+    {
+      "name": "6c relay: /screen-01/b/<A>/* after B started -> 409 broadcast-changed, no-store; id=<A> under B -> 409",
+      "ok": true,
+      "live": {
+        "status": 409,
+        "cache": "no-store",
+        "body": {
+          "error": "broadcast-changed"
+        }
+      },
+      "media": 409,
+      "dvr": 409,
+      "dvrPlaylist": 409,
+      "dvrFile": 409,
+      "session": 409,
+      "idOfAUnderB": 409
+    },
+    {
+      "name": "6d an old direct link to A -> ended/unavailable, never plays, never asks for B",
+      "ok": true,
+      "overlay": "이 방송은 지금 볼 수 없어요",
+      "kind": "unavailable",
+      "video": {
+        "w": 0,
+        "t": 0
+      },
+      "requestsForB": 0,
+      "media200": 0,
+      "requests": [
+        "GET /screen-01/info 200"
+      ]
+    },
+    {
+      "name": "6e list shows B only; B plays with every media request under /screen-01/b/<B>/",
+      "ok": true,
+      "cardB": true,
+      "cardA": false,
+      "opened": true,
+      "overlay": "",
+      "kind": "ready",
+      "video": {
+        "w": 1280,
+        "h": 720,
+        "t": 7.627,
+        "frames": 50
+      },
+      "transport": "hls.js",
+      "advancedS": 1.48,
+      "mediaRequests": 54,
+      "outsideScope": []
+    },
+    {
+      "name": "6b path reuse: page A shows ended, never plays B (no /b/<B>/ request, no 200 for /b/<A>/ after bye), its chat closed and never on B",
+      "ok": true,
+      "endedAfterMs": 299,
+      "frozen": true,
+      "videoAtEnd": {
+        "w": 0,
+        "h": 0,
+        "t": 0,
+        "frames": 0
+      },
+      "requestsForB": [],
+      "scopedA200AfterBye": [],
+      "chatStatus": "closed",
+      "chatFramesOfB": [],
+      "chatSocketsAfterBye": []
+    },
+    {
+      "name": "6f key change in the page (B -> A link, no reload): B session deleted, B chat socket closed, no B request after 1.5 s, nothing plays",
+      "ok": true,
+      "sidB": true,
+      "sessionBefore": {
+        "sid": "2166c3a04440c3ee4dcfc45a19990b78",
+        "opens": 1,
+        "beats": 0,
+        "beatFailures": 0,
+        "lastBeatError": null
+      },
+      "visibilityBefore": "visible",
+      "overlay": "이 방송은 지금 볼 수 없어요",
+      "kind": "unavailable",
+      "chatSocketClosedAfterMs": 33,
+      "openSockets": 1,
+      "advancedS": 0,
+      "requestsForBAfter1500ms": [],
+      "deletes": [
+        "DELETE /screen-01/b/52b7eddd029baabf4f29d36590f9ee90/session/2166c3a04440c3ee4dcfc45a19990b78 204"
+      ],
+      "joins": 0
+    },
+    {
+      "name": "7a reconnect: relay MediaMTX restart -> reconnecting/waiting (or a silent recovery under 4 s), then B plays again (never ended/error/busy)",
+      "ok": true,
+      "mediaBackAfterMs": 1488,
+      "transientAfterMs": 426,
+      "silentStallMs": 804,
+      "recoveredAfterMs": 14622,
+      "overlays": [
+        "방송에 다시 연결하는 중이에요"
+      ],
+      "kinds": [
+        "reconnecting",
+        "ready"
+      ],
+      "publisherRestarts": 1,
+      "sessionOpens": 1
+    },
+    {
+      "name": "7b chat: socket dropped -> reconnects and redraws the server history once (no duplicate ids)",
+      "ok": true,
+      "dropped": 1,
+      "wentDownAfterMs": 6,
+      "reconnectedAfterMs": 1062,
+      "newSockets": 1,
+      "dom": {
+        "count": 2,
+        "m1": 1,
+        "m2": 1
+      },
+      "runtimeMessages": 2,
+      "historyIds": 2,
+      "uniqueIds": 2,
+      "serverHistory": 2,
+      "sent": [
+        true,
+        true
+      ]
+    },
+    {
+      "name": "8 waiting: publisher away (still announced) -> waiting, Retry-After honoured, no request storm, plays again",
+      "ok": true,
+      "waitingAfterMs": 1359,
+      "windowS": 20,
+      "infoSessionPer10s": 6,
+      "infoRequests": 9,
+      "minInfoGapMs": 2002,
+      "mediaPer10s": 0,
+      "retryAfterSeen": [
+        "2"
+      ],
+      "terminal": [],
+      "playsAgainAfterMs": 11490,
+      "advancedS": 1.5
+    },
+    {
+      "name": "9 cap: page 1 plays, page 2 busy; its session retries honour Retry-After; no media, no WHEP",
+      "ok": true,
+      "page1": {
+        "overlay": "",
+        "kind": "ready",
+        "video": {
+          "w": 1280,
+          "h": 720,
+          "t": 7.648,
+          "frames": 50
+        },
+        "transport": "hls.js"
+      },
+      "sessions": 1,
+      "busyAfterMs": 90,
+      "sessionPosts": [
+        "503 ra=15",
+        "503 ra=15"
+      ],
+      "gaps": [
+        {
+          "status": 503,
+          "retryAfterS": 15,
+          "gapMs": 19321
+        }
+      ],
+      "page2Media": 0,
+      "whepPosts": 0,
+      "page2": {
+        "overlay": "접속자가 많아요",
+        "kind": "busy",
+        "video": {
+          "w": 0,
+          "h": 0,
+          "t": 0,
+          "frames": 0
+        },
+        "transport": "hls.js"
+      },
+      "message": "잠시 후 다시 연결해 주세요.",
+      "page1KeepsPlayingS": 2.01
+    },
+    {
+      "name": "10 forbidden: 403 on the scoped session POST -> error overlay, one attempt, no retry storm, no WHEP, never plays",
+      "ok": true,
+      "overlay": "이 방송은 지금 볼 수 없어요",
+      "kind": "unavailable",
+      "message": "이 방송을 볼 수 있는 권한이 없어요.",
+      "shownAfterMs": 109,
+      "sessionPosts": [
+        "POST /screen-01/b/52b7eddd029baabf4f29d36590f9ee90/session 403"
+      ],
+      "requestsAfterErrorPer10s": 0,
+      "afterError": [],
+      "whepPosts": 0,
+      "media": 0
+    },
+    {
+      "name": "11 cleanup: leaving the watch page closes the session (DELETE), the chat socket and every media request",
+      "ok": true,
+      "sessions": [
+        1,
+        0
+      ],
+      "sessionGoneAfterMs": 243,
+      "deletes": [
+        204
+      ],
+      "chatSocketClosedAfterMs": 243,
+      "chatClients": [
+        1,
+        0
+      ],
+      "requestsAfterLeaving": [],
+      "videoGone": true
+    },
+    {
+      "name": "all: no WHEP POST from the HLS-capable pages (checks 1-11)",
+      "ok": true,
+      "whepPosts": []
+    },
+    {
+      "name": "12a WHEP fallback: no MSE and no native HLS -> transport webrtc, B plays",
+      "ok": true,
+      "env": {
+        "mediaSource": "undefined",
+        "managed": "undefined",
+        "nativeHls": ""
+      },
+      "overlay": "",
+      "kind": "ready",
+      "video": {
+        "w": 1280,
+        "h": 720,
+        "t": 1.695,
+        "frames": 51
+      },
+      "transport": "webrtc",
+      "advancedS": 1.5,
+      "pcs": 1,
+      "offer": "POST /screen-01/whep?b=52b7eddd029baabf4f29d36590f9ee90 201",
+      "hlsRequests": [],
+      "capFree": true
+    },
+    {
+      "name": "12b WHEP: /info (broadcast id) checked before and after the offer",
+      "ok": true,
+      "infoBefore": true,
+      "infoAfter": true,
+      "infoRequests": 2
+    },
+    {
+      "name": "12c WHEP: leaving the page deletes the WHEP session (MediaMTX reader released)",
+      "ok": true,
+      "releasedAfterMs": 27,
+      "deletes": [
+        "DELETE /screen-01/whep/ed82ab96-a182-4317-bae1-677c8b50233a 200"
+      ]
+    },
+    {
+      "name": "12d WHEP at the cap -> busy, never plays, Retry-After honoured, no HLS fallback",
+      "ok": true,
+      "page1": {
+        "overlay": "",
+        "kind": "ready",
+        "video": {
+          "w": 1280,
+          "h": 720,
+          "t": 7.278,
+          "frames": 58
+        },
+        "transport": "hls.js"
+      },
+      "busyAfterMs": 276,
+      "offers": [
+        "503 ra=15",
+        "503 ra=15"
+      ],
+      "gaps": [
+        {
+          "status": 503,
+          "retryAfterS": 15,
+          "gapMs": 19139
+        }
+      ],
+      "fallback": 0,
+      "page3": {
+        "overlay": "접속자가 많아요",
+        "kind": "busy",
+        "video": {
+          "w": 0,
+          "h": 0,
+          "t": 0,
+          "frames": 0
+        },
+        "transport": "webrtc"
+      },
+      "pcs": 2
+    }
+  ],
+  "steps": [
+    {
+      "name": "1 list",
+      "s": 3
+    },
+    {
+      "name": "2 playback",
+      "s": 12
+    },
+    {
+      "name": "2b scoped routes",
+      "s": 0
+    },
+    {
+      "name": "3 quality",
+      "s": 7
+    },
+    {
+      "name": "4 chat",
+      "s": 3
+    },
+    {
+      "name": "5 DVR",
+      "s": 5
+    },
+    {
+      "name": "6 path reuse",
+      "s": 30
+    },
+    {
+      "name": "7 reconnect",
+      "s": 18
+    },
+    {
+      "name": "8 waiting",
+      "s": 33
+    },
+    {
+      "name": "9 cap",
+      "s": 52
+    },
+    {
+      "name": "10 forbidden",
+      "s": 12
+    },
+    {
+      "name": "11 cleanup",
+      "s": 12
+    },
+    {
+      "name": "12 WHEP",
+      "s": 46
+    }
+  ],
+  "notes": [
+    "Edge ran with --mute-audio (shared PC): audio is still decoded; webkitAudioDecodedByteCount is the measure",
+    "legacy /screen-01/live.m3u8: 200 while B was announced and A's publisher still sent (the path link serves whatever the path carries), 200 once B published"
+  ],
+  "notConfirmed": [
+    "iPhone/iPad Safari on a real device: native HLS or ManagedMediaSource, LL-HLS parts, DVR seeking, autoplay and the sound button",
+    "Android Chrome on a real device; the mobile layouts with the real adapter",
+    "HTTPS/WSS through Caddy (deploy/Caddyfile.example) and a CDN in front of the scoped media routes",
+    "a relay process restart while a page is watching (registry and chat history in memory are lost)",
+    "quality ladder failure (source-only list) seen from the React page",
+    "401/403 on the media itself (live.m3u8, parts, DVR files) or on the WHEP offer: check 10 faults only the scoped session POST",
+    "the React page on WHEP while B is announced but the path still carries the previous publisher (the relay answers whep?b=<B> 503 + Retry-After there, checked by e2e.mjs; this run plays WHEP only after B publishes)",
+    "sessions longer than this run (session renewal over hours, DVR across many 60 s recording files)",
+    "browsers other than headless Edge (Chrome, Firefox, desktop Safari)"
+  ],
+  "pages": {
+    "p1": {
+      "origin": "http://127.0.0.1:25080",
+      "requests": 2423,
+      "sockets": [
+        {
+          "id": "39124.34",
+          "path": "/screen-01/chat",
+          "t": 1794297133775,
+          "status": 101,
+          "closedAt": 1794297160239
+        },
+        {
+          "id": "39124.509",
+          "path": "/screen-01/chat",
+          "t": 1794297245042,
+          "status": 101,
+          "closedAt": 1794297306928
+        },
+        {
+          "id": "39124.1658",
+          "path": "/screen-01/chat",
+          "t": 1794297324982,
+          "status": 101,
+          "closedAt": null
+        }
+      ],
+      "console": []
+    },
+    "p2": {
+      "origin": "http://localhost:25080",
+      "requests": 652,
+      "sockets": [
+        {
+          "id": "3948.14",
+          "path": "/screen-01/chat",
+          "t": 1794297152903,
+          "status": 101,
+          "closedAt": 1794297160239
+        },
+        {
+          "id": "3948.235",
+          "path": "/screen-01/chat",
+          "t": 1794297168856,
+          "status": 101,
+          "closedAt": 1794297178270
+        },
+        {
+          "id": "3948.305",
+          "path": "/screen-01/chat",
+          "t": 1794297188291,
+          "status": 101,
+          "closedAt": 1794297205276
+        },
+        {
+          "id": "3948.504",
+          "path": "/screen-01/chat",
+          "t": 1794297206271,
+          "status": 101,
+          "closedAt": null
+        },
+        {
+          "id": "3948.649",
+          "path": "/screen-01/chat",
+          "t": 1794297254983,
+          "status": 101,
+          "closedAt": null
+        },
+        {
+          "id": "3948.685",
+          "path": "/screen-01/chat",
+          "t": 1794297293282,
+          "status": null,
+          "closedAt": 1794297293290
+        }
+      ],
+      "console": []
+    },
+    "p3": {
+      "origin": "http://127.0.0.1:25080",
+      "requests": 29,
+      "sockets": [
+        {
+          "id": "24808.13",
+          "path": "/screen-01/chat",
+          "t": 1794297319203,
+          "status": 101,
+          "closedAt": 1794297321911
+        },
+        {
+          "id": "24808.36",
+          "path": "/screen-01/chat",
+          "t": 1794297326961,
+          "status": 101,
+          "closedAt": null
+        }
+      ],
+      "console": []
+    }
+  },
+  "backend": {
+    "kind": "spring",
+    "jar": "apps/api/build/libs/frame-api.jar",
+    "jvmOptions": "-Xmx256m -XX:+ExitOnOutOfMemoryError -Xms64m",
+    "steps": "all"
+  },
+  "proxy": {
+    "total": 3021,
+    "faults": 2,
+    "upstreamErrors": 20,
+    "aborted": 19,
+    "byKind": {
+      "web": {
+        "200": 37,
+        "404": 1
+      },
+      "other": {
+        "200": 8,
+        "404": 10
+      },
+      "api": {
+        "200": 23,
+        "500": 1
+      },
+      "info": {
+        "200": 49
+      },
+      "websocket": {
+        "101": 10
+      },
+      "session": {
+        "200": 6,
+        "204": 14,
+        "403": 1,
+        "503": 2
+      },
+      "media-scoped": {
+        "200": 2809,
+        "206": 1,
+        "404": 2,
+        "409": 11,
+        "502": 19,
+        "503": 11,
+        "null": 2
+      },
+      "whep": {
+        "200": 1,
+        "201": 1,
+        "503": 2
+      }
+    }
+  },
+  "finishedAt": "2026-11-10T07:56:02.927Z",
+  "durationS": 237,
+  "passed": 34,
+  "failed": 0
+}

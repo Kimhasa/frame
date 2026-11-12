@@ -7,7 +7,8 @@ HTTP 200이나 WHEP 201만으로는 성공으로 세지 않는다. 결과는 `ve
 
 | 파일 | 역할 |
 | --- | --- |
-| `run-load.mjs` | 단계 부하 실행기. 램프업·유지·동시 입장·교체(churn)·화질 혼합·채팅·DVR·실제 브라우저 표본·자원 샘플링·중단 규칙·결과 저장 |
+| `run-load.mjs` | 단계 부하 실행기. 램프업·유지·동시 입장·교체(churn)·화질 혼합·채팅·DVR·실제 브라우저 표본·자원 샘플링·중단 규칙·결과 저장. 수신 방식 `receiver`: `whep`(기본) 또는 `hls`(아래 "HLS 수신 모드") |
+| `lib/hls-client.mjs`, `lib/hls-pool.mjs`, `lib/hls-worker.mjs` | HLS 수신기. 시청자 1명 = Node LL-HLS 클라이언트 1개(세션 → live.m3u8 → 변형 → init → part + 차단 재요청, 영상 + AAC), 워커 스레드로 나눠 실행 |
 | `lib/generator.mjs` | 부하 발생기. 별도 MediaMTX(자체 설정·API 포트 21900+)에서 시청자 1명 = `source: whep://…` 경로 1개. 각 시청자는 ICE·DTLS-SRTP·RTCP를 하는 실제 WebRTC peer이며 H.264/Opus를 받아 depacketize만 하고 디코딩하지 않는다 |
 | `lib/chat.mjs` | `/<path>/chat` WebSocket(native/src/chat.cpp 프로토콜: `/info`의 broadcastId로 join → send). 보낸 시각을 메시지에 넣어 같은 프로세스의 다른 소켓에서 받은 시각으로 전달 지연 p50/p95와 전달률을 잰다 |
 | `lib/dvr.mjs` | `/<path>/dvr` 색인 조회 후 `/<path>/dvr/media?id=&start=&duration=` 조각을 임의 과거 위치에서 받아 오류율·TTFB를 잰다 |
@@ -18,7 +19,7 @@ HTTP 200이나 WHEP 201만으로는 성공으로 세지 않는다. 결과는 `ve
 | `target.mjs`, `lib/app-shim.mjs` | 앱 없이 쓰는 독립 대상: MediaMTX(streamer.cpp와 같은 스트리밍 설정, 포트 215xx/218xx/219xx) + FFmpeg testsrc2 1080p60 H.264(High, B-frame 없음, GOP 1 s) + Opus, 선택적 하위 화질(runOnDemand)·DVR 녹화, 그리고 앱의 `/info`·WHEP 프록시·`/chat`·`/dvr`을 흉내 내는 Node 대역(shim) |
 | `plans/*.json` | 시험 프로필 |
 
-포트: 이 도구는 21000–21999만 쓴다(대상 21554/21889/21189/21996/21997, shim 21888, 발생기 API 21900+, Edge 21222).
+포트: 이 도구는 21000–21999만 쓴다(대상 21554/21889/21189/21996/21997, 대상 LL-HLS 21887(--hls), shim 21888, 발생기 API 21900+, Edge 21222).
 8554·8889·8189 등 앱 포트는 열지 않는다(실제 앱을 시험할 때는 앱이 연 8889에 **접속**만 한다).
 
 ## 정의 (results.json `definitions`에도 기록)
@@ -122,6 +123,49 @@ node tools/load/run-load.mjs --plan tools/load/plans/selfcheck-appstats-local.js
 - **트래픽**: 8 Mbps × 1,000명은 영상만 약 8 Gbps, 60 s에 약 60 GB. 인터넷·유료 회선에서는 `--max-traffic-gb`를 반드시 정하고 짧은 유지 시간으로 시작한다. 무료 서비스·유료 자원은 이 도구가 만들지 않는다.
 - **발생기 한계 먼저**: `calibrate-local.json`으로 발생기 PC가 몇 세션을 받을 수 있는지(`results.json` `calibration`) 먼저 확인하고, 그보다 큰 단계는 발생기를 여러 PC로 나눈다(각 PC에서 같은 플랜을 `--stages`로 나눠 동시에 실행).
 - `generator.instances`로 한 PC에서 발생기 MediaMTX를 여러 개로 나눌 수 있다(API 포트 21900+i).
+
+## HLS 수신 모드 (`receiver: "hls"`) — 브라우저 일반 시청 경로
+
+브라우저 페이지는 이제 기본으로 LL-HLS(hls.js)를 쓴다. 이 모드에서는 시청자 1명이 **Node LL-HLS 클라이언트 1개**(`lib/hls-client.mjs`, 워커 스레드 `lib/hls-pool.mjs`·`lib/hls-worker.mjs`)이다. 디코딩은 하지 않고 플레이어의 로더가 하는 요청을 그대로 한다.
+
+1. 선택: `POST /<path>/session` → `{sid, heartbeatMs}`. 이후 `PUT /<path>/session/<sid>` 하트비트, 나갈 때 `DELETE`(페이지와 같음). 429/503은 Retry-After(1–30 s, 지터)만큼 기다리고 연속 6회까지. 404(엔드포인트 없음)면 세션 없이 본다.
+2. `live.m3u8`(`/info`의 `hls.master`, 또는 `target.hls`/`--hls-url`) → 플랜 화질의 변형(`source` = 가장 높은 해상도, `720p` = 높이 720, 혼합은 `qualities` 가중치나 `--qualities source=0.7,720p=0.3`).
+3. 영상 재생 목록과 AAC 재생 목록을 각각 따라간다: 첫 로드 → init(EXT-X-MAP) → 시작 위치(최신 미디어보다 `startBehindSec` 1.5 s 앞의 독립 part, 페이지의 liveSyncDuration과 같음. 오디오는 영상 시작 위치에 맞춤) → `_HLS_msn`/`_HLS_part` 차단 재요청 → 새 part 받기. 서버가 내주면 delta 재생 목록(`_HLS_skip=YES`)을 쓴다(hls.js와 같음). `hls.parts: false`면 part 없이 전체 세그먼트만 받고 목표 길이마다 다시 읽는다(LL-HLS를 모르는 플레이어·CDN).
+4. 실패: 404·연속 오류·429/503 6회 → 그 시청자를 처음부터 다시(재시작 수 `restarts`, 백오프 1–8 s). 401/403 → 중단.
+
+측정값(`results.json` 단계별 `hls`, `stages.csv`의 `hls*` 열, `samples.csv`의 `hls*` 열):
+
+| 항목 | 정의 |
+| --- | --- |
+| 수신 중·지속 수신·전체 속도 | WHEP 모드와 같다(받은 미디어 바이트 증가, 화질별 기준의 90% 이상). 기준은 대상 수신 속도(MediaMTX API·앱 `/api/stats`) → `referenceKbps` → 1단계 측정 → `live.m3u8`의 AVERAGE-BANDWIDTH 순. HLS 바이트는 영상 + AAC + fMP4 상자이고 대상 수신량은 영상 + Opus + AAC라 약 1–2 % 차이는 정상 |
+| 첫 미디어 | 입장 요청 → 따라가는 모든 트랙(영상, AAC)의 첫 part/세그먼트를 init 뒤에 다 받은 시각. 구성(`firstMediaComponentsMs`): session, master, playlist, init, firstMedia |
+| 지연 추정(`delayEstimateMs`) | 표본 시각 − 가상 재생 위치. 가상 플레이어는 처음 받은 단위에서 시작해 버퍼가 있는 동안 실시간으로 진행하고, liveSync + 0.5 s보다 많이 쌓이면 1.1배로 따라잡고, 버퍼 끝에서 멈춘다. 위치는 EXT-X-PROGRAM-DATE-TIME(대상 MediaMTX가 받은 시각). 같은 시계가 필요하고, MediaMTX 이전(캡처·인코딩·송출)과 이후(디코딩·표시)는 들어가지 않는다 |
+| 수신 지연(`receiveDelayMs`) | part/세그먼트 도착 시각 − 그 끝의 PROGRAM-DATE-TIME |
+| 끊김(`stalls`) | 새 영상 미디어가 `stallMs`(3 s) 넘게 없음. 미디어가 다시 오면 1회, 유지 구간 끝까지 멈춘 시청자도 1회 |
+| 요청 | 종류별 수(`master`, `playlist`, `part`, `segment`, `init`, `session`), 상태 코드, 오류 코드, 시청자·초당 요청 수, 429/503 수와 비율, Retry-After 값, 재생 목록 바이트/미디어 바이트, 차단 재요청 대기·단위 받기 시간 |
+| 세션 | 연 세션 수, 거절(429/503), 대상이 센 세션 수 최댓값(앱 `/api/stats` `hls.sessions`, 중계 `/healthz` `hlsSessions`) |
+
+중단 규칙(WHEP 모드 규칙에 더해): `hls-busy-share` — 최근 30 s HLS 요청 중 429/503 비율 ≥ `max503Share`(0.1, 요청 `minBusyRequests` 50개 이상) 10 s 지속. `generator-cpu` — 수신기 스레드(워커 + 1)가 모두 바쁨(프로세스 CPU ≥ 0.9 × 스레드 수 코어) 30 s 지속. Node 수신기는 기계 전체 CPU보다 스레드 하나가 먼저 포화되므로 이 규칙이 발생기 포화다. 이벤트 루프 지연은 워커 것까지 포함한다.
+
+브라우저 표본(`browser-sampler.mjs`)은 실제 페이지(hls.js)를 연다. 페이지가 만드는 Hls 인스턴스를 기록해 1초마다 `now − hls.playingDate`(재생 위치의 PROGRAM-DATE-TIME 기준 지연, `pdtDelayMs`)와 `hls.latency`, `FrameRuntime.hls`(전송 방식, 재생 중인 레벨, 끊김, 버퍼)를 읽고, 디코딩 FPS는 peer connection이 없으면 `getVideoPlaybackQuality()`의 프레임 수 증가로 잰다. 대상이 `--source live`면 바코드로 캡처→표시 지연도 잰다. 이 값들은 별도 단계(`browserPhase`)에서만 나오며 미디어 부하 수치와 섞지 않는다.
+
+```powershell
+# 독립 대상(LL-HLS, Opus + AAC, 720p 요청 시 인코딩)
+node tools/load/target.mjs --dir $env:TEMP\frame-load-target --hls --renditions 720p --duration 1800
+node tools/load/run-load.mjs --plan tools/load/plans/selfcheck-hls-local.json --target-state $env:TEMP\frame-load-target\state.json
+# 실제 앱(브라우저 시청 경로). 기본 단계 1,10,50,100,300,500,1000, --stages로 바꾼다
+node tools/load/run-load.mjs --plan tools/load/plans/real-app-hls.json --host 127.0.0.1
+node tools/load/run-load.mjs --plan tools/load/plans/real-app-hls.json --host 192.168.0.10 --qualities source=0.7,720p=0.3 --stages 1,10,50
+# 중계 서버(세션 참가·하트비트, /healthz 세션 수)
+node tools/load/run-load.mjs --plan tools/load/plans/relay-hls.json --host relay.example.com --stages 1,10,50 --max-traffic-gb 10
+node tools/load/run-load.mjs --plan tools/load/plans/relay-hls.json --base http://127.0.0.1:21480 --relay-health http://127.0.0.1:21480/healthz --browser 0
+node tools/load/summarize.mjs verification/load/<runId>
+```
+
+- 다른 WHEP 플랜도 `--receiver hls`로 HLS 수신으로 돌릴 수 있다. 추가 옵션: `--hls-workers N`(0 = 실행기 스레드), `--hls-session true|false`, `--hls-parts false`, `--hls-url <live.m3u8>`, `--relay-health <url>`.
+- target.mjs `--hls`: 앱과 같은 LL-HLS(1 s 세그먼트, 200 ms part, 7개)를 루프백 21887에 열고 shim이 `live.m3u8`(Streamer::HlsMultivariant와 같은 형식), `/<path>[/<q>]/hls/<file>`(중계 `server/lib/hls.mjs`의 공유 세션, 쿠키 없음), `/<path>/session`(`--session-cap N`이면 N 초과 시 503 + Retry-After 5), `/assets/js/*`(hls.js)를 내준다. 송출은 앱처럼 Opus(첫 오디오) + AAC(둘째 오디오)이고(`--audio opus`면 예전처럼 Opus만), 하위 화질은 두 오디오를 복사하고 원본 fps와 키프레임 위치를 따른다.
+- shim은 HLS 연결을 기본으로 유지한다(keep-alive, 중계와 같음). 앱의 http_server.cpp는 응답마다 `Connection: close`이고 모든 HLS 요청이 400개 동시 요청 한도(`kMaxRequests`)에 들어간다. 앱 결과와 shim 결과를 같은 것으로 보지 않는다(`--hls-connection close`로 연결 방식만 앱처럼 할 수 있다).
+- **한 PC 루프백, 요청 수, 채팅 소켓을 인터넷 시청자 1,000명으로 보고하지 않는다.** HLS 클라이언트 1명은 LL-HLS에서 초당 약 10–20개 요청을 하지만, 그것은 한 발생기 PC가 만든 부하일 뿐이다.
 
 ## 결과 파일
 

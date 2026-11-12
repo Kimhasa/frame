@@ -1,0 +1,25 @@
+{
+  "verificationDatabaseOnly": true,
+  "results": [
+    {
+      "name": "The poll owner session survives the API restart",
+      "pass": true
+    },
+    {
+      "name": "The old broadcast instance closes its active poll while preserving owner history and vote totals",
+      "pass": true
+    },
+    {
+      "name": "The viewer retains its own selected option and closed result after restart",
+      "pass": true
+    },
+    {
+      "name": "Retrying the same old vote confirms its receipt without adding a new vote after closure",
+      "pass": true
+    },
+    {
+      "name": "The replacement registry instance does not inherit an old poll on the same path",
+      "pass": true
+    }
+  ]
+}

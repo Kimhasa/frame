@@ -1,0 +1,114 @@
+# FRAME 1단계 HTTPS/WSS 시험용 Caddy 설정. 운영 예시(deploy/Caddyfile.example)와 같은 중계 프록시 규칙에
+# React 공개 웹(/_frame/)을 더한 것이다. server/verify/https-session.mjs가 아래 환경 변수를 채워 실행한다(직접 쓸 때도 같다).
+#   FRAME_TEST_HOST        시험 HTTPS 주소의 호스트(예: <기기>.<tailnet>.ts.net 또는 LAN IP)
+#   FRAME_TEST_PORT        HTTPS 포트(기본 443)
+#   FRAME_TEST_BIND        듣는 주소(예: Tailscale IP 하나). 다른 망에는 열지 않는다.
+#   FRAME_TEST_TLS         "인증서파일 키파일"(tailscale cert로 받은 Let's Encrypt 인증서) 또는 "internal"(Caddy 내부 CA)
+#   FRAME_TEST_DIST        apps/web/dist (corepack yarn build 결과)
+#   FRAME_TEST_RELAY       중계 웹 서비스(frame-api.jar 또는 비교용 relay.mjs)의 루프백 주소(예: 127.0.0.1:26070)
+#   FRAME_TEST_DIR         시험 폴더(Caddy 저장소·접근 로그). 저장소 밖에 둔다.
+#   FRAME_TEST_ADMIN       Caddy 관리 API 루프백 주소(예: 127.0.0.1:26019)
+# 검사: caddy validate --config deploy/test/Caddyfile.https-test --adapter caddyfile
+
+{
+	admin {$FRAME_TEST_ADMIN}
+	# 시험 인증서만 쓴다: 80번 포트 리디렉션과 ACME를 열지 않고, 내부 CA를 써도 시스템 신뢰 저장소를 바꾸지 않는다.
+	auto_https disable_redirects
+	skip_install_trust
+	# 실행 중 설정을 사용자 전역 폴더(%AppData%\Caddy\autosave.json)에 저장하지 않는다. 시험 설정은 시험 폴더 밖에 남기지 않는다.
+	persist_config off
+	storage file_system {$FRAME_TEST_DIR}/caddy-data
+	servers {
+		timeouts {
+			read_header 10s
+			read_body 30s
+			idle 2m
+		}
+		# 시험에서는 HTTP/3(QUIC)을 끈다. tailnet MTU(1280)에서는 QUIC 첫 패킷(1280 + 헤더)이 들어가지 않아 폰이 QUIC을 시도하다
+		# TCP로 내려가고, PC에서는 루프백 경로라 HTTP/3가 되어 PC 결과가 폰을 대표하지 못한다. 운영 예시는 기본값(h1 h2 h3) 그대로.
+		protocols h1 h2
+	}
+}
+
+{$FRAME_TEST_HOST}:{$FRAME_TEST_PORT} {
+	bind {$FRAME_TEST_BIND}
+	tls {$FRAME_TEST_TLS}
+
+	request_body {
+		max_size 300KB
+	}
+
+	# 운영 예시는 1년. 시험에서는 짧게 둔다: 시험 호스트(이 PC의 tailnet 이름)의 HSTS가 폰 브라우저에 1년 동안 남지 않게.
+	header {
+		Strict-Transport-Security "max-age=300"
+		-Server
+	}
+
+	encode zstd gzip {
+		match {
+			header Content-Type text/*
+			header Content-Type application/json*
+			header Content-Type application/vnd.apple.mpegurl*
+		}
+	}
+
+	# React 공개 웹(Vite base /_frame/). 설계 3.3절: 화면 주소의 요청만 index.html로 돌리고(SPA), 해시가 있는 자산은
+	# 장기 캐시, HTML은 재검증, 없는 파일은 404(index.html로 대신하지 않음).
+	redir /_frame /_frame/ 308
+	handle_path /_frame/* {
+		root * {$FRAME_TEST_DIST}
+		header X-Content-Type-Options nosniff
+
+		# 화면 주소: 확장자가 없고 assets/ 밖인 경로(/live, /watch/<경로>/<방송 id>, /). 알 수 없는 화면 주소는 앱이 /live로 보낸다.
+		@page {
+			not path_regexp \.[A-Za-z0-9]+$
+			not path /assets/*
+		}
+		handle @page {
+			rewrite * /index.html
+			header Cache-Control no-cache
+			file_server
+		}
+
+		@hashed {
+			path /assets/*
+			file
+		}
+		handle @hashed {
+			header Cache-Control "public, max-age=31536000, immutable"
+			file_server
+		}
+
+		@other file
+		handle @other {
+			header Cache-Control no-cache
+			file_server
+		}
+
+		handle {
+			header Cache-Control no-store
+			respond "Not found" 404
+		}
+	}
+
+	# 나머지(API, HLS, DVR, 시청 세션, 채팅 WebSocket, 기존 /<경로> 시청 화면)는 운영 예시와 같이 중계로 넘긴다.
+	handle {
+		reverse_proxy {$FRAME_TEST_RELAY} {
+			flush_interval -1
+			transport http {
+				dial_timeout 5s
+				keepalive 60s
+				response_header_timeout 45s
+			}
+		}
+	}
+
+	log {
+		# 시험 세션 동안 교체하지 않는다(시청자 1명당 시간당 약 17 MB). 교체되면 앞선 폰 요청이 https-access-report.mjs에서 빠진다.
+		output file {$FRAME_TEST_DIR}/caddy-access.log {
+			roll_size 1GiB
+			roll_keep 3
+		}
+		format json
+	}
+}

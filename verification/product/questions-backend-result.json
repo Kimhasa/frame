@@ -1,0 +1,284 @@
+{
+  "GeneratedAt": "2026-11-12T08:16:34.7165321+00:00",
+  "Command": "gradlew.bat test bootJar",
+  "Suite": {
+    "Tests": 119.0,
+    "Failures": 0.0,
+    "Errors": 0.0,
+    "Skipped": 0.0
+  },
+  "Classes": [
+    {
+      "Name": "frame.api.account.AccountIntegrationTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.AccountSessionRecoveryTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ChannelPollsTest",
+      "Tests": 4,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ChannelProfileTest",
+      "Tests": 6,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ChannelQuestionsTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ChatModerationTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ChatTicketsTest",
+      "Tests": 5,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ProductMigrationIntegrationTest",
+      "Tests": 10,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ProductNotificationsTest",
+      "Tests": 5,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ProductStorageDisabledTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ReportManagementTest",
+      "Tests": 6,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ScheduledBroadcastsTest",
+      "Tests": 4,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.WatchHistoryTest",
+      "Tests": 5,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.BlankRelayVariablesTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.broadcast.BroadcastRegistryTest",
+      "Tests": 12,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.chat.ChatHandshakeFilterTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.chat.ChatRulesTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.chat.ManagedChatHubTest",
+      "Tests": 2,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.dvr.DvrRulesTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.mediamtx.MediaMtxPathsTest",
+      "Tests": 2,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.obs.ObsBroadcastsTest",
+      "Tests": 10,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.payments.PaymentsTest",
+      "Tests": 10,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.playback.PlaybackRulesTest",
+      "Tests": 7,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.playback.ViewerSessionsTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.ShutdownTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.StartupGraceTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.stats.StatsRowTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.UpstreamBreakTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.web.JsCompatTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    }
+  ],
+  "JarSha256": "ddbb83128c77b32ee081954c7e0d0358f530c99f75e4387303f6efaac1e01df7",
+  "Migrations": [
+    {
+      "Name": "V1__accounts_channels_follows.sql",
+      "Sha256": "09aac64c7d820f3ea8b3229b99b4dca11a1de6c104c7da277846415bf8a39b4f"
+    },
+    {
+      "Name": "V2__signup_consents.sql",
+      "Sha256": "5841a933a3fb672ee4876ebf6a4c36247416a126b7e17555151e9ecc8bb4daad"
+    },
+    {
+      "Name": "V3__broadcast_schedules.sql",
+      "Sha256": "8661aecdd2fadaf14a67a36a2ad5e60811dae1a94b77f09ca62480f8a61bea6d"
+    },
+    {
+      "Name": "V4__watch_history.sql",
+      "Sha256": "e5c93b9231061ec8253b160b7de5f5fbbb14ff3e50754e56ba3e6b65340029ca"
+    },
+    {
+      "Name": "V5__channel_profiles_reports.sql",
+      "Sha256": "b82d405664a182606e35cea5919be5096ffdaea1d8a57223eb3be0c95529a0ee"
+    },
+    {
+      "Name": "V6__report_management.sql",
+      "Sha256": "b282072620ab76027dbed89f4d37179e79199c150233eb8722d0d92d15ee3557"
+    },
+    {
+      "Name": "V7__product_notifications.sql",
+      "Sha256": "88f914cbe4137bab2376f84bb78e1b60402b9c4ec9c2c990f27ec78c9947f4ef"
+    },
+    {
+      "Name": "V8__channel_chat_moderation.sql",
+      "Sha256": "c6fd971cfb0dc10dd59bb107dfed6131a1f37ead43f8c1453a071fee03090044"
+    },
+    {
+      "Name": "V9__channel_polls.sql",
+      "Sha256": "65e4689d1b6622b59b541129e6c6742bc8e77458790e53d468dbff8a68721782"
+    },
+    {
+      "Name": "V10__channel_questions.sql",
+      "Sha256": "e7e7eceacdd6e3871317e8e5167670a355510524d09f088134acbecb965dd50c"
+    }
+  ],
+  "Database": "Native PostgreSQL verification database only; generated schemas and Redis namespaces cleaned",
+  "DockerContainerExecution": false,
+  "MainDatabaseChanged": false,
+  "ActualBroadcastProcessesChanged": false,
+  "QuestionChecks": [
+    "Owner-only list/detail/update and member submission enforce session, CSRF, Origin and optional expected-account scope before private reads or writes",
+    "Questions and answers remain private to author and target channel owner; only one explicitly pinned question is public and own request UUID never enters public or owner DTOs",
+    "NFC text, CRLF normalization, Unicode lengths, control characters, exact fields and canonical idempotency payloads are validated",
+    "Concurrent same-request submissions yield 201 plus 200 for one row; a different canonical payload under the same request UUID is rejected",
+    "Active account blocks and follower-only settings apply; link and word checks share pure chat normalization without consuming or applying chat slow mode",
+    "Unicode TLD word boundaries and ordinary HTTP HTTPS www uppercase fullwidth addresses match while ordinary prose and numeric versions do not",
+    "Answered and unanswered questions can be pinned; atomic replacement increments the previous row version and stale or concurrent owner edits are rejected",
+    "Unpin immediately excludes the question from subsequent public reads; anonymous and unrelated members cannot read private answers",
+    "Account-global three accepted questions per sixty seconds is durable in PostgreSQL; rejected requests and exact replays consume zero and the view exposes the actual remaining retry window",
+    "KST date status search bounds and equal-millisecond UUID keyset pages are validated",
+    "Old broadcast keys retain only the authors own question history; new submissions and public pins require exact current ID path and registry instance",
+    "Same ID and path reused by a new broadcast instance cannot publish the previous pin; API restart preserves private questions and answers without carrying pins forward",
+    "Cookie-free public reads remain available during Redis outage and do not expose private questions",
+    "V9 to V10 migration preserves poll options and votes, creates no fake questions, enforces idempotency uniqueness and one channel pin plus answer timestamp consistency",
+    "V1 through V9 SQL hashes are unchanged; altered applied SQL blocks synthetic pending V11 DDL"
+  ],
+  "Notes": [
+    "Actual HTTP integration uses generated accounts, an isolated Spring API and controlled MediaMTX registry fixtures; browser and real-source QA are reported separately by root",
+    "No question deletion, question editing, answer deletion, scheduler, queue, SSE or media source identity redesign was added",
+    "No production database change, API restart, OBS modification, Docker execution or OS reboot was performed by this backend task"
+  ]
+}

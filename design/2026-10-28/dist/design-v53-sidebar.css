@@ -1,0 +1,37 @@
+/* Viewer navigation only; creator navigation and mobile bottom navigation retain their layout. */
+.sidebar.v3-sidebar.v53-sidebar{padding:18px 12px 24px;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#d1d9d4 transparent;min-height:0}
+.v53-sidebar .v53-navigation{display:flex;flex-direction:column;gap:3px}
+.v53-sidebar .v53-navigation+.v53-navigation{margin-top:20px}
+.sidebar.v3-sidebar.v53-sidebar .v53-navigation>button{display:flex;align-items:center;gap:14px;width:100%;min-width:0;min-height:46px;padding:11px 14px;border:0;border-radius:10px;background:transparent;color:#34433b;font-size:15px;font-weight:500;line-height:1.5;text-align:left}
+.v53-sidebar .v53-navigation>button>svg{width:22px;height:22px;flex:none;stroke-width:1.8}
+.v53-sidebar .v53-navigation .nav-label{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.v53-sidebar .v53-nav-short{display:none}
+.sidebar.v3-sidebar.v53-sidebar .v53-navigation>button:hover:not(:disabled){background:#f2f5f3}
+.sidebar.v3-sidebar.v53-sidebar .v53-navigation>button[aria-current=page]{background:#edf6f0;color:#226946;font-weight:650}
+.sidebar.v3-sidebar.v53-sidebar .v53-navigation>button[aria-current=page]:hover:not(:disabled){background:#e4f0e9}
+.sidebar.v3-sidebar.v53-sidebar .v53-navigation>button:active:not(:disabled){background:#e4eae6}
+.v53-sidebar button:focus-visible{outline:2px solid #287653;outline-offset:-2px;box-shadow:none}
+.v53-sidebar button:disabled{opacity:.45;cursor:default}
+.sidebar.v3-sidebar.v53-sidebar .v53-followed{margin-top:28px}
+.sidebar.v3-sidebar.v53-sidebar .side-heading{padding:0 12px 10px;font-size:12px;color:#78857d;font-weight:600}
+.sidebar.v3-sidebar.v53-sidebar .side-channel{display:flex;align-items:center;gap:9px;width:100%;min-width:0;min-height:48px;padding:8px 10px;border:0;border-radius:9px;background:transparent;text-align:left}
+.sidebar.v3-sidebar.v53-sidebar .side-channel:hover:not(:disabled){background:#f2f5f3}
+.v53-sidebar .side-channel>.avatar{width:30px;height:30px;flex:none}
+.v53-sidebar .side-channel-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;color:#394a40}
+.v53-sidebar .v53-channel-status{display:flex;align-items:center;gap:5px;flex:none;white-space:nowrap;color:#849087;font-size:11px;font-variant-numeric:tabular-nums}
+.v53-sidebar .v53-channel-status.is-live{color:#65756b}
+.v53-sidebar .channel-live-dot{position:static;width:5px;height:5px;flex:none;margin:0;background:#e55361}
+.sidebar.v3-sidebar.v53-sidebar .side-more{display:flex;align-items:center;gap:10px;width:100%;min-height:44px;padding:9px 12px;border:0;border-radius:9px;background:transparent;font-size:13px;color:#63736a}
+.v53-sidebar .side-more>svg{width:18px;height:18px;flex:none}
+.sidebar.v3-sidebar.v53-sidebar .side-more:hover:not(:disabled){background:#f2f5f3}
+@container(min-width:851px){
+  #product-root.v53-viewer-navigation>.app-layout{grid-template-columns:240px minmax(0,1fr)}
+  #product-root.v53-viewer-navigation .v53-sidebar{width:240px;height:calc(100dvh - 72px);min-height:0}
+  #product-root.v53-viewer-navigation:is(.v2-navigation-compact,.wide-mode)>.app-layout{grid-template-columns:72px minmax(0,1fr)}
+  #product-root.v53-viewer-navigation:is(.v2-navigation-compact,.wide-mode) .v53-sidebar{width:72px;padding:16px 6px 24px}
+  #product-root.v53-viewer-navigation:is(.v2-navigation-compact,.wide-mode) .v53-sidebar .v53-navigation>button{display:flex;flex-direction:column;justify-content:center;gap:5px;min-height:66px;padding:9px 3px;font-weight:500}
+  #product-root.v53-viewer-navigation:is(.v2-navigation-compact,.wide-mode) .v53-sidebar .nav-label{display:none}
+  #product-root.v53-viewer-navigation:is(.v2-navigation-compact,.wide-mode) .v53-nav-short{display:block;font-size:10px;line-height:1.4;white-space:nowrap}
+  #product-root.v53-viewer-navigation:is(.v2-navigation-compact,.wide-mode) .v53-followed{display:none}
+  #product-root.v53-viewer-navigation:is(.v2-navigation-compact,.wide-mode) .v53-navigation+.v53-navigation{margin-top:12px}
+}

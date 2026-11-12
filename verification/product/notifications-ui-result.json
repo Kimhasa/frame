@@ -1,0 +1,174 @@
+{
+  "origin": "http://127.0.0.1:5365",
+  "api": "http://127.0.0.1:18083",
+  "verificationDatabaseOnly": true,
+  "checks": 37,
+  "passed": 37,
+  "realSources": [
+    "Dedicated MediaMTX RTMP H264/AAC source",
+    "Live-source API restart",
+    "Actual public report and terminal review transactions"
+  ],
+  "paginationInstrumentation": "Only the first inbox UI pagination requests lower limit to 2; all rows and cursors are actual server responses.",
+  "faultInjection": [
+    "Inbox GET 503",
+    "Cursor GET 503",
+    "Read PATCH 503",
+    "Read-all POST 503",
+    "Individual DELETE 503",
+    "Delayed read-all POST",
+    "Delayed clear DELETE and 503"
+  ],
+  "results": [
+    {
+      "name": "A real recipient follows the broadcaster with live notifications enabled before publishing",
+      "pass": true
+    },
+    {
+      "name": "Actual MediaMTX-ready streaming and four terminal reviews create five unread notifications for the authenticated account",
+      "pass": true
+    },
+    {
+      "name": "Reporter notifications show generic outcomes without leaking operator notes or identity",
+      "pass": true
+    },
+    {
+      "name": "Real two-row keyset pages return every notification once",
+      "pass": true
+    },
+    {
+      "name": "An independent account has its own empty inbox and cannot read or delete a foreign notification",
+      "pass": true
+    },
+    {
+      "name": "A cookie account change with an old expected identity is rejected before another account inbox can be returned",
+      "pass": true
+    },
+    {
+      "name": "Restarting only the API during the same live source preserves inbox state and does not duplicate a live notification",
+      "pass": true
+    },
+    {
+      "name": "Inbox GET 503 is a retryable error rather than an empty inbox",
+      "pass": true
+    },
+    {
+      "name": "List retry uses real server notifications and the authoritative five-unread header badge",
+      "pass": true
+    },
+    {
+      "name": "Pagination 503 retains already loaded notification rows",
+      "pass": true
+    },
+    {
+      "name": "Retry and final pagination append all five once and remove the exhausted cursor action",
+      "pass": true
+    },
+    {
+      "name": "Visible notification content excludes operator identity and private review notes",
+      "pass": true
+    },
+    {
+      "name": "Notification filters, rows and actions fit the 390px viewport",
+      "pass": true
+    },
+    {
+      "name": "Notification filters, rows and actions fit the 320px viewport",
+      "pass": true
+    },
+    {
+      "name": "A failed read preserves the unread report row and its generic result dialog",
+      "pass": true
+    },
+    {
+      "name": "Escape closes the result dialog and restores focus to its notification",
+      "pass": true
+    },
+    {
+      "name": "Successful individual read saves its server timestamp and updates the global unread count",
+      "pass": true
+    },
+    {
+      "name": "Unread and report-kind filters combine while the header count remains account-wide",
+      "pass": true
+    },
+    {
+      "name": "Read-state and kind filters survive a full reload",
+      "pass": true
+    },
+    {
+      "name": "An old live notification points to the immutable channel instead of another broadcast on the reused path",
+      "pass": true
+    },
+    {
+      "name": "Following the ended-live fallback marks the notification read and opens the correct channel with the updated badge",
+      "pass": true
+    },
+    {
+      "name": "Read-all 503 preserves each existing read state",
+      "pass": true
+    },
+    {
+      "name": "Pending read-all disables controls and blocks duplicate activation",
+      "pass": true
+    },
+    {
+      "name": "Read-all saves all read states and zero unread count across reload",
+      "pass": true
+    },
+    {
+      "name": "Individual delete 503 keeps the notification in the inbox",
+      "pass": true
+    },
+    {
+      "name": "Successful individual deletion survives reload",
+      "pass": true
+    },
+    {
+      "name": "Clear-all confirmation explains account-wide scope and receives focus",
+      "pass": true
+    },
+    {
+      "name": "Cancelling clear-all preserves notifications and restores its opening control",
+      "pass": true
+    },
+    {
+      "name": "Pending clear-all locks confirmation and rejects Escape or duplicate Enter",
+      "pass": true
+    },
+    {
+      "name": "Clear-all 503 preserves the inbox and open confirmation for retry",
+      "pass": true
+    },
+    {
+      "name": "Clear-all confirmation fits the 320px viewport",
+      "pass": true
+    },
+    {
+      "name": "Successful clear-all empties the inbox and leaves focus on a meaningful page control",
+      "pass": true
+    },
+    {
+      "name": "Deleted notifications stay deleted while the same actual live source continues",
+      "pass": true
+    },
+    {
+      "name": "A fresh terminal report creates a new unread notification after the previous inbox was cleared",
+      "pass": true
+    },
+    {
+      "name": "A cross-tab cookie account change clears old rows and unread badge and passively shows the second account without a login redirect",
+      "pass": true
+    },
+    {
+      "name": "Returning to the original account restores only its final persisted read notification",
+      "pass": true
+    },
+    {
+      "name": "No browser runtime or unconfirmed interception errors",
+      "pass": true
+    }
+  ],
+  "runtimeErrors": [],
+  "confirmedCanceledInterceptions": []
+}

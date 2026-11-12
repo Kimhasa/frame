@@ -1,0 +1,24 @@
+{
+  "proxyChecks": 12,
+  "proxyChecksPassed": 12,
+  "proxyConfigHasNoSensitiveValues": true,
+  "source": {
+    "filesScanned": 185,
+    "sensitiveMatchFiles": 0
+  },
+  "build": {
+    "filesScanned": 161,
+    "sensitiveMatchFiles": 0
+  },
+  "logs": {
+    "filesScanned": 2,
+    "sensitiveMatchFiles": 0
+  },
+  "codeChanges": 0,
+  "runtimeRestarts": 0,
+  "providerCalls": 0,
+  "archive": {
+    "jarEntriesScanned": 258,
+    "sensitiveMatchEntries": 0
+  }
+}

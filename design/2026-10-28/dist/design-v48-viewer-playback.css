@@ -1,0 +1,13 @@
+/* UIF-003: playback feedback, scoped to the existing viewer player. */
+.v48-playback-target .v48-center-play,.v48-playback-target .v48-playback-feedback{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;align-items:center;justify-content:center;width:64px;height:64px;padding:17px;color:#fff;background:#101820bf;border:0;border-radius:50%;z-index:3}
+.v48-playback-target .v48-center-play{cursor:pointer;transition:background .15s ease,box-shadow .15s ease}
+.v48-playback-target .v48-center-play:hover{background:#101820e6;border:0}
+.v48-playback-target .v48-center-play:focus-visible{outline:2px solid #fff;outline-offset:4px;box-shadow:0 0 0 6px #10182080}
+.v48-playback-target .v48-center-play:active{background:#101820f5}
+.v48-playback-target .v48-center-play svg,.v48-playback-target .v48-playback-feedback svg{width:30px;height:30px;display:block;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.v48-playback-target .v48-playback-feedback{pointer-events:none}
+.v48-playback-target.v48-feedback-active .v48-center-play:not(:focus-visible){visibility:hidden}
+.v48-playback-target .v48-center-play[hidden],.v48-playback-target .v48-playback-feedback[hidden]{display:none}
+@container(max-width:600px){.v48-playback-target .v48-center-play,.v48-playback-target .v48-playback-feedback{width:52px;height:52px;padding:13px}.v48-playback-target .v48-center-play svg,.v48-playback-target .v48-playback-feedback svg{width:26px;height:26px}}
+@media(prefers-reduced-motion:reduce){.v48-playback-target .v48-center-play{transition:none}}
+.v38-reduced-motion .v48-playback-target .v48-center-play{transition:none}

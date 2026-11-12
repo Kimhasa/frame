@@ -1,0 +1,38 @@
+{
+  "finalJarApplied": true,
+  "immutableRuntimeJar": true,
+  "healthStatus": 200,
+  "mediaReceiverStatus": 200,
+  "checks": [
+    {
+      "route": "/api/v1/session",
+      "status": 200,
+      "userPresent": false,
+      "csrfPresent": true,
+      "streamKeyPresent": false
+    },
+    {
+      "route": "/api/v1/me/follows",
+      "status": 401,
+      "userPresent": false,
+      "csrfPresent": false,
+      "streamKeyPresent": false
+    },
+    {
+      "route": "/_frame/api/studio",
+      "status": 401,
+      "userPresent": false,
+      "csrfPresent": false,
+      "streamKeyPresent": false
+    },
+    {
+      "route": "/_frame/api/payments/config",
+      "status": 401,
+      "userPresent": false,
+      "csrfPresent": false,
+      "streamKeyPresent": false
+    }
+  ],
+  "verificationWebStopped": true,
+  "mainDatabaseNotSeededByTests": true
+}

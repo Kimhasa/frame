@@ -1,0 +1,13 @@
+{
+  "name": "relay-hls",
+  "_comment": "Relay (server/relay.mjs) origin for internet viewing: --host <relay host> (https://<host>; for a local relay pass --base http://127.0.0.1:<port> and --relay-health http://127.0.0.1:<port>/healthz). Every viewer joins a viewer session first (POST /<path>/session -> {sid, heartbeatMs}; 503 + Retry-After at the relay's viewer cap is waited out, at most 6 times), heartbeats with PUT /<path>/session/<sid> every heartbeatMs and leaves with DELETE, then plays live.m3u8 like the page (parts + blocking reloads, video + AAC). Target statistics: the relay's /healthz (hlsSessions = target session count, hlsViewers); the relay has no per-path ingest counter, so the full-rate reference is live.m3u8 AVERAGE-BANDWIDTH (the relay's own measured average) unless --reference-kbps source=<kbit/s> is given. The 429/503 share stop rule covers session, playlist and media answers. Relay egress may be metered: the 20 GB cap stops the run before a stage that would pass it (raise it deliberately with --max-traffic-gb). Requests through a CDN in front of the relay are not separated from the origin here; a run from one generator PC is that PC's capacity, not 1,000 internet viewers. One headless Edge page with the relay's viewer page runs after the holds of stages 1 and 10.",
+  "receiver": "hls",
+  "target": { "base": "https://{host}", "path": "screen-01", "relayHealth": "https://{host}/healthz", "useApi": false, "tree": [] },
+  "hls": { "workers": 2, "session": true, "parts": true, "audio": true, "skip": true, "startBehindSec": 1.5, "stallMs": 3000, "insecure": false },
+  "stages": [1, 10, 50, 100, 300, 500, 1000],
+  "holdSec": 45,
+  "rampPerSec": 10,
+  "qualities": { "source": 1 },
+  "browser": { "count": 1, "profiles": ["desktop"], "url": "https://{host}/screen-01", "seconds": 20, "stages": [1, 10], "mode": "separate", "latency": false },
+  "limits": { "maxTrafficGB": 20, "abortOnDegraded": true, "minFullRate": 0.9, "minSuccess": 0.9, "max503Share": 0.1, "minBusyRequests": 50 }
+}

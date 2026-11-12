@@ -1,0 +1,108 @@
+.page {
+  --ui-ink: #24332b;
+  --ui-muted: #6a786f;
+  --ui-line: #e2e8e4;
+  --ui-surface: #fff;
+  width: 100%; min-width: 0; min-height: calc(100dvh - var(--header-height));
+  padding: 28px var(--content-gutter) 48px; background: #f7f8fa; color: var(--ui-ink); container-type: inline-size;
+}
+.pageHeader { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; min-height: 44px; margin: 0 0 24px; }
+.pageHeader h1 { display: flex; align-items: center; min-height: 44px; margin: 0; color: #202d25; font-size: 26px; font-weight: 730; line-height: 1.4; letter-spacing: -.045em; }
+.pageHeader h1:focus { outline: none; }
+.pageActions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.page .filterField { display: grid; align-content: start; gap: 6px; min-width: 0; color: #617467; font-size: 12px; font-weight: 600; line-height: 1.5; }
+
+.page .button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-width: 0; min-height: 44px; padding: 9px 14px; border: 1px solid #d9e2dc; border-radius: 8px; background: #fff; color: #3d5044; font-size: 13px; font-weight: 650; line-height: 1.4; text-align: center; white-space: nowrap; transition: background .12s, border-color .12s, box-shadow .12s; }
+.page .button:hover:not(:disabled):not([aria-pressed='true']) { border-color: #b8cbbf; background: #f5f9f6; color: #264c36; }
+.page .button:focus-visible { outline: 2px solid #7ac6a0; outline-offset: 2px; }
+.page .button.primary { border-color: var(--frame-green); background: var(--frame-green); color: #fff; }
+.page .button.primary:hover:not(:disabled) { border-color: var(--frame-green-ink); background: var(--frame-green-ink); color: #fff; }
+.page .button.danger { border-color: #ecd3d8; background: #fff5f6; color: #a33d50; }
+.page .button.danger:hover:not(:disabled) { border-color: #dda5b2; background: #ffebef; color: #8e2c40; }
+.page .button.quiet { border-color: transparent; background: transparent; color: #687a6e; }
+.page .button:disabled { border-color: #e4e9e6; background: #f3f5f4; color: #98a39c; opacity: 1; cursor: not-allowed; box-shadow: none; }
+.page .button svg { flex: none; width: 16px; height: 16px; stroke-width: 1.8; }
+
+.page :is(input, select, textarea).control { width: 100%; min-width: 0; min-height: 44px; padding: 9px 12px; border: 1px solid #d8e2db; border-radius: 8px; background: #fff; color: #2f4236; box-shadow: 0 1px 2px #1d392405; font-size: 14px; font-weight: 450; line-height: 1.5; transition: border-color .12s, box-shadow .12s; }
+.page :is(input, select).control { height: 44px; }
+.page textarea.control { min-height: 104px; padding-block: 10px; resize: vertical; }
+.page .control::placeholder { color: #718376; opacity: 1; }
+.page .control:hover:not(:disabled):not([readonly]):not(:focus):not([aria-invalid='true']) { border-color: #afc4b7; }
+.page .control:focus, .page .control:focus-visible { outline: none; border-color: #5ba980; box-shadow: 0 0 0 3px #24915c12; }
+.page .control[aria-invalid='true'] { border-color: #ca7686; background: #fffdfd; }
+.page .control[aria-invalid='true']:focus { box-shadow: 0 0 0 3px #bb486515; }
+.page .control[readonly] { background: #f5f7f6; color: #65766a; box-shadow: none; }
+.page .control:disabled { border-color: #e4e9e6; background: #f1f4f2; color: #9aa59e; box-shadow: none; cursor: not-allowed; }
+.page select.control { width: auto; max-width: 100%; appearance: none; padding-right: 34px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23788c7d' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-position: right 11px center; background-repeat: no-repeat; cursor: pointer; }
+.page input.control::-webkit-calendar-picker-indicator { opacity: .55; cursor: pointer; }
+.page label > select.control { width: 100%; }
+.page .checkbox { width: 17px; height: 17px; flex: none; margin: 0; accent-color: var(--frame-green); cursor: pointer; }
+.page .checkbox:disabled { opacity: .45; cursor: not-allowed; }
+.page .search { display: flex; align-items: center; gap: 9px; min-width: 0; min-height: 44px; padding: 0 12px; border: 1px solid #d8e2db; border-radius: 8px; background: #fff; color: #819087; }
+.page .search:focus-within { border-color: #5ba980; box-shadow: 0 0 0 3px #24915c12; }
+.page .search svg { flex: none; width: 17px; height: 17px; }
+.page .search input { width: 100%; min-width: 0; min-height: 42px; padding: 8px 0; border: 0; background: transparent; color: #2f4236; font-size: 14px; }
+.page .search input:focus-visible { outline: none; }
+.page .search input::placeholder { color: #718376; }
+
+.page .tabs { display: flex; gap: 24px; overflow-x: auto; scrollbar-width: thin; margin: 0 0 24px; border-bottom: 1px solid var(--ui-line); }
+.page .tabs > :is(a, button) { display: inline-flex; align-items: center; justify-content: center; flex: none; gap: 6px; min-height: 44px; padding: 9px 1px 12px; border: 0; border-bottom: 2px solid transparent; border-radius: 0; background: transparent; color: #65786b; font-size: 14px; font-weight: 560; white-space: nowrap; }
+.page .tabs > :is(a, button):hover { color: #2e5640; }
+.page .tabs > [aria-current='page'], .page .tabs > [aria-selected='true'] { border-bottom-color: var(--frame-green); color: var(--frame-green-ink); font-weight: 700; }
+.page .tabs > button:disabled { color: #a3ada6; cursor: not-allowed; }
+.page .tableFrame { overflow: hidden; border: 1px solid var(--ui-line); border-radius: 11px; background: #fff; }
+.page .table { width: 100%; border-collapse: collapse; text-align: left; color: #35483b; font-size: 13px; }
+.page .table :is(th, td) { padding: 12px 18px; border-bottom: 1px solid #edf0ee; overflow-wrap: anywhere; }
+.page .table thead th { height: 44px; padding-block: 10px; background: #f8faf9; color: #677b6d; font-size: 12px; font-weight: 600; }
+.page .table tbody tr { transition: background .12s; }
+.page .table tbody tr:hover { background: #fafcfb; }
+.page .table tbody tr:focus-within { background: #f5faf7; }
+.page .table tbody tr:has(input[type='checkbox']:checked) { background: #eff9f3; }
+.page .table tbody tr:last-child > :is(th, td) { border-bottom: 0; }
+.page .table tbody th { background: transparent; font-weight: 650; }
+.page .table :is(th, td):last-child { width: 1%; white-space: nowrap; }
+.page .table .button { min-height: 34px; padding: 7px 11px; border-radius: 7px; font-size: 12px; }
+.page .table .numeric, .page .table [data-align='end'] { text-align: right; font-variant-numeric: tabular-nums; }
+.page .table time { color: #738178; font-size: 12px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.page .table td > :is(strong, b) { font-weight: 650; }
+
+.badge { display: inline-flex; align-items: center; gap: 6px; min-height: 24px; padding: 3px 8px; border: 1px solid #e2e7e4; border-radius: 6px; background: #f5f7f6; color: #5c7062; font-size: 11px; font-weight: 600; line-height: 1.45; white-space: nowrap; vertical-align: middle; }
+.badge i { flex: none; width: 5px; height: 5px; border-radius: 50%; background: currentColor; opacity: .65; }
+.badge[data-tone='positive'] { border-color: #d3ebdd; background: #f0faf4; color: #347451; }
+.badge[data-tone='warning'] { border-color: #eedfbe; background: #fffaee; color: #84621f; }
+.badge[data-tone='danger'] { border-color: #efd8dd; background: #fff4f6; color: #a44d60; }
+.badge[data-tone='info'] { border-color: #d9e7ef; background: #f3f8fb; color: #52788d; }
+.badge[data-tone='live'] { border-color: #f0d4d6; background: #fff5f5; color: #b65159; }
+.empty { display: grid; justify-items: center; align-content: center; gap: 10px; min-height: 220px; padding: 32px 20px; border: 1px solid #e2e8e4; border-radius: 11px; background: #fff; text-align: center; }
+.emptyIcon { display: grid; place-items: center; width: 44px; height: 44px; margin-bottom: 3px; border: 1px solid #e9eeeb; border-radius: 12px; background: #f8faf9; color: #8b9d90; }
+.empty h2 { margin: 0; font-size: 15px; font-weight: 650; }
+.empty p { max-width: 360px; margin: 0; color: #6a7c70; font-size: 13px; line-height: 1.65; }
+.emptyAction { margin-top: 6px; }
+.page .dialog { width: min(480px, calc(100% - 32px)); max-height: calc(100dvh - 32px); padding: 24px; border: 1px solid #dfe7e1; border-radius: 14px; background: #fff; color: #293c30; box-shadow: 0 16px 64px #20332924; }
+.page .dialog::backdrop { background: #15251e55; backdrop-filter: blur(2px); }
+.page .dialogHeader { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 22px; }
+.page .dialogHeader h2 { margin: 0; font-size: 18px; font-weight: 700; letter-spacing: -.025em; }
+.page .dialogHeader h2:focus { outline: none; }
+.page .dialogActions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+
+@container (max-width: 690px) {
+  .page .table, .page .table tbody { display: block; }
+  .page .table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .page .table tbody tr { display: grid; gap: 12px; padding: 16px; border-bottom: 1px solid #e7ece8; }
+  .page .table tbody tr:last-child { border-bottom: 0; }
+  .page .table tbody :is(th, td), .page .table tbody td:last-child { display: flex; justify-content: space-between; align-items: center; gap: 16px; width: auto; padding: 0; border: 0; }
+  .page .table tbody :is(th, td)[data-label]::before { content: attr(data-label); flex: none; color: #859289; font-size: 12px; font-weight: 450; }
+  .page .table tbody td:last-child { justify-content: flex-end; }
+  .page .table tbody [data-primary='true'] { display: block; }
+  .page .table tbody [data-primary='true']::before { display: none; }
+  .page .table .button { min-height: 40px; padding-inline: 13px; }
+}
+@media (max-width: 600px) {
+  .page { padding-block: 22px 36px; }
+  .pageHeader { gap: 12px; margin-bottom: 22px; }
+  .pageHeader h1 { font-size: 23px; }
+  .page :is(input, select, textarea).control, .page .search input { font-size: 16px; }
+  .page .dialog { padding: 20px; }
+  .page .dialogHeader { margin-bottom: 18px; }
+}
+@media (prefers-reduced-motion: reduce) { .page :is(.button, .control, .table tr) { transition: none; } }

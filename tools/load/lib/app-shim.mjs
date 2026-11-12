@@ -3,8 +3,14 @@
 // viewer UI can be exercised without the app. It is a protocol stand-in for testing the tools: its numbers say nothing
 // about the C++ server's capacity (thread per connection and the connection / request / chat limits are only imitated,
 // with the app's "503 Busy + Retry-After" answers). GET /api/stats follows the app statistics contract (v 1): per path
-// ready/readers/bytes, WebRTC session count and cumulative bytes, HTTP threads/requests/refused, chat clients/refused.
+// ready/readers/bytes, WebRTC session count and cumulative bytes, HTTP threads/requests/refused, chat clients/refused,
+// HLS viewer sessions. With o.hls it also serves the app's HLS contract: live.m3u8 (built like Streamer::HlsMultivariant),
+// /<path>[/<q>]/hls/<file> through one shared MediaMTX session per path (the relay's lib/hls.mjs, so no cookie reaches a
+// client), /<path>/session (POST/PUT/DELETE, optional cap) and /assets/js (hls.js for the real page). Unlike the app it
+// keeps HLS connections alive by default (o.hlsConnection 'close' sends Connection: close like http_server.cpp).
 import { createServer } from 'node:http';
+import { pipeline } from 'node:stream';
+import { UpstreamHls, ViewerSessions, avcLevelIdc, hlsParams } from '../../../server/lib/hls.mjs';
 import { createHash, randomBytes } from 'node:crypto';
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
@@ -52,6 +58,9 @@ export function startShim(o) {
   const history = [];
   let nextMessage = 0, active = 0, inflight = 0, dvrCache = null, dvrCacheAt = 0, socketSeq = 0;
   const stats = { http: 0, httpRejected: 0, requestRejected: 0, chatRejected: 0, chatPeak: 0, chatNameTaken: 0, whep: 0, dvrIndex: 0, dvrMedia: 0, apiStats: 0 };
+  const hlsUp = o.hls ? new UpstreamHls(`http://127.0.0.1:${o.hlsPort}`, () => { stats.hlsUpstreamWarnings++; }) : null;
+  const sessions = new ViewerSessions({ activeMs: 30000, perIp: 1e9 });
+  Object.assign(stats, { hlsPlaylists: 0, hlsMedia: 0, hlsUpstreamWarnings: 0, sessionsOpened: 0, sessionsRefused: 0 });
   const busy = (seconds, body = 'Busy') => `HTTP/1.1 503 Service Unavailable\r\nRetry-After: ${seconds}\r\nContent-Type: text/plain; charset=utf-8\r\nContent-Length: ${Buffer.byteLength(body)}\r\nCache-Control: no-store\r\nConnection: close\r\n\r\n${body}`;
 
   // /api/stats: counters are cumulative since the shim started. MediaMTX lists only open WebRTC sessions, so the bytes of
@@ -81,7 +90,7 @@ export function startShim(o) {
       statsCache = { v: 1, timeMs: Date.now(), running: true, paths, webrtc: { sessions: seen.size, bytesSent: sent + closedSent, bytesReceived: recv + closedRecv },
         mediaDiscardWarnings: typeof o.discardWarnings === 'function' ? o.discardWarnings() : 0,
         http: { threads: active, requests: inflight, refused: stats.httpRejected + stats.requestRejected },
-        chat: { clients: clients.size, joined: [...clients].filter(c => c.joined).length, refused: stats.chatRejected } };
+        chat: { clients: clients.size, joined: [...clients].filter(c => c.joined).length, refused: stats.chatRejected }, hls: { sessions: sessions.total } };
       statsAt = Date.now();
       return statsCache;
     })().finally(() => { statsBusy = null; });
@@ -91,12 +100,63 @@ export function startShim(o) {
 
   const info = () => ({ running: true, path, width: o.width, height: o.height, fps: o.fps, bitrate: o.mbps, audio: 'system', codec: 'H.264',
     elapsedMs: Date.now() - startedAtMs, startedAtMs, broadcastId, dvr: !!o.record, title: '부하 시험 대상', publisher: 'load-target',
-    renditions: (o.renditionList || []).map(r => ({ name: r.name, width: r.width, height: r.height, mbps: r.mbps, fps: o.fps, codec: 'H.264' })), iceServers: [] });
+    renditions: (o.renditionList || []).map(r => ({ name: r.name, width: r.width, height: r.height, mbps: r.mbps, fps: o.fps, codec: 'H.264' })), iceServers: [],
+    ...(o.hls ? { hls: { master: 'live.m3u8', lowLatency: true, audio: o.audio === 'none' ? 'none' : 'aac', dvr: null } } : {}), audio: o.audio === 'none' ? 'none' : 'system' });
+
+  // live.m3u8 as Streamer::HlsMultivariant: source first, then the qualities high to low; BANDWIDTH = configured rate +
+  // AAC (CBR clip: AVERAGE-BANDWIDTH the same); CODECS level from size, rate and bitrate; the AAC rendition per quality.
+  function liveMaster(quality) {
+    const aac = o.audio !== 'none' && o.audio !== 'opus';
+    const list = [{ name: 'source', prefix: '', width: o.width, height: o.height, mbps: o.mbps }, ...[...(o.renditionList || [])].sort((a, b) => b.height - a.height).map(r => ({ ...r, prefix: r.name + '/' }))]
+      .filter(e => !quality || quality === e.name);
+    if (!list.length) return '';
+    const out = ['#EXTM3U', '#EXT-X-VERSION:9', '#EXT-X-INDEPENDENT-SEGMENTS'];
+    for (const e of list) {
+      const bw = Math.round(e.mbps * 1e6 + (aac ? 128000 : 0)), group = `aac-${e.name}`;
+      if (aac) out.push(`#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID="${group}",NAME="audio",DEFAULT=YES,AUTOSELECT=YES,CHANNELS="2",URI="${e.prefix}hls/audio3_stream.m3u8"`);
+      out.push(`#EXT-X-STREAM-INF:BANDWIDTH=${bw},AVERAGE-BANDWIDTH=${bw},RESOLUTION=${e.width}x${e.height},FRAME-RATE=${Number(o.fps).toFixed(3)},CODECS="avc1.6400${avcLevelIdc(e.width, e.height, o.fps, e.mbps).toString(16).padStart(2, '0')}${aac ? ',mp4a.40.2' : ''}"${aac ? `,AUDIO="${group}"` : ''}`, `${e.prefix}hls/video1_stream.m3u8`);
+    }
+    return out.join('\n') + '\n';
+  }
+  const hlsHeaders = extra => ({ 'Access-Control-Allow-Origin': '*', ...(o.hlsConnection === 'close' ? { Connection: 'close' } : {}), ...extra });
+  function sendHls(res, code, type, body, extra = {}) {
+    const data = Buffer.from(body ?? '');
+    res.writeHead(code, hlsHeaders({ 'Content-Type': type, 'Content-Length': data.length, ...extra }));
+    res.end(data);
+  }
+  async function hls(req, res, mtxPath, file, q) {
+    const params = hlsParams(q);
+    if (file.endsWith('.m3u8')) {
+      stats.hlsPlaylists++;
+      const r = await hlsUp.playlist(mtxPath, file, params);
+      if (r.status !== 200) return sendHls(res, r.status === 404 ? 404 : 502, 'text/plain; charset=utf-8', r.status === 404 ? 'Not found' : 'Upstream error', { 'Cache-Control': 'no-store' });
+      return sendHls(res, 200, r.type || 'application/vnd.apple.mpegurl', r.body, { 'Cache-Control': 'max-age=1' });
+    }
+    stats.hlsMedia++;
+    const r = await hlsUp.media(mtxPath, file, params);
+    if (r.status !== 200) return sendHls(res, r.status === 404 ? 404 : 502, 'text/plain; charset=utf-8', r.status === 404 ? 'Not found' : 'Upstream error', { 'Cache-Control': 'no-store' });
+    const up = r.res;
+    res.writeHead(200, hlsHeaders({ 'Content-Type': up.headers['content-type'] || 'video/mp4', 'Cache-Control': 'public, max-age=60', ...(up.headers['content-length'] ? { 'Content-Length': up.headers['content-length'] } : {}) }));
+    if (req.method === 'HEAD') { up.destroy(); return res.end(); }
+    await new Promise(resolve => pipeline(up, res, () => resolve()));
+  }
+  // POST /<path>/session -> {sid, heartbeatMs} (503 + Retry-After past o.sessionCap); PUT/DELETE /<path>/session/<sid> -> 204 | 404.
+  function session(req, res, sid) {
+    const ip = String(req.socket.remoteAddress || '');
+    if (sid) {
+      if (req.method !== 'PUT' && req.method !== 'DELETE') return send(res, 405, 'text/plain; charset=utf-8', 'Method not allowed');
+      return send(res, sessions.touch(path, sid, ip, ip, req.method === 'DELETE') ? 204 : 404, '', '', { 'Cache-Control': 'no-store' });
+    }
+    if (req.method !== 'POST') return send(res, 405, 'text/plain; charset=utf-8', 'Method not allowed');
+    if (o.sessionCap > 0 && sessions.size(path) >= o.sessionCap) { stats.sessionsRefused++; return send(res, 503, 'application/json; charset=utf-8', JSON.stringify({ error: 'busy' }), { 'Retry-After': '5', 'Cache-Control': 'no-store' }); }
+    stats.sessionsOpened++;
+    return json(res, 200, { sid: sessions.open(path, ip, ip), heartbeatMs: 15000 });
+  }
 
   function send(res, code, type, body, extra = {}) {
     const data = Buffer.isBuffer(body) ? body : Buffer.from(body ?? '');
     res.writeHead(code, { ...(type ? { 'Content-Type': type } : {}), 'Content-Length': data.length, Connection: 'close', 'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, PATCH, DELETE, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type, If-Match',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type, If-Match, Range',
       'Access-Control-Expose-Headers': 'Location, ETag, Link, Accept-Patch', ...extra });
     res.end(data);
   }
@@ -228,6 +288,9 @@ export function startShim(o) {
   const pinger = setInterval(() => { for (const c of clients) if (c.open) c.socket.write(wsFrame(9, Buffer.alloc(0))); }, 25000);
   const esc = path.replace(/[-/]/g, '\\$&');
   const whepRe = new RegExp(`^/${esc}(/(?:240|360|480|720|1080|1440)p)?/whep(/[A-Za-z0-9_-]{1,128})?$`);
+  const hlsRe = new RegExp(`^/${esc}(/(?:240|360|480|720|1080|1440)p)?/hls/([A-Za-z0-9_][A-Za-z0-9_.-]{0,79})$`);
+  const sessionRe = new RegExp(`^/${esc}/session(?:/([0-9a-f]{32}))?$`);
+  const scriptRe = /^(?:\/[a-zA-Z0-9][a-zA-Z0-9_-]{0,63})?\/assets\/js\/([A-Za-z0-9][A-Za-z0-9._-]{0,80}\.(?:js|txt))$/;
 
   const server = createServer(async (req, res) => {
     stats.http++;
@@ -246,8 +309,20 @@ export function startShim(o) {
       if (!['POST', 'PATCH', 'DELETE'].includes(req.method)) return send(res, 405, 'text/plain; charset=utf-8', 'Method not allowed');
       return whep(req, res, p);
     }
+    let m;
+    if (o.hls && (m = sessionRe.exec(p)) && req.method !== 'OPTIONS') return session(req, res, m[1]);
+    if (p === `/${path}/stats` && req.method === 'POST') { for await (const _ of req); return send(res, 204, '', ''); }  // the page's stats beacon
     if (req.method === 'OPTIONS') return send(res, 204, '', '');
     if (req.method !== 'GET' && req.method !== 'HEAD') return send(res, 405, 'text/plain; charset=utf-8', 'Method not allowed');
+    if (o.hls && (m = hlsRe.exec(p))) {
+      try { return await hls(req, res, path + (m[1] || ''), m[2], url.searchParams); } catch { if (!res.headersSent) return send(res, 502, 'text/plain; charset=utf-8', 'Upstream error'); return res.destroy(); }
+    }
+    if (o.hls && p === `/${path}/live.m3u8`) {
+      const q = url.searchParams.get('q') || '';
+      const body = /^(|source|(240|360|480|720|1080|1440)p)$/.test(q) ? liveMaster(q) : '';
+      return body ? sendHls(res, 200, 'application/vnd.apple.mpegurl', body, { 'Cache-Control': 'max-age=1' }) : send(res, 404, 'text/plain; charset=utf-8', 'Quality is not available');
+    }
+    if ((m = scriptRe.exec(p)) && existsSync(join(ui, 'assets', 'js', m[1]))) return send(res, 200, m[1].endsWith('.js') ? 'text/javascript; charset=utf-8' : 'text/plain; charset=utf-8', readFileSync(join(ui, 'assets', 'js', m[1])), { 'Cache-Control': 'public, max-age=31536000, immutable' });
     if (p === '/api/broadcasts') return json(res, 200, [{ id: broadcastId, path, title: '부하 시험 대상', viewerUrl: `/${path}`, live: true }]);
     if (p === `/${path}/info`) return json(res, 200, info());
     if (p === `/${path}/dvr`) { stats.dvrIndex++; return json(res, 200, o.record ? await dvrIndex() : { running: true, id: broadcastId, dvr: false }); }
@@ -264,6 +339,7 @@ export function startShim(o) {
     if (p !== `/${path}/chat` || String(req.headers.upgrade).toLowerCase() !== 'websocket' || !req.headers['sec-websocket-key']) return socket.end('HTTP/1.1 400 Bad Request\r\nContent-Length: 0\r\nConnection: close\r\n\r\n');
     chat(req, socket);
   });
+  server.keepAliveTimeout = 65000;
   return new Promise((resolve, reject) => {
     server.once('error', reject);
     server.listen(port, bind, () => resolve({ broadcastId, stats, limits: { maxHttp, maxRequests, maxChat, chatNames }, chatClients: () => clients.size, close: () => { clearInterval(pinger); for (const c of clients) c.socket.destroy(); server.closeAllConnections?.(); server.close(); } }));

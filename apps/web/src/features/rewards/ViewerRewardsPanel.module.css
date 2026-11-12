@@ -1,0 +1,62 @@
+.card { display: flex; flex: none; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px 10px; margin: 10px 12px 0; padding: 7px 11px; border: 1px solid #dce7e0; border-radius: 8px; background: #fafcfb; }
+.card > span { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; min-width: 0; color: #718477; font-size: 12px; line-height: 1.6; }
+.card strong { color: #365841; font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.watchHint { flex-basis: 100%; margin: 0; color: #7d8f83; font-size: 11px; line-height: 1.6; overflow-wrap: anywhere; }
+.textButton { min-height: 28px; padding: 2px 0; border: 0; border-radius: 4px; background: transparent; color: var(--frame-green-ink); font-size: 12px; font-weight: 700; }
+.textButton:hover:not(:disabled) { text-decoration: underline; text-underline-offset: 3px; }
+.dialog { box-sizing: border-box; width: min(540px, calc(100% - 32px)); max-height: calc(100dvh - 32px); margin: auto; padding: 0; overflow: auto; overscroll-behavior: contain; border: 1px solid #dfe8e2; border-radius: 15px; background: #fff; color: #304538; box-shadow: 0 18px 64px #132c2730; }
+.dialog::backdrop { background: #10251d66; backdrop-filter: blur(2px); }
+.header { position: sticky; top: 0; z-index: 1; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 15px 14px 22px; border-bottom: 1px solid #edf1ee; background: #fff; }
+.header h2 { margin: 0; font-size: 17px; font-weight: 720; line-height: 1.5; }
+.header h2:focus, .success:focus { outline: none; }
+.iconButton { display: grid; place-items: center; flex: none; width: 36px; height: 36px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: #718477; }
+.iconButton:hover:not(:disabled) { background: #edf5f0; color: var(--frame-green-ink); }
+.iconButton:disabled { opacity: .5; }
+.body { display: grid; gap: 20px; min-width: 0; padding: 22px; }
+.wallet { padding: 16px 18px; border: 1px solid #d8e9df; border-radius: 10px; background: #f5faf7; }
+.wallet > div { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.wallet span { color: #718477; font-size: 12px; }
+.wallet strong { color: #365841; font-size: 23px; font-weight: 730; font-variant-numeric: tabular-nums; }
+.wallet p { margin: 9px 0 0; color: #7d8f83; font-size: 11px; line-height: 1.8; }
+.tabs { display: flex; flex-wrap: wrap; gap: 5px 18px; border-bottom: 1px solid #e8eeea; }
+.tabs button { min-height: 40px; margin-bottom: -1px; padding: 5px 0 10px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: #819087; font-size: 13px; font-weight: 650; }
+.tabs [aria-current='page'] { border-bottom-color: var(--frame-green); color: var(--frame-green-ink); }
+.list { display: grid; gap: 11px; margin: 0; padding: 0; list-style: none; }
+.list > li { min-width: 0; padding: 14px 15px; border: 1px solid #e2e9e5; border-radius: 9px; }
+.row { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 8px 14px; min-width: 0; }
+.row > div { flex: 1; min-width: 90px; }
+.row strong { display: block; color: #38513f; font-size: 14px; font-weight: 650; line-height: 1.7; overflow-wrap: anywhere; }
+.row small { display: block; margin-top: 4px; color: #819087; font-size: 11px; line-height: 1.6; }
+.cost { flex: none; color: var(--frame-green-ink); font-size: 14px; font-weight: 700; line-height: 1.7; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.rowActions { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 7px 12px; margin-top: 12px; }
+.rowActions time { color: #819087; font-size: 11px; line-height: 1.6; font-variant-numeric: tabular-nums; }
+.copy { margin: 0; color: #657c6c; font-size: 13px; line-height: 1.8; white-space: pre-wrap; overflow-wrap: anywhere; }
+.detail { margin: 0; padding: 15px 16px; border: 1px solid #dce8e1; border-radius: 10px; background: #f7faf8; }
+.detail > div { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 4px 12px; padding: 6px 0; color: #718477; font-size: 13px; line-height: 1.7; }
+.detail dt { flex: none; }
+.detail dd { margin: 0; color: #38513f; font-weight: 650; overflow-wrap: anywhere; }
+.form { display: grid; min-width: 0; gap: 12px; }
+.fieldHeading { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; color: #365841; font-size: 13px; font-weight: 650; }
+.fieldHeading small { color: #819087; font-size: 11px; font-weight: 450; }
+.textarea { box-sizing: border-box; width: 100%; min-height: 100px; resize: vertical; padding: 12px 14px; border: 1px solid #d8e3dc; border-radius: 9px; background: #fff; color: #38513f; font: inherit; font-size: 14px; line-height: 1.75; }
+.textarea::placeholder { color: #9aa79e; }
+.textarea:focus { outline: 2px solid #abd4bc; outline-offset: 2px; border-color: #8fbea2; }
+.textarea[aria-invalid='true'] { border-color: #cb8392; }
+.textarea:read-only { background: #f5f7f6; }
+.actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 8px; }
+.button { display: inline-flex; justify-content: center; align-items: center; gap: 7px; min-width: 0; min-height: 40px; padding: 8px 13px; border: 1px solid #d9e4dd; border-radius: 8px; background: #fff; color: #4b6353; font-size: 13px; font-weight: 650; line-height: 1.5; }
+.button:hover:not(:disabled) { border-color: #aecdbb; background: #f3f9f5; }
+.primary { border-color: var(--frame-green); background: var(--frame-green-bright); color: var(--frame-green-on-bright); }
+.primary:hover:not(:disabled) { background: var(--frame-green-bright-hover); }
+.button:disabled { border-color: #e4eae6; background: #f2f5f3; color: #96a49b; cursor: default; }
+.error, .hint, .success, .empty { margin: 0; color: #7d8f83; font-size: 12px; font-weight: 450; line-height: 1.8; overflow-wrap: anywhere; }
+.error { color: #a3374c; }
+.success { color: var(--frame-green-ink); }
+.more { display: grid; justify-items: center; gap: 7px; margin-top: 13px; }
+@media (max-width: 600px) {
+  .dialog { width: calc(100% - 24px); max-height: calc(100dvh - 24px); border-radius: 13px; }
+  .header { padding: 12px 12px 12px 18px; }
+  .body { padding: 19px 18px; gap: 18px; }
+  .wallet { padding: 14px; }
+  .list > li { padding: 13px; }
+}

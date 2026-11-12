@@ -1,0 +1,6 @@
+time,path,session,broadcast,transport,mode,quality,height,fps,loss_pct,jitter_ms,freezes,mbps,abr_switches,last_switch,event,device
+2026-11-11T07:11:00.422Z,screen-01,e2e1,15a13788f1a9ade7fe2ea682f564ba61,webrtc,auto,720p,720,29.9,0.12,14,0,2.9,1,"720p>480p loss, ""x""","'=HYPERLINK(""x"")",desktop
+2026-11-11T07:11:00.434Z,screen-01,e2e2,15a13788f1a9ade7fe2ea682f564ba61,webrtc,auto,720p,720,29.9,0.12,14,0,2.9,1,"720p>480p loss, ""x""","'=HYPERLINK(""x"")",desktop
+2026-11-11T07:11:42.363Z,screen-01,7ipsr1l761,15a13788f1a9ade7fe2ea682f564ba61,hls,manual,720p,720,29.9,,,0,12.6,0,,,desktop
+2026-11-11T07:11:57.349Z,screen-01,7ipsr1l761,15a13788f1a9ade7fe2ea682f564ba61,hls,manual,720p,720,29.9,,,0,9.6,0,,,desktop
+

@@ -1,0 +1,1 @@
+﻿stage,mode,index,profile,viewport,dpr,error,transport,level,firstFrameMs,presentedFps,decodedFps,decodedFpsBasis,droppedVideoFrames,pdtDelayP50Ms,hlsLatencyP50Ms,hlsStalls,decodedWidth,decodedHeight,freezes,maxGapMs,videoKbps,videoLossRatio,jitterBufferMs,peerConnections,connectionChangedInWindow,latencyP50Ms

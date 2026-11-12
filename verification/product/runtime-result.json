@@ -1,0 +1,41 @@
+{
+  "generatedAt": "2026-11-11T09:12:42.614Z",
+  "runtime": {
+    "running": true,
+    "postgres": {
+      "host": "127.0.0.1",
+      "port": 15432,
+      "version": "17.11",
+      "database": "frame_product",
+      "verifyDatabase": "frame_product_verify",
+      "appRoleSuperuser": false,
+      "appRoleCreateDatabase": false,
+      "appRoleCreateRole": false,
+      "mainDatabaseInitiallyEmpty": true
+    },
+    "redis": {
+      "host": "127.0.0.1",
+      "port": 16379,
+      "version": "8.10.3",
+      "authenticationRequired": true,
+      "namespace": "frame:product:sessions",
+      "maxmemory": "128mb",
+      "policy": "noeviction",
+      "appendOnly": true,
+      "communityWindowsBuild": true,
+      "archiveSha256": "8000848c48668c8cd32f21386ce951d0e02c1aefae39443ab9d3de11ff8ebf9e"
+    }
+  },
+  "checks": {
+    "repeatStartNoOp": true,
+    "repeatStartPreservedPids": true,
+    "postgresAppConnection": true,
+    "redisAuthenticatedPing": true,
+    "redisUnauthenticatedPingDenied": true,
+    "onlyLoopbackListeners": true,
+    "credentialsOutsideRepository": true,
+    "existingPostgres5432Untouched": true,
+    "obsMediaRuntimeUntouched": true
+  },
+  "privateConfigPath": "C:\\Users\\wlsdu\\AppData\\Local\\Frame\\product\\config.json"
+}

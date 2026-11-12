@@ -1,0 +1,2 @@
+.button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 44px; padding: 8px 14px; border: 1px solid var(--frame-green-line); border-radius: 8px; background: var(--frame-green-soft); color: var(--frame-green-ink); font-size: 14px; font-weight: 650; white-space: nowrap; }
+.button:hover { border-color: var(--frame-green); background: var(--frame-green-selected); }

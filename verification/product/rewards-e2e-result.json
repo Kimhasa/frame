@@ -1,0 +1,35 @@
+{
+  "verificationDatabaseOnly": true,
+  "productionUserDataUntouched": true,
+  "nativeObsReceiverUntouched": true,
+  "complete": true,
+  "testedJarSha256": "7b77ca3c9651d9aaa8a429164aa3d8282c4209a1287bebffd0ff295db3459dc1",
+  "results": [
+    {
+      "name": "Real reward submission and management UI verification pass",
+      "pass": true
+    },
+    {
+      "name": "One low-resolution source is replaced sequentially to verify old broadcast protection",
+      "pass": true
+    },
+    {
+      "name": "Read-only development StrictMode management UI verification passes",
+      "pass": true
+    },
+    {
+      "name": "Balances, ledger entries and redemption history persist after restart",
+      "pass": true
+    },
+    {
+      "name": "The tested private JAR stays immutable throughout verification",
+      "pass": true
+    }
+  ],
+  "fixture": "Dedicated MediaMTX + 320x180 15fps H.264/AAC FFmpeg source + immutable Spring JAR + production React + headless Edge",
+  "limits": [
+    "Single PC and loopback only",
+    "No Caddy HTTPS/WSS or physical mobile device coverage",
+    "No load or capacity claim"
+  ]
+}

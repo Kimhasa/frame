@@ -1,0 +1,106 @@
+{
+  "origin": "http://127.0.0.1:5364",
+  "verificationDatabaseOnly": true,
+  "faultInjection": [
+    "Private/public GET 503",
+    "Save 503",
+    "Server time conflict",
+    "Delayed POST",
+    "Cancel 503"
+  ],
+  "results": [
+    {
+      "name": "List failure is displayed instead of fake empty data",
+      "pass": true
+    },
+    {
+      "name": "List retry recovers the real empty state",
+      "pass": true
+    },
+    {
+      "name": "New reservation focuses its title",
+      "pass": true
+    },
+    {
+      "name": "Blank title error focuses the field",
+      "pass": true
+    },
+    {
+      "name": "Failed save keeps the dialog and entered fields",
+      "pass": true
+    },
+    {
+      "name": "Pending save disables fields and close",
+      "pass": true
+    },
+    {
+      "name": "Pending Escape and Enter cannot close or duplicate the request",
+      "pass": true
+    },
+    {
+      "name": "Server success adds the reservation to the table",
+      "pass": true
+    },
+    {
+      "name": "Reservation survives browser reload",
+      "pass": true
+    },
+    {
+      "name": "Seoul date and time reach the server unchanged",
+      "pass": true
+    },
+    {
+      "name": "Preview query parameters cannot hide real schedules",
+      "pass": true
+    },
+    {
+      "name": "Known duplicate is rejected before submission",
+      "pass": true
+    },
+    {
+      "name": "Server conflict keeps entered values and focuses time",
+      "pass": true
+    },
+    {
+      "name": "Edit updates the same stored reservation",
+      "pass": true
+    },
+    {
+      "name": "Schedule table has no horizontal overflow on mobile",
+      "pass": true
+    },
+    {
+      "name": "Public schedule failure is not presented as no reservations",
+      "pass": true
+    },
+    {
+      "name": "Anonymous public channel shows the real edited schedule in Seoul time",
+      "pass": true
+    },
+    {
+      "name": "Anonymous studio redirects to login with a return path",
+      "pass": true
+    },
+    {
+      "name": "Cancellation failure keeps the reservation and confirmation dialog",
+      "pass": true
+    },
+    {
+      "name": "Successful cancellation removes the row and restores a valid focus target",
+      "pass": true
+    },
+    {
+      "name": "Cancellation persists after browser reload",
+      "pass": true
+    },
+    {
+      "name": "Cancelled reservation disappears from the public channel",
+      "pass": true
+    },
+    {
+      "name": "No browser runtime or interception errors",
+      "pass": true
+    }
+  ],
+  "runtimeErrors": []
+}

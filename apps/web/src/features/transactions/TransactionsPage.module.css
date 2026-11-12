@@ -1,0 +1,24 @@
+.filters { display: grid; grid-template-columns: minmax(0, 430px) repeat(2, minmax(132px, 156px)) auto; align-items: end; justify-content: start; gap: 8px; }
+.filters input, .choices select { min-height: 44px; padding: 8px 12px; border: 1px solid #dce5e0; border-radius: 8px; background: #fff; color: #344a3e; font-size: 14px; }
+.filters input { width: 100%; min-width: 0; }
+.filters input::placeholder { color: #62746a; }
+.filters input[aria-invalid='true'] { border-color: #c0586b; }
+.dateField { display: grid; gap: 5px; min-width: 0; color: #53675d; font-size: 12px; }
+.choices, .filterActions, .pagination > div { display: flex; flex-wrap: wrap; gap: 8px; }
+.choices { margin: 12px 0 19px; }
+.choices select { max-width: 100%; cursor: pointer; }
+.error { margin: 0 0 14px; color: #a22d3f; font-size: 14px; }
+.description { display: grid; gap: 5px; }
+.description strong { font-weight: 650; }
+.description span { color: #62746a; font-size: 12px; }
+.amount { font-weight: 680; font-variant-numeric: tabular-nums; }
+.pagination { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 14px; color: #52675c; font-size: 13px; }
+.notice { margin: 14px 0 0; color: #52675c; font-size: 14px; line-height: 1.6; overflow-wrap: anywhere; }
+@container (max-width: 690px) {
+  .filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .filters > input, .filterActions { grid-column: 1 / -1; }
+  .description { text-align: right; }
+}
+@media (max-width: 600px) {
+  .filters input, .choices select { font-size: 16px; }
+}

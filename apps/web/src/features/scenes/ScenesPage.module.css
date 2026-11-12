@@ -1,0 +1,46 @@
+.editor :is(input, select) { min-height: 44px; padding: 8px 12px; border: 1px solid #dce5e0; border-radius: 8px; background: #fff; color: #344a3e; font-size: 14px; }
+.sceneList button[aria-pressed='true'] { border-color: var(--frame-green-line); background: var(--frame-green-soft); color: var(--frame-green-ink); }
+.sceneList button[aria-pressed='true'] { background: var(--frame-green-selected); }
+.sceneList { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+.sceneList button { max-width: 100%; white-space: normal; overflow-wrap: anywhere; text-align: left; }
+.layout { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 20px; }
+.previewCard, .sources { min-width: 0; overflow: hidden; border: 1px solid #e2e8e4; border-radius: 10px; background: #fff; }
+.canvas { position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: #152028; }
+.canvas > img { width: 100%; height: 100%; object-fit: cover; }
+.canvasEmpty { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 10px; padding: 16px; color: #b7c4c1; text-align: center; }
+.canvasEmpty p { margin: 0; font-size: 14px; }
+.overlays { position: absolute; right: 14px; bottom: 14px; left: 14px; display: flex; flex-wrap: wrap; gap: 6px; max-height: calc(100% - 28px); overflow: auto; }
+.overlays span { max-width: 100%; padding: 6px 10px; border: 1px solid #c4efda55; border-radius: 6px; background: #173b2fe8; color: #d6f7e6; font-size: 12px; overflow-wrap: anywhere; }
+.previewCaption { padding: 17px 18px; }
+.previewCaption h2 { margin: 0 0 6px; font-size: 18px; font-weight: 700; overflow-wrap: anywhere; }
+.previewCaption > span { color: #53675d; font-size: 13px; }
+.previewCaption p { display: flex; align-items: baseline; gap: 6px; margin: 12px 0 0; color: #53675d; font-size: 13px; line-height: 1.6; overflow-wrap: anywhere; }
+.previewCaption p svg { flex: none; align-self: center; color: var(--frame-green); }
+.sourcesHeader { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 18px; border-bottom: 1px solid #e9eeeb; }
+.sourcesHeader h2 { margin: 0; font-size: 17px; }
+.sourceList { margin: 0; padding: 0; list-style: none; }
+.sourceList li { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 17px 18px; border-bottom: 1px solid #e9eeeb; }
+.sourceList li:last-child { border: 0; }
+.sourceCopy { min-width: 0; }
+.sourceCopy h3 { margin: 0; font-size: 15px; font-weight: 650; line-height: 1.6; overflow-wrap: anywhere; }
+.sourceCopy p { margin: 3px 0 8px; color: #53675d; font-size: 13px; }
+.sourceActions { display: flex; flex: none; flex-wrap: wrap; gap: 6px; }
+.sourceEmpty { display: grid; place-content: center; min-height: 170px; padding: 20px; color: #53675d; font-size: 14px; text-align: center; }
+.notice { margin: 14px 0 0; color: #52675c; font-size: 14px; line-height: 1.6; overflow-wrap: anywhere; }
+.editor { display: grid; gap: 16px; margin-top: 18px; }
+.editor label { display: grid; gap: 7px; color: #53675d; font-size: 14px; font-weight: 650; }
+.editor :is(input, select) { width: 100%; min-width: 0; }
+.error { margin: 0; color: #a22d3f; font-size: 14px; }
+.deleteName { padding: 14px; border-radius: 8px; background: #f3f6f4; font-size: 14px; line-height: 1.6; overflow-wrap: anywhere; }
+@container (max-width: 900px) {
+.layout { grid-template-columns: minmax(0, 1fr); }
+
+
+}
+@media (max-width: 600px) {
+.editor :is(input, select) { font-size: 16px; }
+.sourceList li { flex-wrap: wrap; }
+.sourceActions { margin-left: auto; }
+
+
+}

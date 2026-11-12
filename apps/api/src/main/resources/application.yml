@@ -1,0 +1,173 @@
+# FRAME backend settings, fed by the Node relay's environment variables of the same meaning and defaults
+# (deploy/relay.env.example, server/lib/config.mjs), so one relay.env drives either backend. As in the Node relay, a variable
+# set to an empty value counts as unset (BlankRelayVariables), and an unknown RELAY_* variable is named in a startup warning.
+server:
+  address: ${RELAY_LISTEN_HOST:127.0.0.1}
+  port: ${RELAY_PORT:8080}
+  # A stop (systemctl restart, SIGTERM) lets requests in flight finish, but only for the lifecycle timeout below.
+  shutdown: graceful
+  tomcat:
+    # Longer than the front proxy's idle pool (Caddy keepalive 60s), so it never reuses a socket this server just closed.
+    keep-alive-timeout: 65s
+    # LL-HLS makes several requests per second per viewer over the proxy's pooled connections: never recycle them (Node: no limit).
+    max-keep-alive-requests: -1
+    connection-timeout: 10s
+    # RELAY_MAX_SOCKETS is answered with 503 + Retry-After by web/WebDefaults; Tomcat's own limit stays above it.
+    max-connections: 20000
+  error:
+    include-stacktrace: never
+    include-message: never
+    whitelabel:
+      enabled: false
+
+spring:
+  datasource:
+    url: ${FRAME_PRODUCT_DB_URL:}
+    username: ${FRAME_PRODUCT_DB_USERNAME:}
+    password: ${FRAME_PRODUCT_DB_PASSWORD:}
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 1
+      connection-timeout: 5000
+  data:
+    redis:
+      repositories:
+        enabled: false
+      host: ${FRAME_PRODUCT_REDIS_HOST:127.0.0.1}
+      port: ${FRAME_PRODUCT_REDIS_PORT:16379}
+      password: ${FRAME_PRODUCT_REDIS_PASSWORD:}
+      connect-timeout: 2s
+      timeout: 2s
+  session:
+    timeout: 12h
+    redis:
+      namespace: ${FRAME_PRODUCT_REDIS_NAMESPACE:frame:product:sessions}
+      repository-type: default
+      configure-action: none
+  flyway:
+    enabled: true
+    validate-on-migrate: true
+    clean-disabled: true
+    baseline-on-migrate: false
+  sql:
+    init:
+      mode: never
+  application:
+    name: frame-api
+  main:
+    banner-mode: off
+  # How long a stop waits for requests in flight (the Node relay: 1.5 s). A viewer's blocking LL-HLS reload can be held by
+  # MediaMTX for up to 15 s; without this limit one such request would hold a restart that long (default 30 s). Requests
+  # cut off here are retried by the players, which reach the front proxy's 502 until the service is back anyway.
+  lifecycle:
+    timeout-per-shutdown-phase: 2s
+  # The API never takes multipart or form bodies: controllers read the raw body themselves after their checks.
+  servlet:
+    multipart:
+      enabled: false
+  mvc:
+    formcontent:
+      filter:
+        enabled: false
+  # LL-HLS holds playlist requests open until MediaMTX has the next part: one virtual thread per request keeps that cheap.
+  threads:
+    virtual:
+      enabled: true
+
+frame:
+  product:
+    enabled: ${FRAME_PRODUCT_ENABLED:false}
+    public-origin: ${FRAME_PRODUCT_PUBLIC_ORIGIN:http://127.0.0.1:5360}
+    cookie-secure: ${FRAME_PRODUCT_COOKIE_SECURE:false}
+  # Public origin viewers use (list baseUrl, thumbnailUrl). Empty: taken from the trusted proxy's X-Forwarded-* or Host.
+  public-base-url: ${RELAY_PUBLIC_BASE_URL:}
+  # Front proxies whose X-Forwarded-For/-Proto/-Host are believed (Caddy on loopback).
+  trusted-proxies: ${RELAY_TRUSTED_PROXIES:127.0.0.1,::1}
+  # "<token> <path> [<path> ...]" entries, comma separated, and/or a file with one entry per line. Never in the repository.
+  publisher-tokens: ${RELAY_PUBLISHER_TOKENS:}
+  publisher-tokens-file: ${RELAY_PUBLISHER_TOKENS_FILE:}
+  # OBS media is auto-registered by the backend; no native announce heartbeat is needed.
+  obs:
+    enabled: ${RELAY_OBS_ENABLED:false}
+    server-url: ${RELAY_OBS_SERVER_URL:rtmp://127.0.0.1:1935}
+  payments:
+    enabled: ${TOSS_TEST_ENABLED:false}
+    client-key: ${TOSS_TEST_CLIENT_KEY:}
+    secret-key: ${TOSS_TEST_SECRET_KEY:}
+    security-key: ${TOSS_TEST_SECURITY_KEY:}
+    store-dir: ${TOSS_TEST_STORE_DIR:}
+  hls: ${RELAY_HLS:true}
+  # HLS audio for senders without an AAC track (older apps): the relay's Opus -> AAC transcode path <path>/aac.
+  hls-aac: ${RELAY_HLS_AAC:false}
+  # JSON array of RTCPeerConnection iceServers handed out in /info (plus TURN REST credentials, below).
+  ice-servers: ${RELAY_ICE_SERVERS:[]}
+  # An announced broadcast lives this long after its last announcement (the sender announces every 2 s).
+  announce-ttl-ms: ${RELAY_ANNOUNCE_TTL_MS:15000}
+  # While announced, a broadcast whose media stopped arriving stays {"running":true,"mediaReady":false} this long.
+  media-grace-ms: ${RELAY_MEDIA_GRACE_MS:15000}
+  # Viewer sessions (heartbeat every 15 s) are active while the last heartbeat is this recent.
+  session-active-ms: ${RELAY_SESSION_ACTIVE_MS:30000}
+  # Fallback viewer count of HLS clients without a session (address + browser seen within hls-active-ms). Behind a CDN: off.
+  hls-count-without-session: ${RELAY_HLS_COUNT_WITHOUT_SESSION:true}
+  hls-active-ms: ${RELAY_HLS_ACTIVE_MS:12000}
+  mediamtx:
+    api: ${RELAY_MEDIAMTX_API:http://127.0.0.1:9997}
+    hls: ${RELAY_MEDIAMTX_HLS:http://127.0.0.1:8888}
+    webrtc: ${RELAY_MEDIAMTX_WEBRTC:http://127.0.0.1:8889}
+    playback: ${RELAY_MEDIAMTX_PLAYBACK:http://127.0.0.1:9996}
+    api-user: ${RELAY_MEDIAMTX_API_USER:}
+    api-pass: ${RELAY_MEDIAMTX_API_PASS:}
+    # A failing or slow API keeps the last good path list this long (marked stale) instead of showing every broadcast offline.
+    stale-ms: ${RELAY_MEDIAMTX_STALE_MS:15000}
+  # The quality ladder: one FFmpeg per broadcast publishes the source copy (<path>/src) and these qualities. Empty: source only.
+  quality:
+    renditions: ${RELAY_RENDITIONS:}
+    ffmpeg: ${RELAY_FFMPEG:ffmpeg}
+    rtsp: ${RELAY_MEDIAMTX_RTSP:rtsp://127.0.0.1:8554}
+    idle-ms: ${RELAY_LADDER_IDLE_MS:300000}
+  # DVR from the relay MediaMTX recording (<record-dir>/<path>/rec). Without a folder there is no dvr.m3u8.
+  dvr:
+    enabled: ${RELAY_DVR:true}
+    record-dir: ${RELAY_RECORD_DIR:}
+  turn:
+    urls: ${RELAY_TURN_URLS:}
+    secret: ${RELAY_TURN_SECRET:}
+    ttl-s: ${RELAY_TURN_TTL_S:3600}
+  stats:
+    dir: ${RELAY_STATS_DIR:}
+    max-mb: ${RELAY_STATS_MAX_MB:50}
+    keep-days: ${RELAY_STATS_KEEP_DAYS:30}
+  # The existing viewer page (/ and /<path>): the sender app's UI build from a configured file, never from its source folder.
+  legacy-ui:
+    file: ${RELAY_UI_FILE:}
+    fonts-dir: ${RELAY_FONTS_DIR:}
+    js-dir: ${RELAY_JS_DIR:}
+  limits:
+    sockets: ${RELAY_MAX_SOCKETS:4000}
+    broadcasts: ${RELAY_MAX_BROADCASTS:64}
+    viewers-per-path: ${RELAY_MAX_VIEWERS_PER_PATH:1000}
+    sessions-per-ip: ${RELAY_MAX_SESSIONS_PER_IP:200}
+    chat: ${RELAY_MAX_CHAT:2000}
+    chat-per-ip: ${RELAY_MAX_CHAT_PER_IP:50}
+    whep-inflight: ${RELAY_MAX_WHEP_INFLIGHT:64}
+    dvr-streams: ${RELAY_MAX_DVR_STREAMS:200}
+    dvr-per-ip: ${RELAY_MAX_DVR_PER_IP:16}
+    hls-inflight: ${RELAY_MAX_HLS_INFLIGHT:3000}
+    hls-per-ip: ${RELAY_MAX_HLS_PER_IP:300}
+  # Token buckets "burst/perSecond" per address (publish, session, chat, WHEP, DVR, stats) or per publisher token (announce).
+  rates:
+    publish-ip: ${RELAY_RATE_PUBLISH_IP:60/10}
+    announce: ${RELAY_RATE_ANNOUNCE:30/5}
+    auth-fail: ${RELAY_RATE_AUTH_FAIL:10/0.1667}
+    session: ${RELAY_RATE_SESSION:60/2}
+    chat-connect: ${RELAY_RATE_CHAT_CONNECT:60/5}
+    chat-send: ${RELAY_RATE_CHAT_SEND:60/6}
+    whep: ${RELAY_RATE_WHEP:60/2}
+    dvr: ${RELAY_RATE_DVR:120/20}
+    stats: ${RELAY_RATE_STATS:120/20}
+
+logging:
+  level:
+    # Only this backend's own lines, as in the Node relay: the server's request tracing could otherwise log publisher tokens.
+    root: info
+    frame: ${RELAY_LOG_LEVEL:info}

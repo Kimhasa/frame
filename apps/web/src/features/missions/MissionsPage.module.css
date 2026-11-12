@@ -1,0 +1,30 @@
+.filters { display: grid; grid-template-columns: minmax(0, 430px) repeat(2, minmax(132px, 156px)) auto; align-items: end; justify-content: start; gap: 8px; }
+.filters input, .editor :is(select, textarea) { min-height: 44px; padding: 8px 12px; border: 1px solid #dce5e0; border-radius: 8px; background: #fff; color: #344a3e; font-size: 14px; }
+.filters input { width: 100%; min-width: 0; }
+.filters input::placeholder { color: #62746a; }
+.dateField { display: grid; gap: 5px; min-width: 0; color: #53675d; font-size: 12px; }
+.filterActions { display: flex; flex-wrap: wrap; gap: 8px; }
+.sortField { width: max-content; max-width: 100%; margin: 12px 0 19px; }
+.error { margin: 0 0 14px; color: #a22d3f; font-size: 14px; }
+.notice { margin: 14px 0 0; color: #52675c; font-size: 14px; line-height: 1.6; overflow-wrap: anywhere; }
+.missionTitle { margin: 0 0 14px; font-size: 17px; line-height: 1.5; overflow-wrap: anywhere; }
+.info { display: grid; gap: 12px; margin: 0; padding: 14px; border-radius: 8px; background: #f3f6f4; }
+.info > div { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-size: 14px; line-height: 1.55; }
+.info dt { flex: none; color: #53675d; }
+.info dd { margin: 0; text-align: right; overflow-wrap: anywhere; }
+.history { margin-top: 18px; }
+.history h3 { margin: 0 0 8px; font-size: 15px; }
+.history ol { margin: 0; padding-left: 20px; color: #52675c; font-size: 14px; line-height: 1.6; }
+.history p { margin: 0 0 8px; overflow-wrap: anywhere; }
+.editor { display: grid; gap: 8px; margin-top: 18px; }
+.editor label { display: grid; gap: 7px; color: #53675d; font-size: 14px; font-weight: 650; }
+.editor :is(select, textarea) { width: 100%; min-width: 0; }
+.editor textarea { resize: vertical; line-height: 1.6; }
+
+@container (max-width: 690px) {
+  .filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .filters > input, .filterActions { grid-column: 1 / -1; }
+}
+@media (max-width: 600px) {
+  .filters input, .editor :is(select, textarea) { font-size: 16px; }
+}

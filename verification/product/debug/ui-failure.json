@@ -1,0 +1,26 @@
+{
+  "results": [
+    {
+      "name": "Browser signup creates and logs in account",
+      "pass": true
+    },
+    {
+      "name": "Channel text survives browser reload",
+      "pass": true
+    },
+    {
+      "name": "Saved channel banner displays publicly",
+      "pass": true
+    },
+    {
+      "name": "Profile name survives browser reload",
+      "pass": true
+    },
+    {
+      "name": "Fresh account has no shared operator studio",
+      "pass": true
+    }
+  ],
+  "error": "UI timeout: ownedstudio",
+  "runtimeErrors": []
+}

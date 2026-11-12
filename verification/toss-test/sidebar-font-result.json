@@ -1,0 +1,38 @@
+{
+  "results": [
+    {
+      "width": 1440,
+      "home": {
+        "fontSize": "15px",
+        "fontWeight": "550",
+        "height": 46,
+        "lineHeight": "21.75px",
+        "iconWidth": 22
+      },
+      "studio": {
+        "fontSize": "15px",
+        "fontWeight": "550",
+        "height": 46,
+        "lineHeight": "21.75px",
+        "iconWidth": 22
+      }
+    },
+    {
+      "width": 390,
+      "home": {
+        "fontSize": "15px",
+        "fontWeight": "550",
+        "height": 46,
+        "lineHeight": "21.75px",
+        "iconWidth": 22
+      },
+      "studio": {
+        "fontSize": "15px",
+        "fontWeight": "550",
+        "height": 46,
+        "lineHeight": "21.75px",
+        "iconWidth": 22
+      }
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+.summary { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; }
+.appIcon { display: grid; flex: none; place-items: center; width: 46px; height: 46px; border: 1px solid #dce7df; border-radius: 11px; background: #f0f7f2; color: #52785f; }
+.summary strong { font-size: 15px; font-weight: 700; }
+.summary p { margin: 5px 0 0; color: #718176; font-size: 12px; line-height: 1.6; }
+.details { display: grid; gap: 16px; margin: 0; padding-block: 18px; border-block: 1px solid #e8edea; }
+.details > div { display: flex; align-items: center; justify-content: space-between; gap: 16px; font-size: 13px; line-height: 1.6; }
+.details dt { flex: none; color: #6a7b70; }
+.details dd { margin: 0; color: #344a3e; text-align: right; }
+.state { display: flex; align-items: flex-start; gap: 9px; margin-top: 20px; padding: 12px; border: 1px solid var(--frame-green-line); border-radius: 8px; background: var(--frame-green-soft); color: var(--frame-green-ink); font-size: 13px; line-height: 1.7; }
+.state[data-state='failed'] { border-color: #ead6b8; background: #fff7eb; color: #794e1e; }
+.state[data-state='checking'] { border-color: #e3e9e5; background: #f5f7f6; color: #617568; }
+.state > svg { flex: none; margin-top: 2px; }
+.state p { margin: 0; }
+.help { margin: 12px 0 0; color: #718176; font-size: 12px; line-height: 1.7; }
+.spinner { animation: spin .9s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spinner { animation: none; } }

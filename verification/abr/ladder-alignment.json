@@ -1,0 +1,13 @@
+{
+  "at": "2026-11-02T05:26:10Z",
+  "what": "Same-date segment of every HLS variant of the running app broadcast (motion-test window, 1080p60 NVENC VBR 8.5 Mbps, audio none), fetched through the viewer server (/screen-01/<q>/hls/video1_stream.m3u8) at the same moment; init + segment decoded, first frame of each side by side in ladder-alignment.png (src, 720p, 480p, 360p, 240p).",
+  "variants": {
+    "src":  { "mediaSequence": 76, "segment": "seg81", "programDateTime": "2026-11-02T05:26:07.090Z", "tfdtSeconds": 90.0, "bytes": 58820 },
+    "720p": { "mediaSequence": 76, "segment": "seg81", "programDateTime": "2026-11-02T05:26:07.090Z", "tfdtSeconds": 90.0, "bytes": 40578 },
+    "480p": { "mediaSequence": 75, "segment": "seg80", "programDateTime": "2026-11-02T05:26:07.090Z", "tfdtSeconds": 90.0, "bytes": 32862 },
+    "360p": { "mediaSequence": 18, "segment": "seg23", "programDateTime": "2026-11-02T05:26:07.090Z", "tfdtSeconds": 90.0, "bytes": 30749 },
+    "240p": { "mediaSequence": 75, "segment": "seg80", "programDateTime": "2026-11-02T05:26:07.090Z", "tfdtSeconds": 90.0, "bytes": 24246 }
+  },
+  "result": "identical PROGRAM-DATE-TIME and tfdt on all five variants; the decoded first frames show the same motion-test clock (05:26:07.139) and barcode",
+  "before": "separate per-quality runOnDemand encoders: PDT fractions .666 (source) vs .936/.937 (480p/240p), about 0.27 s apart; hls.js 'Adjusting initPTS' and fragGap emergency switches (client agent report, 2026-11-02)"
+}

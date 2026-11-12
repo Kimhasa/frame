@@ -1,0 +1,33 @@
+{
+  "origin": "http://127.0.0.1:5366",
+  "developmentStrictMode": true,
+  "dedicatedFixtureCookiesOnly": true,
+  "readOnly": true,
+  "results": [
+    {
+      "name": "Real development StrictMode retains exactly the dedicated account’s one already-read report notification",
+      "pass": true
+    },
+    {
+      "name": "The read report result stays open with its heading focused after development effect replay",
+      "pass": true
+    },
+    {
+      "name": "Escape restores the opening control and the zero-unread account has no false badge",
+      "pass": true
+    },
+    {
+      "name": "The notification inbox and personal report result fit a 320px viewport",
+      "pass": true
+    },
+    {
+      "name": "All notification requests keep the captured owner and the smoke performs no writes or runtime errors",
+      "pass": true
+    }
+  ],
+  "runtimeErrors": [],
+  "dataChangingRequests": 0,
+  "blockedWrites": 0,
+  "ownerHeadersMatched": true,
+  "complete": true
+}

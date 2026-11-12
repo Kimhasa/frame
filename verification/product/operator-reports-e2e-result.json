@@ -1,0 +1,46 @@
+{
+  "verificationDatabaseOnly": true,
+  "productionUserDataUntouched": true,
+  "productionOperatorNotAutomaticallyAssigned": true,
+  "mediaReceiverUntouched": true,
+  "complete": true,
+  "results": [
+    {
+      "name": "Real report management, workflow conflicts and permission checks pass browser verification",
+      "pass": true
+    },
+    {
+      "name": "Local operator command recognizes the explicitly granted verification account",
+      "pass": true
+    },
+    {
+      "name": "Explicit local revoke blocks an existing logged-in session",
+      "pass": true
+    },
+    {
+      "name": "Explicit local grant restores the same existing account without creating a user",
+      "pass": true
+    },
+    {
+      "name": "Read-only development StrictMode keeps operator dialogs and mobile layout working",
+      "pass": true
+    },
+    {
+      "name": "Operator authorization and Redis login survive API restart",
+      "pass": true
+    },
+    {
+      "name": "Review status, operator and note persist after API restart",
+      "pass": true
+    },
+    {
+      "name": "Closed reports remain immutable after restart",
+      "pass": true
+    }
+  ],
+  "limits": [
+    "Single PC, loopback and headless Edge only",
+    "No Caddy HTTPS/WSS, physical mobile device or load verification",
+    "Review status and notes do not execute channel restrictions or deletion"
+  ]
+}

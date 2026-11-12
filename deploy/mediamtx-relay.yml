@@ -1,10 +1,13 @@
 # FRAME 인터넷 중계 서버용 MediaMTX 1.21.3 설정 (deploy/README.md 참고).
 #
-# 역할: Windows 송출 앱(송출 PC마다 자기 계정)이 RTSPS로 원본 한 개(H.264 High, B프레임 없음, 1초 GOP + Opus)를 올리고,
-# 브라우저는 server/relay.mjs(HTTPS는 앞단 Caddy)를 통해서만 WebRTC(WHEP)·LL-HLS·DVR을 받는다.
+# 역할: Windows 송출 앱(송출 PC마다 자기 계정)이 RTSPS로 원본 한 개(H.264 High, B프레임 없음, 1초 GOP + 첫 음성 Opus(WebRTC)
+# + 둘째 음성 AAC-LC 48 kHz(HLS·녹화))를 올리고, 브라우저는 중계 웹 서비스(apps/api의 frame-api.jar, HTTPS는 앞단 Caddy)를 통해서만 받는다:
+# 일반 시청은 LL-HLS(relay가 만든 /<path>/live.m3u8), 녹화 다시보기는 HLS(/<path>/dvr.m3u8), WebRTC(WHEP)는 데스크톱 앱 수신과
+# HLS를 전혀 못 쓰는 브라우저용.
 #
 # 공개되는 포트는 RTSPS(송출)와 WebRTC ICE(UDP/TCP 8189)뿐이다. API·playback·metrics·HLS·WebRTC 협상 HTTP와
-# 평문 RTSP는 127.0.0.1에만 열고, 브라우저 요청은 relay.mjs가 검사한 뒤 루프백으로 넘긴다.
+# 평문 RTSP는 127.0.0.1에만 열고, 브라우저 요청은 중계 웹 서비스가 검사한 뒤 루프백으로 넘긴다.
+# OBS를 사용할 때는 deploy/OBS.md에 따라 RTMP를 켠다: 평문 RTMP는 루프백, 인터넷 송출은 RTMPS :1936.
 #
 # 비밀 값은 이 파일에 넣지 않는다. 환경변수가 같은 이름의 설정을 덮어쓴다(MediaMTX 기능):
 #   MTX_AUTHINTERNALUSERS_1_PASS, _2_PASS ...  송출 PC별 계정 비밀번호 (sha256:BASE64 해시, deploy/mediamtx.env.example)
@@ -22,9 +25,9 @@ udpMaxPayloadSize: 1200
 
 authMethod: internal
 authInternalUsers:
-  # 0: 이 서버 안의 프로세스만(relay.mjs, 화질별 공유 인코더). 익명 시청은 relay.mjs를 거친 루프백 요청으로만 가능하다.
-  #    WebRTC/HLS의 trustedProxies를 비워 두므로 MediaMTX는 모든 시청 요청을 127.0.0.1로 보고, 외부에서 RTSP로 직접
-  #    읽기·송출하는 길은 없다. 원본 경로(하위 경로가 없는 이름)에는 이 계정도 송출할 수 없다.
+  # 0: 이 서버 안의 프로세스만(중계 웹 서비스, 화질 래더, 녹화 복사). 익명 시청은 중계 웹 서비스를 거친 루프백 요청으로만
+  #    가능하다. WebRTC/HLS의 trustedProxies를 비워 두므로 MediaMTX는 모든 시청 요청을 127.0.0.1로 보고, 외부에서 RTSP로
+  #    직접 읽기·송출하는 길은 없다. 원본 경로(하위 경로가 없는 이름)에는 이 계정도 송출할 수 없다.
   - user: any
     pass:
     ips: ['127.0.0.1', '::1']
@@ -34,10 +37,11 @@ authInternalUsers:
       - action: api
       - action: metrics
       - action: publish
-        path: '~^[a-zA-Z0-9][a-zA-Z0-9_-]{0,63}/((240|360|480|720|1080|1440)p|aac)$'
+        path: '~^[a-zA-Z0-9][a-zA-Z0-9_-]{0,63}/(src|(240|360|480|720|1080|1440)p|aac|rec)$'
 
   # 1부터: 송출 PC마다 계정 하나. 각 계정은 자기 경로와(선택) 그 PC가 직접 만든 하위 화질 경로에만 송출할 수 있어서,
-  # 다른 송출 PC의 비밀번호로는 남의 경로를 쓸 수 없다(원래 송출 PC가 재연결하는 사이에도 가로챌 수 없음).
+  # 다른 송출 PC의 비밀번호로는 남의 경로를 쓸 수 없다(원래 송출 PC가 재연결하는 사이에도 가로챌 수 없음). 녹화 경로
+  # <path>/rec에는 어느 송출 PC도 송출할 수 없다(서버 안의 복사만).
   # 비밀번호 해시는 mediamtx.env의 MTX_AUTHINTERNALUSERS_<번호>_PASS. 송출 PC를 늘리면 같은 형식으로 항목을 추가하고,
   # relay.env 토큰 파일에서 그 PC의 토큰에 같은 경로를 준다(deploy/README.md 5·6장). 사용자 이름과 경로는 비밀이 아니다.
   - user: frame-sender-01
@@ -53,6 +57,15 @@ authInternalUsers:
       - action: publish
         path: '~^screen-02(/(240|360|480|720|1080|1440)p)?$'
 
+  # 3: optional OBS channel. Match this password to that channel's Spring publisher token (SHA-256 hash here).
+  # This example cannot publish until MTX_AUTHINTERNALUSERS_3_PASS is provisioned. No read/API permission.
+  - user: obs-spring
+    pass: "sha256:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+    ips: []
+    permissions:
+      - action: publish
+        path: obs-spring
+
 api: true
 apiAddress: 127.0.0.1:9997
 apiTrustedProxies: []
@@ -60,12 +73,12 @@ metrics: true
 metricsAddress: 127.0.0.1:9998
 pprof: false
 
-# DVR 녹화 조회·잘라 받기. relay.mjs만 접근한다.
+# DVR 녹화 조회·잘라 받기(이전 페이지의 /<path>/dvr/media). 중계 웹 서비스만 접근한다.
 playback: true
 playbackAddress: 127.0.0.1:9996
 playbackAllowOrigins: []
 
-# 송출 입력. 인터넷에서는 RTSPS(TLS)만 받는다. 평문 RTSP는 루프백 전용(서버 안의 화질 인코더가 원본을 읽는 용도).
+# 송출 입력. 인터넷에서는 RTSPS(TLS)만 받는다. 평문 RTSP는 루프백 전용(서버 안의 화질 인코더·녹화 복사가 원본을 읽는 용도).
 rtsp: true
 rtspTransports: [tcp]
 rtspEncryption: "optional"
@@ -78,10 +91,19 @@ rtspServerCert: /etc/frame-relay/tls/rtsps.crt
 rtspAuthMethods: [basic]
 
 rtmp: false
+# Opt-in OBS input: enable with MTX_RTMP=true. Plain RTMP remains local to this PC; public input uses RTMPS.
+rtmpEncryption: "optional"
+rtmpAddress: 127.0.0.1:1935
+rtmpsAddress: :1936
+rtmpServerKey: /etc/frame-relay/tls/rtsps.key
+rtmpServerCert: /etc/frame-relay/tls/rtsps.crt
+rtmpTrustedProxies: []
 srt: false
 moq: false
 
-# LL-HLS: WebRTC를 쓸 수 없는 단말(UDP/TCP 8189 차단 회사망 등)용 대체 경로. relay.mjs가 /<path>/hls/*로 중계한다.
+# LL-HLS: 모든 브라우저 시청의 기본 경로(1 s 세그먼트, 200 ms 파트, 블로킹 재요청). 중계 웹 서비스가 경로·화질마다 MediaMTX
+# 세션 하나를 모든 시청자가 함께 쓰게 하고(쿠키 확인도 relay가 처리) 재생 목록의 세션 값을 지워 /<path>[/<화질>]/hls/*로
+# 중계한다. 그래서 브라우저·CDN에는 MediaMTX 쿠키가 가지 않고 모두 같은 응답을 받는다.
 hls: true
 hlsAddress: 127.0.0.1:8888
 hlsEncryption: false
@@ -120,36 +142,45 @@ pathDefaults:
   record: false
 
 paths:
-  # 원본 경로: 방송 전체를 재인코딩 없이 녹화(DVR). 1초 조각으로 기록되어 DVR 실시간 끝이 약 1초 뒤에 따라온다.
-  # 경로는 방송마다 재사용되므로 relay.mjs가 현재 방송 이전 구간을 목록·조각 요청에서 가린다.
+  # OBS sends H.264 + one AAC track; the native app sends Opus first and AAC second. MediaMTX selects matching regexes
+  # alphabetically, not by YAML insertion order: the opening '(' sorts this OBS rule before the generic '^[' rule.
+  # Separate OBS paths preserve both recording audio layouts without another encode.
+  '~^(obs-[a-zA-Z0-9][a-zA-Z0-9_-]{0,59})$':
+    runOnAvailable: ffmpeg -hide_banner -nostdin -loglevel warning -rtsp_transport tcp -i rtsp://127.0.0.1:$RTSP_PORT/$MTX_PATH -map 0:v:0 -map 0:a:0? -c copy -f rtsp -rtsp_transport tcp -pkt_size 1190 rtsp://127.0.0.1:$RTSP_PORT/$MTX_PATH/rec
+    runOnAvailableRestart: true
+
+  # 원본 경로: 녹화하지 않는다. 방송이 준비되면(runOnAvailable: MediaMTX 1.21에서 설계의 runOnReady에 해당하는 이름)
+  # FFmpeg 하나가 영상과 둘째 음성(AAC)만 재인코딩 없이 복사 경로 <path>/rec로 올리고, 그 경로만 녹화한다(HLS 플레이어가
+  # 쓰는 트랙만, 두 번째 인코딩 없음). 송출이 끊겼다 돌아오면 다시 띄운다. AAC가 없는 송출(이전 버전 앱)은 영상만 녹화된다.
   '~^[a-zA-Z0-9][a-zA-Z0-9_-]{0,63}$':
+    runOnAvailable: ffmpeg -hide_banner -nostdin -loglevel warning -rtsp_transport tcp -i rtsp://127.0.0.1:$RTSP_PORT/$MTX_PATH -map 0:v:0 -map 0:a:1? -c copy -f rtsp -rtsp_transport tcp -pkt_size 1190 rtsp://127.0.0.1:$RTSP_PORT/$MTX_PATH/rec
+    runOnAvailableRestart: true
+
+  # 녹화(DVR) 경로: 방송 전체를 재인코딩 없이 fMP4로, 1초 조각(part)·60초 파일. 중계 웹 서비스가 이 파일을 dvr.m3u8(키프레임에서
+  # 자른 약 4초 세그먼트)과 /dvr·/dvr/media로 보여 준다. 경로는 방송마다 재사용되므로 중계 웹 서비스가 현재 방송 이전 구간을 가린다.
+  '~^([a-zA-Z0-9][a-zA-Z0-9_-]{0,63})/rec$':
     record: true
     recordPath: ./recordings/%path/%Y-%m-%d_%H-%M-%S-%f%z
     recordFormat: fmp4
     recordPartDuration: 1s
     recordMaxPartSize: 100M
     recordSegmentDuration: 60s
-    # 보존 6시간(8 Mbps 기준 시간당 약 3.6 GB). 디스크에 맞춰 조정하고, 더 긴 방송은 앞부분부터 DVR에서 사라진다.
+    # 보존 6시간(8 Mbps 기준 시간당 약 3.6 GB). 디스크에 맞춰 조정하고, 더 긴 방송은 앞부분부터 DVR에서 사라진다
+    # (relay는 디스크에 실제로 있는 파일만 목록에 올린다).
     recordDeleteAfter: 6h
 
-  # 서버 측 화질별 공유 인코더(선택). 시청자가 한 명이라도 볼 때만 화질마다 FFmpeg 하나가 돌고, 그 화질의 모든
-  # 시청자가 공유한다. 원본 FPS를 유지하고 1초마다 키프레임을 넣는다. CPU가 부족한 무료 VM에서는 relay.env의
-  # RELAY_RENDITIONS를 비워 두면 브라우저에 광고되지 않는다(경로 정의만으로는 아무 것도 실행되지 않음).
-  '~^([a-zA-Z0-9][a-zA-Z0-9_-]{0,63})/720p$':
-    runOnDemand: ffmpeg -hide_banner -nostdin -loglevel warning -rtsp_transport tcp -i rtsp://127.0.0.1:$RTSP_PORT/$G1 -map 0:v:0 -map 0:a? -vf scale=-2:720:flags=bilinear -c:v libx264 -preset veryfast -tune zerolatency -profile:v high -bf 0 -pix_fmt yuv420p -force_key_frames expr:gte(t,n_forced*1) -b:v 3500k -maxrate 3500k -bufsize 3500k -c:a copy -f rtsp -rtsp_transport tcp -pkt_size 1190 rtsp://127.0.0.1:$RTSP_PORT/$MTX_PATH
-    runOnDemandStartTimeout: 15s
-    runOnDemandCloseAfter: 15s
-  '~^([a-zA-Z0-9][a-zA-Z0-9_-]{0,63})/480p$':
-    runOnDemand: ffmpeg -hide_banner -nostdin -loglevel warning -rtsp_transport tcp -i rtsp://127.0.0.1:$RTSP_PORT/$G1 -map 0:v:0 -map 0:a? -vf scale=-2:480:flags=bilinear -c:v libx264 -preset veryfast -tune zerolatency -profile:v high -bf 0 -pix_fmt yuv420p -force_key_frames expr:gte(t,n_forced*1) -b:v 1800k -maxrate 1800k -bufsize 1800k -c:a copy -f rtsp -rtsp_transport tcp -pkt_size 1190 rtsp://127.0.0.1:$RTSP_PORT/$MTX_PATH
-    runOnDemandStartTimeout: 15s
-    runOnDemandCloseAfter: 15s
-  '~^([a-zA-Z0-9][a-zA-Z0-9_-]{0,63})/360p$':
-    runOnDemand: ffmpeg -hide_banner -nostdin -loglevel warning -rtsp_transport tcp -i rtsp://127.0.0.1:$RTSP_PORT/$G1 -map 0:v:0 -map 0:a? -vf scale=-2:360:flags=bilinear -c:v libx264 -preset veryfast -tune zerolatency -profile:v high -bf 0 -pix_fmt yuv420p -force_key_frames expr:gte(t,n_forced*1) -b:v 900k -maxrate 900k -bufsize 900k -c:a copy -f rtsp -rtsp_transport tcp -pkt_size 1190 rtsp://127.0.0.1:$RTSP_PORT/$MTX_PATH
-    runOnDemandStartTimeout: 15s
-    runOnDemandCloseAfter: 15s
+  # 서버 측 화질(선택, relay.env의 RELAY_RENDITIONS): 방송 미디어가 들어오면(유휴로 멈춘 뒤에는 다음 시청 요청 때) 중계 웹 서비스(apps/api의 quality/Ladders)가
+  # 방송마다 FFmpeg 하나(화질 래더)를 띄운다. 원본을 한 번만 디코딩해 원본 복사본 <path>/src와 낮은 화질 <path>/<h>p를
+  # 모두 같은 -start_time_realtime으로 올리고, 아래 useAbsoluteTimestamp로 MediaMTX가 그 시각을 그대로 쓴다. 그래서 모든 HLS
+  # 화질의 타임스탬프와 PROGRAM-DATE-TIME이 같아 화질 전환에 빈 구간이 생기지 않는다(화질마다 따로 띄우던 이전 방식은 약
+  # 0.3초씩 어긋났다). 원본 FPS 유지, 키프레임은 원본과 같은 위치, 음성(Opus, AAC)은 복사. 모든 화질의 리더가 5분 동안
+  # 없으면 relay가 멈춘다(RELAY_LADDER_IDLE_MS). 미리 띄우는 이유: 새 경로는 FFmpeg의 둘째 RTCP 보고(5초 뒤)부터 받아서, 요청 때 띄우면 첫 시청자가 약 8초 기다린다. 경로 정의만으로는 아무 것도 실행되지 않는다.
+  '~^([a-zA-Z0-9][a-zA-Z0-9_-]{0,63})/(src|(240|360|480|720|1080|1440)p)$':
+    useAbsoluteTimestamp: true
 
-  # iPhone Safari 기본 HLS용 AAC 변환(선택, RELAY_HLS_AAC=1). 영상은 복사하고 음성만 Opus→AAC로 바꾼다.
+  # AAC 변환(선택, RELAY_HLS_AAC=1): AAC 트랙이 없는 송출(이전 버전 앱)의 HLS 음성 대체 경로. 영상은 복사하고 첫 음성만
+  # Opus→AAC로 바꾼다(트랙: video1, audio2). AAC를 함께 올리는 송출에서는 relay의 live.m3u8이 쓰지 않는다.
   '~^([a-zA-Z0-9][a-zA-Z0-9_-]{0,63})/aac$':
-    runOnDemand: ffmpeg -hide_banner -nostdin -loglevel warning -rtsp_transport tcp -i rtsp://127.0.0.1:$RTSP_PORT/$G1 -map 0:v:0 -map 0:a? -c:v copy -c:a aac -b:a 128k -ar 48000 -f rtsp -rtsp_transport tcp -pkt_size 1190 rtsp://127.0.0.1:$RTSP_PORT/$MTX_PATH
+    runOnDemand: ffmpeg -hide_banner -nostdin -loglevel warning -rtsp_transport tcp -i rtsp://127.0.0.1:$RTSP_PORT/$G1 -map 0:v:0 -map 0:a:0? -c:v copy -c:a aac -b:a 128k -ar 48000 -ac 2 -f rtsp -rtsp_transport tcp -pkt_size 1190 rtsp://127.0.0.1:$RTSP_PORT/$MTX_PATH
     runOnDemandStartTimeout: 15s
     runOnDemandCloseAfter: 30s

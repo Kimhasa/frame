@@ -1,0 +1,2478 @@
+{
+  "schema": "frame-load/2",
+  "runId": "20261102-142643-real-app-hls",
+  "final": true,
+  "startedAt": "2026-11-02T05:26:48.085Z",
+  "endedAt": "2026-11-02T05:30:43.719Z",
+  "command": "C:\\Users\\wlsdu\\AppData\\Local\\Programs\\nodejs\\node.exe C:\\Users\\wlsdu\\OneDrive\\Desktop\\frame\\tools\\load\\run-load.mjs --plan tools/load/plans/real-app-hls.json --host 127.0.0.1 --stages 1,10,25,50,100 --hold 20",
+  "cwd": "C:\\Users\\wlsdu\\OneDrive\\Desktop\\frame",
+  "outDir": "C:\\Users\\wlsdu\\OneDrive\\Desktop\\frame\\verification\\load\\20261102-142643-real-app-hls",
+  "plan": {
+    "name": "real-app-hls",
+    "receiver": "hls",
+    "hls": {
+      "workers": 2,
+      "parts": true,
+      "audio": true,
+      "session": true,
+      "skip": true,
+      "startBehindSec": 1.5,
+      "stallMs": 3000,
+      "keepAlive": true,
+      "insecure": false
+    },
+    "generatorId": "ddd0",
+    "target": {
+      "whep": null,
+      "base": "http://127.0.0.1:8889",
+      "hls": null,
+      "relayHealth": null,
+      "path": "screen-01",
+      "stateFile": null,
+      "api": null,
+      "useApi": false,
+      "appStats": "http://127.0.0.1:8889/api/stats",
+      "requireAppStats": true,
+      "pids": [],
+      "tree": [
+        "FrameConsole"
+      ],
+      "names": [],
+      "pathLike": [],
+      "criticalNames": [
+        "FrameConsole",
+        "mediamtx"
+      ],
+      "host": "127.0.0.1"
+    },
+    "stages": [
+      1,
+      10,
+      25,
+      50,
+      100
+    ],
+    "rampPerSec": 10,
+    "burst": false,
+    "burstConcurrency": 32,
+    "holdSec": 20,
+    "settleSec": 10,
+    "keepBetweenStages": true,
+    "emptyWaitSec": 30,
+    "firstMediaTimeoutMs": 10000,
+    "sampleMs": 2000,
+    "resourceMs": 3000,
+    "stallKbps": 0,
+    "sustainedMinFraction": 0.95,
+    "fullRateFraction": 0.9,
+    "referenceKbps": null,
+    "rateWindowSec": 10,
+    "minSegmentSec": 4,
+    "lowRateKbps": 300,
+    "churn": {
+      "perSec": 0,
+      "rejoinDelayMs": 0,
+      "minAgeSec": 10
+    },
+    "qualities": {
+      "source": 1
+    },
+    "qualitySwitch": {
+      "fraction": 0,
+      "atSec": 20,
+      "to": {
+        "source": "720p",
+        "720p": "480p",
+        "480p": "source"
+      }
+    },
+    "chat": {
+      "fraction": 0,
+      "senderFraction": 0.05,
+      "messagesPerMinute": 6,
+      "reconnectMs": 0,
+      "connectTimeoutMs": 10000
+    },
+    "dvr": {
+      "fraction": 0,
+      "chunkMs": 4000,
+      "intervalMs": 4000,
+      "liveMarginMs": 5000
+    },
+    "generator": {
+      "instances": 1,
+      "apiPortBase": 21900,
+      "udpReadBufferSize": 4194304
+    },
+    "whepTap": {
+      "enabled": false,
+      "port": 21950
+    },
+    "limits": {
+      "generatorCpuPct": 90,
+      "hostCpuPct": 95,
+      "targetCpuPct": 90,
+      "sustainSec": 30,
+      "minSuccess": 0.9,
+      "successGraceSec": 20,
+      "minFullRate": 0.9,
+      "abortOnDegraded": true,
+      "maxTrafficGB": 200,
+      "projectTraffic": true,
+      "minFreeMemMB": 300,
+      "memSustainSec": 10,
+      "eventLoopLagMs": 1000,
+      "nicUtil": 0.8,
+      "max503Share": 0.1,
+      "min503Requests": 20,
+      "window503Sec": 30,
+      "sustain503Sec": 10,
+      "externalCpuPct": 25,
+      "minBusyRequests": 50,
+      "genThreadsBusy": 0.9
+    },
+    "browser": {
+      "count": 1,
+      "url": "http://127.0.0.1:8889/screen-01",
+      "seconds": 20,
+      "stages": [
+        1,
+        10
+      ],
+      "devtoolsPort": 21222,
+      "headless": true,
+      "startDelaySec": 5,
+      "mode": "separate",
+      "profiles": [
+        "desktop"
+      ],
+      "latency": false
+    },
+    "media": true,
+    "calibrate": false,
+    "calibrateStages": [
+      10,
+      25,
+      50,
+      75,
+      100,
+      150,
+      200,
+      300,
+      400,
+      500,
+      700,
+      1000
+    ],
+    "cleanupWaitSec": 30,
+    "_comment": "FrameConsole's browser viewing path (HLS, run with --host <sender IP>, 127.0.0.1 when the generator runs on the sender PC). Every viewer is a Node LL-HLS client: POST /screen-01/session (+ PUT heartbeat, DELETE on leave, as the page), live.m3u8, the variant of its quality, init, parts with blocking reloads, video + AAC. Quality per plan: source only here; a mix with --qualities source=0.7,720p=0.3 (the app must offer 720p). Stages 1-10-50-100-300-500-1000, hold 45 s each; on one PC the stop rules (generator threads, host CPU/memory, success, 429/503 share, degraded rate) end the run long before 1000 - that is a loopback limit, never 1,000 internet viewers. Target statistics only from the app's read-only GET /api/stats (v 1): ingest per path as the full-rate reference, hls.sessions as the target session count, http.refused. The app answers Connection: close and counts every HLS request in its 400 in-flight slots (http_server.cpp kMaxRequests), so 503 Busy answers are expected past a few hundred LL-HLS viewers. One headless Edge page with the real UI (hls.js) runs in a separate phase after the holds of stages 1 and 10: decoded fps and real delay, kept apart from the media-load numbers. Traffic cap 200 GB is loopback/LAN protection only; lower it with --max-traffic-gb on any metered link."
+  },
+  "versions": {
+    "node": "v24.22.1",
+    "generatorMediamtx": "v1.21.3",
+    "target": null
+  },
+  "host": {
+    "hostname": "KJY",
+    "cores": 8,
+    "os": "Microsoft Windows 11 Pro 10.0.26200",
+    "logical": 16,
+    "nics": [
+      {
+        "description": "Intel(R) Wi-Fi 6 AX201 160MHz",
+        "name": "Wi-Fi",
+        "linkSpeed": "2.4 Gbps"
+      },
+      {
+        "description": "Tailscale Tunnel",
+        "name": "Tailscale",
+        "linkSpeed": "100 Gbps"
+      }
+    ],
+    "gpus": [
+      "NVIDIA GeForce RTX 3060 Laptop GPU",
+      "Intel(R) UHD Graphics"
+    ],
+    "cpu": "11th Gen Intel(R) Core(TM) i7-11800H @ 2.30GHz",
+    "logicalCpus": 16,
+    "ramGB": 15.8,
+    "osRelease": "10.0.26200",
+    "node": "v24.22.1"
+  },
+  "hostBaseline": {
+    "hostCpuPct": 82.2,
+    "unattributedCpuPct": 63.3,
+    "freeMemMB": 349,
+    "targetCpuPct": 15.8,
+    "targetRssMB": 1390.1,
+    "targetProcs": [
+      {
+        "id": 34296,
+        "name": "msedgewebview2",
+        "cores": 0,
+        "rssMB": 101.8,
+        "threads": 29,
+        "handles": 361
+      },
+      {
+        "id": 11244,
+        "name": "msedgewebview2",
+        "cores": 0,
+        "rssMB": 22.1,
+        "threads": 10,
+        "handles": 192
+      },
+      {
+        "id": 36440,
+        "name": "msedgewebview2",
+        "cores": 0,
+        "rssMB": 16,
+        "threads": 10,
+        "handles": 179
+      },
+      {
+        "id": 36660,
+        "name": "mediamtx",
+        "cores": 0.07,
+        "rssMB": 126.6,
+        "threads": 22,
+        "handles": 299
+      },
+      {
+        "id": 18640,
+        "name": "msedgewebview2",
+        "cores": 0,
+        "rssMB": 38.3,
+        "threads": 22,
+        "handles": 367
+      },
+      {
+        "id": 38172,
+        "name": "conhost",
+        "cores": 0,
+        "rssMB": 7.4,
+        "threads": 2,
+        "handles": 100
+      },
+      {
+        "id": 38260,
+        "name": "ffmpeg",
+        "cores": 0,
+        "rssMB": 16.6,
+        "threads": 6,
+        "handles": 213
+      },
+      {
+        "id": 24252,
+        "name": "conhost",
+        "cores": 0,
+        "rssMB": 7.9,
+        "threads": 2,
+        "handles": 99
+      },
+      {
+        "id": 34200,
+        "name": "FrameConsole",
+        "cores": 0.26,
+        "rssMB": 90.7,
+        "threads": 43,
+        "handles": 1038
+      },
+      {
+        "id": 37012,
+        "name": "msedgewebview2",
+        "cores": 0,
+        "rssMB": 124.4,
+        "threads": 48,
+        "handles": 1407
+      },
+      {
+        "id": 30016,
+        "name": "msedgewebview2",
+        "cores": 0,
+        "rssMB": 79.6,
+        "threads": 47,
+        "handles": 599
+      },
+      {
+        "id": 8392,
+        "name": "conhost",
+        "cores": 0,
+        "rssMB": 6.2,
+        "threads": 2,
+        "handles": 99
+      },
+      {
+        "id": 41848,
+        "name": "ffmpeg",
+        "cores": 1.2,
+        "rssMB": 307.2,
+        "threads": 49,
+        "handles": 600
+      },
+      {
+        "id": 35668,
+        "name": "ffmpeg",
+        "cores": 1,
+        "rssMB": 445.2,
+        "threads": 104,
+        "handles": 979
+      }
+    ],
+    "gpu": {
+      "enc": 24,
+      "dec": 1,
+      "memMB": 4726,
+      "util": 41
+    }
+  },
+  "generatorId": "ddd0",
+  "chatNameExample": "부하-ddd0-v00000",
+  "target": {
+    "whep": null,
+    "base": "http://127.0.0.1:8889",
+    "path": "screen-01",
+    "api": null,
+    "appStats": "http://127.0.0.1:8889/api/stats",
+    "appStatsCheck": {
+      "ok": true,
+      "status": 200,
+      "v": 1,
+      "paths": [
+        "screen-01",
+        "screen-01/240p",
+        "screen-01/360p",
+        "screen-01/480p",
+        "screen-01/720p",
+        "screen-01/rec",
+        "screen-01/src"
+      ]
+    },
+    "info": {
+      "audio": "none",
+      "bitrate": 8.5,
+      "broadcastId": "b59837178925d667e86aca63390749c8",
+      "codec": "H.264",
+      "dvr": true,
+      "elapsedMs": 128070,
+      "fps": 60,
+      "height": 1080,
+      "hls": {
+        "audio": "none",
+        "dvr": "dvr.m3u8",
+        "lowLatency": true,
+        "master": "live.m3u8"
+      },
+      "iceServers": [],
+      "path": "screen-01",
+      "publisher": "KJY",
+      "renditions": [
+        {
+          "codec": "H.264",
+          "fps": 60,
+          "height": 720,
+          "mbps": 4,
+          "name": "720p",
+          "width": 1280
+        },
+        {
+          "codec": "H.264",
+          "fps": 60,
+          "height": 480,
+          "mbps": 1.5,
+          "name": "480p",
+          "width": 852
+        },
+        {
+          "codec": "H.264",
+          "fps": 60,
+          "height": 360,
+          "mbps": 1,
+          "name": "360p",
+          "width": 640
+        },
+        {
+          "codec": "H.264",
+          "fps": 60,
+          "height": 240,
+          "mbps": 0.5,
+          "name": "240p",
+          "width": 426
+        }
+      ],
+      "running": true,
+      "startedAtMs": 1793597086272,
+      "title": "FRAME 모션 테스트",
+      "width": 1920
+    },
+    "standalone": null
+  },
+  "definitions": {
+    "viewer": "one Node LL-HLS client (lib/hls-client.mjs, 2 worker threads): live.m3u8 -> the variant of its quality -> init -> parts with blocking playlist reloads (_HLS_msn/_HLS_part) + the AAC rendition, viewer session with heartbeat; no decoding or rendering",
+    "hls": {
+      "firstMedia": "the first part/segment of every followed track (video and AAC) received completely after init; readyTime = that moment on the receiver clock",
+      "delay": "estimated delay = now - position of a virtual player that starts at the first unit it received (1.5 s behind the newest media, like the page liveSyncDuration), plays in real time while media is buffered, catches up at 1.1x when more than liveSync + 0.5 s is buffered, and stops at the buffer end; positions come from EXT-X-PROGRAM-DATE-TIME (the target MediaMTX clock at ingest). Needs the generator and target clocks in sync; excludes capture, encode and publish before MediaMTX, and decode/render after. The real delay is the browser sampler one (barcode / hls.js playingDate).",
+      "stall": "no new video part/segment for more than 3000 ms (counted when media resumes, plus one per viewer still stalled at the hold end)",
+      "busy": "requests answered 429 or 503 (session, live.m3u8, playlists, init, parts, segments); waits follow Retry-After (1-30 s, jitter), at most 6 in a row before the viewer restarts",
+      "traffic": "media bytes (init, parts, segments) of video and AAC; playlist bytes are counted separately (playlistBytesPerMediaByte)"
+    },
+    "receiving": "received bytes grew by more than 0 kbit/s in a 2000 ms sample window",
+    "firstMedia": "join requested (ramp slot, burst start or churn re-join; queueing included) -> the viewer's generator path has media: ready, with tracks and received bytes. The time is the path ready time (tracks gathered = first RTP) when it is a real time not before the request; MediaMTX's zero-year placeholder and earlier times are ignored. Without a usable ready time the sample clock is used and counted in firstMediaMs.basis / firstMediaFromSampleClock (error up to one sample interval).",
+    "reconnect": "media again after a loss, or a new real ready time of the same session; the placeholder -> real ready time transition is not a reconnect",
+    "sustained": "first media and receiving in >= 95% of the hold windows; successRate = sustained / requested",
+    "fullRate": "sustained, and every quality segment the viewer watched in the hold (>= 4 s) has a mean rate >= 90% of that quality's reference (reference.<quality>.from); fullRateSuccessRate = full-rate viewers / (requested or sessions seen) minus sessions too short to judge (fullRateTooShort, all segments < minSegmentSec), not measured when a watched quality has no reference (an idle path's ingest 0 is no reference)",
+    "fullRateLive": "per sample: share of viewers whose rolling 10 s rate is >= 90% of their quality's rolling reference (stop rule degraded-below-min)",
+    "stall": "a 2000 ms window without growth (<= 0 kbit/s); stallTimeRatio = stalled time / observed time after first media",
+    "cpuPct": "percent of the whole machine (all logical CPUs) from process CPU time; cores = same in CPU cores",
+    "unattributedCpuPct": "host CPU minus generator, target and browser-sampler processes: other programs and kernel network time; a stage is flagged externalLoad when its hold mean is above 25%",
+    "rtpPacketsLost": "losses reported by the generator WebRTC sources (MediaMTX log, \"1 RTP packet lost\" and \"N RTP packets lost\"); lossRatioEst assumes ~1,150 B per RTP packet",
+    "whep": "WHEP signalling seen by the loopback tap (status per offer, Retry-After values); MediaMTX's WHEP client itself retries about every 5 s whatever Retry-After says",
+    "traffic": "bytes received by the generator's protocol viewers (browser pages not counted)",
+    "network": "generator and target location are recorded in host/target; loopback or same-PC traffic does not cross the NIC"
+  },
+  "notMeasured": [
+    "decoded FPS, rendering, A/V sync, player rebuffering and live latency are not measured by protocol viewers (see browser sampler fields)",
+    "HLS: the delay estimate is not the player delay (no decode/render, MediaMTX ingest clock); RTP loss and ICE do not apply",
+    "HLS: requests the target refused are seen only as the answers the receiver got",
+    "target-side dropped frame counts: only the app count of MediaMTX \"too slow, discarding\" warnings (appDiscardWarnings)"
+  ],
+  "trafficPlan": {
+    "viewerSeconds": 6410,
+    "estimatedGB": 0.4,
+    "atKbps": 465,
+    "at8600kbpsGB": 6.9,
+    "at12000kbpsGB": 9.6,
+    "capGB": 200,
+    "note": "protocol viewers only (browser pages and chat not counted); per-viewer rate = the mix of the plan's qualities",
+    "basis": "per-viewer mean of stage 1"
+  },
+  "stages": [
+    {
+      "stage": 1,
+      "requested": 1,
+      "holdSec": 20.2,
+      "measuredViewers": 1,
+      "joined": 1,
+      "notStarted": 0,
+      "addFailed": 0,
+      "addApiMsP95": 122,
+      "firstMediaMs": {
+        "n": 1,
+        "p50": 174,
+        "p95": 174,
+        "max": 174,
+        "basis": {
+          "ready-time": 1
+        },
+        "sampleClockErrorMs": "<= 2000 (sample-clock basis only)",
+        "readyTimeOnly": {
+          "n": 1,
+          "p50": 174,
+          "p95": 174,
+          "max": 174
+        },
+        "from": "the join's ramp slot",
+        "components": {
+          "queueMs": {
+            "n": 1,
+            "p50": 1,
+            "p95": 1,
+            "max": 1
+          },
+          "addApiMs": {
+            "n": 1,
+            "p50": 122,
+            "p95": 122,
+            "max": 122
+          },
+          "whepAnswerMs": "not measured",
+          "mediaAfterAnswerMs": "not measured"
+        }
+      },
+      "firstMediaTimeouts": 0,
+      "firstMediaPending": 0,
+      "firstMediaFromSampleClock": 0,
+      "sustainedReceiving": 1,
+      "successRate": 1,
+      "successBasis": "requested viewers",
+      "fullRateSuccessRate": 1,
+      "fullRateUnjudged": 0,
+      "fullRateTooShort": 0,
+      "fullRateByQuality": {
+        "source": {
+          "segments": 1,
+          "kbpsP50": 465,
+          "referenceKbps": 463,
+          "referenceFrom": "target ingest rate of screen-01 (app-stats)",
+          "ratioP5": 1.005,
+          "ratioP50": 1.005,
+          "belowFraction": 0
+        }
+      },
+      "referenceKbps": 463,
+      "referenceFrom": "target ingest rate of screen-01 (app-stats)",
+      "reference": {
+        "source": {
+          "kbps": 463,
+          "from": "target ingest rate of screen-01 (app-stats)"
+        }
+      },
+      "receivingRatio": {
+        "min": 1,
+        "mean": 1
+      },
+      "fullRateLive": {
+        "min": 1,
+        "mean": 1
+      },
+      "stallTimeRatio": 0,
+      "lowRateWindowRatio": 0,
+      "stallEvents": 0,
+      "viewersWithStall": 0,
+      "rssTrendMBPerMin": {
+        "generator": -13.21,
+        "target": 1.68
+      },
+      "disconnects": 0,
+      "reconnects": 0,
+      "staleReadyTimes": 0,
+      "perViewerKbps": {
+        "p5": 465,
+        "p50": 465,
+        "p95": 465,
+        "mean": 465
+      },
+      "totalMbps": {
+        "mean": 0.5,
+        "max": 0.5
+      },
+      "sourceKbps": 463,
+      "rateVsSource": {
+        "p5": 1.005,
+        "p50": 1.005,
+        "degradedViewers": 0
+      },
+      "rtpPacketsLost": "not measured",
+      "lostPerViewerMinute": "not measured",
+      "lossRatioEst": "not measured",
+      "processingErrors": 0,
+      "iceCandidatePairs": {},
+      "churn": null,
+      "qualitySwitch": null,
+      "qualityMix": {
+        "source": 1
+      },
+      "chat": null,
+      "dvr": null,
+      "receiver": "hls",
+      "hls": {
+        "delayEstimateMs": {
+          "n": 10,
+          "p50": 1870,
+          "p95": 1870,
+          "max": 1870,
+          "perViewerP50": {
+            "n": 1,
+            "p50": 1870,
+            "p95": 1870,
+            "max": 1870
+          },
+          "basis": "sample clock - virtual playhead (EXT-X-PROGRAM-DATE-TIME of the media being played), see definitions.hls.delay"
+        },
+        "bufferAheadMs": {
+          "n": 10,
+          "p50": 1694,
+          "p95": 1745,
+          "max": 1745
+        },
+        "receiveDelayMs": {
+          "n": 100,
+          "p50": 111,
+          "p95": 122,
+          "max": 162,
+          "basis": "arrival of a part/segment - PROGRAM-DATE-TIME of its end"
+        },
+        "stalls": {
+          "events": 0,
+          "viewersWithStall": 0,
+          "stallMs": 0,
+          "rebufferMs": 0,
+          "fellBehind": 0,
+          "skippedUnits": 0,
+          "restarts": 0,
+          "definition": "no new video media for > 3000 ms"
+        },
+        "requests": {
+          "total": 201,
+          "perViewerSec": 9.95,
+          "byKind": {
+            "session": 1,
+            "playlist": 100,
+            "part": 100
+          },
+          "status": {
+            "playlist 200": 100,
+            "part 200": 100,
+            "session 204": 1
+          },
+          "errors": {},
+          "busy429or503": 0,
+          "busyShare": 0,
+          "retryAfter": {},
+          "abortedByViewers": 0,
+          "playlistBytesPerMediaByte": 0.1319
+        },
+        "timingsMs": {
+          "blockingReload": {
+            "n": 100,
+            "p50": 196,
+            "p95": 199,
+            "max": 208
+          },
+          "unitFetch": {
+            "n": 100,
+            "p50": 3,
+            "p95": 7,
+            "max": 48
+          },
+          "master": {
+            "n": 0,
+            "p50": null,
+            "p95": null,
+            "max": null
+          }
+        },
+        "firstMediaComponentsMs": {
+          "session": {
+            "n": 1,
+            "p50": 105,
+            "p95": 105,
+            "max": 105
+          },
+          "master": {
+            "n": 1,
+            "p50": 16,
+            "p95": 16,
+            "max": 16
+          },
+          "playlist": {
+            "n": 1,
+            "p50": 146,
+            "p95": 146,
+            "max": 146
+          },
+          "init": {
+            "n": 1,
+            "p50": 154,
+            "p95": 154,
+            "max": 154
+          },
+          "firstMedia": {
+            "n": 1,
+            "p50": 165,
+            "p95": 165,
+            "max": 165
+          },
+          "note": "from the start of the viewer in the receiver (no ramp queue); firstMediaMs of the stage counts from the join request"
+        },
+        "sessions": {
+          "opened": 1,
+          "refused429or503": 0,
+          "viewersWithSession": 1,
+          "targetSessionsMax": 2
+        },
+        "variants": {
+          "1920x1080": 1
+        },
+        "viewerStates": {
+          "playing": 1
+        },
+        "generatorLagP99MsMax": 39
+      },
+      "errors": {
+        "generatorErrorKinds": {},
+        "lossLogLines": 0,
+        "whep": null
+      },
+      "externalLoad": {
+        "unattributedCpuPctMean": 27.8,
+        "unattributedCpuPctMax": 37.7,
+        "samplesAbove": 7,
+        "samples": 10,
+        "flagged": true,
+        "thresholdPct": 25
+      },
+      "resources": {
+        "genCpuPct": {
+          "mean": 0.7,
+          "max": 1
+        },
+        "genRssMB": {
+          "max": 221.8
+        },
+        "targetCpuPct": {
+          "mean": 18.4,
+          "max": 21.2
+        },
+        "targetRssMB": {
+          "max": 1389.7
+        },
+        "hostCpuPct": {
+          "mean": 46.9,
+          "max": 56.5
+        },
+        "freeMemMB": {
+          "min": 569
+        },
+        "nicRxMbps": {
+          "mean": 0.2
+        },
+        "nicTxMbps": {
+          "mean": 0.3
+        },
+        "gpuPct": {
+          "max": 41
+        },
+        "gpuEncPct": {
+          "max": 26
+        },
+        "eventLoopLagP99Ms": {
+          "max": 39
+        },
+        "generatorListMs": {
+          "max": 2
+        },
+        "statsVia": "app-stats",
+        "targetSendMbps": {
+          "mean": null
+        },
+        "targetDiscardedFrames": "not measured",
+        "targetSessionsMax": 2,
+        "app": {
+          "httpThreadsMax": 5,
+          "httpRefused": 0,
+          "chatClientsMax": 2,
+          "chatJoinedMax": 2,
+          "chatRefused": 0,
+          "discardWarnings": 0
+        }
+      },
+      "decodedFps": "not measured",
+      "renderedFps": "not measured",
+      "avSync": "not measured",
+      "liveLatencyMs": "not measured",
+      "rebuffering": "stall windows only (byte growth); player rebuffering not measured",
+      "browser": null,
+      "browserPhase": {
+        "tool": "browser-sampler",
+        "url": "http://127.0.0.1:8889/screen-01",
+        "count": 1,
+        "seconds": 20,
+        "startedAt": "2026-11-02T05:27:28.469Z",
+        "browser": "Edg/156.0.4314.58",
+        "headless": true,
+        "definitions": {
+          "firstFrameMs": "page navigation start -> first presented video frame (requestVideoFrameCallback), includes page load, WHEP/ICE and first keyframe",
+          "presentedFps": "presented frames per second in the window (rVFC)",
+          "freeze": "gap > 500 ms between presented frames",
+          "latencyMs": "barcode stamp (source wall clock) -> expected display time; needs a shared clock",
+          "decodedFps": "WebRTC: framesDecoded delta / stats-timestamp delta of the main connection (over the window, or from its first decoded frame when made inside the window); HLS (no peer connection): getVideoPlaybackQuality totalVideoFrames delta / time (decodedFpsBasis)",
+          "pdtDelayMs": "HLS (hls.js): once a second, now - hls.playingDate of the player on the shown element; the playing position by EXT-X-PROGRAM-DATE-TIME (target MediaMTX ingest clock): excludes capture/encode/publish before MediaMTX, includes buffering and decode; same clock needed",
+          "hlsLatencyMs": "hls.js latency (live edge of the playlist - playing position), once a second",
+          "profiles": "desktop = the window as started; mobile = DevTools emulation (390x844, DPR 3, touch, Android UA) in desktop Edge: mobile-like layout and quality choice, not a phone decoder or mobile network"
+        },
+        "pages": [
+          {
+            "index": 0,
+            "profile": "desktop",
+            "viewport": "1888x984",
+            "dpr": 1,
+            "firstFrameMs": 1871,
+            "windowSec": 20,
+            "presentedFps": 57.5,
+            "freezes": 0,
+            "freezeMs": 0,
+            "maxGapMs": 34,
+            "decodedWidth": 1920,
+            "decodedHeight": 1080,
+            "decodedFps": 60.3,
+            "decodedFpsSpanSec": 20,
+            "decodedFpsBasis": "getVideoPlaybackQuality (window)",
+            "framesDropped": 6,
+            "droppedVideoFrames": 6,
+            "transport": "hls.js",
+            "level": "1920x1080",
+            "hlsStalls": 0,
+            "bufferAheadS": 1.549,
+            "bandwidthEstimate": 1939466,
+            "pdtDelayMs": {
+              "n": 20,
+              "p50": 1674,
+              "p95": 1723,
+              "min": 1674,
+              "max": 1774
+            },
+            "hlsLatencyMs": {
+              "n": 20,
+              "p50": 1564,
+              "p95": 1615,
+              "min": 1558,
+              "max": 1664
+            },
+            "statsFreezeCount": null,
+            "statsFreezeSec": null,
+            "decoder": null,
+            "powerEfficientDecoder": null,
+            "videoPacketsLost": null,
+            "videoPacketsReceived": null,
+            "videoLossRatio": null,
+            "videoJitterMs": null,
+            "jitterBufferMs": null,
+            "videoKbps": null,
+            "nack": null,
+            "pli": null,
+            "audio": null,
+            "rttMs": null,
+            "peerConnections": 0,
+            "connectionChangedInWindow": false,
+            "videoElementSwitches": 0,
+            "peerConnectionLog": [],
+            "windowStartMs": 3948,
+            "latencyMs": "not measured (source has no live barcode)",
+            "avSync": "not measured",
+            "video": "video",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+          }
+        ],
+        "summary": {
+          "ok": 1,
+          "failed": 0,
+          "firstFrameMs": {
+            "p50": 1871,
+            "p95": 1871
+          },
+          "presentedFps": {
+            "mean": 57.5,
+            "min": 57.5
+          },
+          "decodedFps": {
+            "mean": 60.3
+          },
+          "freezes": 0,
+          "freezeMs": 0,
+          "framesDropped": 6,
+          "videoLossRatioMax": 0,
+          "resolution": [
+            "1920x1080"
+          ],
+          "connectionChanges": 0,
+          "transports": [
+            "hls.js"
+          ],
+          "levels": [
+            "1920x1080"
+          ],
+          "pdtDelayMs": {
+            "p50": 1674,
+            "p95": 1723
+          },
+          "hlsLatencyMs": {
+            "p50": 1564
+          },
+          "droppedVideoFrames": 6,
+          "latencyMs": "not measured",
+          "byProfile": {
+            "desktop": {
+              "pages": 1,
+              "ok": 1,
+              "viewport": "1888x984@1x",
+              "resolution": [
+                "1920x1080"
+              ],
+              "firstFrameMsP50": 1871,
+              "presentedFpsMean": 57.5,
+              "decodedFpsMean": 60.3,
+              "videoKbpsMean": null,
+              "freezes": 0
+            }
+          }
+        },
+        "mode": "separate",
+        "during": {
+          "sec": 30.8,
+          "protocolViewers": 1,
+          "receivingRatioMin": 1,
+          "fullRateLiveMin": 1,
+          "totalMbpsMean": 0.5,
+          "targetSessionsMax": 3,
+          "targetDiscardedFrames": 0,
+          "hostCpuPctMax": 87.6,
+          "browserCpuPctMean": 2.1
+        }
+      },
+      "traffic": {
+        "stageGB": 0.003,
+        "holdGB": 0.001,
+        "cumulativeGB": 0.003,
+        "stageSec": 61.1
+      },
+      "abortReason": null
+    },
+    {
+      "stage": 10,
+      "requested": 10,
+      "holdSec": 20.2,
+      "measuredViewers": 10,
+      "joined": 9,
+      "notStarted": 0,
+      "addFailed": 0,
+      "addApiMsP95": 31,
+      "firstMediaMs": {
+        "n": 9,
+        "p50": 29,
+        "p95": 54,
+        "max": 54,
+        "basis": {
+          "ready-time": 9
+        },
+        "sampleClockErrorMs": "<= 2000 (sample-clock basis only)",
+        "readyTimeOnly": {
+          "n": 9,
+          "p50": 29,
+          "p95": 54,
+          "max": 54
+        },
+        "from": "the join's ramp slot",
+        "components": {
+          "queueMs": {
+            "n": 9,
+            "p50": 10,
+            "p95": 14,
+            "max": 14
+          },
+          "addApiMs": {
+            "n": 9,
+            "p50": 5,
+            "p95": 31,
+            "max": 31
+          },
+          "whepAnswerMs": "not measured",
+          "mediaAfterAnswerMs": "not measured"
+        }
+      },
+      "firstMediaTimeouts": 0,
+      "firstMediaPending": 0,
+      "firstMediaFromSampleClock": 0,
+      "sustainedReceiving": 10,
+      "successRate": 1,
+      "successBasis": "requested viewers",
+      "fullRateSuccessRate": 1,
+      "fullRateUnjudged": 0,
+      "fullRateTooShort": 0,
+      "fullRateByQuality": {
+        "source": {
+          "segments": 10,
+          "kbpsP50": 471,
+          "referenceKbps": 473,
+          "referenceFrom": "target ingest rate of screen-01 (app-stats)",
+          "ratioP5": 0.997,
+          "ratioP50": 0.997,
+          "belowFraction": 0
+        }
+      },
+      "referenceKbps": 473,
+      "referenceFrom": "target ingest rate of screen-01 (app-stats)",
+      "reference": {
+        "source": {
+          "kbps": 473,
+          "from": "target ingest rate of screen-01 (app-stats)"
+        }
+      },
+      "receivingRatio": {
+        "min": 1,
+        "mean": 1
+      },
+      "fullRateLive": {
+        "min": 1,
+        "mean": 1
+      },
+      "stallTimeRatio": 0,
+      "lowRateWindowRatio": 0,
+      "stallEvents": 0,
+      "viewersWithStall": 0,
+      "rssTrendMBPerMin": {
+        "generator": 47.73,
+        "target": 9.47
+      },
+      "disconnects": 0,
+      "reconnects": 0,
+      "staleReadyTimes": 0,
+      "perViewerKbps": {
+        "p5": 471,
+        "p50": 471,
+        "p95": 471,
+        "mean": 471
+      },
+      "totalMbps": {
+        "mean": 4.7,
+        "max": 4.8
+      },
+      "sourceKbps": 473,
+      "rateVsSource": {
+        "p5": 0.997,
+        "p50": 0.997,
+        "degradedViewers": 0
+      },
+      "rtpPacketsLost": "not measured",
+      "lostPerViewerMinute": "not measured",
+      "lossRatioEst": "not measured",
+      "processingErrors": 0,
+      "iceCandidatePairs": {},
+      "churn": null,
+      "qualitySwitch": null,
+      "qualityMix": {
+        "source": 10
+      },
+      "chat": null,
+      "dvr": null,
+      "receiver": "hls",
+      "hls": {
+        "delayEstimateMs": {
+          "n": 100,
+          "p50": 2103,
+          "p95": 2112,
+          "max": 2120,
+          "perViewerP50": {
+            "n": 10,
+            "p50": 2100,
+            "p95": 2112,
+            "max": 2112
+          },
+          "basis": "sample clock - virtual playhead (EXT-X-PROGRAM-DATE-TIME of the media being played), see definitions.hls.delay"
+        },
+        "bufferAheadMs": {
+          "n": 100,
+          "p50": 1802,
+          "p95": 1865,
+          "max": 1880
+        },
+        "receiveDelayMs": {
+          "n": 1000,
+          "p50": 124,
+          "p95": 136,
+          "max": 154,
+          "basis": "arrival of a part/segment - PROGRAM-DATE-TIME of its end"
+        },
+        "stalls": {
+          "events": 0,
+          "viewersWithStall": 0,
+          "stallMs": 0,
+          "rebufferMs": 0,
+          "fellBehind": 0,
+          "skippedUnits": 0,
+          "restarts": 0,
+          "definition": "no new video media for > 3000 ms"
+        },
+        "requests": {
+          "total": 2021,
+          "perViewerSec": 10.01,
+          "byKind": {
+            "session": 11,
+            "playlist": 1010,
+            "part": 1000
+          },
+          "status": {
+            "playlist 200": 1010,
+            "part 200": 1000,
+            "session 204": 11
+          },
+          "errors": {},
+          "busy429or503": 0,
+          "busyShare": 0,
+          "retryAfter": {},
+          "abortedByViewers": 0,
+          "playlistBytesPerMediaByte": 0.1322
+        },
+        "timingsMs": {
+          "blockingReload": {
+            "n": 1010,
+            "p50": 189,
+            "p95": 197,
+            "max": 206
+          },
+          "unitFetch": {
+            "n": 1000,
+            "p50": 11,
+            "p95": 17,
+            "max": 29
+          },
+          "master": {
+            "n": 0,
+            "p50": null,
+            "p95": null,
+            "max": null
+          }
+        },
+        "firstMediaComponentsMs": {
+          "session": {
+            "n": 9,
+            "p50": 3,
+            "p95": 8,
+            "max": 8
+          },
+          "master": {
+            "n": 9,
+            "p50": 1,
+            "p95": 23,
+            "max": 23
+          },
+          "playlist": {
+            "n": 9,
+            "p50": 9,
+            "p95": 46,
+            "max": 46
+          },
+          "init": {
+            "n": 9,
+            "p50": 15,
+            "p95": 49,
+            "max": 49
+          },
+          "firstMedia": {
+            "n": 9,
+            "p50": 19,
+            "p95": 52,
+            "max": 52
+          },
+          "note": "from the start of the viewer in the receiver (no ramp queue); firstMediaMs of the stage counts from the join request"
+        },
+        "sessions": {
+          "opened": 9,
+          "refused429or503": 0,
+          "viewersWithSession": 9,
+          "targetSessionsMax": 12
+        },
+        "variants": {
+          "1920x1080": 10
+        },
+        "viewerStates": {
+          "playing": 9
+        },
+        "generatorLagP99MsMax": 35
+      },
+      "errors": {
+        "generatorErrorKinds": {},
+        "lossLogLines": 0,
+        "whep": null
+      },
+      "externalLoad": {
+        "unattributedCpuPctMean": 28.5,
+        "unattributedCpuPctMax": 34.4,
+        "samplesAbove": 6,
+        "samples": 10,
+        "flagged": true,
+        "thresholdPct": 25
+      },
+      "resources": {
+        "genCpuPct": {
+          "mean": 1.1,
+          "max": 1.6
+        },
+        "genRssMB": {
+          "max": 248.1
+        },
+        "targetCpuPct": {
+          "mean": 19.2,
+          "max": 21.6
+        },
+        "targetRssMB": {
+          "max": 1342.4
+        },
+        "hostCpuPct": {
+          "mean": 48.8,
+          "max": 57.2
+        },
+        "freeMemMB": {
+          "min": 450
+        },
+        "nicRxMbps": {
+          "mean": 0.6
+        },
+        "nicTxMbps": {
+          "mean": 0.4
+        },
+        "gpuPct": {
+          "max": 43
+        },
+        "gpuEncPct": {
+          "max": 26
+        },
+        "eventLoopLagP99Ms": {
+          "max": 35
+        },
+        "generatorListMs": {
+          "max": 4
+        },
+        "statsVia": "app-stats",
+        "targetSendMbps": {
+          "mean": null
+        },
+        "targetDiscardedFrames": "not measured",
+        "targetSessionsMax": 12,
+        "app": {
+          "httpThreadsMax": 14,
+          "httpRefused": 0,
+          "chatClientsMax": 2,
+          "chatJoinedMax": 2,
+          "chatRefused": 0,
+          "discardWarnings": 0
+        }
+      },
+      "decodedFps": "not measured",
+      "renderedFps": "not measured",
+      "avSync": "not measured",
+      "liveLatencyMs": "not measured",
+      "rebuffering": "stall windows only (byte growth); player rebuffering not measured",
+      "browser": null,
+      "browserPhase": {
+        "tool": "browser-sampler",
+        "url": "http://127.0.0.1:8889/screen-01",
+        "count": 1,
+        "seconds": 20,
+        "startedAt": "2026-11-02T05:28:30.058Z",
+        "browser": "Edg/156.0.4314.58",
+        "headless": true,
+        "definitions": {
+          "firstFrameMs": "page navigation start -> first presented video frame (requestVideoFrameCallback), includes page load, WHEP/ICE and first keyframe",
+          "presentedFps": "presented frames per second in the window (rVFC)",
+          "freeze": "gap > 500 ms between presented frames",
+          "latencyMs": "barcode stamp (source wall clock) -> expected display time; needs a shared clock",
+          "decodedFps": "WebRTC: framesDecoded delta / stats-timestamp delta of the main connection (over the window, or from its first decoded frame when made inside the window); HLS (no peer connection): getVideoPlaybackQuality totalVideoFrames delta / time (decodedFpsBasis)",
+          "pdtDelayMs": "HLS (hls.js): once a second, now - hls.playingDate of the player on the shown element; the playing position by EXT-X-PROGRAM-DATE-TIME (target MediaMTX ingest clock): excludes capture/encode/publish before MediaMTX, includes buffering and decode; same clock needed",
+          "hlsLatencyMs": "hls.js latency (live edge of the playlist - playing position), once a second",
+          "profiles": "desktop = the window as started; mobile = DevTools emulation (390x844, DPR 3, touch, Android UA) in desktop Edge: mobile-like layout and quality choice, not a phone decoder or mobile network"
+        },
+        "pages": [
+          {
+            "index": 0,
+            "profile": "desktop",
+            "viewport": "1888x984",
+            "dpr": 1,
+            "firstFrameMs": 833,
+            "windowSec": 20,
+            "presentedFps": 54.8,
+            "freezes": 0,
+            "freezeMs": 0,
+            "maxGapMs": 34,
+            "decodedWidth": 1920,
+            "decodedHeight": 1080,
+            "decodedFps": 60.8,
+            "decodedFpsSpanSec": 20,
+            "decodedFpsBasis": "getVideoPlaybackQuality (window)",
+            "framesDropped": 17,
+            "droppedVideoFrames": 17,
+            "transport": "hls.js",
+            "level": "1920x1080",
+            "hlsStalls": 0,
+            "bufferAheadS": 1.363,
+            "bandwidthEstimate": 1891871,
+            "pdtDelayMs": {
+              "n": 20,
+              "p50": 1675,
+              "p95": 1853,
+              "min": 1675,
+              "max": 1953
+            },
+            "hlsLatencyMs": {
+              "n": 20,
+              "p50": 1564,
+              "p95": 1751,
+              "min": 1541,
+              "max": 1850
+            },
+            "statsFreezeCount": null,
+            "statsFreezeSec": null,
+            "decoder": null,
+            "powerEfficientDecoder": null,
+            "videoPacketsLost": null,
+            "videoPacketsReceived": null,
+            "videoLossRatio": null,
+            "videoJitterMs": null,
+            "jitterBufferMs": null,
+            "videoKbps": null,
+            "nack": null,
+            "pli": null,
+            "audio": null,
+            "rttMs": null,
+            "peerConnections": 0,
+            "connectionChangedInWindow": false,
+            "videoElementSwitches": 0,
+            "peerConnectionLog": [],
+            "windowStartMs": 2988,
+            "latencyMs": "not measured (source has no live barcode)",
+            "avSync": "not measured",
+            "video": "video",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+          }
+        ],
+        "summary": {
+          "ok": 1,
+          "failed": 0,
+          "firstFrameMs": {
+            "p50": 833,
+            "p95": 833
+          },
+          "presentedFps": {
+            "mean": 54.8,
+            "min": 54.8
+          },
+          "decodedFps": {
+            "mean": 60.8
+          },
+          "freezes": 0,
+          "freezeMs": 0,
+          "framesDropped": 17,
+          "videoLossRatioMax": 0,
+          "resolution": [
+            "1920x1080"
+          ],
+          "connectionChanges": 0,
+          "transports": [
+            "hls.js"
+          ],
+          "levels": [
+            "1920x1080"
+          ],
+          "pdtDelayMs": {
+            "p50": 1675,
+            "p95": 1853
+          },
+          "hlsLatencyMs": {
+            "p50": 1564
+          },
+          "droppedVideoFrames": 17,
+          "latencyMs": "not measured",
+          "byProfile": {
+            "desktop": {
+              "pages": 1,
+              "ok": 1,
+              "viewport": "1888x984@1x",
+              "resolution": [
+                "1920x1080"
+              ],
+              "firstFrameMsP50": 833,
+              "presentedFpsMean": 54.8,
+              "decodedFpsMean": 60.8,
+              "videoKbpsMean": null,
+              "freezes": 0
+            }
+          }
+        },
+        "mode": "separate",
+        "during": {
+          "sec": 29.7,
+          "protocolViewers": 10,
+          "receivingRatioMin": 1,
+          "fullRateLiveMin": 1,
+          "totalMbpsMean": 4.8,
+          "targetSessionsMax": 12,
+          "targetDiscardedFrames": 0,
+          "hostCpuPctMax": 90.6,
+          "browserCpuPctMean": 2.4
+        }
+      },
+      "traffic": {
+        "stageGB": 0.035,
+        "holdGB": 0.012,
+        "cumulativeGB": 0.038,
+        "stageSec": 60.7
+      },
+      "abortReason": null
+    },
+    {
+      "stage": 25,
+      "requested": 25,
+      "holdSec": 20.2,
+      "measuredViewers": 25,
+      "joined": 15,
+      "notStarted": 0,
+      "addFailed": 0,
+      "addApiMsP95": 36,
+      "firstMediaMs": {
+        "n": 15,
+        "p50": 38,
+        "p95": 55,
+        "max": 55,
+        "basis": {
+          "ready-time": 15
+        },
+        "sampleClockErrorMs": "<= 2000 (sample-clock basis only)",
+        "readyTimeOnly": {
+          "n": 15,
+          "p50": 38,
+          "p95": 55,
+          "max": 55
+        },
+        "from": "the join's ramp slot",
+        "components": {
+          "queueMs": {
+            "n": 15,
+            "p50": 7,
+            "p95": 15,
+            "max": 15
+          },
+          "addApiMs": {
+            "n": 15,
+            "p50": 5,
+            "p95": 36,
+            "max": 36
+          },
+          "whepAnswerMs": "not measured",
+          "mediaAfterAnswerMs": "not measured"
+        }
+      },
+      "firstMediaTimeouts": 0,
+      "firstMediaPending": 0,
+      "firstMediaFromSampleClock": 0,
+      "sustainedReceiving": 25,
+      "successRate": 1,
+      "successBasis": "requested viewers",
+      "fullRateSuccessRate": 1,
+      "fullRateUnjudged": 0,
+      "fullRateTooShort": 0,
+      "fullRateByQuality": {
+        "source": {
+          "segments": 25,
+          "kbpsP50": 468,
+          "referenceKbps": 465,
+          "referenceFrom": "target ingest rate of screen-01 (app-stats)",
+          "ratioP5": 1.007,
+          "ratioP50": 1.007,
+          "belowFraction": 0
+        }
+      },
+      "referenceKbps": 465,
+      "referenceFrom": "target ingest rate of screen-01 (app-stats)",
+      "reference": {
+        "source": {
+          "kbps": 465,
+          "from": "target ingest rate of screen-01 (app-stats)"
+        }
+      },
+      "receivingRatio": {
+        "min": 1,
+        "mean": 1
+      },
+      "fullRateLive": {
+        "min": 1,
+        "mean": 1
+      },
+      "stallTimeRatio": 0,
+      "lowRateWindowRatio": 0,
+      "stallEvents": 0,
+      "viewersWithStall": 0,
+      "rssTrendMBPerMin": {
+        "generator": -54.52,
+        "target": 5.36
+      },
+      "disconnects": 0,
+      "reconnects": 0,
+      "staleReadyTimes": 0,
+      "perViewerKbps": {
+        "p5": 468,
+        "p50": 468,
+        "p95": 468,
+        "mean": 468
+      },
+      "totalMbps": {
+        "mean": 11.7,
+        "max": 11.8
+      },
+      "sourceKbps": 465,
+      "rateVsSource": {
+        "p5": 1.007,
+        "p50": 1.007,
+        "degradedViewers": 0
+      },
+      "rtpPacketsLost": "not measured",
+      "lostPerViewerMinute": "not measured",
+      "lossRatioEst": "not measured",
+      "processingErrors": 0,
+      "iceCandidatePairs": {},
+      "churn": null,
+      "qualitySwitch": null,
+      "qualityMix": {
+        "source": 25
+      },
+      "chat": null,
+      "dvr": null,
+      "receiver": "hls",
+      "hls": {
+        "delayEstimateMs": {
+          "n": 250,
+          "p50": 2103,
+          "p95": 2123,
+          "max": 2126,
+          "perViewerP50": {
+            "n": 25,
+            "p50": 2103,
+            "p95": 2117,
+            "max": 2123
+          },
+          "basis": "sample clock - virtual playhead (EXT-X-PROGRAM-DATE-TIME of the media being played), see definitions.hls.delay"
+        },
+        "bufferAheadMs": {
+          "n": 250,
+          "p50": 1776,
+          "p95": 1845,
+          "max": 1861
+        },
+        "receiveDelayMs": {
+          "n": 2500,
+          "p50": 139,
+          "p95": 166,
+          "max": 226,
+          "basis": "arrival of a part/segment - PROGRAM-DATE-TIME of its end"
+        },
+        "stalls": {
+          "events": 0,
+          "viewersWithStall": 0,
+          "stallMs": 0,
+          "rebufferMs": 0,
+          "fellBehind": 0,
+          "skippedUnits": 0,
+          "restarts": 0,
+          "definition": "no new video media for > 3000 ms"
+        },
+        "requests": {
+          "total": 5068,
+          "perViewerSec": 10.04,
+          "byKind": {
+            "session": 43,
+            "playlist": 2525,
+            "part": 2500
+          },
+          "status": {
+            "playlist 200": 2525,
+            "part 200": 2500,
+            "session 204": 43
+          },
+          "errors": {},
+          "busy429or503": 0,
+          "busyShare": 0,
+          "retryAfter": {},
+          "abortedByViewers": 0,
+          "playlistBytesPerMediaByte": 0.1336
+        },
+        "timingsMs": {
+          "blockingReload": {
+            "n": 2525,
+            "p50": 180,
+            "p95": 193,
+            "max": 216
+          },
+          "unitFetch": {
+            "n": 2500,
+            "p50": 20,
+            "p95": 36,
+            "max": 75
+          },
+          "master": {
+            "n": 0,
+            "p50": null,
+            "p95": null,
+            "max": null
+          }
+        },
+        "firstMediaComponentsMs": {
+          "session": {
+            "n": 15,
+            "p50": 2,
+            "p95": 19,
+            "max": 19
+          },
+          "master": {
+            "n": 15,
+            "p50": 2,
+            "p95": 18,
+            "max": 18
+          },
+          "playlist": {
+            "n": 15,
+            "p50": 17,
+            "p95": 46,
+            "max": 46
+          },
+          "init": {
+            "n": 15,
+            "p50": 19,
+            "p95": 49,
+            "max": 49
+          },
+          "firstMedia": {
+            "n": 15,
+            "p50": 21,
+            "p95": 54,
+            "max": 54
+          },
+          "note": "from the start of the viewer in the receiver (no ramp queue); firstMediaMs of the stage counts from the join request"
+        },
+        "sessions": {
+          "opened": 15,
+          "refused429or503": 0,
+          "viewersWithSession": 15,
+          "targetSessionsMax": 27
+        },
+        "variants": {
+          "1920x1080": 25
+        },
+        "viewerStates": {
+          "playing": 15
+        },
+        "generatorLagP99MsMax": 44.9
+      },
+      "errors": {
+        "generatorErrorKinds": {},
+        "lossLogLines": 0,
+        "whep": null
+      },
+      "externalLoad": {
+        "unattributedCpuPctMean": 28.5,
+        "unattributedCpuPctMax": 38.6,
+        "samplesAbove": 7,
+        "samples": 10,
+        "flagged": true,
+        "thresholdPct": 25
+      },
+      "resources": {
+        "genCpuPct": {
+          "mean": 1.9,
+          "max": 2.5
+        },
+        "genRssMB": {
+          "max": 398.7
+        },
+        "targetCpuPct": {
+          "mean": 20.3,
+          "max": 23
+        },
+        "targetRssMB": {
+          "max": 747.5
+        },
+        "hostCpuPct": {
+          "mean": 50.7,
+          "max": 59.7
+        },
+        "freeMemMB": {
+          "min": 584
+        },
+        "nicRxMbps": {
+          "mean": 0.2
+        },
+        "nicTxMbps": {
+          "mean": 0.3
+        },
+        "gpuPct": {
+          "max": 38
+        },
+        "gpuEncPct": {
+          "max": 32
+        },
+        "eventLoopLagP99Ms": {
+          "max": 44.9
+        },
+        "generatorListMs": {
+          "max": 16
+        },
+        "statsVia": "app-stats",
+        "targetSendMbps": {
+          "mean": null
+        },
+        "targetDiscardedFrames": "not measured",
+        "targetSessionsMax": 27,
+        "app": {
+          "httpThreadsMax": 29,
+          "httpRefused": 0,
+          "chatClientsMax": 2,
+          "chatJoinedMax": 2,
+          "chatRefused": 0,
+          "discardWarnings": 0
+        }
+      },
+      "decodedFps": "not measured",
+      "renderedFps": "not measured",
+      "avSync": "not measured",
+      "liveLatencyMs": "not measured",
+      "rebuffering": "stall windows only (byte growth); player rebuffering not measured",
+      "browser": null,
+      "browserPhase": null,
+      "traffic": {
+        "stageGB": 0.045,
+        "holdGB": 0.029,
+        "cumulativeGB": 0.083,
+        "stageSec": 31.6
+      },
+      "abortReason": null
+    },
+    {
+      "stage": 50,
+      "requested": 50,
+      "holdSec": 20.2,
+      "measuredViewers": 50,
+      "joined": 25,
+      "notStarted": 0,
+      "addFailed": 0,
+      "addApiMsP95": 14,
+      "firstMediaMs": {
+        "n": 25,
+        "p50": 21,
+        "p95": 42,
+        "max": 55,
+        "basis": {
+          "ready-time": 25
+        },
+        "sampleClockErrorMs": "<= 2000 (sample-clock basis only)",
+        "readyTimeOnly": {
+          "n": 25,
+          "p50": 21,
+          "p95": 42,
+          "max": 55
+        },
+        "from": "the join's ramp slot",
+        "components": {
+          "queueMs": {
+            "n": 25,
+            "p50": 7,
+            "p95": 13,
+            "max": 14
+          },
+          "addApiMs": {
+            "n": 25,
+            "p50": 4,
+            "p95": 14,
+            "max": 23
+          },
+          "whepAnswerMs": "not measured",
+          "mediaAfterAnswerMs": "not measured"
+        }
+      },
+      "firstMediaTimeouts": 0,
+      "firstMediaPending": 0,
+      "firstMediaFromSampleClock": 0,
+      "sustainedReceiving": 50,
+      "successRate": 1,
+      "successBasis": "requested viewers",
+      "fullRateSuccessRate": 1,
+      "fullRateUnjudged": 0,
+      "fullRateTooShort": 0,
+      "fullRateByQuality": {
+        "source": {
+          "segments": 50,
+          "kbpsP50": 473,
+          "referenceKbps": 470,
+          "referenceFrom": "target ingest rate of screen-01 (app-stats)",
+          "ratioP5": 1.007,
+          "ratioP50": 1.007,
+          "belowFraction": 0
+        }
+      },
+      "referenceKbps": 470,
+      "referenceFrom": "target ingest rate of screen-01 (app-stats)",
+      "reference": {
+        "source": {
+          "kbps": 470,
+          "from": "target ingest rate of screen-01 (app-stats)"
+        }
+      },
+      "receivingRatio": {
+        "min": 1,
+        "mean": 1
+      },
+      "fullRateLive": {
+        "min": 1,
+        "mean": 1
+      },
+      "stallTimeRatio": 0,
+      "lowRateWindowRatio": 0,
+      "stallEvents": 0,
+      "viewersWithStall": 0,
+      "rssTrendMBPerMin": {
+        "generator": 8.73,
+        "target": -297.68
+      },
+      "disconnects": 0,
+      "reconnects": 0,
+      "staleReadyTimes": 0,
+      "perViewerKbps": {
+        "p5": 473,
+        "p50": 473,
+        "p95": 481,
+        "mean": 473
+      },
+      "totalMbps": {
+        "mean": 23.7,
+        "max": 24
+      },
+      "sourceKbps": 470,
+      "rateVsSource": {
+        "p5": 1.007,
+        "p50": 1.007,
+        "degradedViewers": 0
+      },
+      "rtpPacketsLost": "not measured",
+      "lostPerViewerMinute": "not measured",
+      "lossRatioEst": "not measured",
+      "processingErrors": 0,
+      "iceCandidatePairs": {},
+      "churn": null,
+      "qualitySwitch": null,
+      "qualityMix": {
+        "source": 50
+      },
+      "chat": null,
+      "dvr": null,
+      "receiver": "hls",
+      "hls": {
+        "delayEstimateMs": {
+          "n": 500,
+          "p50": 2110,
+          "p95": 2143,
+          "max": 2150,
+          "perViewerP50": {
+            "n": 50,
+            "p50": 2110,
+            "p95": 2146,
+            "max": 2150
+          },
+          "basis": "sample clock - virtual playhead (EXT-X-PROGRAM-DATE-TIME of the media being played), see definitions.hls.delay"
+        },
+        "bufferAheadMs": {
+          "n": 500,
+          "p50": 1889,
+          "p95": 1942,
+          "max": 1959
+        },
+        "receiveDelayMs": {
+          "n": 5003,
+          "p50": 173,
+          "p95": 243,
+          "max": 341,
+          "basis": "arrival of a part/segment - PROGRAM-DATE-TIME of its end"
+        },
+        "stalls": {
+          "events": 0,
+          "viewersWithStall": 0,
+          "stallMs": 0,
+          "rebufferMs": 0,
+          "fellBehind": 0,
+          "skippedUnits": 0,
+          "restarts": 0,
+          "definition": "no new video media for > 3000 ms"
+        },
+        "requests": {
+          "total": 10091,
+          "perViewerSec": 10,
+          "byKind": {
+            "session": 88,
+            "playlist": 5000,
+            "part": 5003
+          },
+          "status": {
+            "playlist 200": 5000,
+            "part 200": 5003,
+            "session 204": 88
+          },
+          "errors": {},
+          "busy429or503": 0,
+          "busyShare": 0,
+          "retryAfter": {},
+          "abortedByViewers": 0,
+          "playlistBytesPerMediaByte": 0.1312
+        },
+        "timingsMs": {
+          "blockingReload": {
+            "n": 5000,
+            "p50": 157,
+            "p95": 183,
+            "max": 225
+          },
+          "unitFetch": {
+            "n": 5003,
+            "p50": 41,
+            "p95": 79,
+            "max": 166
+          },
+          "master": {
+            "n": 0,
+            "p50": null,
+            "p95": null,
+            "max": null
+          }
+        },
+        "firstMediaComponentsMs": {
+          "session": {
+            "n": 25,
+            "p50": 2,
+            "p95": 13,
+            "max": 20
+          },
+          "master": {
+            "n": 25,
+            "p50": 1,
+            "p95": 2,
+            "max": 3
+          },
+          "playlist": {
+            "n": 25,
+            "p50": 7,
+            "p95": 16,
+            "max": 29
+          },
+          "init": {
+            "n": 25,
+            "p50": 9,
+            "p95": 18,
+            "max": 32
+          },
+          "firstMedia": {
+            "n": 25,
+            "p50": 12,
+            "p95": 21,
+            "max": 33
+          },
+          "note": "from the start of the viewer in the receiver (no ramp queue); firstMediaMs of the stage counts from the join request"
+        },
+        "sessions": {
+          "opened": 25,
+          "refused429or503": 0,
+          "viewersWithSession": 25,
+          "targetSessionsMax": 51
+        },
+        "variants": {
+          "1920x1080": 50
+        },
+        "viewerStates": {
+          "playing": 25
+        },
+        "generatorLagP99MsMax": 68.3
+      },
+      "errors": {
+        "generatorErrorKinds": {},
+        "lossLogLines": 0,
+        "whep": null
+      },
+      "externalLoad": {
+        "unattributedCpuPctMean": 35.4,
+        "unattributedCpuPctMax": 50.2,
+        "samplesAbove": 10,
+        "samples": 10,
+        "flagged": true,
+        "thresholdPct": 25
+      },
+      "resources": {
+        "genCpuPct": {
+          "mean": 3.3,
+          "max": 3.9
+        },
+        "genRssMB": {
+          "max": 381.9
+        },
+        "targetCpuPct": {
+          "mean": 25.3,
+          "max": 27.2
+        },
+        "targetRssMB": {
+          "max": 770.3
+        },
+        "hostCpuPct": {
+          "mean": 63.9,
+          "max": 78.6
+        },
+        "freeMemMB": {
+          "min": 432
+        },
+        "nicRxMbps": {
+          "mean": 0.3
+        },
+        "nicTxMbps": {
+          "mean": 5.2
+        },
+        "gpuPct": {
+          "max": 44
+        },
+        "gpuEncPct": {
+          "max": 28
+        },
+        "eventLoopLagP99Ms": {
+          "max": 68.3
+        },
+        "generatorListMs": {
+          "max": 40
+        },
+        "statsVia": "app-stats",
+        "targetSendMbps": {
+          "mean": null
+        },
+        "targetDiscardedFrames": "not measured",
+        "targetSessionsMax": 51,
+        "app": {
+          "httpThreadsMax": 54,
+          "httpRefused": 0,
+          "chatClientsMax": 2,
+          "chatJoinedMax": 2,
+          "chatRefused": 0,
+          "discardWarnings": 0
+        }
+      },
+      "decodedFps": "not measured",
+      "renderedFps": "not measured",
+      "avSync": "not measured",
+      "liveLatencyMs": "not measured",
+      "rebuffering": "stall windows only (byte growth); player rebuffering not measured",
+      "browser": null,
+      "browserPhase": null,
+      "traffic": {
+        "stageGB": 0.091,
+        "holdGB": 0.059,
+        "cumulativeGB": 0.174,
+        "stageSec": 32.6
+      },
+      "abortReason": null
+    },
+    {
+      "stage": 100,
+      "requested": 100,
+      "holdSec": 20.2,
+      "measuredViewers": 100,
+      "joined": 50,
+      "notStarted": 0,
+      "addFailed": 0,
+      "addApiMsP95": 105,
+      "firstMediaMs": {
+        "n": 50,
+        "p50": 93,
+        "p95": 216,
+        "max": 309,
+        "basis": {
+          "ready-time": 50
+        },
+        "sampleClockErrorMs": "<= 2000 (sample-clock basis only)",
+        "readyTimeOnly": {
+          "n": 50,
+          "p50": 93,
+          "p95": 216,
+          "max": 309
+        },
+        "from": "the join's ramp slot",
+        "components": {
+          "queueMs": {
+            "n": 50,
+            "p50": 7,
+            "p95": 15,
+            "max": 22
+          },
+          "addApiMs": {
+            "n": 50,
+            "p50": 33,
+            "p95": 105,
+            "max": 116
+          },
+          "whepAnswerMs": "not measured",
+          "mediaAfterAnswerMs": "not measured"
+        }
+      },
+      "firstMediaTimeouts": 0,
+      "firstMediaPending": 0,
+      "firstMediaFromSampleClock": 0,
+      "sustainedReceiving": 100,
+      "successRate": 1,
+      "successBasis": "requested viewers",
+      "fullRateSuccessRate": 1,
+      "fullRateUnjudged": 0,
+      "fullRateTooShort": 0,
+      "fullRateByQuality": {
+        "source": {
+          "segments": 100,
+          "kbpsP50": 466,
+          "referenceKbps": 464,
+          "referenceFrom": "target ingest rate of screen-01 (app-stats)",
+          "ratioP5": 1.005,
+          "ratioP50": 1.005,
+          "belowFraction": 0
+        }
+      },
+      "referenceKbps": 464,
+      "referenceFrom": "target ingest rate of screen-01 (app-stats)",
+      "reference": {
+        "source": {
+          "kbps": 464,
+          "from": "target ingest rate of screen-01 (app-stats)"
+        }
+      },
+      "receivingRatio": {
+        "min": 1,
+        "mean": 1
+      },
+      "fullRateLive": {
+        "min": 1,
+        "mean": 1
+      },
+      "stallTimeRatio": 0,
+      "lowRateWindowRatio": 0,
+      "stallEvents": 0,
+      "viewersWithStall": 0,
+      "rssTrendMBPerMin": {
+        "generator": -22.05,
+        "target": -280.23
+      },
+      "disconnects": 0,
+      "reconnects": 0,
+      "staleReadyTimes": 0,
+      "perViewerKbps": {
+        "p5": 466,
+        "p50": 466,
+        "p95": 470,
+        "mean": 467
+      },
+      "totalMbps": {
+        "mean": 46.7,
+        "max": 53.8
+      },
+      "sourceKbps": 464,
+      "rateVsSource": {
+        "p5": 1.005,
+        "p50": 1.005,
+        "degradedViewers": 0
+      },
+      "rtpPacketsLost": "not measured",
+      "lostPerViewerMinute": "not measured",
+      "lossRatioEst": "not measured",
+      "processingErrors": 0,
+      "iceCandidatePairs": {},
+      "churn": null,
+      "qualitySwitch": null,
+      "qualityMix": {
+        "source": 100
+      },
+      "chat": null,
+      "dvr": null,
+      "receiver": "hls",
+      "hls": {
+        "delayEstimateMs": {
+          "n": 1000,
+          "p50": 2117,
+          "p95": 2212,
+          "max": 2245,
+          "perViewerP50": {
+            "n": 100,
+            "p50": 2117,
+            "p95": 2196,
+            "max": 2211
+          },
+          "basis": "sample clock - virtual playhead (EXT-X-PROGRAM-DATE-TIME of the media being played), see definitions.hls.delay"
+        },
+        "bufferAheadMs": {
+          "n": 1000,
+          "p50": 1681,
+          "p95": 1829,
+          "max": 1986
+        },
+        "receiveDelayMs": {
+          "n": 10030,
+          "p50": 246,
+          "p95": 504,
+          "max": 626,
+          "basis": "arrival of a part/segment - PROGRAM-DATE-TIME of its end"
+        },
+        "stalls": {
+          "events": 0,
+          "viewersWithStall": 0,
+          "stallMs": 0,
+          "rebufferMs": 0,
+          "fellBehind": 0,
+          "skippedUnits": 0,
+          "restarts": 0,
+          "definition": "no new video media for > 3000 ms"
+        },
+        "requests": {
+          "total": 19706,
+          "perViewerSec": 9.76,
+          "byKind": {
+            "session": 149,
+            "playlist": 9527,
+            "part": 10030
+          },
+          "status": {
+            "playlist 200": 9527,
+            "part 200": 10030,
+            "session 204": 149
+          },
+          "errors": {},
+          "busy429or503": 0,
+          "busyShare": 0,
+          "retryAfter": {},
+          "abortedByViewers": 0,
+          "playlistBytesPerMediaByte": 0.1263
+        },
+        "timingsMs": {
+          "blockingReload": {
+            "n": 9527,
+            "p50": 116,
+            "p95": 154,
+            "max": 222
+          },
+          "unitFetch": {
+            "n": 10030,
+            "p50": 83,
+            "p95": 132,
+            "max": 237
+          },
+          "master": {
+            "n": 0,
+            "p50": null,
+            "p95": null,
+            "max": null
+          }
+        },
+        "firstMediaComponentsMs": {
+          "session": {
+            "n": 50,
+            "p50": 12,
+            "p95": 63,
+            "max": 80
+          },
+          "master": {
+            "n": 50,
+            "p50": 2,
+            "p95": 65,
+            "max": 70
+          },
+          "playlist": {
+            "n": 50,
+            "p50": 38,
+            "p95": 140,
+            "max": 165
+          },
+          "init": {
+            "n": 50,
+            "p50": 49,
+            "p95": 160,
+            "max": 179
+          },
+          "firstMedia": {
+            "n": 50,
+            "p50": 51,
+            "p95": 196,
+            "max": 215
+          },
+          "note": "from the start of the viewer in the receiver (no ramp queue); firstMediaMs of the stage counts from the join request"
+        },
+        "sessions": {
+          "opened": 50,
+          "refused429or503": 0,
+          "viewersWithSession": 50,
+          "targetSessionsMax": 101
+        },
+        "variants": {
+          "1920x1080": 100
+        },
+        "viewerStates": {
+          "playing": 50
+        },
+        "generatorLagP99MsMax": 162.1
+      },
+      "errors": {
+        "generatorErrorKinds": {},
+        "lossLogLines": 0,
+        "whep": null
+      },
+      "externalLoad": {
+        "unattributedCpuPctMean": 36.2,
+        "unattributedCpuPctMax": 44.6,
+        "samplesAbove": 10,
+        "samples": 10,
+        "flagged": true,
+        "thresholdPct": 25
+      },
+      "resources": {
+        "genCpuPct": {
+          "mean": 5.6,
+          "max": 6.1
+        },
+        "genRssMB": {
+          "max": 393.6
+        },
+        "targetCpuPct": {
+          "mean": 29,
+          "max": 32.4
+        },
+        "targetRssMB": {
+          "max": 668.8
+        },
+        "hostCpuPct": {
+          "mean": 70.8,
+          "max": 82.5
+        },
+        "freeMemMB": {
+          "min": 261
+        },
+        "nicRxMbps": {
+          "mean": 0.2
+        },
+        "nicTxMbps": {
+          "mean": 5.5
+        },
+        "gpuPct": {
+          "max": 40
+        },
+        "gpuEncPct": {
+          "max": 29
+        },
+        "eventLoopLagP99Ms": {
+          "max": 162.1
+        },
+        "generatorListMs": {
+          "max": 64
+        },
+        "statsVia": "app-stats",
+        "targetSendMbps": {
+          "mean": null
+        },
+        "targetDiscardedFrames": "not measured",
+        "targetSessionsMax": 101,
+        "app": {
+          "httpThreadsMax": 58,
+          "httpRefused": 0,
+          "chatClientsMax": 2,
+          "chatJoinedMax": 2,
+          "chatRefused": 0,
+          "discardWarnings": 0
+        }
+      },
+      "decodedFps": "not measured",
+      "renderedFps": "not measured",
+      "avSync": "not measured",
+      "liveLatencyMs": "not measured",
+      "rebuffering": "stall windows only (byte growth); player rebuffering not measured",
+      "browser": null,
+      "browserPhase": null,
+      "traffic": {
+        "stageGB": 0.199,
+        "holdGB": 0.117,
+        "cumulativeGB": 0.372,
+        "stageSec": 35.2
+      },
+      "abortReason": null
+    }
+  ],
+  "abort": null,
+  "saturation": [
+    {
+      "kind": "external-load-at-baseline",
+      "stage": 0,
+      "phase": "init",
+      "t": "2026-11-02T05:26:54.334Z",
+      "detail": {
+        "unattributedCpuPct": 63.3,
+        "hostCpuPct": 82.2
+      }
+    },
+    {
+      "kind": "host-memory",
+      "stage": 1,
+      "phase": "ramp",
+      "t": "2026-11-02T05:26:54.795Z",
+      "detail": {
+        "freeMemMB": 265
+      }
+    },
+    {
+      "kind": "external-load",
+      "stage": 1,
+      "phase": "settle",
+      "t": "2026-11-02T05:27:04.814Z",
+      "detail": {
+        "unattributedCpuPct": 28.3,
+        "hostCpuPct": 48.7,
+        "genCpuPct": 0.8,
+        "targetCpuPct": 19.6
+      }
+    }
+  ],
+  "calibration": null,
+  "cleanup": {
+    "targetSessionsTrace": [
+      {
+        "afterMs": 7,
+        "targetSessions": 101,
+        "generatorPaths": 0
+      },
+      {
+        "afterMs": 2022,
+        "targetSessions": 1,
+        "generatorPaths": 0
+      }
+    ],
+    "baselineTargetSessions": 1,
+    "remainingTargetSessions": 1,
+    "remainingGeneratorPaths": 0,
+    "returnedToBaseline": true,
+    "removeFailures": 0,
+    "targetAfter": {
+      "cpuPct": 18.7,
+      "rssMB": 588,
+      "procs": 14
+    },
+    "targetBaseline": {
+      "cpuPct": 15.8,
+      "rssMB": 1390.1
+    },
+    "appAfter": {
+      "webrtcSessions": 0,
+      "httpThreads": 4,
+      "chatClients": 2
+    },
+    "chatServerClientsAfter": null
+  },
+  "errors": {
+    "generatorErrorKinds": {},
+    "lossLogLines": 0,
+    "whep": "not measured",
+    "hls": {
+      "requests": 64892,
+      "bytes": 439004895,
+      "playlistBytes": 48200682,
+      "mediaBytes": 390798013,
+      "byKind": {
+        "session": 594,
+        "master": 100,
+        "playlist": 30941,
+        "init": 100,
+        "part": 33157
+      },
+      "status": {
+        "session 200": 100,
+        "master 200": 100,
+        "playlist 200": 30941,
+        "init 200": 100,
+        "part 200": 33157,
+        "session 204": 494
+      },
+      "errors": {},
+      "busy": 0,
+      "retryAfter": {},
+      "sessionOpened": 100,
+      "sessionRefused": 0,
+      "aborted": 100
+    },
+    "sourceErrorsSample": {}
+  },
+  "files": {
+    "stagesCsv": "stages.csv",
+    "samplesCsv": "samples.csv",
+    "browserCsv": "browser.csv",
+    "generatorLogs": [
+      "hls-errors.json"
+    ]
+  }
+}

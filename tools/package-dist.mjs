@@ -27,6 +27,15 @@ await mkdir(app, { recursive: true });
 await copy(join(root, 'build/native/FrameConsole.exe'), join(app, 'FrameConsole.exe'));
 await copy(join(root, 'outputs/index.html'), join(app, 'ui/index.html'));
 for (const font of ['PretendardVariable.woff2', 'OFL.txt', 'SOURCE.txt']) await copy(join(root, 'outputs/assets/fonts', font), join(app, 'ui/assets/fonts', font));
+// Player scripts (vendored hls.js, served by the viewer server at /assets/js/<name> with a long cache: names carry the
+// version). A license file among them is also placed in licenses/.
+const scripts = join(root, 'outputs/assets/js');
+if (existsSync(scripts))
+  for (const entry of await readdir(scripts, { withFileTypes: true })) {
+    if (!entry.isFile()) continue;
+    await copy(join(scripts, entry.name), join(app, 'ui/assets/js', entry.name));
+    if (/license/i.test(entry.name)) await copy(join(scripts, entry.name), join(app, 'licenses', entry.name));
+  }
 await copy(join(tp, 'ffmpeg-9.0.2-essentials_build/bin/ffmpeg.exe'), join(app, 'bin/ffmpeg.exe'));
 await copy(join(tp, 'mediamtx/mediamtx.exe'), join(app, 'bin/mediamtx.exe'));
 await copy(join(root, 'deps/archives/MicrosoftEdgeWebView2RuntimeInstallerX64.exe'), join(app, 'redist/MicrosoftEdgeWebView2RuntimeInstallerX64.exe'));

@@ -1,0 +1,55 @@
+.toolbar { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin: 14px 0 20px; }
+.toolbar > div { display: flex; align-items: flex-end; gap: 10px; }
+.broadcast { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 22px; padding: 16px 18px; border: 1px solid #dce8e1; border-radius: 10px; background: #f1f8f4; }
+.broadcast > div { min-width: 0; }
+.broadcast strong { display: block; margin-top: 5px; color: #35483b; font-size: 14px; font-weight: 650; overflow-wrap: anywhere; }
+.broadcast p { margin: 0; color: #718176; font-size: 13px; line-height: 1.7; }
+.broadcast small { color: var(--frame-green-ink); font-size: 12px; font-weight: 650; }
+.question { min-width: 0; }
+.question strong { display: block; color: #35483b; font-size: 14px; font-weight: 650; line-height: 1.65; }
+.question small { display: block; margin-top: 7px; color: #718176; font-size: 12px; font-weight: 450; line-height: 1.6; }
+.results { display: grid; gap: 12px; min-width: 160px; max-width: 430px; width: 100%; margin: 0; padding: 0; list-style: none; }
+.results li > div { display: flex; justify-content: space-between; align-items: start; gap: 12px; margin-bottom: 5px; color: #35483b; font-size: 13px; line-height: 1.6; }
+.results li > div > span { min-width: 0; overflow-wrap: anywhere; }
+.results strong { flex: none; color: #65786a; font-size: 12px; font-weight: 600; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.track { display: block; height: 5px; overflow: hidden; border-radius: 4px; background: #edf2ef; }
+.track > span { display: block; height: 100%; border-radius: 4px; background: #86b49b; }
+.state { display: grid; justify-items: start; gap: 7px; }
+.state small { color: #718176; font-size: 12px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.rowActions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+.muted, .hint, .loading { color: #718176; font-size: 13px; line-height: 1.8; }
+.loading { margin: 14px 0; }
+.hint { margin: 0; font-size: 12px; font-weight: 450; }
+.error, .success { margin: 12px 0; font-size: 13px; line-height: 1.8; overflow-wrap: anywhere; }
+.error { color: #a2394e; }
+.success { color: var(--frame-green-ink); }
+.errorArea { margin-bottom: 18px; }
+.errorArea > p { margin-top: 0; }
+.more { display: grid; justify-items: center; gap: 8px; margin-top: 20px; }
+.dialog { overflow: auto; overscroll-behavior: contain; }
+.dialog h3 { margin: 0 0 18px; color: #35483b; font-size: 16px; font-weight: 650; line-height: 1.7; overflow-wrap: anywhere; }
+.dialog fieldset { display: grid; gap: 20px; min-width: 0; margin: 0; padding: 0; border: 0; }
+.dialog label { display: grid; gap: 8px; min-width: 0; color: #65786a; font-size: 13px; font-weight: 600; }
+.dialog textarea { resize: vertical; }
+.dialogCopy { margin: 0 0 20px; color: #718176; font-size: 13px; line-height: 1.8; overflow-wrap: anywhere; }
+.target { margin: 0 0 20px; padding: 13px 14px; border-radius: 8px; background: #f4f8f5; }
+.target small { display: block; color: #718176; font-size: 12px; }
+.target strong { display: block; margin-top: 4px; color: #435f4d; font-size: 13px; font-weight: 600; line-height: 1.7; overflow-wrap: anywhere; }
+.fieldHeading { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.fieldHeading small { color: #718176; font-size: 12px; font-weight: 450; }
+.summary { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-top: 20px; padding-top: 16px; border-top: 1px solid #edf0ee; }
+.summary span, .summary time { color: #718176; font-size: 12px; line-height: 1.7; font-variant-numeric: tabular-nums; }
+.textButton { min-height: 40px; padding: 7px 0; border: 0; background: transparent; color: var(--frame-green-ink); font-size: 13px; font-weight: 650; }
+.textButton:hover { text-decoration: underline; text-underline-offset: 3px; }
+.srOnly { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+@container (max-width: 690px) {
+  .results { min-width: 0; max-width: none; }
+  .state { justify-items: end; }
+  .question { width: 100%; }
+}
+@media (max-width: 600px) {
+  .broadcast { padding: 14px; }
+  .toolbar > div { flex: 1; }
+  .toolbar label { flex: 1; min-width: 130px; }
+  .toolbar > button { flex: none; }
+}

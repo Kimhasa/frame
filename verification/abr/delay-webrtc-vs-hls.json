@@ -1,0 +1,28 @@
+{
+ "at": "2026-11-02T06:17:35.427Z",
+ "url": "http://127.0.0.1:8889/screen-01",
+ "runs": [
+  {
+   "mode": "webrtc",
+   "transport": "webrtc",
+   "decoded": "1920x1080",
+   "firstFrameMs": 3314,
+   "hlsLatencyS": null,
+   "samples": 60,
+   "delayP50Ms": 133,
+   "delayP10Ms": 118,
+   "delayP90Ms": 141
+  },
+  {
+   "mode": "hls",
+   "transport": "hls.js",
+   "decoded": "1920x1080",
+   "firstFrameMs": 415,
+   "hlsLatencyS": 1.562,
+   "samples": 60,
+   "delayP50Ms": 1651,
+   "delayP10Ms": 1647,
+   "delayP90Ms": 1659
+  }
+ ]
+}

@@ -1,0 +1,190 @@
+{
+  "verificationDatabaseOnly": true,
+  "origin": "http://127.0.0.1:5365",
+  "api": "http://127.0.0.1:18083",
+  "checks": 42,
+  "passed": 42,
+  "realSources": [
+    "One isolated MediaMTX/FFmpeg source replaced sequentially on the same path",
+    "Real PostgreSQL account submissions, owner answers and channel policies"
+  ],
+  "paginationInstrumentation": "Owner question GET limit is lowered to 2; rows and opaque cursors are actual server responses.",
+  "faultInjection": [
+    "Owner GET 503",
+    "Owner PATCH 503/delay",
+    "Submission request-stage 503/delay",
+    "Submission response-stage 503 after actual HTTP 201 server commit"
+  ],
+  "results": [
+    {
+      "name": "Concurrent retries of one account request UUID create exactly one real private question",
+      "pass": true
+    },
+    {
+      "name": "Reusing a request UUID with different content is rejected instead of silently replacing a question",
+      "pass": true
+    },
+    {
+      "name": "Waiting questions are visible only to their author and channel owner, while anonymous and other viewers receive no private rows",
+      "pass": true
+    },
+    {
+      "name": "Private question management rejects an unexpected account scope before returning rows",
+      "pass": true
+    },
+    {
+      "name": "Only three accepted questions consume the account minute limit and the fourth returns a real retry interval",
+      "pass": true
+    },
+    {
+      "name": "Stored link blocking rejects a real question containing a Unicode top-level domain",
+      "pass": true
+    },
+    {
+      "name": "Stored follow, block, word and link rules protect new questions without charging rejected submissions or applying chat slow mode",
+      "pass": true
+    },
+    {
+      "name": "An unpinned answer is stored for its author and owner without exposing the private answer to other viewers",
+      "pass": true
+    },
+    {
+      "name": "The owner can publicly pin an unanswered question without exposing its request UUID or private account identifier",
+      "pass": true
+    },
+    {
+      "name": "Pin replacement atomically exposes one question and increments the displaced question version",
+      "pass": true
+    },
+    {
+      "name": "An editor holding the displaced pin version cannot overwrite a newer atomic pin replacement",
+      "pass": true
+    },
+    {
+      "name": "Unpinning immediately removes the public card while preserving the private answer history",
+      "pass": true
+    },
+    {
+      "name": "A real same-path broadcast replacement removes public pins and new submission access while preserving old private history and owner answers",
+      "pass": true
+    },
+    {
+      "name": "A saved request UUID confirms its original receipt after broadcast closure without creating another private question",
+      "pass": true
+    },
+    {
+      "name": "The management list retries a real GET failure and appends an actual server cursor page without duplicate rows",
+      "pass": true
+    },
+    {
+      "name": "Question search is applied by the real owner API instead of filtering only the loaded page",
+      "pass": true
+    },
+    {
+      "name": "The intended question editor opens with its heading focused",
+      "pass": true
+    },
+    {
+      "name": "Oversized owner answers are rejected locally and focus their field",
+      "pass": true
+    },
+    {
+      "name": "Owner save 503 retains the complete multiline answer and public-pin choice",
+      "pass": true
+    },
+    {
+      "name": "Pending answer saving locks every control and prevents Escape dismissal or a duplicate mutation",
+      "pass": true
+    },
+    {
+      "name": "A confirmed owner save persists its answer and public pin and focuses success feedback",
+      "pass": true
+    },
+    {
+      "name": "An actual version conflict preserves the owner draft and disables stale automatic resubmission",
+      "pass": true
+    },
+    {
+      "name": "Declining the latest-state confirmation leaves the conflicting draft intact",
+      "pass": true
+    },
+    {
+      "name": "The latest server answer replaces a draft only after explicit confirmation",
+      "pass": true
+    },
+    {
+      "name": "The owner answer editor fits the 390px viewport",
+      "pass": true
+    },
+    {
+      "name": "The owner answer editor fits the 320px viewport",
+      "pass": true
+    },
+    {
+      "name": "Closing the owner editor returns focus to its original question action",
+      "pass": true
+    },
+    {
+      "name": "Anonymous viewers can see the deliberately pinned answer without receiving another account private history",
+      "pass": true
+    },
+    {
+      "name": "Question login preserves the exact current broadcast return route",
+      "pass": true
+    },
+    {
+      "name": "An unknown submission failure retains and freezes the original draft without inventing a private question",
+      "pass": true
+    },
+    {
+      "name": "An uncertain retry reuses the exact request UUID and text while pending controls prevent duplicate send or Escape",
+      "pass": true
+    },
+    {
+      "name": "The real submission is stored once, clears its confirmed draft and focuses the acknowledgement",
+      "pass": true
+    },
+    {
+      "name": "A real server commit followed by an injected 503 is recovered from its own receipt without duplicate rows or a stale failure message",
+      "pass": true
+    },
+    {
+      "name": "Closing the viewer dialog returns focus to its question opener",
+      "pass": true
+    },
+    {
+      "name": "The actual account private question history survives browser reload",
+      "pass": true
+    },
+    {
+      "name": "The viewer question composer and private history fit the 390px viewport",
+      "pass": true
+    },
+    {
+      "name": "The pinned label stays on one line and its real long channel handle stays inside the 390px dialog",
+      "pass": true
+    },
+    {
+      "name": "The viewer question composer and private history fit the 320px viewport",
+      "pass": true
+    },
+    {
+      "name": "The pinned label stays on one line and its real long channel handle stays inside the 320px dialog",
+      "pass": true
+    },
+    {
+      "name": "A shared-cookie account switch clears the previous account private questions instead of applying another owner response",
+      "pass": true
+    },
+    {
+      "name": "Final persisted answers and private submissions remain unchanged after navigation and account switching",
+      "pass": true
+    },
+    {
+      "name": "No browser runtime or unconfirmed interception errors",
+      "pass": true
+    }
+  ],
+  "runtimeErrors": [],
+  "confirmedCanceledInterceptions": []
+}

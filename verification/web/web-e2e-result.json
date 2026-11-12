@@ -1,0 +1,295 @@
+{
+  "startedAt": "2026-11-12T05:33:44.202Z",
+  "host": {
+    "logicalCpus": 16,
+    "cpuLoadPct": {
+      "samples": 4,
+      "min": 24,
+      "avg": 29,
+      "max": 36
+    }
+  },
+  "tools": {
+    "node": "v24.22.1",
+    "mediamtx": "v1.21.3",
+    "ffmpeg": "ffmpeg version 9.0.2-essentials_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers",
+    "edge": "157.0.4341.46"
+  },
+  "ports": {
+    "rtsp": 25554,
+    "rtsps": 25322,
+    "rtp": 25000,
+    "rtcp": 25001,
+    "webrtc": 25889,
+    "ice": 25189,
+    "hls": 25888,
+    "api": 25997,
+    "playback": 25996,
+    "metrics": 25998,
+    "relay": 25070,
+    "web": 25080,
+    "control": 25081,
+    "edge": 25222
+  },
+  "web": {
+    "url": "http://127.0.0.1:25080/_frame/",
+    "secondOrigin": "http://localhost:25080/_frame/",
+    "dist": "<repo>\\apps\\web\\dist",
+    "assets": [
+      "account-client-CmSNxX5u.js",
+      "adapter-JuBbBH_W.js",
+      "code-workspace-DAcN5HGJ.svg",
+      "community-types-4h-N9u2N.css",
+      "community-types-n72viLsi.js",
+      "ConnectedCommunity-Cr-4ivkL.css",
+      "ConnectedCommunity-Dtc2oI4-.js",
+      "creative-studio-BTDpigEv.webp",
+      "forest-game-BwCwc-8q.webp",
+      "frame-symbol-D-4U2svL.svg",
+      "hls-D4n1qvN7.js",
+      "index-CFICVkdk.js",
+      "index-jgra1eqc.css",
+      "night-drive-DS6tJwlq.webp",
+      "preload-helper-WnyfH98n.js",
+      "PretendardVariable-CJuje-Rk.woff2",
+      "react-DvXU6kJ2.js"
+    ]
+  },
+  "broadcasts": {
+    "path": "screen-01",
+    "A": "2a37e2f69d56b5ddd989d2b23356317b",
+    "B": "0342f0f58989933b1475f63f7ada0c64"
+  },
+  "checks": [
+    {
+      "name": "setup: relay MediaMTX starts with deploy/mediamtx-relay.yml",
+      "ok": true,
+      "log": [
+        "2026/11/12 14:33:45 INF MediaMTX v1.21.3, windows, amd64",
+        "2026/11/12 14:33:45 INF configuration loaded from <home>\\AppData\\Local\\Temp\\frame-web-e2e-1794461624199\\mediamtx\\mediamtx.yml",
+        "2026/11/12 14:33:45 INF [metrics] started with listener on 127.0.0.1:25998 (TCP/HTTP)"
+      ]
+    },
+    {
+      "name": "setup: relay /healthz",
+      "ok": true,
+      "log": [
+        "2026-11-12T05:33:46.250Z INFO FRAME relay 0.3.0 listening on 127.0.0.1:25070; UI <repo>\\outputs\\index.html; scripts <repo>\\outputs\\assets\\js; 1 publisher token(s); renditions [480p]; DVR on; HLS on (+AAC); media grace 45000 ms; playback stats not stored (RELAY_STATS_DIR unset)",
+        "2026-11-12T05:33:46.261Z INFO MediaMTX API reachable"
+      ]
+    },
+    {
+      "name": "setup: web-proxy serves /_frame/ (SPA index for pages, 404 for a missing asset) and passes the rest to the relay",
+      "ok": true,
+      "page": 200,
+      "pageCache": "no-cache",
+      "missingAsset": 404,
+      "relayHealthz": 200,
+      "secondOrigin": 200
+    },
+    {
+      "name": "setup: headless Edge DevTools up",
+      "ok": true
+    },
+    {
+      "name": "1a list: no broadcast -> empty state (200 + [])",
+      "ok": true,
+      "emptyShown": true,
+      "status": 200,
+      "items": 0
+    },
+    {
+      "name": "1b list: /api/broadcasts 500 -> error state, not the empty state",
+      "ok": true,
+      "errorShown": true,
+      "emptyShown": false,
+      "faultedRequests": 1,
+      "rule": 1
+    },
+    {
+      "name": "1c list: card for A; clicking it opens /_frame/watch/screen-01/<A>",
+      "ok": true,
+      "publisherReady": true,
+      "announce": 204,
+      "thumbnailUpload": 204,
+      "listed": true,
+      "retryButton": true,
+      "cardShown": true,
+      "thumbnailShown": false,
+      "href": "/_frame/watch/screen-01/2a37e2f69d56b5ddd989d2b23356317b",
+      "opened": true
+    },
+    {
+      "name": "2 playback: A plays via hls.js, 1280x720 with audio, no RTCPeerConnection, media only under /screen-01/b/<A>/",
+      "ok": true,
+      "firstFrameMs": 7309,
+      "size": "1280x720",
+      "advancedS": 4.44,
+      "frames": 121,
+      "audioBytes": 67935,
+      "transport": "hls.js",
+      "pcs": 0,
+      "adapter": "relay",
+      "watch": {
+        "kind": "ready",
+        "broadcastId": "2a37e2f69d56b5ddd989d2b23356317b",
+        "path": "screen-01"
+      },
+      "mediaRequests": 106,
+      "outsideScope": [],
+      "session": "POST /screen-01/b/2a37e2f69d56b5ddd989d2b23356317b/session 200",
+      "sessionBeforeMedia": true,
+      "level": {
+        "height": 720,
+        "width": 1280,
+        "bitrate": 3128000
+      },
+      "latencyS": 1.283,
+      "muted": false,
+      "sample": [
+        "GET /screen-01/b/2a37e2f69d56b5ddd989d2b23356317b/live.m3u8 200",
+        "GET /screen-01/b/2a37e2f69d56b5ddd989d2b23356317b/480p/hls/video1_stream.m3u8 200",
+        "GET /screen-01/b/2a37e2f69d56b5ddd989d2b23356317b/480p/hls/audio3_stream.m3u8 200",
+        "GET /screen-01/b/2a37e2f69d56b5ddd989d2b23356317b/480p/hls/video1_stream.m3u8?_HLS_msn=8&_HLS_part=0&_HLS_skip=YES failed"
+      ],
+      "adapterRequests": [
+        "/api/broadcasts",
+        "/api/broadcasts",
+        "/screen-01/info",
+        "/screen-01/chat",
+        "/screen-01/b/2a37e2f69d56b5ddd989d2b23356317b/session",
+        "/screen-01/b/2a37e2f69d56b5ddd989d2b23356317b/live.m3u8",
+        "/screen-01/b/2a37e2f69d56b5ddd989d2b23356317b/480p/hls/video1_stream.m3u8",
+        "/screen-01/b/2a37e2f69d56b5ddd989d2b23356317b/480p/hls/audio3_stream.m3u8",
+        "/screen-01/b/2a37e2f69d56b5ddd989d2b23356317b/480p/hls/video1_stream.m3u8?_HLS_msn=8&_HLS_part=0&_HLS_skip=YES",
+        "/screen-01/b/2a37e2f69d56b5ddd989d2b23356317b/src/hls/audio3_stream.m3u8",
+        "/screen-01/b/2a37e2f69d56b5ddd989d2b23356317b/src/hls/video1_stream.m3u8",
+        "/screen-01/b/2a37e2f69d56b5ddd989d2b23356317b/src/hls/audio3_stream.m3u8?_HLS_msn=8&_HLS_part=0&_HLS_skip=YES"
+      ]
+    },
+    {
+      "name": "4a chat: nickname set, message sent and acknowledged (pending clears)",
+      "ok": true,
+      "nickname": {
+        "ok": true,
+        "submit": "설정하기"
+      },
+      "clicked": true,
+      "shownTimes": 1,
+      "ackMs": 64,
+      "ack": {
+        "ok": true,
+        "id": "2a37e2f6-1"
+      },
+      "lastAckId": "2a37e2f6-1",
+      "joinBroadcastIsA": true,
+      "sockets": [
+        "/screen-01/chat"
+      ]
+    },
+    {
+      "name": "4b chat: a second page on A (other origin) receives it exactly once",
+      "ok": true,
+      "p2Connected": true,
+      "shownTimes": 1,
+      "messageFrames": 1,
+      "shownAfterMs": 126
+    }
+  ],
+  "steps": [
+    {
+      "name": "1 list",
+      "s": 3
+    },
+    {
+      "name": "2 playback",
+      "s": 12
+    },
+    {
+      "name": "4 chat",
+      "s": 3
+    }
+  ],
+  "notes": [
+    "Edge ran with --mute-audio (shared PC): audio is still decoded; webkitAudioDecodedByteCount is the measure"
+  ],
+  "notConfirmed": [
+    "iPhone/iPad Safari on a real device: native HLS or ManagedMediaSource, LL-HLS parts, DVR seeking, autoplay and the sound button",
+    "Android Chrome on a real device; the mobile layouts with the real adapter",
+    "HTTPS/WSS through Caddy (deploy/Caddyfile.example) and a CDN in front of the scoped media routes",
+    "a relay process restart while a page is watching (registry and chat history in memory are lost)",
+    "quality ladder failure (source-only list) seen from the React page",
+    "401/403 on the media itself (live.m3u8, parts, DVR files) or on the WHEP offer: check 10 faults only the scoped session POST",
+    "the React page on WHEP while B is announced but the path still carries the previous publisher (the relay answers whep?b=<B> 503 + Retry-After there, checked by e2e.mjs; this run plays WHEP only after B publishes)",
+    "sessions longer than this run (session renewal over hours, DVR across many 60 s recording files)",
+    "browsers other than headless Edge (Chrome, Firefox, desktop Safari)"
+  ],
+  "pages": {
+    "p1": {
+      "origin": "http://127.0.0.1:25080",
+      "requests": 211,
+      "sockets": [
+        {
+          "id": "15932.58",
+          "path": "/screen-01/chat",
+          "t": 1794461630484,
+          "status": 101,
+          "closedAt": null
+        }
+      ],
+      "console": []
+    },
+    "p2": {
+      "origin": "http://localhost:25080",
+      "requests": 101,
+      "sockets": [
+        {
+          "id": "31340.28",
+          "path": "/screen-01/chat",
+          "t": 1794461642575,
+          "status": 101,
+          "closedAt": null
+        }
+      ],
+      "console": []
+    }
+  },
+  "proxy": {
+    "total": 311,
+    "faults": 1,
+    "upstreamErrors": 1,
+    "aborted": 1,
+    "byKind": {
+      "web": {
+        "200": 40,
+        "404": 1
+      },
+      "other": {
+        "200": 3
+      },
+      "api": {
+        "200": 3,
+        "500": 1
+      },
+      "session": {
+        "200": 2,
+        "404": 5
+      },
+      "info": {
+        "200": 3
+      },
+      "websocket": {
+        "101": 2
+      },
+      "media-scoped": {
+        "200": 246,
+        "502": 1,
+        "null": 4
+      }
+    }
+  },
+  "finishedAt": "2026-11-12T05:34:05.058Z",
+  "durationS": 21,
+  "passed": 10,
+  "failed": 0
+}

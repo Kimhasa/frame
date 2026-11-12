@@ -1,0 +1,39 @@
+{
+  "verificationDatabaseOnly": true,
+  "productionUserDataUntouched": true,
+  "mediaReceiverUntouched": true,
+  "rebootRequired": false,
+  "complete": true,
+  "results": [
+    {
+      "name": "Profile editor, channel details, sharing and reporting pass browser verification",
+      "pass": true
+    },
+    {
+      "name": "Development StrictMode, clipboard denial and cancelled Web Share recover correctly",
+      "pass": true
+    },
+    {
+      "name": "Redis login survives the API restart",
+      "pass": true
+    },
+    {
+      "name": "Stored channel profile and stable ID survive the API restart",
+      "pass": true
+    },
+    {
+      "name": "The previous handle still resolves to the same channel after restart",
+      "pass": true
+    },
+    {
+      "name": "Received reports persist and duplicate submissions remain blocked after restart",
+      "pass": true
+    }
+  ],
+  "limits": [
+    "Single PC, loopback and headless Edge",
+    "No native mobile browser or Caddy HTTPS verification",
+    "Clipboard and Web Share payloads are checked with browser spies; no external messages are sent",
+    "No global video/view counters or operator report review UI"
+  ]
+}

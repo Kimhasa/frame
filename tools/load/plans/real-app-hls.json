@@ -1,0 +1,13 @@
+{
+  "name": "real-app-hls",
+  "_comment": "FrameConsole's browser viewing path (HLS, run with --host <sender IP>, 127.0.0.1 when the generator runs on the sender PC). Every viewer is a Node LL-HLS client: POST /screen-01/session (+ PUT heartbeat, DELETE on leave, as the page), live.m3u8, the variant of its quality, init, parts with blocking reloads, video + AAC. Quality per plan: source only here; a mix with --qualities source=0.7,720p=0.3 (the app must offer 720p). Stages 1-10-50-100-300-500-1000, hold 45 s each; on one PC the stop rules (generator threads, host CPU/memory, success, 429/503 share, degraded rate) end the run long before 1000 - that is a loopback limit, never 1,000 internet viewers. Target statistics only from the app's read-only GET /api/stats (v 1): ingest per path as the full-rate reference, hls.sessions as the target session count, http.refused. The app answers Connection: close and counts every HLS request in its 400 in-flight slots (http_server.cpp kMaxRequests), so 503 Busy answers are expected past a few hundred LL-HLS viewers. One headless Edge page with the real UI (hls.js) runs in a separate phase after the holds of stages 1 and 10: decoded fps and real delay, kept apart from the media-load numbers. Traffic cap 200 GB is loopback/LAN protection only; lower it with --max-traffic-gb on any metered link.",
+  "receiver": "hls",
+  "target": { "base": "http://{host}:8889", "path": "screen-01", "appStats": "http://{host}:8889/api/stats", "requireAppStats": true, "useApi": false, "tree": ["FrameConsole"] },
+  "hls": { "workers": 2, "session": true, "parts": true, "audio": true, "skip": true, "startBehindSec": 1.5, "stallMs": 3000 },
+  "stages": [1, 10, 50, 100, 300, 500, 1000],
+  "holdSec": 45,
+  "rampPerSec": 10,
+  "qualities": { "source": 1 },
+  "browser": { "count": 1, "profiles": ["desktop"], "url": "http://{host}:8889/screen-01", "seconds": 20, "stages": [1, 10], "mode": "separate", "latency": false },
+  "limits": { "maxTrafficGB": 200, "abortOnDegraded": true, "minFullRate": 0.9, "minSuccess": 0.9, "max503Share": 0.1, "minBusyRequests": 50 }
+}

@@ -1,0 +1,34 @@
+{
+  "origin": "http://127.0.0.1:5366",
+  "developmentStrictMode": true,
+  "readOnly": true,
+  "dedicatedFixtureCookiesOnly": true,
+  "results": [
+    {
+      "name": "Development StrictMode retains one actual owner reward list without duplicate UI or errors",
+      "pass": true
+    },
+    {
+      "name": "The editor survives effect replay and discards local name, points and enabled drafts on Close and Escape",
+      "pass": true
+    },
+    {
+      "name": "The rejected request shows its actual reason read-only and restores its opener without a processing form",
+      "pass": true
+    },
+    {
+      "name": "The 390px list and 320px editor retain readable fields and a styled enabled checkbox without overflow",
+      "pass": true
+    },
+    {
+      "name": "Saved rewards and terminal processing remain unchanged with guarded owner reads and zero writes or runtime errors",
+      "pass": true
+    }
+  ],
+  "runtimeErrors": [],
+  "dataChangingRequests": 0,
+  "blockedWrites": 0,
+  "chatSockets": 0,
+  "ownerHeadersMatched": true,
+  "complete": true
+}

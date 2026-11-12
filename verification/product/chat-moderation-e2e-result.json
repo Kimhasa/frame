@@ -1,0 +1,43 @@
+{
+  "verificationDatabaseOnly": true,
+  "productionUserDataUntouched": true,
+  "nativeObsReceiverUntouched": true,
+  "complete": true,
+  "testedJarSha256": "fe4182caf45c808eeab787af8cb7e697540d40e2c789a681199ac2ee7437ec2b",
+  "results": [
+    {
+      "name": "Real account chat policy and management UI verification pass",
+      "pass": true
+    },
+    {
+      "name": "One owned low-resolution media source backs the real chat room",
+      "pass": true
+    },
+    {
+      "name": "Read-only development StrictMode management UI verification passes",
+      "pass": true
+    },
+    {
+      "name": "Settings and their optimistic version persist across API restart",
+      "pass": true
+    },
+    {
+      "name": "Active account blocks persist across API restart",
+      "pass": true
+    },
+    {
+      "name": "Authenticated WebSocket policy remains enforced after restart",
+      "pass": true
+    },
+    {
+      "name": "The tested private JAR stays immutable throughout verification",
+      "pass": true
+    }
+  ],
+  "fixture": "Dedicated MediaMTX + 320x180 15fps H.264/AAC FFmpeg source + immutable Spring JAR + production React + headless Edge",
+  "limits": [
+    "Single PC and loopback only",
+    "No Caddy HTTPS/WSS or physical mobile device coverage",
+    "No load or capacity claim"
+  ]
+}

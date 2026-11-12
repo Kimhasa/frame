@@ -1,0 +1,24 @@
+/* Mobile viewer presentation. Existing media controls and choices retain their behavior. */
+(()=>{
+'use strict';const F=window.F;if(!F)return;
+const old={render:F.render,modal:F.renderModal,close:F.closeModal};const S=F.v39Viewer={sheet:null,search:null};
+const mobile=()=>F.v39Mobile?.isMobile()||matchMedia('(max-width:767px)').matches;
+const watching=()=>['watch','vod-watch','clip-watch'].includes(F.currentBase)||F.screen==='quality';
+function cleanup(){if(S.sheet){const {shell,menu,placeholder}=S.sheet;if(placeholder.isConnected)placeholder.replaceWith(menu);shell.remove();F.root.inert=false;S.sheet=null;document.body.classList.remove('v39-quality-open');}}
+function closeQuality(){cleanup();if(F.screen==='quality')F.closeModal();}
+function keyboard(){document.body.classList.toggle('v39-chat-keyboard',mobile()&&document.activeElement?.id==='chat-message'&&(window.visualViewport?.height||innerHeight)<650);}
+function quality(){if(!mobile()||F.screen!=='quality'||S.sheet)return;const menu=F.root.querySelector('.locked-player-quality-menu');if(!menu)return;
+const placeholder=document.createComment('quality-menu');menu.before(placeholder);
+const shell=document.createElement('div');shell.className='v39-quality-backdrop';shell.innerHTML='<section class="v39-quality-sheet" role="dialog" aria-modal="true" aria-labelledby="v39-quality-title"><span class="v39-sheet-handle" aria-hidden="true"></span><header><h2 id="v39-quality-title">화질</h2><button type="button" class="icon" aria-label="화질 선택 닫기">'+F.icon('close')+'</button></header></section>';
+shell.querySelector('section').append(menu);menu.classList.add('v39-quality-options');menu.querySelector('.locked-quality-menu-title')?.setAttribute('hidden','');document.body.append(shell);F.root.inert=true;document.body.classList.add('v39-quality-open');S.sheet={shell,menu,placeholder};shell.querySelector('header button').onclick=closeQuality;shell.onclick=ev=>{if(ev.target===shell)closeQuality();};requestAnimationFrame(()=>menu.querySelector('[aria-checked=true]')?.focus());}
+function copy(){const roots=[F.root,F.dialog];for(const root of roots){root?.querySelectorAll('.chat-pinned').forEach(n=>{if(n.textContent.trim()==='서로를 배려하는 대화를 나눠주세요.')n.remove();});const help=root?.querySelector('#v34-chat-name-help');if(help&&!help.classList.contains('v34-chat-name-error'))help.textContent='1–20자';root?.querySelectorAll('.help,.hint,.field-help,.muted,small').forEach(n=>{if(n.children.length)return;const t=n.textContent.trim();if(['송출 해상도와 프레임률을 기준으로 계산해요.','시안에서는 실제 결제가 진행되지 않아요.','실제 결제는 진행되지 않아요.'].includes(t))n.remove();});}}
+function polish(){const m=mobile();document.body.classList.toggle('v39-watch',m&&watching());document.body.classList.toggle('v39-search',m&&F.screen==='search');document.body.classList.toggle('v39-search-empty',m&&F.screen==='search'&&!String(F.searchQuery||'').trim());
+F.root.querySelectorAll('.chat-head').forEach(h=>{const row=h.querySelector('.row'),p=h.querySelector('[data-action="v38-viewer-participants"]');if(row&&p&&p.parentElement!==row)row.prepend(p);});
+const player=F.root.querySelector('#video-player');if(m&&watching()&&player&&!player.querySelector('.v39-player-back')){const b=document.createElement('button');b.className='v39-player-back';b.type='button';b.setAttribute('aria-label','뒤로');b.innerHTML=F.icon('arrow');b.onclick=ev=>{ev.stopPropagation();F.navigate('live');};player.append(b);}
+if(m&&F.screen==='search'){const header=F.root.querySelector('.v3-header'),form=F.root.querySelector('#catalog-search');if(header&&form&&!header.contains(form)){header.innerHTML='<button type="button" class="v39-search-back icon" aria-label="뒤로">'+F.icon('arrow')+'</button>';header.append(form);header.querySelector('button').onclick=()=>F.navigate('live');S.search=form;}}
+copy();quality();keyboard();}
+F.render=(...args)=>{cleanup();const r=old.render(...args);polish();return r;};F.renderModal=(...args)=>{const r=old.modal(...args);copy();return r;};F.closeModal=(...args)=>{cleanup();return old.close(...args);};
+window.addEventListener('keydown',ev=>{if(!S.sheet)return;const all=[...S.sheet.shell.querySelectorAll('button:not(:disabled)')],i=all.indexOf(document.activeElement);if(ev.key==='Escape'){ev.preventDefault();ev.stopImmediatePropagation();closeQuality();}else if(ev.key==='Tab'){if(ev.shiftKey&&i<=0){ev.preventDefault();all.at(-1)?.focus();}else if(!ev.shiftKey&&i===all.length-1){ev.preventDefault();all[0]?.focus();}}},true);
+let width=mobile();window.addEventListener('resize',()=>{const next=mobile();if(next!==width){width=next;cleanup();F.render();}else polish();});window.visualViewport?.addEventListener('resize',()=>{document.body.style.setProperty('--v39-viewport-height',visualViewport.height+'px');keyboard();});document.addEventListener('focusin',keyboard);document.addEventListener('focusout',()=>requestAnimationFrame(keyboard));
+Object.assign(S,{polish,closeQuality});polish();
+})();

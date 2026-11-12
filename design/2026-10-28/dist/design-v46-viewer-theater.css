@@ -1,0 +1,2 @@
+/* Existing geometry is reused. Layouts with no sidebar have no width to reclaim. */
+#product-root.v46-viewer-layout[data-v46-wide-available=false] #locked-viewer-wide{display:none!important}

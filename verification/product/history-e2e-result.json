@@ -1,0 +1,131 @@
+{
+  "startedWith": "Isolated Spring + MediaMTX + FFmpeg + production React + headless Edge",
+  "verificationDatabaseOnly": true,
+  "nativeObsReceiverUntouched": true,
+  "productionUserDataUntouched": true,
+  "ports": {
+    "api": 18083,
+    "web": 5365,
+    "mtx": 29997,
+    "rtsp": 29554,
+    "hls": 29888,
+    "edge": 9494
+  },
+  "fixture": {
+    "video": "320x180 15fps H.264 + AAC",
+    "path": "history-screen"
+  },
+  "faultInjection": [
+    "First history POST 503"
+  ],
+  "results": [
+    {
+      "name": "New account has no fabricated history",
+      "pass": true
+    },
+    {
+      "name": "Opening a waiting broadcast does not create history",
+      "pass": true,
+      "detail": {
+        "time": 0,
+        "paused": true,
+        "readyState": 0,
+        "frames": 0,
+        "width": 0,
+        "height": 0
+      }
+    },
+    {
+      "name": "A history save failure does not interrupt video playback",
+      "pass": true,
+      "detail": {
+        "before": {
+          "time": 7.21879,
+          "paused": false,
+          "readyState": 4,
+          "frames": 23,
+          "width": 320,
+          "height": 180
+        },
+        "after": {
+          "time": 8.328338,
+          "paused": false,
+          "readyState": 4,
+          "frames": 40,
+          "width": 320,
+          "height": 180
+        }
+      }
+    },
+    {
+      "name": "Advancing real HLS video saves server broadcast metadata",
+      "pass": true,
+      "detail": {
+        "width": 320,
+        "height": 180
+      }
+    },
+    {
+      "name": "Transient failure retries after cooldown instead of every media event",
+      "pass": true,
+      "detail": {
+        "attempts": 2,
+        "retryAfterMs": 5046
+      }
+    },
+    {
+      "name": "Successful watch visit does not send repeated writes",
+      "pass": true
+    },
+    {
+      "name": "The saved record can be deleted while the player stays mounted",
+      "pass": true
+    },
+    {
+      "name": "Continuing playback does not recreate a deleted record",
+      "pass": true
+    },
+    {
+      "name": "Revisiting and playing the broadcast creates a new watched visit",
+      "pass": true
+    },
+    {
+      "name": "Stored history survives browser reload",
+      "pass": true
+    },
+    {
+      "name": "Broadcast ending preserves history and marks it unavailable",
+      "pass": true
+    },
+    {
+      "name": "Ended history is not linked to another broadcast on the same path",
+      "pass": true
+    },
+    {
+      "name": "PostgreSQL history and Redis login survive API restart",
+      "pass": true
+    },
+    {
+      "name": "No browser runtime or interception errors during actual playback",
+      "pass": true
+    },
+    {
+      "name": "Actual watch-history check uses HLS without WHEP fallback",
+      "pass": true
+    },
+    {
+      "name": "History UI pagination, filters, deletion and mobile checks pass",
+      "pass": true,
+      "detail": {
+        "checks": 23
+      }
+    }
+  ],
+  "runtimeErrors": [],
+  "complete": true,
+  "limits": [
+    "Single PC, loopback and headless Edge only",
+    "No iPhone/Android physical-device, Caddy HTTPS/WSS or load verification",
+    "Metadata-only fixtures are used separately for history pagination UI"
+  ]
+}

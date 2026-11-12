@@ -1,0 +1,234 @@
+{
+  "verificationDatabaseOnly": true,
+  "origin": "http://127.0.0.1:5365",
+  "api": "http://127.0.0.1:18083",
+  "checks": 52,
+  "passed": 52,
+  "fixtureExpiry": "The guarded helper changes only a fresh expiring fixture block to created_at_ms+1, a timestamp already in the past; it does not wait 10 minutes or modify production data.",
+  "paginationInstrumentation": "Only initial block-list UI GET limits are lowered to 2; all returned rows and cursors come from the actual server.",
+  "faultInjection": [
+    "Settings GET/PATCH 503",
+    "Delayed settings PATCH",
+    "Block-list and cursor GET 503",
+    "Block POST 503 and delay",
+    "Unblock DELETE 503 and delay"
+  ],
+  "realEdges": [
+    "Ticket identity/Origin/single-use/session revocation",
+    "Actual policy and account restriction enforcement",
+    "Settings version HTTP 409",
+    "Foreign owner block isolation"
+  ],
+  "results": [
+    {
+      "name": "A real new channel starts with the documented private moderation defaults",
+      "pass": true
+    },
+    {
+      "name": "Private moderation and ticket APIs require a real account and reject a changed account scope",
+      "pass": true
+    },
+    {
+      "name": "The product WebSocket rejects a foreign Origin before joining a room",
+      "pass": true
+    },
+    {
+      "name": "A guest can read chat but cannot gain the supplied account identity or send a message",
+      "pass": true
+    },
+    {
+      "name": "A valid ticket fixes the real account and ignores spoofed join name and user ID",
+      "pass": true
+    },
+    {
+      "name": "Delivered messages use server-owned public channel identity and keep the internal account UUID private",
+      "pass": true
+    },
+    {
+      "name": "A consumed account chat ticket cannot be replayed on another socket",
+      "pass": true
+    },
+    {
+      "name": "An already open socket loses send authority after its actual Redis session is logged out",
+      "pass": true
+    },
+    {
+      "name": "Live link and NFKC case-insensitive word policies also apply to the broadcaster",
+      "pass": true
+    },
+    {
+      "name": "A settings update does not reapply stale link or banned-word refusal state",
+      "pass": true
+    },
+    {
+      "name": "Follower-only enforcement follows actual stored follows immediately and exempts only the owner",
+      "pass": true
+    },
+    {
+      "name": "Slow chat shares its timer across account tabs, recovers after the interval and exempts the owner",
+      "pass": true
+    },
+    {
+      "name": "Disabling slow mode clears a previous slow-mode refusal on the open socket",
+      "pass": true
+    },
+    {
+      "name": "A stored account block applies to existing and new sockets without leaking its private reason",
+      "pass": true
+    },
+    {
+      "name": "A different channel cannot remove the owner block and the owner cannot block their own account",
+      "pass": true
+    },
+    {
+      "name": "The actual send path accepts an expired account restriction and its row appears in the expired filter",
+      "pass": true
+    },
+    {
+      "name": "Unblocking then saving settings keeps the same socket enabled instead of reviving a stale blocked refusal",
+      "pass": true
+    },
+    {
+      "name": "Settings GET 503 shows a retryable load error instead of invented default controls",
+      "pass": true
+    },
+    {
+      "name": "Invalid slow-chat interval is rejected locally and focuses its input",
+      "pass": true
+    },
+    {
+      "name": "Duplicate case-insensitive banned words are rejected before any save",
+      "pass": true
+    },
+    {
+      "name": "Switching management tabs preserves unsaved settings and control states",
+      "pass": true
+    },
+    {
+      "name": "Settings PATCH 503 keeps all changed switches, interval and banned-word draft",
+      "pass": true
+    },
+    {
+      "name": "Pending settings save disables editing and guards duplicate submission",
+      "pass": true
+    },
+    {
+      "name": "Successful UI settings reach the actual server and survive reload",
+      "pass": true
+    },
+    {
+      "name": "Chat settings fit the 390px viewport",
+      "pass": true
+    },
+    {
+      "name": "Chat settings fit the 320px viewport",
+      "pass": true
+    },
+    {
+      "name": "Actual settings version conflict preserves the draft and prevents automatic stale resubmission",
+      "pass": true
+    },
+    {
+      "name": "Conflict refresh confirmation can be cancelled without discarding the draft",
+      "pass": true
+    },
+    {
+      "name": "Explicit conflict refresh loads the newest stored settings without silently saving the discarded draft",
+      "pass": true
+    },
+    {
+      "name": "Block-list GET 503 is an error instead of a false empty state",
+      "pass": true
+    },
+    {
+      "name": "Block pagination 503 retains the already loaded rows",
+      "pass": true
+    },
+    {
+      "name": "Cursor retry appends the final block once and shows the real expired restriction",
+      "pass": true
+    },
+    {
+      "name": "Active and expired filters use the persisted restriction expiration",
+      "pass": true
+    },
+    {
+      "name": "Owner block search finds the actual account by its channel handle",
+      "pass": true
+    },
+    {
+      "name": "Account restriction rows and filters fit the 390px viewport",
+      "pass": true
+    },
+    {
+      "name": "Selected restriction filter text remains fully readable at 390px",
+      "pass": true
+    },
+    {
+      "name": "Account restriction rows and filters fit the 320px viewport",
+      "pass": true
+    },
+    {
+      "name": "Selected restriction filter text remains fully readable at 320px",
+      "pass": true
+    },
+    {
+      "name": "Block creation resolves the real account and requires a private management reason",
+      "pass": true
+    },
+    {
+      "name": "Block POST 503 preserves the confirmed target, selected duration and typed reason",
+      "pass": true
+    },
+    {
+      "name": "Pending account restriction locks its dialog and rejects Escape or duplicate submission",
+      "pass": true
+    },
+    {
+      "name": "A block created through the UI immediately restricts the actual account without exposing its reason",
+      "pass": true
+    },
+    {
+      "name": "Unblock DELETE 503 preserves its confirmation and stored row",
+      "pass": true
+    },
+    {
+      "name": "Pending unblock cannot close or issue a duplicate destructive request",
+      "pass": true
+    },
+    {
+      "name": "UI account unblock is a real server change rather than a local list edit",
+      "pass": true
+    },
+    {
+      "name": "Production chat uses the fixed authenticated account name and offers no nickname impersonation control",
+      "pass": true
+    },
+    {
+      "name": "A real banned-word chat rejection preserves the browser composer draft",
+      "pass": true
+    },
+    {
+      "name": "The browser clears only an acknowledged draft and renders the server-owned broadcaster channel identity",
+      "pass": true
+    },
+    {
+      "name": "Anonymous viewers can read chat history while the composer requires account login",
+      "pass": true
+    },
+    {
+      "name": "Chat login keeps the exact broadcast watch return path",
+      "pass": true
+    },
+    {
+      "name": "Final private restriction state retains the intended blocked account for restart verification",
+      "pass": true
+    },
+    {
+      "name": "No browser runtime or unconfirmed interception errors",
+      "pass": true
+    }
+  ],
+  "runtimeErrors": [],
+  "confirmedCanceledInterceptions": []
+}

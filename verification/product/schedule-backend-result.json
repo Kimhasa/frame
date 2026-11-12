@@ -1,0 +1,205 @@
+{
+  "GeneratedAt": "2026-11-12T02:41:02.8220228Z",
+  "Command": "gradlew.bat test bootJar",
+  "Suite": {
+    "Tests": 73.0,
+    "Failures": 0.0,
+    "Errors": 0.0,
+    "Skipped": 0.0
+  },
+  "Classes": [
+    {
+      "Name": "frame.api.account.AccountIntegrationTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.AccountSessionRecoveryTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ProductMigrationIntegrationTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ProductStorageDisabledTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ScheduledBroadcastsTest",
+      "Tests": 4,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.BlankRelayVariablesTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.broadcast.BroadcastRegistryTest",
+      "Tests": 12,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.chat.ChatHandshakeFilterTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.chat.ChatRulesTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.dvr.DvrRulesTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.mediamtx.MediaMtxPathsTest",
+      "Tests": 2,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.obs.ObsBroadcastsTest",
+      "Tests": 10,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.payments.PaymentsTest",
+      "Tests": 10,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.playback.PlaybackRulesTest",
+      "Tests": 7,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.playback.ViewerSessionsTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.ShutdownTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.StartupGraceTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.stats.StatsRowTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.UpstreamBreakTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.web.JsCompatTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    }
+  ],
+  "JarSha256": "479ba2b1e52d96b9c2a82e0f92a42c4cc08e71c3acea2e438cb85a2ca7e05e66",
+  "Migrations": [
+    {
+      "Name": "V1__accounts_channels_follows.sql",
+      "Sha256": "09aac64c7d820f3ea8b3229b99b4dca11a1de6c104c7da277846415bf8a39b4f"
+    },
+    {
+      "Name": "V2__signup_consents.sql",
+      "Sha256": "5841a933a3fb672ee4876ebf6a4c36247416a126b7e17555151e9ecc8bb4daad"
+    },
+    {
+      "Name": "V3__broadcast_schedules.sql",
+      "Sha256": "8661aecdd2fadaf14a67a36a2ad5e60811dae1a94b77f09ca62480f8a61bea6d"
+    }
+  ],
+  "Database": "Native PostgreSQL loopback verification DB only; generated schemas and Redis namespaces cleaned",
+  "DockerContainerExecution": false,
+  "MainDatabaseChanged": false,
+  "ScheduleChecks": [
+    "Authenticated owner CRUD and public future listing",
+    "Anonymous writes, missing CSRF and foreign Origin rejected",
+    "Another owner receives 404 for updates and cancellation",
+    "Caller-supplied channel rejected",
+    "Exact UTC epoch milliseconds round trip and title trimming",
+    "Concurrent identical time slot creates one row and returns one conflict",
+    "Same time on different channels allowed",
+    "Invalid title, controls, fractional/string/past/too-large times rejected",
+    "Past schedule remains in own history but is absent publicly and cannot be edited or cancelled",
+    "Owner list contains closest 100 future plus latest 100 past records",
+    "Cancellation removes public entry",
+    "Schedules survive fresh Spring Boot process",
+    "V1/V2 upgrade to V3 preserves accounts, channels, follows and unknown consent",
+    "Altered temporary applied SQL blocks pending V4 before DDL",
+    "Disabled product starts without DB/Redis/Flyway",
+    "Maximum 100 upcoming schedules is enforced under an owner channel row lock, including concurrent creation"
+  ],
+  "ScheduleLimitFollowup": {
+    "GeneratedAt": "2026-11-12T02:45:11.7512818Z",
+    "Command": "gradlew.bat test --tests frame.api.account.AccountIntegrationTest --tests frame.api.account.ScheduledBroadcastsTest bootJar",
+    "Tests": 5,
+    "Failures": 0,
+    "Errors": 0,
+    "Skipped": 0,
+    "ApplicationChange": "Creation locks owner channel and enforces maximum 100 upcoming schedules",
+    "Checks": [
+      "100 existing upcoming schedules reject a new one with SCHEDULE_LIMIT",
+      "Two concurrent distinct-time creations from 99 upcoming schedules yield exactly one 201 and one 409 SCHEDULE_LIMIT",
+      "Owner list can display every schedule created through the API",
+      "Existing CRUD, ownership, CSRF, Origin, past history and duplicate-time HTTP checks rerun"
+    ],
+    "PreviousFullSuiteJarSha256": "03d47ae1dadc876f65507bd4fcf903af6d3847269fd6449f877d00ca68cd20bd",
+    "FinalJarSha256": "479ba2b1e52d96b9c2a82e0f92a42c4cc08e71c3acea2e438cb85a2ca7e05e66"
+  }
+}

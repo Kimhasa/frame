@@ -2,21 +2,40 @@
 // (only environment overrides: ports, password hashes, certificate), server/relay.mjs serving outputs/index.html, a sender
 // side like FrameConsole.exe (local MediaMTX + FFmpeg publisher + the app-style FFmpeg forwarder to the relay over RTSPS,
 // restarted with backoff), per-sender publish accounts, announcements, playback reports and headless Edge pages using the
-// unchanged UI: list, playback, quality switch, chat between pages, DVR, HLS, and the same over HTTPS/WSS through
-// server/tls-front.mjs. Evidence: deploy/verification/e2e-result.json, *.png, logs/ (secrets masked).
-// Usage: node server/verify/e2e.mjs [--keep]
-import { mkdirSync, writeFileSync, readFileSync, existsSync, rmSync, copyFileSync } from 'node:fs';
+// unchanged UI: list, HLS playback (hls.js), quality switch, chat between pages, HLS DVR, and the same over HTTPS/WSS through
+// server/tls-front.mjs. HLS contract: live.m3u8 (multivariant, AAC), media playlists without cookies or MediaMTX sessions,
+// CDN-safe cache headers, dvr.m3u8 + dvr/file ranges, viewer sessions with the viewer cap (503 + Retry-After), the same
+// routes under the broadcast prefix /<path>/b/<id>/ (409 for another id) and the path reused by the next broadcast.
+// The publisher sends what the app sends: H.264 + Opus (first audio, WebRTC) + AAC (second audio, HLS and recording), test tone.
+// Evidence: deploy/verification/e2e-result.json, *.png, *.m3u8, logs/ (secrets masked).
+// Usage: node server/verify/e2e.mjs [--keep] [--backend node|spring]
+// --backend spring runs the same checks against the Spring Boot port (apps/api/build/libs/frame-api.jar, JAVA_HOME or
+// FRAME_JAVA = a JDK 21), started with the same RELAY_* environment plus RELAY_UI_FILE=outputs/index.html (the Node relay's
+// default; the Spring backend reads no other app's folder unless told). Its evidence goes to verification/spring/relay.
+import { mkdirSync, writeFileSync, readFileSync, existsSync, rmSync, copyFileSync, readdirSync } from 'node:fs';
 import { tmpdir, cpus } from 'node:os';
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { randomBytes, createHash } from 'node:crypto';
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
 import net from 'node:net';
-import { start, stop, stopAll, waitFor, sleep, checks, ffprobe, killByCommandLine, portFree } from './harness.mjs';
+import { start, stop, stopAll, waitFor, sleep, checks, ffprobe, killByCommandLine, portFree, scrub } from './harness.mjs';
 import { connect } from '../../tools/cdp.mjs';
+import { segmentStart } from '../lib/dvr.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
-const OUT = join(ROOT, 'deploy/verification');
+const argValue = name => { const i = process.argv.indexOf('--' + name); return i > 0 && i + 1 < process.argv.length ? process.argv[i + 1] : null; };
+// Never fall back to the Node relay by accident: "--backend" without a value and "--backend=spring" are refused.
+if (process.argv.some(a => a.startsWith('--backend=')) || (process.argv.includes('--backend') && !argValue('backend'))) throw new Error('usage: --backend node|spring');
+const BACKEND = argValue('backend') || 'node';
+if (!['node', 'spring'].includes(BACKEND)) throw new Error('--backend must be node or spring');
+const JAVA = process.env.FRAME_JAVA || join(process.env.JAVA_HOME || '', 'bin', 'java.exe');
+const API_JAR = join(ROOT, 'apps/api/build/libs/frame-api.jar');
+const OUT = join(ROOT, BACKEND === 'spring' ? 'verification/spring/relay' : 'deploy/verification');
+// The relay web service under test, with the given RELAY_* environment.
+const startRelay = (name, env) => BACKEND === 'spring'
+  ? start(name, JAVA, ['-Xms64m', '-jar', API_JAR], { logDir: TMP, env: { RELAY_UI_FILE: join(ROOT, 'outputs/index.html'), ...env } })
+  : start(name, process.execPath, [join(ROOT, 'server/relay.mjs')], { logDir: TMP, env });
 const TMP = join(tmpdir(), 'frame-relay-e2e-' + Date.now());
 const BIN = join(ROOT, 'dist/FrameConsole/bin');
 const FFMPEG = join(BIN, 'ffmpeg.exe'), MEDIAMTX = join(BIN, 'mediamtx.exe');
@@ -32,7 +51,7 @@ const NOMEDIA = 'nomedia';  // announced by sender A's token, never receives med
 
 for (const d of [TMP, OUT, join(OUT, 'logs')]) mkdirSync(d, { recursive: true });
 const { list, check } = checks();
-const result = { startedAt: new Date().toISOString(), host: { name: process.env.COMPUTERNAME || '', logicalCpus: cpus().length }, tools: {}, ports: PORT, checks: list, notes: [] };
+const result = { startedAt: new Date().toISOString(), host: { logicalCpus: cpus().length }, tools: {}, ports: PORT, checks: list, notes: [] };
 const secret = () => randomBytes(18).toString('hex');
 const PASS_A = secret(), PASS_B = secret(), WRONG_PASS = secret(), TOKEN_A = secret() + secret(), TOKEN_B = secret() + secret(), TURN_SECRET = secret();
 const SECRETS = [PASS_A, PASS_B, WRONG_PASS, TOKEN_A, TOKEN_B, TURN_SECRET];
@@ -54,9 +73,18 @@ const cpuTimer = setInterval(() => {
 cpuTimer.unref();
 const safeProbe = file => { try { return ffprobe(FFPROBE, file); } catch (error) { return { error: String(error.message).split('\n')[0] } } };
 const getJson = async (url, init) => { const r = await fetch(url, init); return { status: r.status, headers: r.headers, body: await r.json().catch(() => null) }; };
+// GET as a given "viewer" (User-Agent), with the body as bytes.
+const fetchAs = async (url, ua = 'e2e-viewer', headers = {}) => { const r = await fetch(url, { headers: { 'User-Agent': ua, ...headers } }); return { status: r.status, headers: r.headers, body: Buffer.from(await r.arrayBuffer()) }; };
+const lines = t => String(t).split('\n').map(l => l.trim()).filter(Boolean);
+const uris = t => lines(t).filter(l => !l.startsWith('#'));
 
 let edge, mediamtx, mediamtxFirst, sender, relay, front, publisher, announcer, forwarder, apiProxy;
 async function main() {
+  if (BACKEND === 'spring') {
+    if (!existsSync(API_JAR)) throw new Error('missing the Spring backend: cd apps/api && ./gradlew bootJar');
+    if (!existsSync(JAVA)) throw new Error('no Java: set JAVA_HOME (or FRAME_JAVA) to a JDK 21');
+  }
+  result.backend = BACKEND === 'spring' ? { kind: 'spring', jar: 'apps/api/build/libs/frame-api.jar', jvmOptions: [process.env.JDK_JAVA_OPTIONS, '-Xms64m'].filter(Boolean).join(' ') } : { kind: 'node' };
   // A port still held by an earlier run would make this run talk to stale processes: stop instead.
   const busyPorts = [];
   for (const p of Object.values(PORT)) if (!(await portFree(p))) busyPorts.push(p);
@@ -90,17 +118,22 @@ async function main() {
     RELAY_PORT: String(port), RELAY_PUBLISHER_TOKENS: `${TOKEN_A} ${PATH} ${NOMEDIA},${TOKEN_B} ${PATH_B}`, RELAY_MEDIAMTX_API: `http://127.0.0.1:${PORT.api}`,
     RELAY_MEDIAMTX_WEBRTC: `http://127.0.0.1:${PORT.webrtc}`, RELAY_MEDIAMTX_HLS: `http://127.0.0.1:${PORT.hls}`, RELAY_MEDIAMTX_PLAYBACK: `http://127.0.0.1:${PORT.playback}`,
     RELAY_RECORD_DIR: join(mtxDir, 'recordings'), RELAY_RENDITIONS: '480p', RELAY_HLS_AAC: '1', RELAY_TURN_URLS: 'turn:turn.example.invalid:3478?transport=udp',
-    RELAY_TURN_SECRET: TURN_SECRET, RELAY_TURN_TTL_S: '600', RELAY_LOG_LEVEL: 'info', RELAY_STATS_DIR: STATS_DIR
+    RELAY_TURN_SECRET: TURN_SECRET, RELAY_TURN_TTL_S: '600', RELAY_LOG_LEVEL: 'info', RELAY_STATS_DIR: STATS_DIR,
+    RELAY_FFMPEG: FFMPEG, RELAY_MEDIAMTX_RTSP: `rtsp://127.0.0.1:${PORT.rtsp}`  // the quality ladder (lib/ladder.mjs)
   });
-  relay = start('relay', process.execPath, [join(ROOT, 'server/relay.mjs')], { logDir: TMP, env: relayEnv(PORT.relay) });
-  check('relay /healthz ok', await waitFor(async () => (await (await fetch(RELAY + '/healthz')).json()).mediamtx, 15000));
+  relay = startRelay('relay', relayEnv(PORT.relay));
+  check('relay /healthz ok', await waitFor(async () => (await (await fetch(RELAY + '/healthz')).json()).mediamtx, 30000));
 
   // ---- publishing: certificate, credentials, per-sender accounts ----
   // FFmpeg 9 verifies the RTSPS certificate by default; the local self-signed one is trusted explicitly with -ca_file.
   const tls = ['-ca_file', join(TMP, 'cert.pem')];
-  const pubArgs = (url, tlsArgs = tls) => ['-hide_banner', '-nostdin', '-loglevel', 'warning', '-re', '-f', 'lavfi', '-i', 'testsrc2=size=1280x720:rate=30', '-f', 'lavfi', '-i', 'sine=frequency=440:sample_rate=48000',
+  // As the app publishes: video, Opus (first audio, WebRTC), AAC-LC 48 kHz (second audio, HLS + recording). aac:false is an
+  // older sender with Opus only.
+  const pubArgs = (url, tlsArgs = tls, { aac = true } = {}) => ['-hide_banner', '-nostdin', '-loglevel', 'warning', '-re', '-f', 'lavfi', '-i', 'testsrc2=size=1280x720:rate=30', '-f', 'lavfi', '-i', 'sine=frequency=440:sample_rate=48000',
+    '-map', '0:v', '-map', '1:a', ...(aac ? ['-map', '1:a'] : []),
     '-c:v', 'libx264', '-preset', 'veryfast', '-tune', 'zerolatency', '-profile:v', 'high', '-bf', '0', '-g', '30', '-keyint_min', '30', '-sc_threshold', '0', '-pix_fmt', 'yuv420p',
-    '-b:v', '3M', '-maxrate', '3M', '-bufsize', '3M', '-c:a', 'libopus', '-b:a', '128k', '-ac', '2', '-f', 'rtsp', '-rtsp_transport', 'tcp', '-pkt_size', '1190', ...(url.startsWith('rtsps:') ? tlsArgs : []), url];
+    '-b:v', '3M', '-maxrate', '3M', '-bufsize', '3M', '-c:a:0', 'libopus', '-b:a:0', '128k', ...(aac ? ['-c:a:1', 'aac', '-b:a:1', '128k'] : []), '-ac', '2',
+    '-f', 'rtsp', '-rtsp_transport', 'tcp', '-pkt_size', '1190', ...(url.startsWith('rtsps:') ? tlsArgs : []), url];
   const tryPublish = async (name, url, tlsArgs) => {
     const p = start(name, FFMPEG, pubArgs(url, tlsArgs), { logDir: TMP });
     const code = await Promise.race([p.exited, sleep(8000).then(() => 'running')]);
@@ -120,11 +153,13 @@ async function main() {
   const aOnB = await tryPublish('publish-a-on-b', rtsps(USER_A, PASS_A, PATH_B));
   check('per-sender accounts: a sender cannot publish another sender\'s path', bOnA.refused && aOnB.refused && /40[13]/.test(bOnA.reason) && /40[13]/.test(aOnB.reason), { bOnA, aOnB });
   const relayPath = async name => (await (await fetch(`http://127.0.0.1:${PORT.api}/v3/paths/get/${encodeURIComponent(name)}`)).json());
-  // Sender B publishing its own path directly (the "second FFmpeg output" style), accepted.
-  const direct = start('publish-b-own', FFMPEG, pubArgs(rtsps(USER_B, PASS_B, PATH_B)), { logDir: TMP });
+  // Sender B publishing its own path directly (the "second FFmpeg output" style), accepted. It is an older sender (Opus
+  // only): its HLS audio comes from the relay's on-demand AAC transcode path.
+  const direct = start('publish-b-own', FFMPEG, pubArgs(rtsps(USER_B, PASS_B, PATH_B), tls, { aac: false }), { logDir: TMP });
   const directReady = await waitFor(async () => (await relayPath(PATH_B)).ready, 20000);
   const directInfo = await relayPath(PATH_B);
   check('sender B publishes its own path over RTSPS', directReady && direct.running, { source: directInfo.source?.type, tracks2: directInfo.tracks2?.map(t => t.codec) });
+  if (directReady) result.olderSender = await olderSenderHls();
   await stop(direct);
 
   // ---- sender PC as FrameConsole.exe runs it: local MediaMTX (loopback, no auth, writeQueueSize 4096) + FFmpeg publisher,
@@ -141,7 +176,9 @@ async function main() {
   const localReady = async () => !!(await (await fetch(`http://127.0.0.1:${PORT.senderApi}/v3/paths/get/${PATH}`)).json()).ready;
 
   forwarder = startForwarder(rtsps(USER_A, WRONG_PASS, PATH));
-  await sleep(6000);
+  // Input probing plus the first auth failure/backoff can outlive 6 s on a busy PC. Observe a real retry rather than
+  // sampling a fixed sleep; the rejection and unaffected local stream are still asserted below.
+  await waitFor(() => forwarder.attempts >= 2, 15000, 100);
   const wrongFwd = { relayReady: !!(await relayPath(PATH)).ready, localReady: await localReady(), publisherRunning: publisher.running, attempts: forwarder.attempts,
     lastError: mask(forwarder.lines.filter(l => /401|Unauthorized|error/i.test(l)).slice(-1)[0] || '') };
   check('forwarder with wrong password: relay refuses, local stream unaffected, app retries', !wrongFwd.relayReady && wrongFwd.localReady && wrongFwd.publisherRunning && wrongFwd.attempts >= 2, wrongFwd);
@@ -204,7 +241,8 @@ async function main() {
   // The relay serves its own 480p encoder (scale=-2:480 -> 854 wide, 1.8 Mbps per the yml), not the sender's local 852x480 one.
   const r480 = (info.renditions || []).find(x => x.name === '480p');
   check('info renditions carry name,width,height,mbps,fps,codec (relay encoder: 854x480)', r480 && r480.width === 854 && r480.height === 480 && r480.mbps === 1.8 && r480.fps === 30 && r480.codec === 'H.264', { renditions: info.renditions });
-  check('info advertises hlsVariants (Opus, AAC)', info.hlsVariants?.opus === 'hls/index.m3u8' && info.hlsVariants?.aac === 'aac/hls/index.m3u8', { hlsVariants: info.hlsVariants });
+  check('info advertises HLS (live.m3u8, AAC, dvr.m3u8)', info.hls?.master === 'live.m3u8' && info.hls.lowLatency === true && info.hls.audio === 'aac' && info.hls.dvr === 'dvr.m3u8',
+    { hls: info.hls, hlsVariants: info.hlsVariants });
   const expectStart = Date.now() - info.elapsedMs;
   check('sentAtMs corrects a sender clock 60 s ahead', info.elapsedMs >= 2000 && info.elapsedMs < 30000 && Math.abs(info.startedAtMs - expectStart) < 2000 && Math.abs(info.startedAtMs - (startedAtSender - SKEW)) < 3000,
     { elapsedMs: info.elapsedMs, startedAtMs: info.startedAtMs, senderStartedAtMs: startedAtSender, skewMs: SKEW });
@@ -229,18 +267,19 @@ async function main() {
   const chunk = Buffer.from(await r.arrayBuffer());
   writeFileSync(join(TMP, 'dvr-chunk.mp4'), chunk);
   const probe = r.status === 200 ? safeProbe(join(TMP, 'dvr-chunk.mp4')) : { skipped: 'status ' + r.status };
-  check('DVR chunk is playable fMP4 (H.264 + Opus)', r.status === 200 && r.headers.get('transfer-encoding') === 'chunked' && probe.streams?.some(s => s.codec_name === 'h264') && probe.streams?.some(s => s.codec_name === 'opus'),
+  // The recording is the copy path <path>/rec: video + the AAC track.
+  check('DVR chunk is playable fMP4 (H.264 + AAC, recorded from <path>/rec)', r.status === 200 && r.headers.get('transfer-encoding') === 'chunked' && probe.streams?.some(s => s.codec_name === 'h264') && probe.streams?.some(s => s.codec_name === 'aac') && !probe.streams?.some(s => s.codec_name === 'opus'),
     { status: r.status, te: r.headers.get('transfer-encoding'), bytes: chunk.length, probe });
   r = await fetch(`${RELAY}/${PATH}/dvr/media?id=${'0'.repeat(32)}&start=${chunkStart}&duration=3000`); check('DVR chunk for another broadcast id -> 409', r.status === 409, { status: r.status, body: await r.json().catch(() => null) });
   r = await fetch(`${RELAY}/${PATH}/dvr/media?id=${BROADCAST_ID}&start=${chunkStart - 600000}&duration=3000`); check('DVR chunk before this broadcast -> 404', r.status === 404, { status: r.status, body: await r.json().catch(() => null) });
   r = await fetch(`${RELAY}/${PATH}/dvr/media?id=${BROADCAST_ID}&start=${chunkStart}&duration=60000`); check('DVR chunk too long -> 400', r.status === 400, { status: r.status });
   r = await fetch(`${RELAY}/${PATH}/dvr/media?id=${BROADCAST_ID}&start=${Date.now() + 5000}&duration=3000`); check('DVR chunk past live edge -> 404 no-data', r.status === 404, { status: r.status, body: await r.json().catch(() => null) });
 
-  // ---- HLS (with MediaMTX's cookie check), both advertised variants ----
-  const hls = await hlsCheck(`${RELAY}/${PATH}/${info.hlsVariants?.opus || 'hls/index.m3u8'}`, 'hls-opus');
-  check('HLS (LL, fMP4) served via relay', hls.ok && /avc1/.test(hls.master) && /opus/.test(hls.master), hls.summary);
-  const hlsAac = await hlsCheck(`${RELAY}/${PATH}/${info.hlsVariants?.aac || 'aac/hls/index.m3u8'}`, 'hls-aac');
-  check('HLS AAC variant (relay-side audio transcode)', hlsAac.ok && /mp4a/.test(hlsAac.master), hlsAac.summary);
+  // ---- HLS: live.m3u8, media playlists without cookies, CDN headers, viewer sessions, the recording as HLS ----
+  result.hls = await liveHlsChecks();
+  result.sessions = await sessionChecks();
+  result.dvrHls = await dvrHlsChecks();
+  result.scoped = await scopedChecks();
 
   // ---- chat protocol rules over raw WebSockets ----
   result.chatRules = await chatRules(`ws://127.0.0.1:${PORT.relay}/${PATH}/chat`);
@@ -256,7 +295,7 @@ async function main() {
   // The UI pages report playback every 15 s: their rows are in the same CSV (no address in it).
   const csv = readStats();
   const uiRows = csv.rows.filter(row => !row.session.startsWith('e2e'));
-  check('UI pages\' playback reports reach the daily CSV', uiRows.length > 0 && uiRows.some(row => row.transport === 'webrtc'), { uiRows: uiRows.length, sample: uiRows.slice(0, 2) });
+  check('UI pages\' playback reports reach the daily CSV (transport hls)', uiRows.length > 0 && uiRows.some(row => row.transport === 'hls'), { uiRows: uiRows.length, sample: uiRows.slice(0, 2) });
 
   // ---- after the browsers: relay state and resource use ----
   const t75 = await waitFor(async () => { const i = await (await fetch(`${RELAY}/${PATH}/dvr`)).json(); return i.segments?.length >= 2 && i.ranges.at(-1).endMs - i.segments[1] > 3000 ? i : null; }, 90000, 1000);
@@ -268,6 +307,12 @@ async function main() {
     cross = { status: res.status, bytes: b.length, probe: res.status === 200 ? safeProbe(join(TMP, 'dvr-cross.mp4')).format || { error: 'not mp4' } : { skipped: true } };
   }
   check('DVR spans the 60 s segment boundary as one range', span && span.ranges === 1 && span.recordedS > 62 && cross?.status === 200 && Number(cross.probe?.duration) > 3.5, { span, crossBoundaryChunk: cross });
+  // dvr.m3u8 across the file boundary: the second file with its own init after a discontinuity.
+  // Files are named by their recording start (f=<epoch ms>): the second file is a second distinct f with its own s=0.
+  const two = t75 && await waitFor(async () => { const t = (await fetchAs(`${RELAY}/${PATH}/dvr.m3u8`)).body.toString(); return new Set([...t.matchAll(new RegExp(`id=${BROADCAST_ID}&f=(\\d+)&s=0\\n`, 'g'))].map(x => x[1])).size >= 2 ? t : null; }, 20000, 1000);
+  if (two) writeFileSync(join(OUT, 'relay-dvr-2files.m3u8'), two);
+  check('dvr.m3u8: next recorded file after EXT-X-DISCONTINUITY with its own EXT-X-MAP', !!two && (two.match(/#EXT-X-DISCONTINUITY\n/g) || []).length === 1 && (two.match(/#EXT-X-MAP:/g) || []).length === 2,
+    { segments: two ? uris(two).length : 0, discontinuities: two ? (two.match(/#EXT-X-DISCONTINUITY\n/g) || []).length : 0 });
   result.healthz = await (await fetch(RELAY + '/healthz')).json();
   // MediaMTX warnings worth knowing: RTP repacketising (publisher packets above udpMaxPayloadSize) and LL-HLS part-duration
   // changes on the AAC variant (MediaMTX says iOS clients may reject them; no iPhone was available to check).
@@ -317,6 +362,9 @@ async function main() {
   const afterBye = await (await fetch(RELAY + '/api/broadcasts')).json();
   const infoAfterBye = await (await fetch(`${RELAY}/${PATH}/info`)).json();
   check('bye removes the broadcast at once (no grace after bye)', r.status === 204 && !afterBye.items.some(i => i.id === BROADCAST_ID) && infoAfterBye.running === false, { status: r.status, items: afterBye.items.length, info: infoAfterBye });
+
+  // ---- the same path reused by the next broadcast (FRAME_DESIGN.md 4.7) ----
+  result.reuse = await reuseChecks();
 }
 
 // The sender app's forwarder: its own FFmpeg per broadcast, exactly this command, restarted with backoff when it exits.
@@ -382,28 +430,326 @@ function parseCsv(text) {
   return rows;
 }
 
-async function hlsCheck(url, name, jar = new Map()) {
-  const get = async u => {
-    const res = await fetch(u, { redirect: 'manual', headers: jar.size ? { Cookie: [...jar].map(([k, v]) => k + '=' + v).join('; ') } : {} });
-    for (const c of res.headers.getSetCookie()) { const [kv] = c.split(';'); const i = kv.indexOf('='); if (i > 0) jar.set(kv.slice(0, i).trim(), kv.slice(i + 1)); }
-    return res;
-  };
-  const t0 = Date.now();
-  let res = await get(url), hops = 0;
-  while (res.status === 302 && hops++ < 3) res = await get(new URL(res.headers.get('location'), url).href);
-  if (res.status !== 200) return { ok: false, status: res.status, retryAfter: res.headers.get('retry-after'), summary: { status: res.status, body: (await res.text()).slice(0, 200), hops } };
-  const master = await res.text(), firstMs = Date.now() - t0;
-  const videoUri = master.split('\n').find(l => l && !l.startsWith('#'));
-  const media = await (await get(new URL(videoUri, url).href)).text();
-  const init = /#EXT-X-MAP:URI="([^"]+)"/.exec(media)?.[1];
-  const seg = media.split('\n').filter(l => l && !l.startsWith('#')).at(-1);
-  const parts = [];
-  for (const u of [init, seg]) if (u) { const b = await get(new URL(u, url).href); parts.push(Buffer.from(await b.arrayBuffer())); }
-  const file = join(TMP, name + '.mp4');
-  writeFileSync(file, Buffer.concat(parts));
-  const probe = safeProbe(file);
-  if (!name.startsWith('cap-')) writeFileSync(join(OUT, name + '-master.m3u8'), master);
-  return { ok: !!(init && seg && probe.streams?.length), status: 200, master, jar, summary: { firstPlaylistMs: firstMs, cookies: [...jar.keys()], master: master.split('\n').filter(l => l.startsWith('#EXT-X-STREAM-INF')), partTarget: /PART-INF:PART-TARGET=([\d.]+)/.exec(media)?.[1], segment: seg, probe } };
+// One media playlist of the relay (relative to /<path>/) as a player loads it directly (no index.m3u8, no cookie): its
+// init + last complete segment probed. Every response is checked for Set-Cookie and MediaMTX session ids.
+async function mediaPlaylist(base, rel, name, cookies, ua = 'e2e-viewer') {
+  const get = async (u, h) => { const r = await fetchAs(new URL(u, base).href, ua, h); if (r.headers.get('set-cookie')) cookies.push(u); return r; };
+  const t0 = Date.now(), pl = await get(rel), ms = Date.now() - t0, textBody = pl.body.toString();
+  const init = /#EXT-X-MAP:URI="([^"]+)"/.exec(textBody)?.[1], seg = uris(textBody).at(-1);
+  const out = { status: pl.status, firstMs: ms, cache: pl.headers.get('cache-control'), sessionInBody: /session=|cookieCheck/.test(textBody), partInf: /#EXT-X-PART-INF:PART-TARGET=([\d.]+)/.exec(textBody)?.[1] || null, text: textBody };
+  if (pl.status !== 200 || !init || !seg) return out;
+  const relDir = rel.slice(0, rel.lastIndexOf('/') + 1), a = await get(relDir + init), b = await get(relDir + seg);
+  out.mediaCache = [a.headers.get('cache-control'), b.headers.get('cache-control')];
+  writeFileSync(join(TMP, name + '.mp4'), Buffer.concat([a.body, b.body]));
+  out.probe = safeProbe(join(TMP, name + '.mp4'));
+  return out;
+}
+
+async function liveHlsChecks() {
+  const base = `${RELAY}/${PATH}/`, cookies = [], out = {};
+  const get = async (u, ua = 'e2e-viewer', h) => { const r = await fetchAs(new URL(u, base).href, ua, h); if (r.headers.get('set-cookie')) cookies.push(u); return r; };
+  const t0 = Date.now(), m1 = await get('live.m3u8', 'viewer-a'), masterMs = Date.now() - t0, m2 = await get('live.m3u8', 'viewer-b');
+  const master = m1.body.toString(), inf = lines(master).filter(l => l.startsWith('#EXT-X-STREAM-INF')), media = lines(master).filter(l => l.startsWith('#EXT-X-MEDIA'));
+  writeFileSync(join(OUT, 'relay-live.m3u8'), master);
+  out.master = { status: m1.status, ms: masterMs, type: m1.headers.get('content-type'), cache: m1.headers.get('cache-control'), sameForTwoViewers: m1.body.equals(m2.body), streamInf: inf, media };
+  check('live.m3u8: source + 480p, AAC group each, real CODECS, AVERAGE-BANDWIDTH, max-age=2, same bytes for all', m1.status === 200 && /mpegurl/.test(out.master.type) && out.master.cache === 'max-age=2' && out.master.sameForTwoViewers
+    && inf.length === 2 && inf.every(l => /CODECS="avc1\.[0-9a-f]{6},mp4a\.40\.2"/.test(l) && /AVERAGE-BANDWIDTH=\d+/.test(l) && /AUDIO="aac-/.test(l)) && /RESOLUTION=1280x720/.test(inf[0]) && /RESOLUTION=854x480/.test(inf[1])
+    && media.length === 2 && master.includes('URI="src/hls/audio3_stream.m3u8"') && master.includes('URI="480p/hls/audio3_stream.m3u8"') && uris(master).join(',') === 'src/hls/video1_stream.m3u8,480p/hls/video1_stream.m3u8', out.master);
+  const q = await get('live.m3u8?q=480p'), qText = q.body.toString();
+  check('live.m3u8?q=480p lists that quality only', q.status === 200 && lines(qText).filter(l => l.startsWith('#EXT-X-STREAM-INF')).length === 1 && uris(qText)[0] === '480p/hls/video1_stream.m3u8', { status: q.status, uris: uris(qText) });
+
+  // The source variant (the quality ladder's copy, src/) loaded directly by two viewers: one shared MediaMTX session,
+  // identical bytes, no cookie.
+  const v1 = await mediaPlaylist(base, 'src/hls/video1_stream.m3u8', 'hls-video', cookies, 'viewer-a'), v2 = await get('src/hls/video1_stream.m3u8', 'viewer-b');
+  const au = await mediaPlaylist(base, 'src/hls/audio3_stream.m3u8', 'hls-audio', cookies, 'viewer-a');
+  out.source = { video: { ...v1, text: undefined, sameForSecondViewer: v2.body.toString() === v1.text }, audio: { ...au, text: undefined } };
+  check('HLS media playlists load directly: no cookie, no MediaMTX session, max-age=1, parts/init public max-age=60', v1.status === 200 && v1.cache === 'max-age=1' && !v1.sessionInBody && v1.partInf && out.source.video.sameForSecondViewer
+    && v1.mediaCache?.every(c => c === 'public, max-age=60') && v1.probe?.streams?.some(s => s.codec_name === 'h264' && s.height === 720) && au.status === 200 && au.probe?.streams?.some(s => s.codec_name === 'aac'), out.source);
+  // Blocking playlist reload (LL-HLS): the next segment's first part, held by MediaMTX until it exists.
+  const msn = Number(/#EXT-X-MEDIA-SEQUENCE:(\d+)/.exec(v1.text || '')?.[1]) + (String(v1.text).match(/#EXTINF/g) || []).length;
+  const b0 = Date.now(), blocked = await get(`src/hls/video1_stream.m3u8?_HLS_msn=${msn + 1}&_HLS_part=0`), blockedText = blocked.body.toString();
+  out.blocking = { msn: msn + 1, status: blocked.status, waitMs: Date.now() - b0, cache: blocked.headers.get('cache-control'), hasNext: (blockedText.match(/#EXTINF/g) || []).length > 0 && Number(/#EXT-X-MEDIA-SEQUENCE:(\d+)/.exec(blockedText)?.[1]) + (blockedText.match(/#EXTINF/g) || []).length >= msn + 1 };
+  check('LL-HLS blocking reload (_HLS_msn/_HLS_part) answered when the part exists', blocked.status === 200 && out.blocking.waitMs < 4000 && out.blocking.hasNext && !/session=/.test(blockedText), out.blocking);
+  // A lower quality loaded directly: the quality ladder already runs (started by live.m3u8 and the source copy).
+  const r480 = await mediaPlaylist(base, '480p/hls/video1_stream.m3u8', 'hls-480p', cookies), a480 = await get('480p/hls/audio3_stream.m3u8');
+  out.rendition = { ...r480, text: undefined, audioStatus: a480.status };
+  const pdts = t => [...String(t || '').matchAll(/#EXT-X-PROGRAM-DATE-TIME:(\S+)/g)].map(x => Date.parse(x[1]));
+  // Timeline: both playlists fetched together. The ladder gives a segment of the same content the same date on every
+  // variant (separate per-quality encoders were about 0.3 s apart), so the nearest dates must match within a frame.
+  const [ns, nr] = await Promise.all([get('src/hls/video1_stream.m3u8'), get('480p/hls/video1_stream.m3u8')]);
+  const nsText = ns.body.toString(), nrText = nr.body.toString(), ps = pdts(nsText), pr = pdts(nrText);
+  out.alignment = { sourceMediaSequence: Number(/#EXT-X-MEDIA-SEQUENCE:(\d+)/.exec(nsText)?.[1]), renditionMediaSequence: Number(/#EXT-X-MEDIA-SEQUENCE:(\d+)/.exec(nrText)?.[1]),
+    sourcePdtMs: ps.slice(-2).map(v => v % 10000), renditionPdtMs: pr.slice(-2).map(v => v % 10000),
+    nearestOffsetMs: ps.length && pr.length ? Math.min(...pr.map(b => Math.min(...ps.map(a => Math.abs(a - b))))) : null };
+  result.notes.push('HLS source vs 480p segment timeline (PDT, media sequence): ' + JSON.stringify(out.alignment));
+  check('HLS source copy and 480p share one timeline (nearest PROGRAM-DATE-TIME within 40 ms)', out.alignment.nearestOffsetMs !== null && out.alignment.nearestOffsetMs <= 40, out.alignment);
+  check('HLS 480p playlist loads directly (on-demand encoder), 854x480 + AAC', r480.status === 200 && r480.probe?.streams?.some(s => s.codec_name === 'h264' && s.height === 480 && s.width === 854) && a480.status === 200 && !r480.sessionInBody, out.rendition);
+  // MediaMTX's own index.m3u8 (older pages): no cookie-check redirect any more.
+  const idx = await get('hls/index.m3u8');
+  out.legacyIndex = { status: idx.status, cache: idx.headers.get('cache-control') };
+  out.setCookie = cookies;
+  check('no Set-Cookie on any HLS response; MediaMTX cookie check answered by the relay', cookies.length === 0 && idx.status === 200 && !/session=/.test(idx.body.toString()), { setCookieOn: cookies, legacyIndex: out.legacyIndex });
+  return out;
+}
+
+async function sessionChecks() {
+  const url = `${RELAY}/${PATH}/session`, out = {};
+  const r1 = await fetch(url, { method: 'POST' }), b1 = await r1.json().catch(() => ({}));
+  const beat = await fetch(`${url}/${b1.sid}`, { method: 'PUT' });
+  const h1 = await (await fetch(RELAY + '/healthz')).json();
+  const del = await fetch(`${url}/${b1.sid}`, { method: 'DELETE' });
+  const after = await fetch(`${url}/${b1.sid}`, { method: 'PUT' });
+  const h2 = await (await fetch(RELAY + '/healthz')).json();
+  const unknown = await fetch(`${RELAY}/nobody/session`, { method: 'POST' });
+  const wrongMethod = await fetch(url, { method: 'GET' });
+  Object.assign(out, { post: r1.status, cache: r1.headers.get('cache-control'), sidOk: /^[0-9a-f]{32}$/.test(b1.sid || ''), heartbeatMs: b1.heartbeatMs, put: beat.status, sessionsWhileOpen: h1.hlsSessions,
+    delete: del.status, putAfterDelete: after.status, sessionsAfter: h2.hlsSessions, unknownPath: unknown.status, get: wrongMethod.status });
+  check('viewer session: POST 200 {sid, heartbeatMs 15000}, PUT 204, DELETE 204, then 404; counted in /healthz', r1.status === 200 && out.sidOk && b1.heartbeatMs === 15000 && out.cache === 'no-store' && beat.status === 204 && h1.hlsSessions >= 1
+    && del.status === 204 && after.status === 404 && h2.hlsSessions === h1.hlsSessions - 1 && unknown.status === 404 && wrongMethod.status === 405, out);
+  return out;
+}
+
+// The current broadcast's recording as HLS: dvr.m3u8 (EVENT, init as a byte range, keyframe segments) and dvr/file.
+async function dvrHlsChecks() {
+  const out = {}, base = `${RELAY}/${PATH}/`;
+  const pl = await waitFor(async () => { const r = await fetchAs(base + 'dvr.m3u8'); const t = r.body.toString(); return r.status === 200 && (t.match(/#EXTINF/g) || []).length >= 2 ? { r, t } : null; }, 45000, 1000);
+  if (!pl) { check('dvr.m3u8 lists the recording', false, { status: (await fetchAs(base + 'dvr.m3u8')).status }); return out; }
+  const t = pl.t, map = /#EXT-X-MAP:URI="([^"]+)",BYTERANGE="(\d+)@0"/.exec(t), segs = uris(t);
+  writeFileSync(join(OUT, 'relay-dvr.m3u8'), t);
+  const extinf = [...t.matchAll(/#EXTINF:([\d.]+)/g)].map(x => +x[1]);
+  const recDir = join(TMP, 'mediamtx', 'recordings', PATH, 'rec'), first = readdirSync(recDir).filter(n => n.endsWith('.mp4')).sort()[0];
+  // The file id is its recording start in whole ms (the time in its name), stable across relay restarts.
+  const fileId = Math.floor(segmentStart(first));
+  out.playlist = { cache: pl.r.headers.get('cache-control'), event: t.includes('#EXT-X-PLAYLIST-TYPE:EVENT'), segments: segs.length, map: map?.[0], first: segs[0], firstFile: first, pdt: /#EXT-X-PROGRAM-DATE-TIME:(\S+)/.exec(t)?.[1], extinf: extinf.slice(0, 6) };
+  check('dvr.m3u8: EVENT, EXT-X-MAP byte range, ~4 s keyframe segments with PROGRAM-DATE-TIME, file id = its recording start, no-cache', out.playlist.cache === 'no-cache' && out.playlist.event && map && segs[0] === `dvr/file.mp4?id=${BROADCAST_ID}&f=${fileId}&s=0`
+    && Date.parse(out.playlist.pdt) > Date.now() - 600000 && extinf.every(d => d > 2 && d < 6.5) && !pl.r.headers.get('set-cookie'), out.playlist);
+  if (!map) return out;
+  const fileUrl = new URL(map[1], base).href, initLen = Number(map[2]);
+  const disk = readFileSync(join(recDir, first));
+  const rInit = await fetchAs(fileUrl, 'e2e', { Range: `bytes=0-${initLen - 1}` }), rMid = await fetchAs(fileUrl, 'e2e', { Range: 'bytes=1000-1999' });
+  const rOut = await fetchAs(fileUrl, 'e2e', { Range: 'bytes=999999999-' }), listed = Number(/\/(\d+)$/.exec(rOut.headers.get('content-range') || '')?.[1]);
+  const rTail = await fetchAs(fileUrl, 'e2e', { Range: 'bytes=-500' });
+  out.ranges = { init: { status: rInit.status, contentRange: rInit.headers.get('content-range'), acceptRanges: rInit.headers.get('accept-ranges'), equalsDisk: rInit.body.equals(disk.subarray(0, initLen)), cache: rInit.headers.get('cache-control') },
+    middle: { status: rMid.status, equalsDisk: rMid.body.equals(disk.subarray(1000, 2000)) }, outside: { status: rOut.status, contentRange: rOut.headers.get('content-range') },
+    suffix: { status: rTail.status, bytes: rTail.body.length, equalsDisk: listed > 500 && rTail.body.equals(disk.subarray(listed - 500, listed)) }, listedBytes: listed, fileOnDisk: disk.length };
+  check('dvr/file Range: 206 + Content-Range equal to the recording, 416 past the listed bytes, suffix range', rInit.status === 206 && out.ranges.init.equalsDisk && /^bytes 0-\d+\/(\d+|\*)$/.test(out.ranges.init.contentRange) && out.ranges.init.acceptRanges === 'bytes'
+    && rMid.status === 206 && out.ranges.middle.equalsDisk && rOut.status === 416 && listed > initLen && listed <= disk.length && rTail.status === 206 && out.ranges.suffix.equalsDisk, out.ranges);
+  const seg = await fetchAs(new URL(segs[1], base).href);
+  writeFileSync(join(TMP, 'dvr-hls-seg.mp4'), Buffer.concat([rInit.body, seg.body]));
+  const probe = safeProbe(join(TMP, 'dvr-hls-seg.mp4'));
+  // The segment keeps its decode times (tfdt), so a probe's "duration" is its end time; the decoded frames show its length.
+  const dec = spawnSync(FFMPEG, ['-hide_banner', '-v', 'error', '-progress', 'pipe:1', '-i', join(TMP, 'dvr-hls-seg.mp4'), '-f', 'null', '-'], { encoding: 'utf8', timeout: 30000 });
+  const segFrames = Number([...String(dec.stdout).matchAll(/^frame=(\d+)/gm)].at(-1)?.[1] || 0);
+  out.segment = { status: seg.status, bytes: seg.body.length, cache: seg.headers.get('cache-control'), extinf: extinf[1], decodedFrames: segFrames, expectedFrames: Math.round(extinf[1] * 30), decodeErrors: String(dec.stderr).split('\n').filter(Boolean).slice(0, 3), probe };
+  check('dvr segment (cut at a keyframe from the parts): init + segment = H.264 + AAC, frames = EXTINF x 30 fps, max-age=3600', seg.status === 200 && out.segment.cache === 'public, max-age=3600' && probe.streams?.some(s => s.codec_name === 'h264')
+    && probe.streams?.some(s => s.codec_name === 'aac') && Math.abs(segFrames - out.segment.expectedFrames) <= 1 && !out.segment.decodeErrors.length, out.segment);
+  const status = async q => (await fetchAs(`${base}dvr/file.mp4?${q}`)).status;
+  out.errors = { otherBroadcast: await status(`id=${'0'.repeat(32)}&f=${fileId}&s=0`), noSuchFile: await status(`id=${BROADCAST_ID}&f=99`), badFile: await status(`id=${BROADCAST_ID}&f=x`), noSuchSegment: await status(`id=${BROADCAST_ID}&f=${fileId}&s=999`) };
+  check('dvr/file errors: other broadcast 409, unknown file 404, bad query 400, unknown segment 404', out.errors.otherBroadcast === 409 && out.errors.noSuchFile === 404 && out.errors.badFile === 400 && out.errors.noSuchSegment === 404, out.errors);
+  // A real HLS client (FFmpeg's demuxer) plays the playlist from its start: init byte range, segments, decode.
+  const ff = spawnSync(FFMPEG, ['-hide_banner', '-v', 'error', '-progress', 'pipe:1', '-live_start_index', '0', '-i', base + 'dvr.m3u8', '-t', '6', '-f', 'null', '-'], { encoding: 'utf8', timeout: 40000 });
+  const frames = Number([...String(ff.stdout).matchAll(/^frame=(\d+)/gm)].at(-1)?.[1] || 0);
+  out.ffmpeg = { exit: ff.status, frames, errors: String(ff.stderr).split('\n').filter(Boolean).slice(0, 5) };
+  check('FFmpeg plays dvr.m3u8 from its start: 6 s decoded without errors', ff.status === 0 && frames >= 170 && !out.ffmpeg.errors.length, out.ffmpeg);
+  return out;
+}
+
+// GET (or another method) -> status, cache header, Retry-After and the JSON error of a refusal.
+async function statusOf(url, init = {}) {
+  const r = await fetch(url, { ...init, headers: { 'User-Agent': 'e2e-scoped', ...(init.headers || {}) } });
+  const body = await r.text();
+  let error = null;
+  try { error = JSON.parse(body).error ?? null; } catch {}
+  return { status: r.status, cache: r.headers.get('cache-control'), retryAfter: r.headers.get('retry-after'), error, setCookie: !!r.headers.get('set-cookie') };
+}
+// Every URI of a playlist: lines and URI="..." attributes (EXT-X-MEDIA, EXT-X-MAP, EXT-X-PART, EXT-X-PRELOAD-HINT, ...).
+const allUris = t => [...uris(t), ...[...String(t).matchAll(/URI="([^"]+)"/g)].map(x => x[1])];
+
+// The broadcast prefix /<path>/b/<id>/ (the new React viewer's links): live.m3u8, the media playlists, parts and segments,
+// dvr, dvr.m3u8, dvr/file and the viewer session answer like /<path>/... but only for this broadcast; under another id
+// every one of them is 409 broadcast-changed (no-store), so neither a player nor a cache ever mixes two broadcasts.
+async function scopedChecks() {
+  const out = {}, cookies = [], other = randomBytes(16).toString('hex');
+  const info = (await getJson(`${RELAY}/${PATH}/info`)).body || {};
+  const prefix = `/${PATH}/b/${BROADCAST_ID}/`, base = RELAY + prefix, wrong = `${RELAY}/${PATH}/b/${other}/`;
+  check('info hls.scope is b/<broadcastId>/ (relative to /<path>/)', info.hls?.scope === `b/${BROADCAST_ID}/` && new URL(info.hls.scope, `${RELAY}/${PATH}/`).pathname === prefix, { hls: info.hls });
+  const get = async (rel, headers, from = base) => { const r = await fetchAs(new URL(rel, from).href, 'e2e-scoped', headers); if (r.headers.get('set-cookie')) cookies.push(rel); return r; };
+  const under = (rel, from = base) => new URL(rel, from).pathname.startsWith(prefix);
+
+  // Master: the same variants as the path route, every URI resolving under the prefix.
+  const master = await get('live.m3u8'), mt = master.body.toString(), pathMaster = (await fetchAs(`${RELAY}/${PATH}/live.m3u8`)).body.toString();
+  const q = await get('live.m3u8?q=480p');
+  writeFileSync(join(OUT, 'relay-scoped-live.m3u8'), mt);
+  out.master = { status: master.status, cache: master.headers.get('cache-control'), uris: allUris(mt), sameVariantsAsPathRoute: uris(mt).join() === uris(pathMaster).join(),
+    allUnderPrefix: allUris(mt).length > 0 && allUris(mt).every(u => under(u)), single480p: q.status === 200 && uris(q.body.toString()).join() === '480p/hls/video1_stream.m3u8' };
+  check('scoped live.m3u8: 200, max-age=2, the path route\'s variants, every URI resolves under /<path>/b/<id>/, ?q=480p', master.status === 200 && out.master.cache === 'max-age=2'
+    && out.master.sameVariantsAsPathRoute && out.master.allUnderPrefix && out.master.single480p, out.master);
+
+  // A media playlist loaded through the prefix: its init, last segment and one part, all under the prefix.
+  const v = await mediaPlaylist(base, 'src/hls/video1_stream.m3u8', 'hls-scoped-video', cookies, 'e2e-scoped');
+  const vt = v.text || '', mediaDir = base + 'src/hls/', seg = uris(vt).at(-1), part = /#EXT-X-PART:[^\n]*URI="([^"]+)"/.exec(vt)?.[1];
+  const partRes = part ? await get(part, {}, mediaDir) : null, headSeg = seg ? await fetch(new URL(seg, mediaDir), { method: 'HEAD' }) : null;
+  const au = await get('src/hls/audio3_stream.m3u8');
+  out.media = { status: v.status, cache: v.cache, mediaCache: v.mediaCache, sessionInBody: v.sessionInBody, allUnderPrefix: allUris(vt).length > 0 && allUris(vt).every(u => under(u, mediaDir)),
+    part: part ? { status: partRes.status, cache: partRes.headers.get('cache-control'), bytes: partRes.body.length } : null, headSegment: headSeg?.status, audio: au.status,
+    probe: v.probe?.streams?.map(s => `${s.codec_name}${s.height ? ' ' + s.height + 'p' : ''}`) };
+  check('scoped HLS: media playlist max-age=1, init/segment/part public max-age=60 (H.264 720p), HEAD 200, audio 200, all under the prefix', v.status === 200 && v.cache === 'max-age=1' && !v.sessionInBody
+    && v.mediaCache?.every(c => c === 'public, max-age=60') && v.probe?.streams?.some(s => s.codec_name === 'h264' && s.height === 720) && out.media.allUnderPrefix
+    && out.media.part?.status === 200 && out.media.part.cache === 'public, max-age=60' && out.media.part.bytes > 0 && headSeg?.status === 200 && au.status === 200, out.media);
+
+  // The recording through the prefix: the index, dvr.m3u8 (relative dvr/file URIs), the init range and one segment.
+  const idx = await getJson(base + 'dvr');
+  const pl = await get('dvr.m3u8'), pt = pl.body.toString(), map = /#EXT-X-MAP:URI="([^"]+)",BYTERANGE="(\d+)@0"/.exec(pt), dsegs = uris(pt);
+  const dInit = map ? await get(map[1], { Range: `bytes=0-${Number(map[2]) - 1}` }) : null;
+  const pathInit = map ? await fetchAs(new URL(map[1], `${RELAY}/${PATH}/`).href, 'e2e-scoped', { Range: `bytes=0-${Number(map[2]) - 1}` }) : null;
+  const dSeg = dsegs.length ? await get(dsegs[Math.min(1, dsegs.length - 1)]) : null;
+  const fileId = /[?&]f=(\d+)/.exec(map?.[1] || '')?.[1] || '1';
+  const otherQuery = await statusOf(`${base}dvr/file.mp4?id=${other}&f=${fileId}&s=0`);
+  out.dvr = { index: { status: idx.status, id: idx.body?.id, ranges: idx.body?.ranges?.length }, playlist: { status: pl.status, cache: pl.headers.get('cache-control'), segments: dsegs.length,
+      allUnderPrefix: allUris(pt).length > 0 && allUris(pt).every(u => under(u)), onlyThisBroadcast: allUris(pt).every(u => u.includes(`id=${BROADCAST_ID}&`)) },
+    init: dInit && { status: dInit.status, sameBytesAsPathRoute: !!pathInit && dInit.body.equals(pathInit.body) }, segment: dSeg && { status: dSeg.status, cache: dSeg.headers.get('cache-control'), bytes: dSeg.body.length },
+    otherIdQuery: otherQuery };
+  check('scoped DVR: index of this broadcast, dvr.m3u8 URIs under the prefix, init 206 (= path route bytes), segment 200 max-age=3600, another id query -> 409',
+    idx.status === 200 && idx.body?.id === BROADCAST_ID && pl.status === 200 && out.dvr.playlist.cache === 'no-cache' && dsegs.length > 0 && out.dvr.playlist.allUnderPrefix && out.dvr.playlist.onlyThisBroadcast
+    && dInit?.status === 206 && out.dvr.init.sameBytesAsPathRoute && dSeg?.status === 200 && out.dvr.segment.cache === 'public, max-age=3600' && otherQuery.status === 409 && otherQuery.error === 'broadcast-changed', out.dvr);
+
+  // Viewer session through the prefix: POST, heartbeat, leave; a heartbeat under another broadcast's prefix closes it.
+  const post = await fetch(base + 'session', { method: 'POST', headers: { 'User-Agent': 'e2e-scoped' } }), pb = await post.json().catch(() => ({}));
+  const beat = await statusOf(`${base}session/${pb.sid}`, { method: 'PUT' });
+  const open = (await (await fetch(RELAY + '/healthz')).json()).hlsSessions;
+  const leave = await statusOf(`${base}session/${pb.sid}`, { method: 'DELETE' }), afterLeave = await statusOf(`${base}session/${pb.sid}`, { method: 'PUT' });
+  const post2 = await (await fetch(base + 'session', { method: 'POST', headers: { 'User-Agent': 'e2e-scoped' } })).json().catch(() => ({}));
+  const beatOther = await statusOf(`${wrong}session/${post2.sid}`, { method: 'PUT' }), beatAfterOther = await statusOf(`${base}session/${post2.sid}`, { method: 'PUT' });
+  out.session = { post: post.status, cache: post.headers.get('cache-control'), sidOk: /^[0-9a-f]{32}$/.test(pb.sid || ''), heartbeatMs: pb.heartbeatMs, put: beat.status, hlsSessionsWhileOpen: open,
+    delete: leave.status, putAfterDelete: afterLeave.status, putUnderOtherId: beatOther, putAfterOtherId: beatAfterOther.status };
+  check('scoped session: POST 200 {sid, heartbeatMs}, PUT 204, DELETE 204, then 404; a heartbeat under another id -> 409 and the session is closed', post.status === 200 && out.session.sidOk
+    && pb.heartbeatMs === 15000 && out.session.cache === 'no-store' && beat.status === 204 && open >= 1 && leave.status === 204 && afterLeave.status === 404
+    && beatOther.status === 409 && beatOther.error === 'broadcast-changed' && beatAfterOther.status === 404, out.session);
+
+  // Another broadcast id: every scoped route 409 (no-store); a path without a broadcast 404; a route the prefix does not carry 404.
+  const refs = { master: 'live.m3u8', mediaPlaylist: 'src/hls/video1_stream.m3u8', part: part ? 'src/hls/' + part : 'src/hls/x_part0.mp4', segment: seg ? 'src/hls/' + seg : 'src/hls/x_seg0.mp4',
+    audio: 'src/hls/audio3_stream.m3u8', dvrIndex: 'dvr', dvrPlaylist: 'dvr.m3u8', dvrFile: `dvr/file.mp4?id=${BROADCAST_ID}&f=${fileId}&s=0` };
+  out.otherId = {};
+  for (const [name, rel] of Object.entries(refs)) out.otherId[name] = await statusOf(new URL(rel, wrong).href);
+  out.otherId.sessionPost = await statusOf(wrong + 'session', { method: 'POST' });
+  out.otherId.segmentHead = await statusOf(new URL(refs.segment, wrong).href, { method: 'HEAD' });
+  check('another broadcast id under the prefix -> 409 broadcast-changed, no-store (master, media playlist, part, segment, audio, DVR, session)',
+    Object.values(out.otherId).every(x => x.status === 409 && x.cache === 'no-store' && (x.error === 'broadcast-changed' || x === out.otherId.segmentHead)), out.otherId);
+  out.misc = { noBroadcast: await statusOf(`${RELAY}/nobody/b/${BROADCAST_ID}/live.m3u8`), notCarried: await statusOf(base + 'info'), whepUnderPrefix: await statusOf(base + 'whep', { method: 'POST', body: 'v=0\r\n' }),
+    wrongMethod: await statusOf(base + 'live.m3u8', { method: 'POST' }) };
+  check('scoped: path without a broadcast -> 404 not-running; info/whep under the prefix -> 404; POST live.m3u8 -> 405', out.misc.noBroadcast.status === 404 && out.misc.noBroadcast.error === 'not-running'
+    && out.misc.notCarried.status === 404 && out.misc.whepUnderPrefix.status === 404 && out.misc.wrongMethod.status === 405, out.misc);
+  const refusedWithCookie = [...Object.values(out.otherId), ...Object.values(out.misc), otherQuery, beat, leave, beatOther].filter(x => x.setCookie).length;
+  out.setCookie = cookies;
+  check('scoped: no Set-Cookie on any response', cookies.length === 0 && refusedWithCookie === 0, { setCookieOn: cookies, refusedWithCookie });
+  return out;
+}
+
+// The path reused by the next broadcast: A ends (bye), B starts on the same path. A's prefix gets 404 and then 409 for
+// every route (never B's playlists, segments, recording, sessions or chat room). While the path still carries a publisher
+// session older than B (the previous sender session), B's own prefix waits (503 + Retry-After); B plays once a session of
+// its own publishes (the forwarder restarted). The path routes (/<path>/...) serve whichever broadcast is on the path.
+async function reuseChecks() {
+  const out = {}, cookies = [], A = `${RELAY}/${PATH}/b/${BROADCAST_ID}/`, idB = randomBytes(16).toString('hex'), B = `${RELAY}/${PATH}/b/${idB}/`;
+  // WHEP stays path-scoped; a page that names its broadcast (?b=<id>, the React viewer's WebRTC fallback) is bound the same way.
+  const whepNamed = id => statusOf(`${RELAY}/${PATH}/whep?b=${id}`, { method: 'POST', headers: { 'Content-Type': 'application/sdp' }, body: 'v=0\r\n' });
+  const routesOf = async (pre, id) => ({ master: await statusOf(pre + 'live.m3u8'), media: await statusOf(pre + 'src/hls/video1_stream.m3u8'), dvrIndex: await statusOf(pre + 'dvr'),
+    dvrPlaylist: await statusOf(pre + 'dvr.m3u8'), dvrFile: await statusOf(`${pre}dvr/file.mp4?id=${id}&f=1&s=0`), sessionPost: await statusOf(pre + 'session', { method: 'POST' }),
+    whep: await whepNamed(id) });
+  out.aAfterBye = await routesOf(A, BROADCAST_ID);
+  check('path reuse: after bye, broadcast A\'s prefix -> 404 not-running (no-store) on every route', Object.values(out.aAfterBye).every(x => x.status === 404 && x.error === 'not-running' && x.cache === 'no-store'), out.aAfterBye);
+
+  // B announced while the forwarder's RTSP session (more than 10 s older than B) still publishes on the path.
+  const rp = await (await fetch(`http://127.0.0.1:${PORT.api}/v3/paths/get/${PATH}`)).json(), readyTime = Date.parse(rp.readyTime || rp.availableTime || '');
+  await sleep(Number.isFinite(readyTime) ? Math.max(0, 12000 - (Date.now() - readyTime)) : 12000);
+  const startedAtMs = Date.now();
+  const annB = type => fetch(RELAY + '/api/broadcasts/announce', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + TOKEN_A },
+    body: JSON.stringify(type === 'bye' ? { v: 1, type, id: idB } : { v: 1, type, item: { id: idB, title: '경로 재사용 검증', publisher: 'RELAY-TEST', path: PATH, width: 1280, height: 720, fps: 30, startedAtMs, sentAtMs: Date.now() } }) });
+  out.announceB = (await annB('announce')).status;
+  let keepB = setInterval(() => annB('announce').catch(() => {}), 2000);
+  try {
+    const infoB = (await getJson(`${RELAY}/${PATH}/info`)).body || {};
+    out.previousSession = { sessionAgeAtAnnounceMs: startedAtMs - readyTime, info: { isB: infoB.broadcastId === idB, mediaReady: infoB.mediaReady, scope: infoB.hls?.scope },
+      a: await routesOf(A, BROADCAST_ID), bMaster: await statusOf(B + 'live.m3u8'), bMedia: await statusOf(B + 'src/hls/video1_stream.m3u8'), bWhep: await whepNamed(idB),
+      badWhep: await whepNamed('not-an-id'), pathMaster: (await statusOf(`${RELAY}/${PATH}/live.m3u8`)).status };
+    check('path reuse: once B has the path, A\'s prefix and whep?b=<A> -> 409 broadcast-changed (no-store) on every route', out.announceB === 204 && Object.values(out.previousSession.a).every(x => x.status === 409 && x.error === 'broadcast-changed' && x.cache === 'no-store'), out.previousSession.a);
+    check('path reuse: B\'s prefix and whep?b=<B> wait (503 + Retry-After) while the path carries a publisher session older than B; a malformed ?b= -> 400', infoB.broadcastId === idB && infoB.hls?.scope === `b/${idB}/`
+      && [out.previousSession.bMaster, out.previousSession.bMedia, out.previousSession.bWhep].every(x => x.status === 503 && x.retryAfter) && out.previousSession.badWhep.status === 400, out.previousSession);
+    // Chat: the old link's join is refused (the room is B's).
+    out.chatOldLink = await new Promise(resolve => {
+      const ws = new WebSocket(`ws://127.0.0.1:${PORT.relay}/${PATH}/chat`), timer = setTimeout(() => { ws.close(); resolve(null); }, 6000);
+      ws.addEventListener('open', () => ws.send(JSON.stringify({ type: 'join', broadcastId: BROADCAST_ID, name: '이전 링크' })));
+      ws.addEventListener('message', e => { const m = JSON.parse(e.data); if (m.type === 'state') { clearTimeout(timer); ws.close(); resolve({ connected: m.connected, broadcastId: m.broadcastId === BROADCAST_ID ? 'A' : m.broadcastId }); } });
+      ws.addEventListener('error', () => { clearTimeout(timer); resolve({ error: 'socket error' }); });
+    });
+    check('path reuse: chat join with A\'s id refused once B has the path', out.chatOldLink?.connected === false, out.chatOldLink);
+
+    // B's own publisher session: the app-style forwarder loop restarts the stopped FFmpeg after 1 s.
+    await stop(forwarder.proc);
+    const t0 = Date.now();
+    const bMaster = await waitFor(async () => { const r = await fetchAs(B + 'live.m3u8'); return r.status === 200 ? r : null; }, 45000, 500);
+    const bMasterMs = bMaster ? Date.now() - t0 : null;
+    const bVideo = bMaster && await waitFor(async () => { const m = await mediaPlaylist(B, 'src/hls/video1_stream.m3u8', 'hls-reuse-b', cookies, 'e2e-scoped'); return m.status === 200 && m.probe?.streams?.some(s => s.codec_name === 'h264') ? m : null; }, 45000, 1000);
+    const bDvr = await fetchAs(B + 'dvr.m3u8'), bDvrText = bDvr.body.toString(), bIndex = (await getJson(B + 'dvr')).body || {};
+    const bSession = await (await fetch(B + 'session', { method: 'POST', headers: { 'User-Agent': 'e2e-scoped' } })).json().catch(() => ({}));
+    out.ownSession = { masterAfterMs: bMasterMs, video: bVideo ? { status: bVideo.status, mediaCache: bVideo.mediaCache, probe: bVideo.probe?.streams?.map(s => s.codec_name) } : null,
+      dvr: { status: bDvr.status, mentionsA: bDvrText.includes(BROADCAST_ID), uris: allUris(bDvrText).length, index: { id: bIndex.id === idB ? 'B' : bIndex.id, ranges: bIndex.ranges?.length } },
+      // B's own WHEP passes the binding (the relay forwards the dummy offer, which MediaMTX rejects: neither 404, 409 nor 503).
+      bWhep: await whepNamed(idB),
+      session: /^[0-9a-f]{32}$/.test(bSession.sid || ''), a: await routesOf(A, BROADCAST_ID), path: { master: (await statusOf(`${RELAY}/${PATH}/live.m3u8`)).status, infoIsB: (await getJson(`${RELAY}/${PATH}/info`)).body?.broadcastId === idB } };
+    if (bSession.sid) await fetch(`${B}session/${bSession.sid}`, { method: 'DELETE' });
+    out.ownSession.setCookie = cookies;
+    check('path reuse: B plays under its own prefix once its own session publishes (H.264), its DVR never names A, whep?b=<B> passes the binding, no Set-Cookie', !!bMaster && !!bVideo && bDvr.status === 200 && !out.ownSession.dvr.mentionsA
+      && bIndex.id === idB && out.ownSession.session && ![404, 409, 503].includes(out.ownSession.bWhep.status) && !cookies.length, out.ownSession);
+    check('path reuse: A\'s prefix and whep?b=<A> still 409 on every route while B plays; the path routes play B', Object.values(out.ownSession.a).every(x => x.status === 409 && x.error === 'broadcast-changed')
+      && out.ownSession.path.master === 200 && out.ownSession.path.infoIsB, { a: out.ownSession.a, path: out.ownSession.path });
+
+    // Media before the announcement (FRAME_DESIGN.md 5.3): a publisher session that began after the broadcast's last
+    // announcement may be the next broadcast's sender taking the path before announcing (the previous "bye" lost), so the
+    // prefix waits (503 + Retry-After) until the broadcast announces again. Reproduced with B: announcements paused, then
+    // the forwarder restarted (B's entry lives RELAY_ANNOUNCE_TTL_MS = 15 s after its last announcement).
+    clearInterval(keepB);
+    await annB('announce');  // B's last announcement before the pause (the 15 s budget below counts from here)
+    await sleep(200);
+    const pathState = async () => await (await fetch(`http://127.0.0.1:${PORT.api}/v3/paths/get/${PATH}`)).json();
+    const readyAt = p => Date.parse(p.readyTime || p.availableTime || '') || 0, before = readyAt(await pathState()), paused = Date.now();
+    await stop(forwarder.proc);
+    const fresh = await waitFor(async () => { const p = await pathState(); return p.ready && readyAt(p) > before ? p : null; }, 9000, 200);
+    // The relay's path list is cached for 1 s: wait one refresh so it shows the new session.
+    if (fresh) await sleep(1300);
+    const am = { pausedForMs: Date.now() - paused, newSession: !!fresh };
+    if (fresh) Object.assign(am, { info: (({ running, mediaReady, broadcastId }) => ({ running, mediaReady, isB: broadcastId === idB }))((await getJson(`${RELAY}/${PATH}/info`)).body || {}),
+      master: await statusOf(B + 'live.m3u8'), media: await statusOf(B + 'src/hls/video1_stream.m3u8'), dvrIndex: await statusOf(B + 'dvr'), pathMaster: (await statusOf(`${RELAY}/${PATH}/live.m3u8`)).status });
+    am.pausedForMsAtCheck = Date.now() - paused;
+    out.announceAfterMedia = am;
+    await annB('announce');
+    keepB = setInterval(() => annB('announce').catch(() => {}), 2000);
+    const confirmed = await waitFor(async () => { const x = await statusOf(B + 'live.m3u8'); return x.status === 200 ? x : null; }, 10000, 250);
+    am.afterAnnounce = confirmed?.status ?? null;
+    check('path reuse: media before the announcement waits under the prefix (503 + Retry-After) until the broadcast announces again; the path route plays it',
+      am.newSession && am.info?.isB && am.info.mediaReady === true && am.pausedForMsAtCheck < 14000
+      && [am.master, am.media, am.dvrIndex].every(x => x?.status === 503 && x.retryAfter && x.cache === 'no-store') && am.pathMaster === 200 && am.afterAnnounce === 200, am);
+  } finally {
+    clearInterval(keepB);
+    out.byeB = (await annB('bye').catch(() => ({ status: 'error' }))).status;
+  }
+  return out;
+}
+
+// An older sender (Opus only) on PATH_B: live.m3u8 takes its audio from the relay's AAC transcode path (original quality only).
+async function olderSenderHls() {
+  const out = {}, base = `${RELAY}/${PATH_B}/`, id = randomBytes(16).toString('hex');
+  const ann = type => fetch(RELAY + '/api/broadcasts/announce', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + TOKEN_B },
+    body: JSON.stringify(type === 'bye' ? { v: 1, type, id } : { v: 1, type, item: { id, title: '이전 송출 검증', publisher: 'RELAY-TEST', path: PATH_B, width: 1280, height: 720, fps: 30, startedAtMs: Date.now(), sentAtMs: Date.now() } }) });
+  out.announce = (await ann('announce')).status;
+  const info = await waitFor(async () => { const i = (await getJson(base + 'info')).body; return i?.mediaReady ? i : null; }, 10000);
+  const m = await fetchAs(base + 'live.m3u8'), master = m.body.toString(), cookies = [];
+  const au = await mediaPlaylist(base, 'aac/hls/audio2_stream.m3u8', 'hls-older-aac', cookies);
+  out.hls = info?.hls; out.master = lines(master).filter(l => l.startsWith('#EXT')); out.audio = { status: au.status, firstMs: au.firstMs, probe: au.probe }; out.setCookie = cookies;
+  check('older sender without AAC: live.m3u8 uses the relay AAC transcode (aac/), original quality only', out.announce === 204 && info?.hls?.audio === 'aac' && m.status === 200 && uris(master).join() === 'aac/hls/video1_stream.m3u8'
+    && master.includes('URI="aac/hls/audio2_stream.m3u8"') && au.status === 200 && au.probe?.streams?.some(s => s.codec_name === 'aac') && !cookies.length, out);
+  out.bye = (await ann('bye')).status;
+  return out;
 }
 
 async function chatRules(url) {
@@ -467,12 +813,25 @@ async function rawWs(url) {
     s.on('data', d => { data = Buffer.concat([data, d]); if (data.includes('\r\n\r\n')) resolve({ s, status: Number(/^HTTP\/1\.1 (\d+)/.exec(data.toString())?.[1]) }); });
     s.on('error', () => resolve({ s, status: 0 }));
   });
-  const closedAfter = (s, frameBuf) => new Promise(resolve => { let done = false; s.on('close', () => { done = true; resolve(true); }); s.write(frameBuf); setTimeout(() => resolve(done), 5000); });
+  // Writes a frame; reports whether the server closed the connection within 5 s and the status of its close frame (0: none).
+  const closedAfter = (s, frameBuf) => new Promise(resolve => {
+    const got = []; let done = false;
+    const code = () => { const all = Buffer.concat(got), i = all.indexOf(0x88); return i >= 0 && all.length >= i + 4 && (all[i + 1] & 0x7f) >= 2 ? all.readUInt16BE(i + 2) : 0; };
+    s.on('data', d => got.push(d));
+    s.on('close', () => { done = true; resolve({ closed: true, code: code() }); });
+    s.write(frameBuf);
+    setTimeout(() => resolve({ closed: done, code: code() }), 5000);
+  });
   const a = await handshake();
-  const unmaskedClosed = a.status === 101 && await closedAfter(a.s, Buffer.concat([Buffer.from([0x81, 5]), Buffer.from('hello')]));
+  const unmasked = a.status === 101 ? await closedAfter(a.s, Buffer.concat([Buffer.from([0x81, 5]), Buffer.from('hello')])) : { closed: false, code: 0 };
+  const unmaskedClosed = unmasked.closed && unmasked.code === 1002;  // protocol error
+  // A text message over the 16 KB cap, as valid text and with all of its bytes sent (a server may refuse it only after the
+  // payload arrives; undecodable bytes would be refused as invalid UTF-8 before the cap is reached): closed with 1009.
   const b = await handshake();
-  const big = Buffer.alloc(14); big[0] = 0x81; big[1] = 0x80 | 127; big.writeBigUInt64BE(1n << 20n, 2);
-  const oversizeClosed = b.status === 101 && await closedAfter(b.s, big);
+  const bigPayload = Buffer.alloc(20000, 0x61), bigMask = randomBytes(4);
+  const big = Buffer.concat([Buffer.from([0x81, 0x80 | 126, 20000 >> 8, 20000 & 255]), bigMask, Buffer.from(bigPayload.map((x, i) => x ^ bigMask[i & 3]))]);
+  const oversize = b.status === 101 ? await closedAfter(b.s, big) : { closed: false, code: 0 };
+  const oversizeClosed = oversize.closed && oversize.code === 1009;  // message too big
   // A join split over two fragments with a ping in between: the server answers the ping and then the reassembled join.
   const masked = (fin, opcode, text) => { const p = Buffer.from(text), m = randomBytes(4), h = Buffer.from([(fin ? 0x80 : 0) | opcode, 0x80 | p.length]); return Buffer.concat([h, m, Buffer.from(p.map((x, i) => x ^ m[i & 3]))]); };
   const e = await handshake();
@@ -488,7 +847,7 @@ async function rawWs(url) {
   e.s.destroy();
   const c = await handshake('short'); c.s.destroy();
   const d = await handshake(undefined, '8'); d.s.destroy();
-  return { unmaskedClosed, oversizeClosed, badKeyStatus: c.status, badVersionStatus: d.status, fragmentedJoin, pong };
+  return { unmaskedClosed, unmaskedCloseCode: unmasked.code, oversizeClosed, oversizeCloseCode: oversize.code, badKeyStatus: c.status, badVersionStatus: d.status, fragmentedJoin, pong };
 }
 
 // A TCP pass-through in front of the relay MediaMTX API that can be made to stall (connections held, nothing answered),
@@ -510,36 +869,46 @@ function stallProxy(listenPort, targetPort) {
   return p;
 }
 
-// Second relay on the same MediaMTX with tiny limits: caps answer instead of dropping, HLS viewers count against the viewer
-// cap, the media grace period ends, a stalled MediaMTX API keeps the last good list, and the per-address limiter runs before
-// the token comparison.
+// Second relay on the same MediaMTX with tiny limits: caps answer instead of dropping, HLS viewer sessions (and clients
+// without one) count against the viewer cap, the media grace period ends, a stalled MediaMTX API keeps the last good list,
+// and the per-address limiter runs before the token comparison.
 async function limitChecks() {
   const port = PORT.relayLimits, base = `http://127.0.0.1:${port}`, out = {};
-  // WebRTC viewers already on the path (page 1): the cap is set one above, so exactly one HLS viewer still fits.
+  // WebRTC viewers already on the path (the pages play HLS now, so normally none): the cap is set one above them.
   const webrtcNow = async () => { const p = await (await fetch(`http://127.0.0.1:${PORT.api}/v3/paths/list`)).json(); return p.items.filter(i => i.name === PATH || i.name.startsWith(PATH + '/')).reduce((n, i) => n + i.readers.filter(x => /webrtc/i.test(x.type)).length, 0); };
   let w = 0;
-  for (let i = 0; i < 20; i++) { const a = await webrtcNow(); await sleep(500); const b = await webrtcNow(); if (a === b && a >= 1) { w = a; break; } }
+  for (let i = 0; i < 10; i++) { const a = await webrtcNow(); await sleep(500); const b = await webrtcNow(); if (a === b) { w = a; break; } }
   out.webrtcViewers = w;
   apiProxy = stallProxy(PORT.apiProxy, PORT.api);
-  const small = start('relay-limits', process.execPath, [join(ROOT, 'server/relay.mjs')], { logDir: TMP, env: {
+  const small = startRelay('relay-limits', {
     RELAY_PORT: String(port), RELAY_PUBLISHER_TOKENS: `${TOKEN_A} ${PATH} ${NOMEDIA}`, RELAY_MEDIAMTX_API: `http://127.0.0.1:${PORT.apiProxy}`, RELAY_MEDIAMTX_WEBRTC: `http://127.0.0.1:${PORT.webrtc}`,
     RELAY_MEDIAMTX_HLS: `http://127.0.0.1:${PORT.hls}`, RELAY_MEDIAMTX_PLAYBACK: `http://127.0.0.1:${PORT.playback}`, RELAY_RECORD_DIR: join(TMP, 'mediamtx', 'recordings'),
-    RELAY_MAX_VIEWERS_PER_PATH: String(Math.max(1, w) + 1), RELAY_MAX_CHAT: '2', RELAY_MAX_SOCKETS: '20', RELAY_MEDIA_GRACE_MS: '3000' } });
-  await waitFor(async () => (await fetch(base + '/healthz')).ok, 10000);
+    RELAY_MAX_VIEWERS_PER_PATH: String(w + 1), RELAY_MAX_CHAT: '2', RELAY_MAX_SOCKETS: '20', RELAY_MEDIA_GRACE_MS: '3000' });
+  await waitFor(async () => (await fetch(base + '/healthz')).ok, 30000);
   const ann = (path = PATH, id = BROADCAST_ID, token = TOKEN_A) => fetch(base + '/api/broadcasts/announce', { method: 'POST', headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
     body: JSON.stringify({ v: 1, type: 'announce', item: { id, title: '제한 검증', publisher: 'RELAY-TEST', path, width: 1280, height: 720, fps: 30, startedAtMs: Date.now(), sentAtMs: Date.now() } }) });
   await ann();
   const keep = setInterval(() => ann().catch(() => {}), 2000);
 
-  // HLS viewers against the cap: viewer 1 fits (w WebRTC + 0 HLS < w+1), then WHEP and a second HLS viewer are refused,
-  // while viewer 1 (its MediaMTX session cookie) keeps playing.
-  const h1 = await hlsCheck(`${base}/${PATH}/hls/index.m3u8`, 'cap-hls-1');
+  // The cap is w+1: one viewer session fits; then WHEP and a second session get 503 + Retry-After. Media requests are never
+  // refused for the cap (same answer for everyone, CDN); a client fetching HLS without a session is counted (fallback by
+  // address + browser), so after the session leaves, the cap is still reached.
+  const sess = (method, sid = '', ua = 'e2e-session') => fetch(`${base}/${PATH}/session${sid ? '/' + sid : ''}`, { method, headers: { 'User-Agent': ua } });
+  const s1 = await sess('POST'), s1Body = await s1.json().catch(() => ({}));
   const whep = await fetch(`${base}/${PATH}/whep`, { method: 'POST', headers: { 'Content-Type': 'application/sdp' }, body: 'v=0\r\n' });
-  const h2 = await hlsCheck(`${base}/${PATH}/hls/index.m3u8`, 'cap-hls-2');
-  const h1again = await hlsCheck(`${base}/${PATH}/hls/index.m3u8`, 'cap-hls-1b', h1.jar || new Map());
+  const s2 = await sess('POST', '', 'e2e-session-2');
+  const plainMaster = await fetch(`${base}/${PATH}/live.m3u8`, { headers: { 'User-Agent': 'no-session-client' } });
+  const plainMedia = await fetch(`${base}/${PATH}/hls/video1_stream.m3u8`, { headers: { 'User-Agent': 'no-session-client' } });
+  await plainMaster.arrayBuffer(); await plainMedia.arrayBuffer();
   const health = await (await fetch(base + '/healthz')).json();
-  out.hlsCap = { cap: Math.max(1, w) + 1, hls1: h1.status, whep: whep.status, whepRetryAfter: whep.headers.get('retry-after'), hls2: h2.status, hls2RetryAfter: h2.retryAfter, hls1Again: h1again.status, hlsViewers: health.hlsViewers, cookies: h1.summary?.cookies };
-  check('HLS viewers count against the viewer cap (503 + Retry-After), an active HLS viewer is kept', h1.ok && whep.status === 503 && whep.headers.get('retry-after') && h2.status === 503 && h2.retryAfter && h1again.ok && health.hlsViewers === 1, out.hlsCap);
+  const beat = await sess('PUT', s1Body.sid), leave = await sess('DELETE', s1Body.sid);
+  const s3 = await sess('POST', '', 'e2e-session-3');
+  out.hlsCap = { cap: w + 1, session1: s1.status, whep: whep.status, whepRetryAfter: whep.headers.get('retry-after'), session2: s2.status, session2RetryAfter: s2.headers.get('retry-after'),
+    noSessionMaster: plainMaster.status, noSessionMedia: plainMedia.status, setCookie: !!(plainMaster.headers.get('set-cookie') || plainMedia.headers.get('set-cookie')),
+    hlsSessions: health.hlsSessions, hlsViewers: health.hlsViewers, heartbeat: beat.status, leave: leave.status, sessionAfterLeaveWhileNoSessionClientActive: s3.status };
+  check('viewer cap via sessions: 503 + Retry-After for WHEP and a new session, media never capped, a client without session counted', s1.status === 200 && whep.status === 503 && whep.headers.get('retry-after')
+    && s2.status === 503 && s2.headers.get('retry-after') && plainMaster.status === 200 && plainMedia.status === 200 && !out.hlsCap.setCookie && health.hlsSessions === 1 && health.hlsViewers === 2
+    && beat.status === 204 && leave.status === 204 && s3.status === 503, out.hlsCap);
 
   // Chat cap and socket cap.
   const sockets = [];
@@ -563,7 +932,7 @@ async function limitChecks() {
   r = await ann(NOMEDIA, nomediaId);
   const i1 = await getJson(`${base}/${NOMEDIA}/info`);
   const w1 = await fetch(`${base}/${NOMEDIA}/whep`, { method: 'POST', headers: { 'Content-Type': 'application/sdp' }, body: 'v=0\r\n' });
-  const hl1 = await fetch(`${base}/${NOMEDIA}/hls/index.m3u8`);
+  const hl1 = await fetch(`${base}/${NOMEDIA}/live.m3u8`);
   const d1 = await getJson(`${base}/${NOMEDIA}/dvr`);
   await sleep(3800);
   await ann(NOMEDIA, nomediaId);  // still announced: only the media is missing
@@ -620,7 +989,10 @@ async function newPage(url) {
   return c;
 }
 const shot = async (c, name) => writeFileSync(join(OUT, name + '.png'), await c.screenshot());
-const playerState = c => c.evaluate(`(() => { const v = document.querySelector('#viewer-preview video'); return v ? { w: v.videoWidth, h: v.videoHeight, t: v.currentTime, paused: v.paused, muted: v.muted, src: v.src ? 'blob' : (v.srcObject ? 'webrtc' : ''), status: document.getElementById('viewer-status')?.textContent.trim(), quality: document.getElementById('player-quality-label')?.textContent.trim() } : null; })()`);
+// Live and recording both play from a blob (MSE) with hls.js: FrameRuntime tells which (playback.mode, hls.transport).
+const playerState = c => c.evaluate(`(() => { const v = document.querySelector('#viewer-preview video'); const rt = window.FrameRuntime; let mode = null, transport = null, latency = null;
+  try { mode = rt.playback.mode; const h = rt.hls; transport = h.transport; latency = h.latency; } catch {}
+  return v ? { w: v.videoWidth, h: v.videoHeight, t: v.currentTime, paused: v.paused, muted: v.muted, src: v.src ? 'blob' : (v.srcObject ? 'webrtc' : ''), mode, transport, latency, status: document.getElementById('viewer-status')?.textContent.trim(), quality: document.getElementById('player-quality-label')?.textContent.trim() } : null; })()`);
 async function playing(c, ms = 3000) {
   const a = await playerState(c); await sleep(ms); const b = await playerState(c);
   return { first: a, second: b, advancedS: a && b ? +(b.t - a.t).toFixed(2) : 0, ok: !!(a && b && b.w > 0 && b.t - a.t > ms / 1000 * 0.5) };
@@ -636,13 +1008,16 @@ async function openFromList(c, name) {
 }
 
 async function browserChecks() {
-  // Page 1: list -> click -> live WebRTC through the relay.
+  // Page 1: list -> click -> live HLS (hls.js loaded from the relay's /assets/js) through the relay; no RTCPeerConnection.
   const p1 = await newPage(RELAY + '/');
+  await p1.evaluate(`(() => { window.__pcs = 0; const P = window.RTCPeerConnection; if (P) window.RTCPeerConnection = function (...a) { window.__pcs++; return new P(...a); }; return true; })()`);
   await sleep(1500); await p1.evaluate('document.fonts.ready.then(() => true)');
   const o1 = await openFromList(p1, '시청자가');
   await shot(p1, 'relay-http-list-opened');
   const play1 = await playing(p1);
-  check('Edge(HTTP): card listed, click plays WebRTC video', o1.cards > 0 && play1.ok && play1.second.src === 'webrtc', { ...o1, ...play1 });
+  const page1Hls = await p1.evaluate(`({ pcs: window.__pcs, hlsLoaded: !!window.Hls, version: window.Hls && window.Hls.version, script: [...document.scripts].map(s => s.src).find(s => s.includes('hls-')) || '' })`);
+  check('Edge(HTTP): card listed, click plays HLS (hls.js from /assets/js), no WebRTC', o1.cards > 0 && play1.ok && play1.second.transport === 'hls.js' && play1.second.mode === 'live' && page1Hls.version === '1.5.20' && page1Hls.pcs === 0,
+    { ...o1, ...play1, ...page1Hls });
   const stats = await p1.evaluate(`(async () => ({ thumbnailShown: !!document.querySelector('#broadcast-grid img'), fps: document.getElementById('info-fps')?.textContent, bitrate: document.getElementById('info-bitrate')?.textContent, resolution: document.getElementById('info-resolution')?.textContent }))()`);
   result.page1 = { ...o1, ...play1, stats };
   await shot(p1, 'relay-http-playing');
@@ -652,8 +1027,12 @@ async function browserChecks() {
   await p1.evaluate(`document.getElementById('player-settings').click(); true`); await sleep(300);
   await p1.evaluate(`[...document.querySelectorAll('#player-quality-menu .quality-menu-option')].find(b => b.textContent.includes('480p'))?.click(); true`);
   const to480 = await waitFor(async () => (await playerState(p1))?.h === 480, 30000, 100);
-  const play480 = await playing(p1, 2000);
-  check('Edge: switch to relay 480p rendition plays 480 lines', to480 && play480.ok, { switchMs: to480 ? Date.now() - q0 : null, ...play480 });
+  const switchMs = to480 ? Date.now() - q0 : null;
+  // hls.currentLevel flushes the buffer (the design's fast manual switch): the first 2 s after the switch are recorded as
+  // measured, the check is the playback of the 3 s after them.
+  const justAfter = await playing(p1, 2000);
+  const play480 = await playing(p1, 3000);
+  check('Edge: switch to relay 480p rendition plays 480 lines', to480 && play480.ok && play480.second.h === 480, { switchMs, firstTwoSecondsAdvancedS: justAfter.advancedS, latencyAfterSwitch: justAfter.second?.latency, ...play480 });
   await p1.evaluate(`document.getElementById('player-settings').click(); true`); await sleep(300);
   await p1.evaluate(`[...document.querySelectorAll('#player-quality-menu .quality-menu-option')].find(b => b.querySelector('.quality-option-copy span')?.textContent.trim() === '720p')?.click(); true`);
   const back = await waitFor(async () => (await playerState(p1))?.h === 720, 20000, 100);
@@ -667,7 +1046,7 @@ async function browserChecks() {
   const list2 = await p2.evaluate(`fetch('/api/broadcasts').then(r => r.json())`);
   const o2 = await openFromList(p2, '시청자나');
   const play2 = await playing(p2);
-  check('Edge(HTTPS): list baseUrl is https origin, WHEP plays', list2.items[0]?.baseUrl === HTTPS && play2.ok, { baseUrl: list2.items[0]?.baseUrl, ...o2, ...play2 });
+  check('Edge(HTTPS): list baseUrl is https origin, HLS plays', list2.items[0]?.baseUrl === HTTPS && play2.ok && play2.second.transport === 'hls.js', { baseUrl: list2.items[0]?.baseUrl, ...o2, ...play2 });
   await shot(p2, 'relay-https-playing');
   result.page2 = { ...o2, ...play2 };
 
@@ -684,23 +1063,27 @@ async function browserChecks() {
   check('Edge chat round trip ws <-> wss', m1 && m2, { httpToHttpsMs: m1 ? m1ms : null, httpsToHttpMs: m2 ? m2ms : null, wsUrls });
   await shot(p2, 'relay-https-chat');
 
-  // DVR through the UI: seek 8 s before the live edge (MediaSource playback of relay recording chunks), then back to live.
+  // DVR through the UI: seek 15 s before the recorded edge (hls.js on dvr.m3u8), then back to live (live.m3u8).
   const dvrIndex = await (await fetch(`${RELAY}/${PATH}/dvr`)).json();
-  const target = (dvrIndex.ranges?.at(-1)?.endMs || Date.now()) - 8000;
+  const target = (dvrIndex.ranges?.at(-1)?.endMs || Date.now()) - 15000;
+  const d0 = Date.now();
   await p1.evaluate(`document.dispatchEvent(new CustomEvent('frame:seek', { detail: { positionMs: ${target} } })); true`);
-  const inHistory = await waitFor(async () => { const s = await playerState(p1); return s?.src === 'blob' && s.w > 0 ? s : null; }, 20000, 100);
+  const inHistory = await waitFor(async () => { const s = await playerState(p1); return s?.mode === 'history' && s.w > 0 && s.t > 0 ? s : null; }, 20000, 100);
+  const seekMs = inHistory ? Date.now() - d0 : null;
   const playDvr = await playing(p1, 3000);
-  check('Edge: DVR seek plays recorded chunks (MSE)', inHistory && playDvr.ok && playDvr.second.src === 'blob', { recordedMs: dvrIndex.ranges?.length ? dvrIndex.ranges.at(-1).endMs - dvrIndex.ranges[0].startMs : null, ...playDvr });
+  const position = await p1.evaluate(`(() => { try { return window.FrameRuntime.playback.positionMs; } catch { return null; } })()`);
+  check('Edge: DVR seek plays the recording (hls.js, dvr.m3u8) near the chosen time', inHistory && playDvr.ok && playDvr.second.mode === 'history' && Math.abs(position - target - 3000) < 8000,
+    { recordedMs: dvrIndex.ranges?.length ? dvrIndex.ranges.at(-1).endMs - dvrIndex.ranges[0].startMs : null, seekMs, positionMinusTargetMs: position ? Math.round(position - target) : null, ...playDvr });
   await shot(p1, 'relay-dvr-history');
   await p1.evaluate(`document.dispatchEvent(new CustomEvent('frame:live')); true`);
-  const live = await waitFor(async () => (await playerState(p1))?.src === 'webrtc', 20000, 100);
-  check('Edge: return to live after DVR', !!live, { state: await playerState(p1) });
+  const live = await waitFor(async () => { const s = await playerState(p1); return s?.mode === 'live' && s.transport === 'hls.js' && s.w > 0 ? s : null; }, 20000, 100);
+  check('Edge: return to live after DVR (live.m3u8)', !!live, { state: await playerState(p1) });
   // Let at least one 15 s playback report go out from both pages before they close.
   await sleep(Math.max(0, 16000 - (Date.now() - q0)));
 
   // Native HLS in this Edge build (informational: iPhone Safari is the real target and is not available here).
   result.edgeHls = await p2.evaluate(`(async () => { const v = document.createElement('video'); const can = v.canPlayType('application/vnd.apple.mpegurl'); if (!can) return { canPlayType: '' };
-    v.muted = true; v.src = '/${PATH}/hls/index.m3u8'; document.body.append(v); try { await v.play(); } catch (e) {} await new Promise(r => setTimeout(r, 6000)); const out = { canPlayType: can, w: v.videoWidth, t: v.currentTime, error: v.error?.code || 0 }; v.remove(); return out; })()`);
+    v.muted = true; v.src = '/${PATH}/live.m3u8'; document.body.append(v); try { await v.play(); } catch (e) {} await new Promise(r => setTimeout(r, 6000)); const out = { canPlayType: can, w: v.videoWidth, t: v.currentTime, error: v.error?.code || 0 }; v.remove(); return out; })()`);
   result.notes.push('Edge native HLS: ' + JSON.stringify(result.edgeHls));
 
   // Leave and close: sessions must disappear from MediaMTX (no leaked readers).
@@ -709,10 +1092,14 @@ async function browserChecks() {
   check('WebRTC readers released after pages close', !!cleared, { paths: cleared });
   const released = await waitFor(async () => { const h = await (await fetch(RELAY + '/healthz')).json(); return h.chatClients === 0 ? h : null; }, 15000);
   check('chat sockets released after pages close', !!released, { healthz: released });
+  const left = await waitFor(async () => { const h = await (await fetch(RELAY + '/healthz')).json(); return h.hlsSessions === 0 ? h : null; }, 15000);
+  check('HLS viewer sessions closed when the pages leave (DELETE)', !!left, { healthz: left || await (await fetch(RELAY + '/healthz')).json() });
   p1.close(); p2.close();
 }
 
 const t0 = Date.now();
+// Ctrl+C: the browser of this run is stopped by its profile folder, then the exit hook of the harness stops the rest.
+for (const sig of ['SIGINT', 'SIGTERM', 'SIGBREAK']) process.on(sig, () => { try { killByCommandLine(TMP); } catch {} process.exit(130); });
 try { await main(); }
 catch (error) { check('script error', false, { error: error.stack }); }
 finally {
@@ -724,11 +1111,14 @@ finally {
   result.passed = list.filter(c => c.ok).length; result.failed = list.filter(c => !c.ok).length;
   const logs = [relay, mediamtxFirst, mediamtx, sender, front, publisher].filter(Boolean).map(p => [p.name, p.lines]);
   if (forwarder) logs.push(['forwarder', forwarder.allLines.concat(forwarder.proc?.running ? forwarder.proc.lines : [])]);
-  for (const [name, lines] of logs) writeFileSync(join(OUT, 'logs', name + '.log'), mask(lines.join('\n')));
-  const csv = readStats();
-  if (csv.raw) writeFileSync(join(OUT, 'stats-sample.csv'), csv.raw.split('\n').slice(0, 12).join('\n') + '\n');
-  writeFileSync(join(OUT, 'e2e-result.json'), mask(JSON.stringify(result, null, 2)));
-  console.log(`\n${result.passed} passed, ${result.failed} failed in ${result.durationS} s (host CPU ${JSON.stringify(result.host.cpuLoadPct)}) -> deploy/verification/e2e-result.json`);
+  // A failed evidence write must not keep the processes of this run alive (the browser is outside the started PID trees).
+  try {
+    for (const [name, lines] of logs) writeFileSync(join(OUT, 'logs', name + '.log'), scrub(mask(lines.join('\n')), ROOT));
+    const csv = readStats();
+    if (csv.raw) writeFileSync(join(OUT, 'stats-sample.csv'), csv.raw.split('\n').slice(0, 12).join('\n') + '\n');
+    writeFileSync(join(OUT, 'e2e-result.json'), scrub(mask(JSON.stringify(result, null, 2)), ROOT));
+  } catch (error) { result.failed += 1; console.log('FAIL evidence not written: ' + error.message); }
+  console.log(`\n${result.passed} passed, ${result.failed} failed in ${result.durationS} s (host CPU ${JSON.stringify(result.host.cpuLoadPct)}) -> ${BACKEND === 'spring' ? 'verification/spring/relay' : 'deploy/verification'}/e2e-result.json`);
   await stopAll();
   const leftovers = killByCommandLine(TMP);
   if (leftovers.length) console.log('stopped leftover processes of this run:', leftovers.join(','));

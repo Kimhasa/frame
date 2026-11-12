@@ -1,0 +1,41 @@
+.filters { display: grid; grid-template-columns: minmax(0, 430px) repeat(2, minmax(132px, 156px)) auto; align-items: end; justify-content: start; gap: 8px; }
+.filters input, .choices select {
+  min-height: 44px; padding: 8px 12px; border: 1px solid #dce5e0; border-radius: 8px;
+  background: #fff; color: #344a3e; font-size: 14px;
+}
+.filters input { width: 100%; min-width: 0; }
+.filters input::placeholder { color: #62746a; }
+.dateField { display: grid; gap: 5px; min-width: 0; color: #53675d; font-size: 12px; }
+.choices, .filterActions, .pagination > div { display: flex; flex-wrap: wrap; gap: 8px; }
+.choices { margin: 12px 0 19px; }
+.choices select { cursor: pointer; }
+.error { margin: 0 0 14px; color: #a22d3f; font-size: 14px; }
+.amount { font-weight: 680; font-variant-numeric: tabular-nums; }
+.pagination { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 14px; color: #52675c; font-size: 13px; }
+
+.settlement + .settlement { margin-top: 36px; }
+.settlement h2 { margin: 0 0 15px; font-size: 19px; font-weight: 700; }
+.settlement > p { margin: 9px 0 0; color: #5c6d64; font-size: 14px; }
+.info { display: grid; gap: 12px; max-width: 720px; margin: 0; }
+.info > div { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-size: 14px; line-height: 1.55; }
+.info dt { flex: none; color: #53675d; }
+.info dd { margin: 0; text-align: right; overflow-wrap: anywhere; }
+.payouts { margin: 0; padding: 0; list-style: none; }
+.payouts li {
+  display: grid; grid-template-columns: max-content minmax(0, 1fr) auto auto; align-items: center;
+  gap: 12px; min-height: 64px; padding: 9px 0; border-bottom: 1px solid #e3e9e5;
+}
+.payouts time { color: #53675d; font-size: 14px; font-variant-numeric: tabular-nums; }
+.dialogInfo { padding: 14px; border-radius: 8px; background: #f3f6f4; }
+
+@container (max-width: 690px) {
+  .filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .filters > input, .filterActions { grid-column: 1 / -1; }
+}
+@container (max-width: 390px) {
+  .payouts li { grid-template-columns: minmax(0, 1fr) auto; gap: 7px 12px; }
+  .payouts :is(strong, button) { justify-self: end; }
+}
+@media (max-width: 600px) {
+  .filters input, .choices select { font-size: 16px; }
+}

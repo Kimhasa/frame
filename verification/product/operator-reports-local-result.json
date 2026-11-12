@@ -1,0 +1,23 @@
+{
+  "migrations": [
+    "1:true",
+    "2:true",
+    "3:true",
+    "4:true",
+    "5:true",
+    "6:true"
+  ],
+  "operatorCount": 0,
+  "status": {
+    "health": 200,
+    "policies": 200,
+    "reportPage": 200,
+    "anonymousList": 401,
+    "anonymousDetail": 401,
+    "anonymousReview": 401
+  },
+  "testAccountsAndReportsNotInsertedIntoProductionDatabase": true,
+  "productionOperatorNotAssigned": true,
+  "operatorAccountSignupDeferredByUser": true,
+  "mediaReceiverPreserved": true
+}

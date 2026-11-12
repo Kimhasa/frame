@@ -1,0 +1,674 @@
+{
+  "startedAt": "2026-11-10T07:58:49.333Z",
+  "kind": "real Caddy on this PC (HTTPS/WSS), headless Edge; not the loopback web-e2e.mjs run",
+  "origin": "https://<test-host>",
+  "tls": "internal",
+  "backend": "node",
+  "session": {
+    "startedAt": "2026-11-10T07:58:21.999Z",
+    "broadcastStartedAt": "2026-11-10T07:58:23.283Z",
+    "testSignal": {
+      "video": "1280x720 30 fps H.264 2.5 Mbps (GOP 1 s): test pattern, wall clock (HH:MM:SS, this PC) and elapsed time since the publisher started",
+      "audio": "AAC + Opus 48 kHz stereo: a 0.15 s beep every second, 880 Hz, and 1320 Hz on every 10th second (silence in between)",
+      "qualities": [
+        "source 720p (src)",
+        "480p (relay ladder)"
+      ]
+    }
+  },
+  "host": {
+    "otherProcesses": [
+      "caddy=1",
+      "ffmpeg=3",
+      "MapleStory=1",
+      "mediamtx=1",
+      "msedge=9"
+    ]
+  },
+  "checks": [
+    {
+      "name": "A caddy validate: deploy/test/Caddyfile.https-test with the session settings",
+      "ok": true,
+      "code": 0,
+      "last": "Valid configuration"
+    },
+    {
+      "name": "B1 certificate: Node, Windows (curl.exe, Schannel) and Edge trust the test host",
+      "ok": null,
+      "notRun": "Caddy local CA (--tls internal): no publicly trusted certificate; needs the tailscale certificate",
+      "tlsMode": "internal",
+      "node": {
+        "authorized": true,
+        "error": null,
+        "protocol": "TLSv1.3",
+        "alpn": "h2"
+      },
+      "cert": {
+        "subject": null,
+        "issuer": "Caddy Local Authority - ECC Intermediate",
+        "san": "DNS:<test-host>",
+        "validFrom": "Nov 10 04:38:47 2026 GMT",
+        "validTo": "Nov 10 16:38:47 2026 GMT"
+      },
+      "curl": "failed: curl: (60) schannel: SEC_E_UNTRUSTED_ROOT (0x80090325) - �ŷڵ��� ���� ������� ������ ü���� �߱��߽��ϴ�.\r\nMore details here: https://curl.se/docs/sslcerts.html\r\n\r\ncurl failed to verify the legitimacy of t"
+    },
+    {
+      "name": "C static: /_frame -> 308 /_frame/; /_frame/live and a direct watch link -> index.html (no-cache); hashed asset immutable; missing asset 404 (not index.html); HSTS, no Server header",
+      "ok": true,
+      "bare": {
+        "status": 308,
+        "location": "/_frame/"
+      },
+      "live": {
+        "status": 200,
+        "type": "text/html; charset=utf-8",
+        "cache": "no-cache"
+      },
+      "watch": {
+        "status": 200,
+        "cache": "no-cache"
+      },
+      "asset": {
+        "path": "/_frame/assets/index-D1oq-Svy.js",
+        "status": 200,
+        "cache": "public, max-age=31536000, immutable",
+        "type": "text/javascript; charset=utf-8"
+      },
+      "missingAsset": {
+        "status": 404,
+        "cache": "no-store",
+        "type": "text/plain; charset=utf-8"
+      },
+      "hsts": "max-age=300",
+      "server": null
+    },
+    {
+      "name": "D relay: /api/broadcasts lists the broadcast with public addresses on the test origin, /info names it, the legacy /<path> page and /healthz answer through Caddy",
+      "ok": true,
+      "api": 200,
+      "listed": true,
+      "publicUrls": [
+        "baseUrl=https://<test-host>",
+        "thumbnailUrl=https://<test-host>/thumbnails/3260b5….jpg"
+      ],
+      "info": {
+        "status": 200,
+        "isBroadcast": true,
+        "scope": "b/3260b5…/",
+        "mediaReady": true
+      },
+      "legacy": {
+        "status": 200,
+        "type": "text/html; charset=utf-8"
+      },
+      "healthz": 200
+    },
+    {
+      "name": "E exposure: no loopback / LAN / tailnet address, relay port or http:// URL in the API, /info, live and DVR playlists",
+      "ok": true,
+      "scanned": {
+        "api/broadcasts": 344,
+        "info": 566,
+        "live.m3u8": 668,
+        "live.m3u8?q=480p": 359,
+        "src/hls/video1_stream.m3u8": 1445,
+        "480p/hls/video1_stream.m3u8": 1445,
+        "dvr": 214,
+        "dvr.m3u8": 1045
+      },
+      "exposed": {}
+    },
+    {
+      "name": "F 503: a broadcast announced without media -> the relay's 503 + Retry-After passes through Caddy unchanged (scoped live.m3u8 and WHEP ?b=)",
+      "ok": true,
+      "announce": 204,
+      "info": {
+        "status": 200,
+        "running": true,
+        "mediaReady": false,
+        "retryAfterHeader": "2"
+      },
+      "scopedLive": {
+        "caddy": {
+          "status": 503,
+          "retryAfter": "2",
+          "cache": "no-store"
+        },
+        "relay": {
+          "status": 503,
+          "retryAfter": "2",
+          "cache": "no-store"
+        }
+      },
+      "whep": {
+        "caddy": {
+          "status": 503,
+          "retryAfter": "2",
+          "cache": "no-store"
+        },
+        "relay": {
+          "status": 503,
+          "retryAfter": "2",
+          "cache": "no-store"
+        }
+      },
+      "bye": 204
+    },
+    {
+      "name": "G WSS: the chat socket upgrade over HTTP/1.1 through Caddy -> 101 Switching Protocols with a valid Sec-WebSocket-Accept",
+      "ok": true,
+      "alpn": "http/1.1",
+      "statusLine": "HTTP/1.1 101 Switching Protocols",
+      "acceptValid": true,
+      "headers": [
+        "Connection: Upgrade",
+        "Sec-WebSocket-Accept: J5BRYcI54S0KhkdFvKF9mWgST/o=",
+        "Strict-Transport-Security: max-age=300",
+        "Upgrade: websocket"
+      ]
+    },
+    {
+      "name": "H1 list: /_frame/live on the HTTPS address shows the test broadcast; its card opens /_frame/watch/<path>/<id>",
+      "ok": true,
+      "loaded": true,
+      "cardShown": true,
+      "opened": true
+    },
+    {
+      "name": "H1b Edge security state \"secure\" without any certificate flag",
+      "ok": null,
+      "notRun": "Caddy local CA: Edge trusts it only through --ignore-certificate-errors-spki-list",
+      "securityState": "secure"
+    },
+    {
+      "name": "H2 playback: hls.js, 1280x720, test tone decoded, no RTCPeerConnection",
+      "ok": true,
+      "firstFrameMs": 2000,
+      "size": "1280x720",
+      "audioBytes": 16329,
+      "transport": "hls.js",
+      "pcs": 0,
+      "latencyS": 1.967,
+      "level": {
+        "height": 720,
+        "width": 1280,
+        "bitrate": 2628000
+      }
+    },
+    {
+      "name": "H3 direct link: reloading /_frame/watch/<path>/<id> (index.html from Caddy) plays the same broadcast again",
+      "ok": true,
+      "document": {
+        "status": 200,
+        "protocol": "h2"
+      },
+      "playsAgainAfterMs": 2099
+    },
+    {
+      "name": "H4a quality: 480p from the menu -> 480 lines, keeps playing",
+      "ok": true,
+      "options": [
+        "자동720p",
+        "720p (원본)",
+        "480p"
+      ],
+      "switchMs": 831,
+      "height": 480,
+      "advancedSIn3s": 1.77,
+      "activeQualityLabel": null
+    },
+    {
+      "name": "H4b quality: 자동 -> back to 720",
+      "ok": true,
+      "backMs": 2970,
+      "quality": "auto"
+    },
+    {
+      "name": "H5a rewind: 45 s before live -> history mode within ~5 s of the target, recording from /<path>/b/<id>/dvr*",
+      "ok": true,
+      "range": {
+        "spanS": 66
+      },
+      "offsetMs": 950.56103515625,
+      "behindLiveS": 45,
+      "toHistoryMs": 2140,
+      "dvrRequests": 10,
+      "audioBytes": 3609
+    },
+    {
+      "name": "H5b 실시간 복귀: live again, latency < 4 s",
+      "ok": true,
+      "backMs": 226,
+      "latencyS": 1.551
+    },
+    {
+      "name": "H6 chat: WSS through Caddy, nickname, send + ack; a second client on the broadcast receives it exactly once",
+      "ok": true,
+      "nodeClient": {
+        "joined": true,
+        "received": 1,
+        "afterMs": 144
+      },
+      "ackMs": 61,
+      "pageSocket": [
+        {
+          "url": "wss://<test-host>/screen-01/chat",
+          "handshakeStatus": 101,
+          "statusText": "Switching Protocols"
+        },
+        {
+          "url": "wss://<test-host>/screen-01/chat",
+          "handshakeStatus": 101,
+          "statusText": "Switching Protocols"
+        }
+      ]
+    },
+    {
+      "name": "H7 chat drop: caddy reload --force closes the WSS; the page reconnects, redraws the history once (message shown once, no duplicate ids) and keeps playing",
+      "ok": true,
+      "reload": {
+        "code": 0
+      },
+      "droppedAfterMs": 128,
+      "reconnectedAfterMs": 980,
+      "newSocketStatus": 101,
+      "historyIds": 1,
+      "duplicates": 0,
+      "shownTimes": 1,
+      "nodeClientClosed": true,
+      "playing": true
+    },
+    {
+      "name": "H8 network: every request on the test origin over https (sockets wss), no mixed content, media/DVR/session only under /<path>/b/<id>/",
+      "ok": true,
+      "requests": 932,
+      "foreign": [],
+      "plainHttp": 0,
+      "mixedContent": [],
+      "protocols": {
+        "h2": 917
+      },
+      "remoteAddresses": [
+        "<addr>"
+      ],
+      "mediaRequests": 894,
+      "sessionRequests": [
+        "POST /screen-01/b/<id>/session 200",
+        "POST /screen-01/b/<id>/session 200",
+        "PUT /screen-01/b/<id>/session/4a0fb7… 204",
+        "PUT /screen-01/b/<id>/session/4a0fb7… 204"
+      ],
+      "outsideScope": [],
+      "consoleErrors": []
+    },
+    {
+      "name": "H9 legacy /<path> page through Caddy: loads over https and its video advances",
+      "ok": true,
+      "loaded": true,
+      "videoWidth": 1280,
+      "requests": 57,
+      "foreign": []
+    },
+    {
+      "name": "H10 relay web service restart: Caddy answers 502 meanwhile, then the broadcast is listed again, a fresh watch page plays",
+      "ok": true,
+      "backend": "node",
+      "stopMs": 270,
+      "serviceUpAfterMs": 238,
+      "caddy502ForMs": 120,
+      "listedAgainAfterMs": 1825,
+      "statusesViaCaddy": {
+        "200": 20,
+        "502": 5
+      },
+      "playingBefore": true,
+      "openPage": {
+        "playsAgainByItself": false,
+        "afterMs": null,
+        "leftReady": true,
+        "overlaysSeen": [
+          "방송이 종료됐어요"
+        ],
+        "watchKinds": [
+          "ready",
+          "ended"
+        ],
+        "finalKind": "ended",
+        "finalOverlay": "방송이 종료됐어요",
+        "chatReconnected": false
+      },
+      "legacyPagePlaysAgainByItself": false,
+      "freshPage": {
+        "loaded": true,
+        "plays": true,
+        "kind": "ready"
+      }
+    }
+  ],
+  "notes": [
+    "stopped leftover Edge processes: 32844,21372,33068,25972,26036,33292,37424,31308,38464,17876,43408,43932"
+  ],
+  "pages": {
+    "page": {
+      "requests": 1006,
+      "sockets": [
+        {
+          "url": "wss://<test-host>/screen-01/chat",
+          "status": 101,
+          "t": 1794297532158,
+          "closedAt": null
+        },
+        {
+          "url": "wss://<test-host>/screen-01/chat",
+          "status": 101,
+          "t": 1794297538735,
+          "closedAt": 1794297577424
+        },
+        {
+          "url": "wss://<test-host>/screen-01/chat",
+          "status": 101,
+          "t": 1794297578276,
+          "closedAt": 1794297586153
+        },
+        {
+          "url": "wss://<test-host>/screen-01/chat",
+          "status": null,
+          "t": 1794297586968,
+          "closedAt": 1794297586974
+        }
+      ],
+      "console": [
+        {
+          "t": 1794297586160,
+          "level": "log-error",
+          "source": "network",
+          "text": "Failed to load resource: the server responded with a status of 502 ()"
+        },
+        {
+          "t": 1794297586161,
+          "level": "log-error",
+          "source": "network",
+          "text": "Failed to load resource: the server responded with a status of 502 ()"
+        },
+        {
+          "t": 1794297586973,
+          "level": "log-error",
+          "source": "network",
+          "text": "WebSocket connection to 'wss://<test-host>/screen-01/chat' failed: Error during WebSocket handshake: Unexpected response code: 404"
+        },
+        {
+          "t": 1794297587177,
+          "level": "log-error",
+          "source": "network",
+          "text": "Failed to load resource: the server responded with a status of 404 ()"
+        },
+        {
+          "t": 1794297587182,
+          "level": "log-error",
+          "source": "network",
+          "text": "Failed to load resource: the server responded with a status of 404 ()"
+        },
+        {
+          "t": 1794297587183,
+          "level": "log-error",
+          "source": "network",
+          "text": "Failed to load resource: the server responded with a status of 404 ()"
+        },
+        {
+          "t": 1794297587236,
+          "level": "log-error",
+          "source": "network",
+          "text": "Failed to load resource: the server responded with a status of 404 ()"
+        },
+        {
+          "t": 1794297587243,
+          "level": "log-error",
+          "source": "network",
+          "text": "Failed to load resource: the server responded with a status of 404 ()"
+        },
+        {
+          "t": 1794297587248,
+          "level": "log-error",
+          "source": "network",
+          "text": "Failed to load resource: the server responded with a status of 404 ()"
+        }
+      ],
+      "issues": [
+        {
+          "t": 1794297532240,
+          "code": "GenericIssue",
+          "details": "{\"genericIssueDetails\":{\"errorType\":\"FormInputHasWrongButWellIntendedAutocompleteValueError\",\"violatingNodeId\":16,\"violatingNodeAttribute\":\"autocomplete\"}}"
+        },
+        {
+          "t": 1794297538811,
+          "code": "GenericIssue",
+          "details": "{\"genericIssueDetails\":{\"errorType\":\"FormInputHasWrongButWellIntendedAutocompleteValueError\",\"violatingNodeId\":29,\"violatingNodeAttribute\":\"autocomplete\"}}"
+        }
+      ],
+      "security": [
+        {
+          "t": 1794297530929,
+          "state": "secure",
+          "cert": true
+        },
+        {
+          "t": 1794297532127,
+          "state": "secure",
+          "cert": true
+        },
+        {
+          "t": 1794297538624,
+          "state": "secure",
+          "cert": true
+        }
+      ]
+    },
+    "legacy": {
+      "requests": 98,
+      "sockets": [
+        {
+          "url": "wss://<test-host>/screen-01/chat",
+          "status": 101,
+          "t": 1794297583120,
+          "closedAt": 1794297586152
+        },
+        {
+          "url": "wss://<test-host>/screen-01/chat",
+          "status": null,
+          "t": 1794297587045,
+          "closedAt": 1794297587048
+        }
+      ],
+      "console": [
+        {
+          "t": 1794297582806,
+          "level": "log-error",
+          "source": "network",
+          "text": "Failed to load resource: the server responded with a status of 404 ()"
+        },
+        {
+          "t": 1794297583126,
+          "level": "log-error",
+          "source": "network",
+          "text": "Failed to load resource: the server responded with a status of 404 ()"
+        },
+        {
+          "t": 1794297586159,
+          "level": "log-error",
+          "source": "network",
+          "text": "Failed to load resource: the server responded with a status of 502 ()"
+        },
+        {
+          "t": 1794297586160,
+          "level": "log-error",
+          "source": "network",
+          "text": "Failed to load resource: the server responded with a status of 502 ()"
+        },
+        {
+          "t": 1794297587048,
+          "level": "log-error",
+          "source": "network",
+          "text": "WebSocket connection to 'wss://<test-host>/screen-01/chat' failed: Error during WebSocket handshake: Unexpected response code: 404"
+        },
+        {
+          "t": 1794297587177,
+          "level": "log-error",
+          "source": "network",
+          "text": "Failed to load resource: the server responded with a status of 404 ()"
+        },
+        {
+          "t": 1794297587182,
+          "level": "log-error",
+          "source": "network",
+          "text": "Failed to load resource: the server responded with a status of 404 ()"
+        },
+        {
+          "t": 1794297587183,
+          "level": "log-error",
+          "source": "network",
+          "text": "Failed to load resource: the server responded with a status of 404 ()"
+        },
+        {
+          "t": 1794297587205,
+          "level": "log-error",
+          "source": "network",
+          "text": "Failed to load resource: the server responded with a status of 404 ()"
+        },
+        {
+          "t": 1794297587209,
+          "level": "log-error",
+          "source": "network",
+          "text": "Failed to load resource: the server responded with a status of 404 ()"
+        },
+        {
+          "t": 1794297587218,
+          "level": "log-error",
+          "source": "network",
+          "text": "Failed to load resource: the server responded with a status of 404 ()"
+        }
+      ],
+      "issues": [
+        {
+          "t": 1794297582746,
+          "code": "GenericIssue",
+          "details": "{\"genericIssueDetails\":{\"errorType\":\"FormInputHasWrongButWellIntendedAutocompleteValueError\",\"violatingNodeId\":19,\"violatingNodeAttribute\":\"autocomplete\"}}"
+        },
+        {
+          "t": 1794297582747,
+          "code": "GenericIssue",
+          "details": "{\"genericIssueDetails\":{\"errorType\":\"FormInputHasWrongButWellIntendedAutocompleteValueError\",\"violatingNodeId\":19,\"violatingNodeAttribute\":\"autocomplete\"}}"
+        }
+      ],
+      "security": [
+        {
+          "t": 1794297582600,
+          "state": "neutral",
+          "cert": false
+        },
+        {
+          "t": 1794297582641,
+          "state": "secure",
+          "cert": true
+        }
+      ]
+    }
+  },
+  "notConfirmed": [
+    "inbound reachability from another tailnet device: this PC reaches its own Tailscale IP on a local path that neither crosses the Tailscale adapter nor Windows Defender Firewall (a firewall rule for caddy.exe or a Tailscale ACL can still block phones)",
+    "iPhone Safari and Android Chrome on real devices (verification/caddy/RESULTS.md)",
+    "HTTP/3: off in the test Caddy (protocols h1 h2; tailnet MTU 1280 does not fit a QUIC initial packet); production keeps h1 h2 h3 and HTTP/3 to phones is not verified"
+  ],
+  "caddyLog": {
+    "rows": 2984,
+    "byProto": {
+      "HTTP/1.1": 398,
+      "HTTP/2.0": 2586
+    },
+    "pageProtocols": {
+      "h2": 917
+    },
+    "chat": [
+      {
+        "proto": "HTTP/1.1",
+        "method": "GET",
+        "status": 101
+      },
+      {
+        "proto": "HTTP/1.1",
+        "method": "GET",
+        "status": 101
+      },
+      {
+        "proto": "HTTP/1.1",
+        "method": "GET",
+        "status": 101
+      },
+      {
+        "proto": "HTTP/1.1",
+        "method": "GET",
+        "status": 101
+      },
+      {
+        "proto": "HTTP/1.1",
+        "method": "GET",
+        "status": 101
+      },
+      {
+        "proto": "HTTP/1.1",
+        "method": "GET",
+        "status": 101
+      },
+      {
+        "proto": "HTTP/1.1",
+        "method": "GET",
+        "status": 101
+      },
+      {
+        "proto": "HTTP/1.1",
+        "method": "GET",
+        "status": 404
+      },
+      {
+        "proto": "HTTP/1.1",
+        "method": "GET",
+        "status": 404
+      },
+      {
+        "proto": "HTTP/1.1",
+        "method": "GET",
+        "status": 101
+      }
+    ],
+    "retryAfter503": [
+      {
+        "uri": "/screen-02/whep?b=<id>",
+        "retryAfter": "2"
+      },
+      {
+        "uri": "/screen-01/info",
+        "retryAfter": "2"
+      },
+      {
+        "uri": "/screen-01/dvr",
+        "retryAfter": "2"
+      },
+      {
+        "uri": "/screen-01/info",
+        "retryAfter": "2"
+      },
+      {
+        "uri": "/screen-02/b/<id>/live.m3u8",
+        "retryAfter": "2"
+      },
+      {
+        "uri": "/screen-02/whep?b=<id>",
+        "retryAfter": "2"
+      }
+    ]
+  },
+  "finishedAt": "2026-11-10T08:01:39.272Z",
+  "durationS": 169,
+  "passed": 18,
+  "failed": 0,
+  "notRun": 2
+}

@@ -1,4 +1,4 @@
-// Relay settings from environment variables (systemd EnvironmentFile or `node --env-file=relay.env`).
+// Relay settings from environment variables (the verification scripts set them; the same RELAY_* names as apps/api).
 // Secrets (publisher tokens, TURN secret) only ever come from the environment or a token file, never from the repository.
 import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
@@ -7,8 +7,8 @@ import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const QUALITY = /^(240|360|480|720|1080|1440)p$/;
-// Target bitrates of the relay-side shared encoders: must match -b:v of the same quality in deploy/mediamtx-relay.yml.
-// RELAY_RENDITIONS may override one with "480p:1.8".
+// Target bitrates of the relay-side shared encoders (the quality ladder, lib/ladder.mjs). RELAY_RENDITIONS may override
+// one with "480p:1.8".
 const RENDITION_MBPS = { '1440p': 10, '1080p': 6, '720p': 3.5, '480p': 1.8, '360p': 0.9, '240p': 0.5 };
 
 const int = (env, name, fallback, min, max) => {
@@ -75,6 +75,8 @@ export function loadConfig(env = process.env) {
     trustedProxies: new Set(list(env.RELAY_TRUSTED_PROXIES ?? '127.0.0.1,::1')),
     uiFile: ui,
     fontsDir: resolve(env.RELAY_FONTS_DIR || resolve(dirname(ui), 'assets/fonts')),
+    // Player scripts shipped with the UI (outputs/assets/js: hls-1.5.20.min.js and its licence).
+    jsDir: resolve(env.RELAY_JS_DIR || resolve(dirname(ui), 'assets/js')),
     tokens, tokenPaths,
     mediamtx: {
       api: url(env, 'RELAY_MEDIAMTX_API', 'http://127.0.0.1:9997'),
@@ -91,6 +93,13 @@ export function loadConfig(env = process.env) {
     hls: flag(env, 'RELAY_HLS', true),
     hlsAac: flag(env, 'RELAY_HLS_AAC', false),
     renditions: renditionList(env),
+    // The quality ladder (one FFmpeg per broadcast, lib/ladder.mjs): the FFmpeg to run, the loopback RTSP it reads the
+    // source from and publishes to (the internal user of mediamtx-relay.yml), and how long it outlives its last reader.
+    ladder: {
+      ffmpeg: env.RELAY_FFMPEG || 'ffmpeg',
+      rtsp: env.RELAY_MEDIAMTX_RTSP || 'rtsp://127.0.0.1:8554',
+      idleMs: int(env, 'RELAY_LADDER_IDLE_MS', 300000, 5000, 3600000)
+    },
     iceServers,
     turn: { urls: list(env.RELAY_TURN_URLS), secret: env.RELAY_TURN_SECRET || '', ttlS: int(env, 'RELAY_TURN_TTL_S', 3600, 60, 86400) },
     // An announced broadcast lives this long after its last announcement (the sender announces every 2 s).
@@ -98,7 +107,11 @@ export function loadConfig(env = process.env) {
     // While announced, a broadcast whose media stopped arriving (sender reconnecting, relay MediaMTX restart) stays
     // {"running":true,"mediaReady":false} this long after media was last seen, so viewers wait instead of ending playback.
     mediaGraceMs: int(env, 'RELAY_MEDIA_GRACE_MS', 15000, 0, 120000),
-    // HLS viewers count against the viewer cap while they requested anything in this window.
+    // Viewer sessions (POST /<path>/session, heartbeat every 15 s): active while the last heartbeat is this recent.
+    sessionActiveMs: int(env, 'RELAY_SESSION_ACTIVE_MS', 30000, 10000, 120000),
+    // Fallback for HLS clients without a session: one viewer per address + browser that requested media within
+    // RELAY_HLS_ACTIVE_MS. Behind a CDN the relay sees only the CDN's cache misses, so set RELAY_HLS_COUNT_WITHOUT_SESSION=0 there.
+    hlsCountWithoutSession: flag(env, 'RELAY_HLS_COUNT_WITHOUT_SESSION', true),
     hlsActiveMs: int(env, 'RELAY_HLS_ACTIVE_MS', 12000, 3000, 60000),
     stats: {
       dir: env.RELAY_STATS_DIR ? resolve(env.RELAY_STATS_DIR) : '',
@@ -115,6 +128,8 @@ export function loadConfig(env = process.env) {
       dvrPerIp: int(env, 'RELAY_MAX_DVR_PER_IP', 16, 1, 10000),
       hlsInflight: int(env, 'RELAY_MAX_HLS_INFLIGHT', 3000, 1, 100000),
       hlsPerIp: int(env, 'RELAY_MAX_HLS_PER_IP', 300, 1, 100000),
+      // Active viewer sessions one address may hold (many phones share one address behind mobile CGNAT).
+      sessionsPerIp: int(env, 'RELAY_MAX_SESSIONS_PER_IP', 200, 1, 100000),
       broadcasts: int(env, 'RELAY_MAX_BROADCASTS', 64, 1, 256)
     },
     // Per-IP token buckets "burst/perSecond". Mobile carriers put many phones behind one address (CGNAT), so the
@@ -122,7 +137,7 @@ export function loadConfig(env = process.env) {
     rates: {
       publishIp: rate(env, 'RELAY_RATE_PUBLISH_IP', '60/10'), announce: rate(env, 'RELAY_RATE_ANNOUNCE', '30/5'), authFail: rate(env, 'RELAY_RATE_AUTH_FAIL', '10/0.1667'),
       chatConnect: rate(env, 'RELAY_RATE_CHAT_CONNECT', '60/5'), chatSend: rate(env, 'RELAY_RATE_CHAT_SEND', '60/6'), whep: rate(env, 'RELAY_RATE_WHEP', '60/2'),
-      dvr: rate(env, 'RELAY_RATE_DVR', '120/20'), stats: rate(env, 'RELAY_RATE_STATS', '120/20'),
+      dvr: rate(env, 'RELAY_RATE_DVR', '120/20'), stats: rate(env, 'RELAY_RATE_STATS', '120/20'), session: rate(env, 'RELAY_RATE_SESSION', '60/2'),
       // One playback report per page (session id) every 4 s; the UI sends one every 15 s.
       statsClient: { burst: 1, perSecond: 0.25 }
     },

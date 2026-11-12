@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-11-11T08:16:30.379Z",
+  "paymentUnitTests": {
+    "tests": 10,
+    "failures": 0,
+    "errors": 0,
+    "provider": "local HTTP mock only"
+  },
+  "springFullSuite": "passed; test bootJar completed before launcher restart",
+  "runtime": {
+    "configAuthorizedStatus": 200,
+    "enabled": true,
+    "environment": "test",
+    "clientKeyPresent": true,
+    "noStore": true,
+    "secretFieldsAbsent": true
+  },
+  "validation": {
+    "noAuthorizationStatus": 401,
+    "belowMinimumStatus": 400,
+    "belowMinimumCode": "INVALID_AMOUNT",
+    "unknownOrderStatus": 404
+  },
+  "privateCredentialChecks": {
+    "sourceContainsActualPrivateKey": false,
+    "runtimeLogsContainActualPrivateKey": false
+  },
+  "upstreamCallsFromTheseProbes": 0,
+  "limits": [
+    "local operator authorization and TEST keys only",
+    "refund, webhook, product user authentication and settlement are outside this test integration"
+  ]
+}

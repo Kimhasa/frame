@@ -1,0 +1,116 @@
+/* Login owns its visual hierarchy and form rhythm. Media controls are outside this scope. */
+.v54-login-active>.app-layout{display:block;min-width:0;min-height:calc(100dvh - 64px);padding:0}
+.v54-login-active>.app-layout>.content{min-width:0;padding:0;background:#fff}
+.v54-login-header{position:relative;z-index:1;height:64px;background:#fff;color:#242a32}
+.v54-login-header-inner{display:flex;align-items:center;justify-content:space-between;height:100%;max-width:1440px;margin:auto;padding:0 24px}
+.v54-login-header button{font:inherit;cursor:pointer;border:0;background:transparent;color:inherit}
+.v54-login-back,.v54-login-header-spacer{display:flex;align-items:center;justify-content:center;flex:none;width:44px;height:44px;padding:10px;border-radius:8px}
+.v54-login-back>svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7}
+.v54-login-back:hover{background:#f4f5f7}
+.v54-login-page{display:flex;flex-direction:column;align-items:stretch;box-sizing:border-box;width:100%;min-width:0;min-height:calc(100dvh - 64px);padding:0;background:#fff;color:#242a32}
+.v54-login-main{display:flex;flex:1 0 auto;align-items:center;justify-content:center;box-sizing:border-box;min-width:0;padding:24px 24px 32px}
+.v54-login{--login-ink:#242a32;--login-sub:#606b78;--login-line:#d4dbe2;--login-brand:#17875c;--login-error:#c23f4b;box-sizing:border-box;width:100%;max-width:380px;min-width:0;font-family:Pretendard,'Segoe UI','Malgun Gothic',sans-serif}
+.v54-login *{box-sizing:border-box}
+.v54-login [hidden]{display:none!important}
+.v54-login-form-brand{display:flex;align-items:center;justify-content:center;margin:0 0 32px;color:#22292f;font-size:34px;font-weight:750;line-height:1.2;letter-spacing:-1.05px}
+.v54-login-form-brand>svg{display:none}
+.v54-login-sr,.v54-login-field>label{position:absolute!important;width:1px!important;height:1px!important;margin:-1px!important;padding:0!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+.v54-login-heading{margin:0 0 28px}
+.v54-login h1{margin:0;color:var(--login-ink);font-size:26px;font-weight:700;line-height:1.4;letter-spacing:-.7px;outline:0}
+.v54-login form{display:flex;flex-direction:column;gap:0;width:100%;min-width:0;margin:0}
+.v54-login-field{position:relative;display:flex;flex-direction:column;min-width:0}
+.v54-login-field+.v54-login-field{margin-top:12px}
+.v54-login-input-wrap{position:relative;min-width:0}
+#product-root#product-root#product-root .v54-login .v54-login-field input{display:block;box-sizing:border-box;width:100%;min-width:0;height:52px;min-height:52px;margin:0;padding:14px 15px;appearance:none;border:1px solid var(--login-line)!important;border-radius:8px;background:#fff;color:var(--login-ink);font:400 16px/1.4 Pretendard,'Segoe UI','Malgun Gothic',sans-serif;outline:0!important;box-shadow:none!important;transition:border-color 120ms ease,box-shadow 120ms ease}
+#product-root#product-root#product-root .v54-login .v54-login-field input::placeholder{color:#7c8794;opacity:1}
+#product-root#product-root#product-root .v54-login .v54-login-field input[name=password]{padding-right:52px}
+#product-root#product-root#product-root .v54-login .v54-login-field input:hover:not([readonly]){border-color:#a3afb9!important}
+#product-root#product-root#product-root .v54-login .v54-login-field input:focus{border-color:var(--login-brand)!important;box-shadow:0 0 0 2px #17875c10!important}
+#product-root#product-root#product-root .v54-login .v54-login-field input[aria-invalid=true]{border-color:var(--login-error)!important}
+#product-root#product-root#product-root .v54-login .v54-login-field input[aria-invalid=true]:focus{border-color:var(--login-error)!important;box-shadow:0 0 0 2px #c23f4b0d!important}
+#product-root#product-root#product-root .v54-login .v54-login-field input[readonly]{background:#f7f8fa;color:#6b7580}
+.v54-login button{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:inherit;font-size:14px;line-height:1.5;cursor:pointer}
+.v54-login button>svg{display:block;flex:none;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.v54-login .v54-login-password{position:absolute;right:4px;top:4px;width:44px;height:44px;min-height:44px;padding:12px;border:0;border-radius:6px;background:transparent;color:#737e8b}
+.v54-login .v54-login-password:hover:not(:disabled){background:#f1f4f6;color:#3c4a55}
+.v54-login .v54-login-primary{display:flex;width:100%;height:52px;min-height:52px;margin:16px 0 0;padding:13px 16px;border:1px solid var(--login-brand);border-radius:8px;background:var(--login-brand);color:#fff;font-size:16px;font-weight:650;letter-spacing:-.2px;box-shadow:none;transition:background-color 120ms ease,border-color 120ms ease}
+.v54-login .v54-login-primary:hover:not(:disabled){background:#11734d;border-color:#11734d}
+.v54-login .v54-login-primary:active:not(:disabled){background:#0e6343;border-color:#0e6343}
+.v54-login .v54-login-primary:disabled{background:#edf2ef;border-color:#e1e8e3;color:#8c9a92;opacity:1;cursor:default}
+.v54-login .v54-login-primary.is-busy:disabled{background:var(--login-brand);border-color:var(--login-brand);color:#fff;cursor:progress}
+.v54-login button:focus-visible,.v54-login-header button:focus-visible{outline:2px solid #17875c;outline-offset:2px;box-shadow:none}
+.v54-login button:disabled{cursor:default}
+#product-root#product-root#product-root .v54-login :is(.v54-login-remember,.v54-login-consent){display:flex;align-items:center;gap:8px;min-height:40px;margin:8px 0 0;padding:4px 0;color:#535e6a;font-size:14px;line-height:20px;cursor:pointer}
+#product-root#product-root#product-root .v54-login .v54-login-consent{align-items:flex-start;min-height:0;margin-top:4px;font-size:12px;line-height:20px}
+#product-root#product-root#product-root .v54-login :is(.v54-login-remember,.v54-login-consent)>input{appearance:none;position:relative;flex:none;width:18px;height:18px;min-width:18px;min-height:18px;margin:0;padding:0;border:1px solid #b8c1ca;border-radius:4px;background:#fff;box-shadow:none;cursor:pointer}
+#product-root#product-root#product-root .v54-login :is(.v54-login-remember,.v54-login-consent)>input:checked{background:var(--login-brand);border-color:var(--login-brand)}
+#product-root#product-root#product-root .v54-login :is(.v54-login-remember,.v54-login-consent)>input:checked:after{content:'';position:absolute;left:5px;top:2px;width:4px;height:8px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+#product-root#product-root#product-root .v54-login :is(.v54-login-remember,.v54-login-consent)>input:focus-visible{outline:2px solid #17875c;outline-offset:2px;box-shadow:none}
+.v54-login :is(.v54-login-remember,.v54-login-consent)>input:disabled{opacity:.45;cursor:default}
+.v54-login :is(.v54-login-remember,.v54-login-consent):has(input:disabled){color:#8f98a1;cursor:default}
+.v54-login .v54-login-inline{display:inline;min-height:0;padding:0;border:0;border-radius:0;background:transparent;color:#485c52;font:inherit;text-decoration:underline;text-underline-offset:3px}
+.v54-login-field>.v54-login-error{position:static;margin:6px 0 0;color:var(--login-error);font-size:12px;line-height:18px;overflow-wrap:anywhere}
+.v54-login-form-error{margin:12px 0 0;color:var(--login-error);font-size:13px;line-height:20px;outline:0}
+.v54-login-links{display:flex;justify-content:center;margin:12px 0 0}
+.v54-login .v54-login-text{min-height:36px;padding:8px 10px;border:0;border-radius:6px;background:transparent;color:var(--login-sub);font-size:13px}
+.v54-login .v54-login-text:hover:not(:disabled){background:#f4f5f7;color:#303c46}
+.v54-login-divider{display:flex;align-items:center;gap:12px;margin:20px 0 18px;color:#98a1ab;font-size:12px;line-height:18px}
+.v54-login-divider:before,.v54-login-divider:after{content:'';flex:1;height:1px;background:#e8ebef}
+.v54-login-social{display:flex;align-items:center;justify-content:center;gap:16px}
+.v54-login .v54-login-social-provider{display:flex;align-items:center;justify-content:center;flex:none;width:48px;height:48px;min-width:48px;min-height:48px;padding:12px;border:1px solid #dfe4e9;border-radius:50%;background:#fff;box-shadow:none}
+.v54-login .v54-login-social-provider>svg{width:23px;height:23px;stroke:none}
+.v54-login .v54-login-social-provider.is-naver{background:#03c75a;border-color:#03c75a}
+.v54-login .v54-login-social-provider:hover:not(:disabled){background:#f5f7f8;border-color:#aab7c1}
+.v54-login .v54-login-social-provider.is-naver:hover:not(:disabled){background:#00b851;border-color:#00b851}
+.v54-login .v54-login-social-provider:disabled{opacity:.45}
+.v54-login-provider-mark{display:block;margin-bottom:20px}
+.v54-login-provider-mark>svg{display:block;width:28px;height:28px}
+.v54-login-account{display:flex;align-items:center;gap:12px;margin:0 0 24px;padding:16px;border:1px solid #e3e7eb;border-radius:10px}
+.v54-login-account>.avatar{flex:none;width:40px;height:40px}
+.v54-login-account>div{display:grid;flex:1;min-width:0;gap:4px}
+.v54-login-account strong{color:var(--login-ink);font-size:15px;overflow-wrap:anywhere}
+.v54-login-account>div>span{color:var(--login-sub);font-size:13px;overflow-wrap:anywhere}
+.v54-login-account>svg{flex:none;width:20px;height:20px;fill:none;stroke:var(--login-brand);stroke-width:1.8}
+.v54-login-recovery-result{display:grid;gap:8px;margin:0 0 24px;padding:8px 0}
+.v54-login-recovery-result>span{color:var(--login-sub);font-size:13px}
+.v54-login-recovery-result>strong{color:var(--login-ink);font-size:16px;font-weight:550;overflow-wrap:anywhere}
+.v54-login-spinner{flex:none;width:17px;height:17px;border:2px solid #ffffff60;border-top-color:#fff;border-radius:50%;animation:v54-login-spin .75s linear infinite}
+.v54-login-footer{box-sizing:border-box;flex:none;width:100%;min-width:0;min-height:120px;padding:14px 20px 18px;border-top:1px solid #edf0f3;background:#fafbfc;color:#858d96;text-align:center;font:400 12px/18px Pretendard,'Segoe UI','Malgun Gothic',sans-serif}
+.v54-login-footer nav{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;column-gap:8px;row-gap:0;min-width:0;margin:0}
+.v54-login-footer .v54-login-footer-link{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;margin:0;padding:10px 4px;border:0;border-radius:5px;background:transparent;color:#68737e;font:inherit;font-size:13px;line-height:20px;white-space:nowrap;cursor:pointer}
+.v54-login-footer .v54-login-footer-link:hover:not(:disabled){background:#f5f6f8;color:#303b45}
+.v54-login-footer .v54-login-footer-link:active:not(:disabled){background:#edf0f3}
+.v54-login-footer .v54-login-footer-link:disabled{color:#a4abb2;cursor:default}
+.v54-login-footer .v54-login-footer-link:focus-visible{outline:2px solid #17875c;outline-offset:1px;box-shadow:none}
+.v54-login-footer p{display:flex;flex-wrap:wrap;justify-content:center;column-gap:12px;row-gap:2px;margin:0;font:inherit}
+.v54-login-footer small{display:block;margin:4px 0 0;font:inherit}
+.v54-login-info{box-sizing:border-box;width:min(440px,calc(100vw - 32px));max-width:calc(100vw - 32px);max-height:calc(100dvh - 32px);margin:auto;padding:0;overflow:auto;overscroll-behavior:contain;border:1px solid #e0e5e9;border-radius:14px;background:#fff;color:#242a32;box-shadow:0 16px 64px #111d2d26;font:400 14px/1.6 Pretendard,'Segoe UI','Malgun Gothic',sans-serif}
+.v54-login-info *{box-sizing:border-box}
+.v54-login-info::backdrop{background:#19232f66}
+.v54-login-info-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 16px 8px 24px}
+.v54-login-info h2{margin:0;font-size:20px;font-weight:700;line-height:1.4;letter-spacing:-.4px}
+.v54-login-info button{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;padding:10px;border:0;border-radius:7px;background:transparent;color:#65717d;font:inherit;cursor:pointer}
+.v54-login-info button:hover{background:#f3f5f7;color:#27343e}
+.v54-login-info button:active{background:#e9edf1}
+.v54-login-info button:focus-visible{outline:2px solid #17875c;outline-offset:2px;box-shadow:none}
+.v54-login-info-x{flex:none;width:44px;height:44px}
+.v54-login-info-x>svg{display:block;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.v54-login-info-body{padding:8px 24px 16px;overflow-wrap:anywhere}
+.v54-login-info-body section+section{margin-top:20px}
+.v54-login-info h3{margin:0 0 6px;color:#303d47;font-size:14px;font-weight:650}
+.v54-login-info p{margin:0;color:#66727d}
+.v54-login-info dl{display:grid;gap:16px;margin:0}
+.v54-login-info dl>div{display:grid;gap:3px}
+.v54-login-info dt{color:#7c8791;font-size:12px}
+.v54-login-info dd{margin:0;color:#34414b}
+.v54-login-info-foot{display:flex;justify-content:flex-end;padding:0 24px 20px}
+.v54-login-info .v54-login-info-done{min-width:80px;border:1px solid #dce2e7;background:#fff;color:#34414b}
+.v54-login-info .v54-login-info-done:hover{border-color:#c6cfd7;background:#f5f7f8}
+body.v54-login-open{overflow:hidden}
+.v54-login-route{position:fixed;z-index:110;left:var(--v54-login-left,0px);top:0;bottom:0;box-sizing:border-box;width:var(--v54-login-width,100%);max-width:100%;overflow:auto;overscroll-behavior:contain;background:#fff;color:#242a32;font-family:Pretendard,'Segoe UI','Malgun Gothic',sans-serif}
+.v54-login-route .v54-login-header{position:sticky;top:0}
+@keyframes v54-login-spin{to{transform:rotate(360deg)}}
+@media(max-width:650px){.v54-login-header{height:56px}.v54-login-header-inner{padding:0 12px}.v54-login-page{min-height:calc(100dvh - 56px)}.v54-login-main{padding:24px 24px 32px}.v54-login-form-brand{margin-bottom:28px;font-size:32px}.v54-login h1{font-size:24px}.v54-login-active>.app-layout{min-height:calc(100dvh - 56px)}.v54-login-footer nav{column-gap:4px}}
+@container(max-width:650px){.v54-login-active .v54-login-header,.v54-login-route .v54-login-header{height:56px}.v54-login-active .v54-login-header-inner,.v54-login-route .v54-login-header-inner{padding:0 12px}.v54-login-active .v54-login-page,.v54-login-route .v54-login-page{min-height:calc(100dvh - 56px)}.v54-login-active .v54-login-main,.v54-login-route .v54-login-main{padding:24px 24px 32px}.v54-login-active .v54-login-form-brand,.v54-login-route .v54-login-form-brand{margin-bottom:28px;font-size:32px}.v54-login-active>.app-layout{min-height:calc(100dvh - 56px)}.v54-login-footer nav{column-gap:4px}}
+@media(prefers-reduced-motion:reduce){.v54-login-spinner{animation:none}.v54-login .v54-login-primary,#product-root#product-root#product-root .v54-login .v54-login-field input{transition:none}}
+

@@ -1,0 +1,58 @@
+{
+  "origin": "http://127.0.0.1:5364",
+  "results": [
+    {
+      "name": "Browser signup creates and logs in account",
+      "pass": true
+    },
+    {
+      "name": "Channel text survives browser reload",
+      "pass": true
+    },
+    {
+      "name": "Saved channel banner displays publicly",
+      "pass": true
+    },
+    {
+      "name": "Profile name survives browser reload",
+      "pass": true
+    },
+    {
+      "name": "Fresh account has no shared operator studio",
+      "pass": true
+    },
+    {
+      "name": "OBS ownership proof connects own studio",
+      "pass": true
+    },
+    {
+      "name": "Connected channel reflects current actual OBS state",
+      "pass": true
+    },
+    {
+      "name": "Follow and bell state survive reload",
+      "pass": true
+    },
+    {
+      "name": "Following page shows actual followed channel",
+      "pass": true
+    },
+    {
+      "name": "Anonymous follow redirects to login with target",
+      "pass": true
+    },
+    {
+      "name": "Login returns to followed channel",
+      "pass": true
+    },
+    {
+      "name": "Real session works without preview login flag",
+      "pass": true
+    },
+    {
+      "name": "Actual mobile channel has no horizontal overflow",
+      "pass": true
+    }
+  ],
+  "runtimeErrors": []
+}

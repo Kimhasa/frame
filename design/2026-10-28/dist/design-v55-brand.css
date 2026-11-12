@@ -1,0 +1,37 @@
+/* The selected symbol and wordmark share a lockup; functional icons are separate. */
+.v55-brand-lockup{display:inline-flex;flex:none;align-items:center;justify-content:center;gap:9px;line-height:1;vertical-align:middle}
+svg.v55-brand-mark{display:block;flex:none;overflow:visible;width:28px;height:28px;color:#247451;fill:currentColor;stroke:none}
+svg.v55-brand-mark>path{fill:currentColor;stroke:none;stroke-width:0}
+svg.v55-brand-wordmark{display:block;flex:none;overflow:visible;width:92px;height:auto;aspect-ratio:138/32;color:#202925;fill:currentColor;stroke:none}
+svg.v55-brand-wordmark path{fill:currentColor;stroke:none;stroke-width:0}
+#product-root .app-header .brand .v55-brand-lockup{gap:9px}
+#product-root .app-header .brand .v55-brand-mark{width:28px;height:28px}
+#product-root .app-header .brand .v55-brand-wordmark{width:92px;height:auto;aspect-ratio:138/32}
+#product-root#product-root .app-header .header-brand .brand{min-height:44px}
+#product-root .v54-login-form-brand .v55-brand-lockup{gap:12px;height:41px}
+#product-root .v54-login-form-brand .v55-brand-mark{width:41px;height:41px}
+#product-root .v54-login-form-brand .v55-brand-wordmark{width:128px;height:auto;aspect-ratio:138/32}
+@media(max-width:650px){
+  #product-root .app-header .brand .v55-brand-lockup{gap:7px}
+  #product-root .app-header .brand .v55-brand-mark{width:26px;height:26px}
+  #product-root .app-header .brand .v55-brand-wordmark{width:82px;height:auto;aspect-ratio:138/32}
+  #product-root .v54-login-form-brand .v55-brand-lockup{gap:10px;height:38px}
+  #product-root .v54-login-form-brand .v55-brand-mark{width:38px;height:38px}
+  #product-root .v54-login-form-brand .v55-brand-wordmark{width:120px;height:auto;aspect-ratio:138/32}
+}
+@media(max-width:389px){
+  #product-root .app-header .brand .v55-brand-wordmark{display:none}
+  #product-root .app-header .brand .v55-brand-lockup{gap:0}
+}
+@container(max-width:650px){
+  #product-root .app-header .brand .v55-brand-lockup{gap:7px}
+  #product-root .app-header .brand .v55-brand-mark{width:26px;height:26px}
+  #product-root .app-header .brand .v55-brand-wordmark{width:82px;height:auto;aspect-ratio:138/32}
+  #product-root .v54-login-form-brand .v55-brand-lockup{gap:10px;height:38px}
+  #product-root .v54-login-form-brand .v55-brand-mark{width:38px;height:38px}
+  #product-root .v54-login-form-brand .v55-brand-wordmark{width:120px;height:auto;aspect-ratio:138/32}
+}
+@container(max-width:389px){
+  #product-root .app-header .brand .v55-brand-wordmark{display:none}
+  #product-root .app-header .brand .v55-brand-lockup{gap:0}
+}

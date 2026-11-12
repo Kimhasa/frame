@@ -1,0 +1,34 @@
+{
+  "origin": "http://127.0.0.1:5366",
+  "developmentStrictMode": true,
+  "readOnly": true,
+  "dedicatedFixtureCookiesOnly": true,
+  "results": [
+    {
+      "name": "Real development StrictMode retains one actual owner poll list without duplicate UI or errors",
+      "pass": true
+    },
+    {
+      "name": "Search and the labeled status filter query the server while retaining the closed fixture",
+      "pass": true
+    },
+    {
+      "name": "A closed result survives effect replay with heading focus and Escape restores its exact opener",
+      "pass": true
+    },
+    {
+      "name": "The owner filters and list fit 390px and readable result choices fit a 320px dialog",
+      "pass": true
+    },
+    {
+      "name": "Every actual poll read carries the captured owner with no writes, chat sockets or runtime errors",
+      "pass": true
+    }
+  ],
+  "runtimeErrors": [],
+  "dataChangingRequests": 0,
+  "blockedWrites": 0,
+  "chatSockets": 0,
+  "ownerHeadersMatched": true,
+  "complete": true
+}

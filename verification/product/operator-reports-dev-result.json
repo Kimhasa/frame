@@ -1,0 +1,31 @@
+{
+  "origin": "http://127.0.0.1:5366",
+  "developmentStrictMode": true,
+  "dedicatedFixtureCookiesOnly": true,
+  "readOnly": true,
+  "results": [
+    {
+      "name": "The dedicated operator session opens the real development StrictMode report list",
+      "pass": true
+    },
+    {
+      "name": "Development effect replay keeps the loaded report dialog open and its heading focused",
+      "pass": true
+    },
+    {
+      "name": "Escape restores focus to the report row action",
+      "pass": true
+    },
+    {
+      "name": "The development operator list and report dialog fit a 320px viewport",
+      "pass": true
+    },
+    {
+      "name": "Read-only operator smoke produces no runtime errors or data-changing requests",
+      "pass": true
+    }
+  ],
+  "runtimeErrors": [],
+  "dataChangingRequests": 0,
+  "complete": true
+}

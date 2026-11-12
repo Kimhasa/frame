@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <title>겹친 프레임</title>
+  <rect x="4" y="4" width="12" height="12" stroke="#23875e" stroke-width="4"/>
+  <path d="M12 22v6h16V12h-6" stroke="#23875e" stroke-width="4"/>
+</svg>

@@ -1,0 +1,71 @@
+<svg class="scene-svg" viewBox="0 0 1200 675" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="방송 화면 미리보기">
+<rect width="1200" height="675" fill="#18232d"/>
+<rect width="52" height="675" fill="#111c25"/>
+<rect x="52" width="215" height="675" fill="#16212a"/>
+<rect x="267" width="933" height="38" fill="#20303c"/>
+<rect x="281" width="148" height="38" fill="#18232d"/>
+<text x="300" y="25" fill="#d1e1e4" font-size="13" font-family="monospace">workspace.ts</text>
+<text x="77" y="35" fill="#b6cbd2" font-size="14" font-family="monospace">EXPLORER</text>
+<text x="75" y="80" fill="#829ba9" font-size="13" font-family="monospace">src</text>
+<text x="90" y="112" fill="#829ba9" font-size="13" font-family="monospace">components</text>
+<text x="90" y="144" fill="#81d9ba" font-size="13" font-family="monospace">LivePlayer.tsx</text>
+<text x="90" y="176" fill="#829ba9" font-size="13" font-family="monospace">BroadcastCard.tsx</text>
+<text x="90" y="208" fill="#829ba9" font-size="13" font-family="monospace">ChatPanel.tsx</text>
+<text x="90" y="240" fill="#829ba9" font-size="13" font-family="monospace">styles</text>
+<text x="90" y="272" fill="#829ba9" font-size="13" font-family="monospace">tokens.css</text>
+<text x="90" y="304" fill="#829ba9" font-size="13" font-family="monospace">package.json</text>
+<rect x="17" y="25" width="18" height="18" rx="4" fill="none" stroke="#527185" stroke-width="2"/>
+<rect x="17" y="80" width="18" height="18" rx="4" fill="none" stroke="#8fdbbf" stroke-width="2"/>
+<rect x="17" y="135" width="18" height="18" rx="4" fill="none" stroke="#527185" stroke-width="2"/>
+<rect x="17" y="190" width="18" height="18" rx="4" fill="none" stroke="#527185" stroke-width="2"/>
+<rect x="17" y="245" width="18" height="18" rx="4" fill="none" stroke="#527185" stroke-width="2"/>
+<rect x="17" y="300" width="18" height="18" rx="4" fill="none" stroke="#527185" stroke-width="2"/>
+<rect x="267" y="507" width="933" height="168" fill="#121d26"/>
+<path d="M267 507H1200" stroke="#324553"/>
+<text x="291" y="535" fill="#a5bac7" font-family="monospace" font-size="12">TERMINAL</text>
+<text x="291" y="568" fill="#7acba3" font-family="monospace" font-size="14">✓ Ready in 242ms</text>
+<text x="291" y="597" fill="#9db2bf" font-family="monospace" font-size="13">Local workspace connected.</text>
+<text x="291" y="627" fill="#629f8c" font-family="monospace" font-size="13">➜ frame / workspace</text>
+<text x="290" y="76" fill="#506b7b" font-family="monospace" font-size="14">1</text>
+<text x="332" y="76" font-family="monospace" font-size="16"><tspan fill="#c8a8ed">import</tspan><tspan fill="#94cbb0"> { useState } from 'react';</tspan>
+</text>
+<text x="290" y="104" fill="#506b7b" font-family="monospace" font-size="14">2</text>
+<text x="332" y="104" font-family="monospace" font-size="16"><tspan fill="#b7d5dd"></tspan><tspan fill="#b7d5dd"></tspan>
+</text>
+<text x="290" y="132" fill="#506b7b" font-family="monospace" font-size="14">3</text>
+<text x="332" y="132" font-family="monospace" font-size="16"><tspan fill="#c8a8ed">export const</tspan><tspan fill="#b7d5dd"> LiveWorkspace = () =&gt; {</tspan>
+</text>
+<text x="290" y="160" fill="#506b7b" font-family="monospace" font-size="14">4</text>
+<text x="332" y="160" font-family="monospace" font-size="16"><tspan fill="#c8a8ed">  const</tspan><tspan fill="#b7d5dd"> [quality, setQuality] = useState('auto');</tspan>
+</text>
+<text x="290" y="188" fill="#506b7b" font-family="monospace" font-size="14">5</text>
+<text x="332" y="188" font-family="monospace" font-size="16"><tspan fill="#c8a8ed">  const</tspan><tspan fill="#b7d5dd"> [connected, setConnected] = useState(true);</tspan>
+</text>
+<text x="290" y="216" fill="#506b7b" font-family="monospace" font-size="14">6</text>
+<text x="332" y="216" font-family="monospace" font-size="16"><tspan fill="#b7d5dd"></tspan><tspan fill="#b7d5dd"></tspan>
+</text>
+<text x="290" y="244" fill="#506b7b" font-family="monospace" font-size="14">7</text>
+<text x="332" y="244" font-family="monospace" font-size="16"><tspan fill="#c8a8ed">  return</tspan><tspan fill="#b7d5dd"> (</tspan>
+</text>
+<text x="290" y="272" fill="#506b7b" font-family="monospace" font-size="14">8</text>
+<text x="332" y="272" font-family="monospace" font-size="16"><tspan fill="#7dc6d5">    &lt;Workspace</tspan><tspan fill="#d6c095"> theme=&quot;light&quot;&gt;</tspan>
+</text>
+<text x="290" y="300" fill="#506b7b" font-family="monospace" font-size="14">9</text>
+<text x="332" y="300" font-family="monospace" font-size="16"><tspan fill="#7dc6d5">      &lt;LivePlayer</tspan><tspan fill="#b7d5dd"> quality={quality}</tspan>
+</text>
+<text x="290" y="328" fill="#506b7b" font-family="monospace" font-size="14">10</text>
+<text x="332" y="328" font-family="monospace" font-size="16"><tspan fill="#b7d5dd">        onQualityChange</tspan><tspan fill="#94cbb0">={setQuality} /&gt;</tspan>
+</text>
+<text x="290" y="356" fill="#506b7b" font-family="monospace" font-size="14">11</text>
+<text x="332" y="356" font-family="monospace" font-size="16"><tspan fill="#7dc6d5">      &lt;ChatPanel</tspan><tspan fill="#94cbb0"> room={broadcast.id} /&gt;</tspan>
+</text>
+<text x="290" y="384" fill="#506b7b" font-family="monospace" font-size="14">12</text>
+<text x="332" y="384" font-family="monospace" font-size="16"><tspan fill="#7dc6d5">    &lt;/Workspace&gt;</tspan><tspan fill="#b7d5dd"></tspan>
+</text>
+<text x="290" y="412" fill="#506b7b" font-family="monospace" font-size="14">13</text>
+<text x="332" y="412" font-family="monospace" font-size="16"><tspan fill="#b7d5dd">  );</tspan><tspan fill="#b7d5dd"></tspan>
+</text>
+<text x="290" y="440" fill="#506b7b" font-family="monospace" font-size="14">14</text>
+<text x="332" y="440" font-family="monospace" font-size="16"><tspan fill="#b7d5dd">};</tspan><tspan fill="#b7d5dd"></tspan>
+</text>
+</svg>

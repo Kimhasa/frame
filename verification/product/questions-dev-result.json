@@ -1,0 +1,34 @@
+{
+  "origin": "http://127.0.0.1:5366",
+  "developmentStrictMode": true,
+  "readOnly": true,
+  "dedicatedFixtureCookiesOnly": true,
+  "results": [
+    {
+      "name": "Development StrictMode retains one actual owner question list without duplicate UI or errors",
+      "pass": true
+    },
+    {
+      "name": "The real detail survives effect replay, cancels a local answer and pin draft, and Escape restores its opener",
+      "pass": true
+    },
+    {
+      "name": "Question and existing poll tabs navigate both ways using real owner reads and clear unrelated filters",
+      "pass": true
+    },
+    {
+      "name": "The 390px owner list and 320px answer editor retain readable fields and a styled pin checkbox without overflow",
+      "pass": true
+    },
+    {
+      "name": "The saved answer and pin remain unchanged; every owner read is guarded with no writes, chat sockets or runtime errors",
+      "pass": true
+    }
+  ],
+  "runtimeErrors": [],
+  "dataChangingRequests": 0,
+  "blockedWrites": 0,
+  "chatSockets": 0,
+  "ownerHeadersMatched": true,
+  "complete": true
+}

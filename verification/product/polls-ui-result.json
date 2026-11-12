@@ -1,0 +1,155 @@
+{
+  "verificationDatabaseOnly": true,
+  "origin": "http://127.0.0.1:5365",
+  "api": "http://127.0.0.1:18083",
+  "checks": 33,
+  "passed": 33,
+  "realSources": [
+    "One isolated MediaMTX/FFmpeg source replaced sequentially on the same path",
+    "Real PostgreSQL account votes and channel policies"
+  ],
+  "fixtureExpiry": "Only one recent polls_ui_* poll ends_at_ms is shortened to created_at_ms+1, an already elapsed timestamp; closure itself is performed by the API.",
+  "paginationInstrumentation": "Initial owner history GET limit is lowered to 2; rows and opaque cursors are actual server responses.",
+  "faultInjection": [
+    "Owner GET 503",
+    "Create POST 503/delay",
+    "Vote POST 503/delay",
+    "Close POST 503/delay"
+  ],
+  "results": [
+    {
+      "name": "One real active poll is created for the owned broadcast and a second active slot is rejected",
+      "pass": true
+    },
+    {
+      "name": "Public aggregates allow anonymous reads while votes, owner history and account scope remain protected",
+      "pass": true
+    },
+    {
+      "name": "The owner may vote and concurrent different choices from one account create exactly one accepted vote",
+      "pass": true
+    },
+    {
+      "name": "Same-choice retries are idempotent and a different account adds one separate vote",
+      "pass": true
+    },
+    {
+      "name": "Stored follower and block policies control voting, while chat slow/link/banned-word rules do not consume or reject a ballot",
+      "pass": true
+    },
+    {
+      "name": "Each account receives only its own selected option with a real server clock",
+      "pass": true
+    },
+    {
+      "name": "Versioned manual closure preserves four votes and later same-choice receipt retries add no vote",
+      "pass": true
+    },
+    {
+      "name": "Replacing the actual source closes the old poll and rejects a new old-broadcast vote",
+      "pass": true
+    },
+    {
+      "name": "The real expiry path closes an elapsed fixture deadline and refuses a first vote after expiry",
+      "pass": true
+    },
+    {
+      "name": "Owner list 503 displays an error rather than fake poll history",
+      "pass": true
+    },
+    {
+      "name": "Actual two-row server cursor pages append the three independent closed polls once",
+      "pass": true
+    },
+    {
+      "name": "Blank question is rejected locally and focuses its field",
+      "pass": true
+    },
+    {
+      "name": "Create 503 retains question, multiline options and selected duration",
+      "pass": true
+    },
+    {
+      "name": "Pending poll creation locks its modal and guards Escape and duplicate submission",
+      "pass": true
+    },
+    {
+      "name": "The owner modal creates the real poll bound to the current replacement broadcast",
+      "pass": true
+    },
+    {
+      "name": "The active owner countdown never exceeds the poll duration returned by the server",
+      "pass": true
+    },
+    {
+      "name": "Owner poll history and controls fit the 390px viewport",
+      "pass": true
+    },
+    {
+      "name": "Owner poll history and controls fit the 320px viewport",
+      "pass": true
+    },
+    {
+      "name": "Anonymous viewers can read a real poll result and receive an account-login action",
+      "pass": true
+    },
+    {
+      "name": "Voting login preserves the exact broadcast return path",
+      "pass": true
+    },
+    {
+      "name": "Vote 503 preserves the selected option and modal without inventing a vote",
+      "pass": true
+    },
+    {
+      "name": "Pending vote disables its modal and prevents a second ballot or Escape dismissal",
+      "pass": true
+    },
+    {
+      "name": "A server-confirmed vote displays its own choice and exactly one aggregate vote",
+      "pass": true
+    },
+    {
+      "name": "The account choice survives reload and the UI offers results instead of changing the vote",
+      "pass": true
+    },
+    {
+      "name": "Viewer poll result modal fits the 390px viewport",
+      "pass": true
+    },
+    {
+      "name": "Viewer poll result modal fits the 320px viewport",
+      "pass": true
+    },
+    {
+      "name": "The owner close action opens the intended close confirmation",
+      "pass": true
+    },
+    {
+      "name": "Manual-close 503 preserves the actual result and confirmation",
+      "pass": true
+    },
+    {
+      "name": "Actual concurrent closure returns 409 and disables stale automatic resubmission",
+      "pass": true
+    },
+    {
+      "name": "Pending manual closure locks the confirmation and prevents duplicate writes",
+      "pass": true
+    },
+    {
+      "name": "The management close action persists a real manual closed state",
+      "pass": true
+    },
+    {
+      "name": "The final live poll stores two real account votes for restart verification",
+      "pass": true
+    },
+    {
+      "name": "No browser runtime or unconfirmed interception errors",
+      "pass": true
+    }
+  ],
+  "runtimeErrors": [],
+  "confirmedCanceledInterceptions": []
+}

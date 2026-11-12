@@ -1,0 +1,215 @@
+{
+  "GeneratedAt": "2026-11-12T04:00:42.3729273+00:00",
+  "Command": "gradlew.bat test bootJar",
+  "Suite": {
+    "Tests": 86.0,
+    "Failures": 0.0,
+    "Errors": 0.0,
+    "Skipped": 0.0
+  },
+  "Classes": [
+    {
+      "Name": "frame.api.account.AccountIntegrationTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.AccountSessionRecoveryTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ChannelProfileTest",
+      "Tests": 6,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ProductMigrationIntegrationTest",
+      "Tests": 5,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ProductStorageDisabledTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ScheduledBroadcastsTest",
+      "Tests": 4,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.WatchHistoryTest",
+      "Tests": 5,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.BlankRelayVariablesTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.broadcast.BroadcastRegistryTest",
+      "Tests": 12,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.chat.ChatHandshakeFilterTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.chat.ChatRulesTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.dvr.DvrRulesTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.mediamtx.MediaMtxPathsTest",
+      "Tests": 2,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.obs.ObsBroadcastsTest",
+      "Tests": 10,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.payments.PaymentsTest",
+      "Tests": 10,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.playback.PlaybackRulesTest",
+      "Tests": 7,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.playback.ViewerSessionsTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.ShutdownTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.StartupGraceTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.stats.StatsRowTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.UpstreamBreakTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.web.JsCompatTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    }
+  ],
+  "JarSha256": "c78da33413a3034839b213d1e675e339b069a0708435a8b0ececa38a782f1a46",
+  "Migrations": [
+    {
+      "Name": "V1__accounts_channels_follows.sql",
+      "Sha256": "09aac64c7d820f3ea8b3229b99b4dca11a1de6c104c7da277846415bf8a39b4f"
+    },
+    {
+      "Name": "V2__signup_consents.sql",
+      "Sha256": "5841a933a3fb672ee4876ebf6a4c36247416a126b7e17555151e9ecc8bb4daad"
+    },
+    {
+      "Name": "V3__broadcast_schedules.sql",
+      "Sha256": "8661aecdd2fadaf14a67a36a2ad5e60811dae1a94b77f09ca62480f8a61bea6d"
+    },
+    {
+      "Name": "V4__watch_history.sql",
+      "Sha256": "e5c93b9231061ec8253b160b7de5f5fbbb14ff3e50754e56ba3e6b65340029ca"
+    },
+    {
+      "Name": "V5__channel_profiles_reports.sql",
+      "Sha256": "b82d405664a182606e35cea5919be5096ffdaea1d8a57223eb3be0c95529a0ee"
+    }
+  ],
+  "Database": "Native PostgreSQL verification database only; generated schemas and Redis namespaces cleaned",
+  "DockerContainerExecution": false,
+  "MainDatabaseChanged": false,
+  "ActualBroadcastProcessesChanged": false,
+  "ChannelChecks": [
+    "All channel responses include server channel creation time, nullable country, ordered links and truthful null video/total-view counters",
+    "Public UUID lookup and current or retired case-insensitive handle lookup return the current channel",
+    "Owner-only profile edits preserve optional new fields for earlier clients and allow explicit country/link clearing",
+    "Link order and bounded ASCII handle, ISO country and HTTP(S) URL inputs are validated; existing total request limit remains 8KB",
+    "Handle rename retains UUID, creation date, follows, schedules and private history; former names stay reserved",
+    "Two owners racing for a name yield one success and one conflict without partial profile updates",
+    "Registration and rename share the same unique namespace; owner can reclaim old names and concurrent own renames preserve both aliases",
+    "Deleted channels leave reserved handle tombstones that new accounts cannot claim",
+    "Anonymous reports, missing CSRF, foreign Origin, self-report and forged reporter fields are rejected",
+    "Report receipt contains only UUID, received status and server timestamp; report contents never appear publicly",
+    "Concurrent duplicate reports yield one receipt and one 24-hour duplicate refusal",
+    "Per-reporter row lock enforces 5 successful reports per minute under concurrency; 429 includes Retry-After 60",
+    "Profile, aliases and duplicate report policy survive a fresh Spring Boot application instance",
+    "V5 upgrade backfills existing handles and preserves channel dates, follows, schedules, history and unknown consent",
+    "V1/V2/V3/V4 SQL hashes unchanged; checksum mismatch blocks synthetic pending V6 DDL"
+  ],
+  "Notes": [
+    "No Docker execution, OBS/media process changes or production deployment are claimed",
+    "Report received means receipt only; operator review and administration are not implemented",
+    "Channel links are stored as user-provided public links and are never fetched by the server"
+  ]
+}

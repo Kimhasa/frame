@@ -1,31 +1,43 @@
 // Chat fan-out load on the relay: N WebSocket viewers join one room, S of them send messages, and every delivery is timed
 // (send -> receipt at each of the N clients). Starts its own relay (no MediaMTX needed for chat) on port 24180 by default.
 // This is a protocol load on one PC over loopback (generator and relay share the CPU); it is not a 1,000-viewer media test.
-// Usage: node server/verify/chat-load.mjs [--clients 1000] [--senders 20] [--messages 5] [--ramp-per-s 200]
-import { writeFileSync, mkdirSync } from 'node:fs';
+// Windows only (the harness stops processes with taskkill; --backend spring runs bin/java.exe).
+// Usage: node server/verify/chat-load.mjs [--clients 1000] [--senders 20] [--messages 5] [--ramp-per-s 200] [--backend node|spring]
+// --backend spring measures the deployed backend (apps/api/build/libs/frame-api.jar; JAVA_HOME or FRAME_JAVA = a JDK 21) and
+// writes verification/spring/chat-load-<clients>x<senders>.json; the default is the Node relay (deploy/verification/).
+import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { randomBytes } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { cpus } from 'node:os';
-import { start, stopAll, waitFor, sleep } from './harness.mjs';
+import { start, stopAll, waitFor, sleep, portFree } from './harness.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const arg = (name, fallback) => { const i = process.argv.indexOf('--' + name); return i > 0 ? Number(process.argv[i + 1]) : fallback; };
+// Never fall back to the Node relay by accident: "--backend" without a value and "--backend=spring" are refused.
+if (process.argv.some(a => a.startsWith('--backend='))) throw new Error('usage: --backend node|spring');
+const BACKEND = (() => { const i = process.argv.indexOf('--backend'); return i > 0 ? process.argv[i + 1] : 'node'; })();
+if (!['node', 'spring'].includes(BACKEND)) throw new Error('--backend must be node or spring');
+const JAVA = process.env.FRAME_JAVA || join(process.env.JAVA_HOME || '', 'bin', 'java.exe');
+const API_JAR = join(ROOT, 'apps/api/build/libs/frame-api.jar');
+if (BACKEND === 'spring' && !(existsSync(API_JAR) && existsSync(JAVA))) throw new Error('the Spring backend needs apps/api/build/libs/frame-api.jar (./gradlew bootJar) and JAVA_HOME (or FRAME_JAVA) = a JDK 21');
+const OUT = join(ROOT, BACKEND === 'spring' ? 'verification/spring' : 'deploy/verification');
 const N = arg('clients', 1000), SENDERS = arg('senders', 20), MESSAGES = arg('messages', 5), RAMP = arg('ramp-per-s', 200), PORT = arg('port', 24180);
 const BASE = `http://127.0.0.1:${PORT}`, TOKEN = randomBytes(24).toString('hex'), ID = randomBytes(16).toString('hex');
 const pct = (a, p) => { if (!a.length) return null; const s = [...a].sort((x, y) => x - y); return +s[Math.min(s.length - 1, Math.floor(p / 100 * s.length))].toFixed(1); };
 const usage = pid => { try { const [cpu, ws] = execFileSync('powershell', ['-NoProfile', '-Command', `$p = Get-Process -Id ${pid}; "$($p.CPU) $($p.WorkingSet64)"`]).toString().trim().split(' ').map(Number); return { cpuS: +cpu.toFixed(2), rssMB: +(ws / 1048576).toFixed(1) }; } catch { return null; } };
 
-const relay = start('relay-chat-load', process.execPath, [join(ROOT, 'server/relay.mjs')], { env: {
+if (!(await portFree(PORT))) throw new Error('port in use (a relay left from an earlier run?): ' + PORT);
+const relay = start('relay-chat-load', ...(BACKEND === 'spring' ? [JAVA, ['-Xms64m', '-jar', API_JAR]] : [process.execPath, [join(ROOT, 'server/relay.mjs')]]), { env: {
   RELAY_PORT: String(PORT), RELAY_PUBLISHER_TOKENS: TOKEN + ' load', RELAY_MEDIAMTX_API: 'http://127.0.0.1:24999', RELAY_MAX_CHAT: String(N + 100), RELAY_MAX_CHAT_PER_IP: String(N + 100),
   RELAY_MAX_SOCKETS: String(N + 500), RELAY_LOG_LEVEL: 'warn',
   // Every generator client shares 127.0.0.1, so the per-IP buckets are opened up for this run only.
   RELAY_RATE_CHAT_CONNECT: `${N}/${RAMP * 2}`, RELAY_RATE_CHAT_SEND: '100000/10000' } });
-await waitFor(async () => (await fetch(BASE + '/healthz')).status > 0, 8000);
+await waitFor(async () => (await fetch(BASE + '/healthz')).status > 0, 30000);
 const announce = () => fetch(BASE + '/api/broadcasts/announce', { method: 'POST', headers: { Authorization: 'Bearer ' + TOKEN }, body: JSON.stringify({ v: 1, type: 'announce', item: { id: ID, title: '채팅 부하', publisher: 'LOAD', path: 'load', width: 1920, height: 1080, fps: 60, startedAtMs: Date.now() } }) });
 await announce();
-const keep = setInterval(announce, 2000);
+const keep = setInterval(() => announce().catch(() => {}), 2000);
 const before = usage(relay.pid);
 // Whole-PC CPU load while the test runs (the PC is shared; generator and relay are on it too).
 const cpuSamples = [];
@@ -70,7 +82,7 @@ for (let m = 0; m < MESSAGES; m++) {
 await waitFor(() => received >= total * joined, 30000, 200);
 const after = usage(relay.pid);
 const result = {
-  at: new Date().toISOString(), node: process.version, definition: 'one room, Node built-in WebSocket clients in one process on the same PC as the relay (loopback); no media',
+  at: new Date().toISOString(), backend: BACKEND, jvmOptions: BACKEND === 'spring' ? [process.env.JDK_JAVA_OPTIONS, '-Xms64m'].filter(Boolean).join(' ') : undefined, node: process.version, definition: 'one room, Node built-in WebSocket clients in one process on the same PC as the relay (loopback); no media',
   clients: N, joined, rampSeconds: +rampS.toFixed(1), connectErrors: failures.connect, joinRefused: failures.join,
   messages: { senders: senders.length, perSender: MESSAGES, sent: total, expectedDeliveries: total * joined, delivered: received, durationS: +((Date.now() - s0) / 1000).toFixed(1) },
   deliveryMs: { p50: pct(latencies, 50), p95: pct(latencies, 95), p99: pct(latencies, 99), max: pct(latencies, 100) },
@@ -78,8 +90,8 @@ const result = {
   hostCpuLoadPct: cpuSamples.length ? { logicalCpus: cpus().length, samples: cpuSamples.length, min: Math.min(...cpuSamples), avg: Math.round(cpuSamples.reduce((a, b) => a + b, 0) / cpuSamples.length), max: Math.max(...cpuSamples) } : null
 };
 console.log(JSON.stringify(result, null, 2));
-mkdirSync(join(ROOT, 'deploy/verification'), { recursive: true });
-writeFileSync(join(ROOT, `deploy/verification/chat-load-${N}x${SENDERS}.json`), JSON.stringify(result, null, 2));
+mkdirSync(OUT, { recursive: true });
+writeFileSync(join(OUT, `chat-load-${N}x${SENDERS}.json`), JSON.stringify(result, null, 2));
 clearInterval(keep); clearInterval(cpuTimer);
 for (const c of clients) try { c.ws.close(); } catch {}
 await sleep(500);

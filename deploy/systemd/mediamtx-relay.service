@@ -21,7 +21,8 @@ ProtectSystem=strict
 ProtectHome=true
 PrivateTmp=true
 ReadWritePaths=/var/lib/frame-relay
-# 하위 화질·AAC 변환을 쓰면 FFmpeg 자식 프로세스가 같은 제한 안에서 돈다.
+# 녹화 복사(yml의 runOnAvailable)와 AAC 변환(runOnDemand) FFmpeg가 이 단위의 자식으로 같은 제한 안에서 돈다.
+# 화질 래더 FFmpeg는 frame-relay 단위의 자식이다.
 
 [Install]
 WantedBy=multi-user.target

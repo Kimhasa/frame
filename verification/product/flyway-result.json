@@ -1,0 +1,78 @@
+{
+  "generatedAt": "2026-11-12T02:08:19.731Z",
+  "flywayVersion": "12.4.0",
+  "classes": [
+    {
+      "className": "ProductMigrationIntegrationTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "className": "ProductStorageDisabledTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "tests": 4,
+  "passed": 4,
+  "actualDatabase": {
+    "database": "frame_product",
+    "readOnly": true,
+    "rowsRead": "flyway_schema_history only",
+    "migrations": [
+      {
+        "version": "1",
+        "script": "V1__accounts_channels_follows.sql",
+        "checksum": -1952429669,
+        "success": true
+      },
+      {
+        "version": "2",
+        "script": "V2__signup_consents.sql",
+        "checksum": -629955322,
+        "success": true
+      }
+    ]
+  },
+  "integrationDatabase": {
+    "type": "native PostgreSQL on loopback",
+    "database": "frame_product_verify",
+    "schemaPrefix": "migration_verify_",
+    "randomGeneratedSchemasOnly": true,
+    "ownedSchemasRemoved": true
+  },
+  "checks": [
+    "Empty schema migrates V1 and V2, repeated migrate executes 0",
+    "V1 legacy accounts/channels/follows survive V2; existing consent remains NULL",
+    "Partial consent violates V2 constraint without altering previous data",
+    "Changed temporary V1 copy fails checksum validation and prevents pending V3 DDL",
+    "Product disabled starts without DataSource, Flyway, RedisConnectionFactory or SessionRepository; media health stays available"
+  ],
+  "runtimePolicy": {
+    "validateOnMigrate": true,
+    "cleanDisabled": true,
+    "baselineOnMigrate": false
+  },
+  "sourceMigrations": [
+    {
+      "script": "V1__accounts_channels_follows.sql",
+      "sha256": "09aac64c7d820f3ea8b3229b99b4dca11a1de6c104c7da277846415bf8a39b4f"
+    },
+    {
+      "script": "V2__signup_consents.sql",
+      "sha256": "5841a933a3fb672ee4876ebf6a4c36247416a126b7e17555151e9ecc8bb4daad"
+    }
+  ],
+  "dockerContainerExecution": false,
+  "realUserRecordsReadOrChanged": false,
+  "bootJarBuilt": false,
+  "finalBuild": {
+    "bootJarBuilt": true,
+    "sha256": "39218faa25039c70c54fe3957298e88b878d28ae5c01ece31106521946f896c8",
+    "fullSuiteEvidence": "backend-full-result.json"
+  }
+}

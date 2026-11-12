@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <title>FRAME · FR 모노그램</title>
+  <g fill="#202b26">
+    <path d="M3 3h14v4H7v6h8v4H7v12H3Z"/>
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M11 3h9c6 0 9 3.5 9 9 0 4-2 7-6 8.5L30 29h-6l-7-8h-2v8h-4V3Zm4 4v10h4c4 0 6-1.5 6-5s-2-5-6-5h-4Z"/>
+  </g>
+</svg>

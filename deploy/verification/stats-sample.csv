@@ -1,6 +1,6 @@
 time,path,session,broadcast,transport,mode,quality,height,fps,loss_pct,jitter_ms,freezes,mbps,abr_switches,last_switch,event,device
-2026-10-29T10:06:13.653Z,screen-01,e2e1,92678a924398ad71f187ee995994cfc7,webrtc,auto,720p,720,29.9,0.12,14,0,2.9,1,"720p>480p loss, ""x""","'=HYPERLINK(""x"")",desktop
-2026-10-29T10:06:13.660Z,screen-01,e2e2,92678a924398ad71f187ee995994cfc7,webrtc,auto,720p,720,29.9,0.12,14,0,2.9,1,"720p>480p loss, ""x""","'=HYPERLINK(""x"")",desktop
-2026-10-29T10:06:56.511Z,screen-01,hsi49muikg,92678a924398ad71f187ee995994cfc7,webrtc,manual,720p,720,30,0,22,0,3.1,0,,,desktop
-2026-10-29T10:07:11.510Z,screen-01,hsi49muikg,92678a924398ad71f187ee995994cfc7,webrtc,manual,720p,720,30,0,72,0,3,0,,,desktop
+2026-11-10T08:02:00.401Z,screen-01,e2e1,7236ad5387cb1daa9987904035a326ea,webrtc,auto,720p,720,29.9,0.12,14,0,2.9,1,"720p>480p loss, ""x""","'=HYPERLINK(""x"")",desktop
+2026-11-10T08:02:00.409Z,screen-01,e2e2,7236ad5387cb1daa9987904035a326ea,webrtc,auto,720p,720,29.9,0.12,14,0,2.9,1,"720p>480p loss, ""x""","'=HYPERLINK(""x"")",desktop
+2026-11-10T08:02:41.972Z,screen-01,k3g7xb34ja,7236ad5387cb1daa9987904035a326ea,hls,manual,720p,720,29.7,,,0,12.9,0,,,desktop
+2026-11-10T08:02:56.963Z,screen-01,k3g7xb34ja,7236ad5387cb1daa9987904035a326ea,hls,manual,720p,720,30,,,0,9.6,0,,,desktop
 

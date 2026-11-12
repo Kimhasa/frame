@@ -1,0 +1,25 @@
+{
+  "verificationDatabaseOnly": true,
+  "results": [
+    {
+      "name": "The reward owner session survives the API restart",
+      "pass": true
+    },
+    {
+      "name": "Actual earned points, both debits and both exact refunds survive with the same durable ledger identities",
+      "pass": true
+    },
+    {
+      "name": "The reward catalog and terminal owner handling remain stored after restart",
+      "pass": true
+    },
+    {
+      "name": "The saved request UUID confirms its refunded receipt after restart without charging or refunding it again",
+      "pass": true
+    },
+    {
+      "name": "The new live instance keeps channel points while separating its redemption history from the previous broadcast",
+      "pass": true
+    }
+  ]
+}

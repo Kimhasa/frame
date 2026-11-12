@@ -1,0 +1,2 @@
+org.springframework.boot.EnvironmentPostProcessor=frame.api.BlankRelayVariables
+org.springframework.boot.autoconfigure.AutoConfigurationImportFilter=frame.api.account.ProductAutoConfigurationFilter

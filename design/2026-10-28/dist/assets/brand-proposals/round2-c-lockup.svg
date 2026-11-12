@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 104" width="480" height="104" fill="none">
+  <title>FRAME — shared perspective lockup</title>
+  <desc>An organic green aperture paired with a purpose-drawn, softly cut FRAME wordmark. All lettering is outlined; no font dependency.</desc>
+  <g transform="translate(4 4)">
+    <path fill="#238563" fill-rule="evenodd" clip-rule="evenodd" d="M18 10H48C68.1 10 83.5 21.4 88.1 40.3C93.7 63.4 78.2 83.5 55.2 88C33.3 92.3 10.1 79.3 8 57.8L5.1 26C4.3 16.4 9.2 10 18 10ZM29 29.3H47.7C58.5 29.3 65.4 35 67 43.9C68.9 54.3 62 64.8 51.8 69C41 73.5 28.8 68 25.2 58.1L21.3 45.4C19.1 38.1 22.1 31.4 29 29.3Z"/>
+  </g>
+  <g fill="#202A25" transform="translate(126 20)">
+    <path d="M4 0H47V12H14V27H42V39H14V64H0V4Q0 0 4 0Z"/>
+    <path fill-rule="evenodd" clip-rule="evenodd" transform="translate(61)" d="M0 64V0H28C44 0 54 8 54 22C54 31.8 49 38 41 41L58 64H41L27 43H14V64H0ZM14 12V31H27C35.2 31 40 28.1 40 21.8C40 15.6 35.2 12 27 12H14Z"/>
+    <path fill-rule="evenodd" clip-rule="evenodd" transform="translate(133)" d="M0 64L22.2 3.8Q23.6 0 27.6 0H34.4Q38.4 0 39.8 3.8L62 64H47L42 49H20L15 64H0ZM23.8 37H38.2L31 15.5L23.8 37Z"/>
+    <path transform="translate(210)" d="M0 64V4Q0 0 4 0H15L36 34.5L57 0H68Q72 0 72 4V64H58V25L40.7 52H31.3L14 25V64H0Z"/>
+    <path transform="translate(300)" d="M4 0H48V12H14V26H43V38H14V52H48V64H4Q0 64 0 60V4Q0 0 4 0Z"/>
+  </g>
+</svg>

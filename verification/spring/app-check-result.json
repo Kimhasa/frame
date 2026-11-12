@@ -1,0 +1,126 @@
+{
+  "startedAt": "2026-11-10T03:14:31.765Z",
+  "kind": "real FrameConsole.exe -> Spring Boot backend (apps/api), loopback ports 27xxx",
+  "ports": {
+    "rtsp": 27554,
+    "rtsps": 27322,
+    "rtp": 27000,
+    "rtcp": 27001,
+    "webrtc": 27889,
+    "ice": 27189,
+    "hls": 27888,
+    "api": 27997,
+    "playback": 27996,
+    "metrics": 27998,
+    "spring": 27070,
+    "web": 27080,
+    "control": 27081,
+    "edge": 27222
+  },
+  "checks": [
+    {
+      "name": "setup: Spring backend up (relay MediaMTX reachable), web-proxy serving apps/web/dist in front of it",
+      "ok": true,
+      "healthz": {
+        "ok": true,
+        "version": "0.1.0-spring",
+        "backend": "spring",
+        "mediamtx": true,
+        "mediamtxListStale": false,
+        "broadcasts": 0,
+        "receiving": 0,
+        "hlsSessions": 0,
+        "uptimeS": 2
+      }
+    },
+    {
+      "name": "1 register: the app publishes over RTSPS and announces to Spring -> /api/broadcasts lists its broadcast, /info names it",
+      "ok": true,
+      "started": true,
+      "listedAfterMs": 3158,
+      "item": {
+        "id": "0105df3b885dd5fe8452c546bbd66e02",
+        "title": "FRAME 모션 테스트",
+        "publisher": "<pc>",
+        "width": 1920,
+        "height": 1080,
+        "fps": 60,
+        "baseUrl": "http://127.0.0.1:27070"
+      },
+      "info": {
+        "running": true,
+        "mediaReady": true,
+        "audio": "none",
+        "codec": "H.264",
+        "bitrate": 8.5,
+        "scope": "b/0105df3b885dd5fe8452c546bbd66e02/",
+        "hlsAudio": "none"
+      },
+      "relayPath": {
+        "ready": true,
+        "source": "rtspsSession",
+        "tracks": [
+          "H264"
+        ]
+      }
+    },
+    {
+      "name": "2 play: /_frame/live shows the app's card, the watch page plays its video through Spring (hls.js, frames advance, media and session under /<path>/b/<id>/)",
+      "ok": true,
+      "cardShown": true,
+      "opened": true,
+      "firstFrameMs": 1665,
+      "size": "1920x1080",
+      "advancedS": 3.22,
+      "frames": 201,
+      "transport": "hls.js",
+      "latencyS": 2.05,
+      "mediaRequests": 53,
+      "mediaStatuses": [
+        200,
+        null
+      ],
+      "outsideScope": [],
+      "session": "POST 200",
+      "playlistHeaders": {
+        "master": {
+          "status": 200,
+          "type": "application/vnd.apple.mpegurl",
+          "cache": "max-age=2",
+          "disposition": null
+        },
+        "media": {
+          "status": 200,
+          "type": "application/vnd.apple.mpegurl",
+          "cache": "max-age=1",
+          "disposition": null
+        }
+      }
+    },
+    {
+      "name": "3 stop: stopping the broadcast in the app withdraws it from Spring (bye): list empty, /info running:false",
+      "ok": true,
+      "goneAfterMs": 693,
+      "info": {
+        "running": false,
+        "path": "screen-01"
+      }
+    }
+  ],
+  "notes": [
+    "stopped leftover processes of this run: 41048,22140,21580,21340,7584,33268,20812,41912,40212,20888,5640,29220,26392,13120,26672,15028,31188,23976,32112,20168,33004,38576,29528,28272,37412,24896,37584,19636,40264,26456,2976,32272,39456"
+  ],
+  "app": {
+    "resolution": "1920x1080",
+    "fps": 60,
+    "audio": "none",
+    "encoder": "auto",
+    "renditions": true
+  },
+  "appPid": 29788,
+  "configRestored": true,
+  "finishedAt": "2026-11-10T03:15:03.722Z",
+  "durationS": 32,
+  "passed": 4,
+  "failed": 0
+}

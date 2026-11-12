@@ -1,0 +1,76 @@
+/* v38 engagement/finance detail UI: scoped, light, inherited Pretendard. */
+.v38-engagement{max-width:620px;color:#202b32}
+.v38-engagement .modal-head,.v38-engagement .modal-footer{border:0}
+.v38-engagement .modal-body{padding-top:8px}
+.v38-engage{min-width:0}
+.v38-recipient{display:flex;align-items:center;gap:10px;margin-bottom:20px;min-width:0}
+.v38-recipient>.avatar{width:36px;height:36px;flex:none}
+.v38-recipient>strong{font-size:15px;line-height:1.5;overflow-wrap:anywhere}
+.v38-currency-input{position:relative}
+.v38-currency-input input{padding-right:42px}
+.v38-currency-input>span{position:absolute;right:15px;top:50%;transform:translateY(-50%);font-size:14px;color:#73818a;pointer-events:none}
+.v38-amounts button[aria-pressed=true]{background:#eef7f2;border-color:#80ad94;color:#275d40}
+.v38-engagement .v38-field{margin:0;gap:8px}
+.v38-engagement .v38-field>label{margin:0}
+.v38-engagement .v38-field input,.v38-engagement .v38-field textarea{font-size:16px}
+.v38-engagement .v38-consent{margin:0}
+.v38-engagement form>.ghost.small{justify-self:start;padding-left:0;padding-right:0}
+.v38-engage form{display:grid;gap:19px}
+.v38-engage form>button[type=submit]{justify-self:end;min-height:44px}
+.v38-field{display:grid;gap:9px;min-width:0}
+.v38-field>label{font-size:14px;font-weight:650;color:#35434c}
+.v38-field input,.v38-field textarea{width:100%;min-width:0;font-size:16px;line-height:1.6}
+.v38-field textarea{resize:none;min-height:105px;max-height:240px}
+.v38-field small,.v38-error{color:#b33d4b;font-size:13px;line-height:1.6}
+.v38-error{margin:8px 0}
+.v38-field .choice-button{justify-content:space-between;min-height:46px;text-align:left}
+.v38-consent{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:#52616a;line-height:1.7}
+.v38-consent input{width:18px;height:18px;flex:none;margin:2px 0 0}
+.v38-amounts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.v38-tabs{overflow-x:auto;white-space:nowrap;gap:24px;margin-bottom:24px}
+.v38-tabs button,.v38-tabs button.active{background:transparent!important;border:0;border-radius:0;border-bottom:2px solid transparent;min-height:44px;padding:10px 0}
+.v38-tabs button[aria-selected=true]{color:#1f593d;border-bottom-color:#26513c;font-weight:650}
+.v38-summary{margin:10px 0 24px;display:grid;gap:15px}
+.v38-summary>div{display:flex;justify-content:space-between;align-items:flex-start;gap:24px}
+.v38-summary dt{font-size:14px;color:#657580;flex:none}
+.v38-summary dd{font-size:14px;font-weight:550;text-align:right;margin:0;min-width:0;overflow-wrap:anywhere}
+.v38-state{text-align:center;padding:34px 10px}
+.v38-state>svg{width:34px;height:34px;color:#518d6c;margin-bottom:16px}
+.v38-state.is-empty>svg{color:#8a99a3}
+.v38-state.is-error>svg{color:#b65a66}
+.v38-state.is-busy>.spinner{display:inline-block;width:28px;height:28px;margin:0 0 18px}
+.v38-state h3{font-size:20px;line-height:1.5;margin:0}
+.v38-state p{font-size:14px;color:#667783;line-height:1.7;margin:10px 0 0;overflow-wrap:anywhere}
+.v38-benefits{font-size:15px;line-height:1.9;padding:16px 0 25px;color:#354a3d}
+.v38-preview{padding:24px;background:#f5f7f8;border-radius:10px;min-height:130px;line-height:1.8;overflow-wrap:anywhere}
+.v38-description{white-space:pre-wrap;overflow-wrap:anywhere;font-size:15px;line-height:1.8}
+.v38-poll-options,.v38-reward-grid{display:grid;gap:12px}
+.v38-poll-options button,.v38-reward-grid button{justify-content:flex-start;text-align:left;min-height:52px;white-space:normal;overflow-wrap:anywhere}
+.v38-poll-options button.selected{background:#edf7f1;border-color:#6ea889;color:#1d5e3e}
+.v38-poll-options button:disabled{opacity:1;color:#687580;background:#f5f7f8}
+.v38-meta{font-size:13px;color:#77858e;margin:18px 0}
+.v38-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px 20px;padding:17px 0;min-width:0}
+.v38-row>strong,.v38-row>span{overflow-wrap:anywhere;min-width:0}
+.v38-row>strong{margin-right:auto}
+.v38-row small,.v38-row p{width:100%;margin:0;font-size:13px;color:#73818a;line-height:1.7}
+.v38-finance{max-width:1240px;min-width:0}
+.v38-finance-card{padding:24px 0}
+.v38-finance-card h2,.v38-benefits h2{font-size:19px;margin:0 0 18px}
+.v38-finance-card .v38-summary{max-width:720px}
+.v38-list-tools{display:flex;flex-wrap:wrap;gap:10px;margin:4px 0 15px;align-items:center}
+.v38-list-tools input[type=search]{flex:1;min-width:200px}
+.v38-list-tools input[type=date]{width:155px;min-width:0;font-size:14px}
+.v38-list-filters{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:22px}
+.v38-list-filters .choice-button{width:auto;min-width:115px;font-size:13px}
+.v38-pagination{display:flex;justify-content:flex-end;align-items:center;gap:10px;margin-top:20px}
+.v38-pagination>span{font-size:13px;color:#78858d;margin-right:auto}
+.v38-table{overflow-x:auto;border:0}
+.v38-table table{width:100%;border-collapse:collapse;font-size:14px}
+.v38-table th{text-align:left;font-size:12px;font-weight:550;color:#76848e;padding:14px 12px;background:#f7f9fa;white-space:nowrap}
+.v38-table td{padding:15px 12px;border-bottom:1px solid #edf0f2;overflow-wrap:anywhere;max-width:360px}
+.v38-drop{max-width:620px;padding:24px 0}
+.v38-engagement button{min-height:44px}
+@container(max-width:700px){.v38-finance .v38-list-tools input[type=search]{flex-basis:100%}.v38-list-tools input[type=date]{flex:1;width:auto}.v38-table table,.v38-table tbody,.v38-table tr,.v38-table td{display:block}.v38-table thead{display:none}.v38-table tr{padding:12px 0;border-bottom:1px solid #e7ecef}.v38-table td{display:flex;justify-content:space-between;gap:20px;max-width:none;padding:8px 0;border:0}.v38-table td:before{content:attr(data-label);font-size:12px;color:#7b8992;flex:none}.v38-finance .v38-tabs{gap:22px}.v38-finance-card{padding:18px 0}}
+@media(max-width:600px){.v38-engagement{max-width:calc(100vw - 24px)}.v38-engagement .modal-body{padding-left:20px;padding-right:20px}.v38-engagement .modal-footer{flex-wrap:wrap}.v38-field input,.v38-field textarea{font-size:16px}.v38-summary>div{gap:20px}.v38-summary dd{max-width:68%}.v38-amounts{gap:8px}.v38-amounts button{font-size:13px;padding:10px 7px}.v38-tabs{gap:22px}.v38-row{gap:10px}.v38-list-filters .choice-button{flex:1;min-width:90px}.v38-pagination button{min-height:44px}.v38-state{padding:28px 4px}}
+@media(max-width:600px){.v38-amounts{grid-template-columns:repeat(2,minmax(0,1fr))}.v38-engage[data-v38-scope="rewards"]>.v38-summary:first-child dd{font-size:24px;font-weight:650;line-height:1.25}}
+

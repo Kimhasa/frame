@@ -1,0 +1,33 @@
+{
+  "results": [
+    {
+      "name": "Anonymous session bootstrap and CSRF token",
+      "pass": true
+    },
+    {
+      "name": "Session response is not cached",
+      "pass": true
+    },
+    {
+      "name": "Signup requires CSRF",
+      "pass": true
+    },
+    {
+      "name": "Signup creates account and channel and authenticates",
+      "pass": true
+    },
+    {
+      "name": "Session cookie is HttpOnly and SameSite Lax",
+      "pass": true
+    },
+    {
+      "name": "New account receives no existing OBS credentials",
+      "pass": true
+    },
+    {
+      "name": "Own channel fields and banner save to server",
+      "pass": false
+    }
+  ],
+  "failure": "Own channel fields and banner save to server"
+}

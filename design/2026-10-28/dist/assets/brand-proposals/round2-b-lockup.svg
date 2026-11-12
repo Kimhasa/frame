@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 264 64" fill="none">
+  <title>FRAME · FR 모노그램과 전용 워드마크</title>
+  <g fill="#202b26">
+    <g transform="translate(8 8) scale(1.5)">
+      <path d="M3 3h14v4H7v6h8v4H7v12H3Z"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M11 3h9c6 0 9 3.5 9 9 0 4-2 7-6 8.5L30 29h-6l-7-8h-2v8h-4V3Zm4 4v10h4c4 0 6-1.5 6-5s-2-5-6-5h-4Z"/>
+    </g>
+    <path d="M78 18h22v6H84v6h13v6H84v10h-6Z"/>
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M108 18h13c8 0 13 4 13 10 0 4-2 7-6 9l8 9h-8l-8-9h-6v9h-6V18Zm6 6v7h7c4 0 7-1 7-3.5s-3-3.5-7-3.5h-7Z"/>
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M154 18h8l12 28h-7l-3-7h-12l-3 7h-7l12-28Zm0 15h8l-4-10-4 10Z"/>
+    <path d="M182 46V18h7l10 13 10-13h7v28h-6V28l-11 14-11-14v18Z"/>
+    <path d="M224 18h24v6h-18v5h16v6h-16v5h18v6h-24Z"/>
+  </g>
+</svg>

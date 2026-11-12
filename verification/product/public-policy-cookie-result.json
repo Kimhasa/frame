@@ -1,0 +1,140 @@
+{
+  "checkedAt": "2026-11-11T10:10:32.615Z",
+  "scope": "Read-only main API and Vite requests using generated invalid or absent session cookies; no actual user cookies read.",
+  "checks": [
+    {
+      "port": 18080,
+      "cookieKind": "none",
+      "path": "/api/v1/policies",
+      "status": 200,
+      "code": null,
+      "publicPolicies": true,
+      "anonymous": false,
+      "csrfProvided": false,
+      "cookieSet": false
+    },
+    {
+      "port": 18080,
+      "cookieKind": "none",
+      "path": "/api/v1/session",
+      "status": 200,
+      "code": null,
+      "publicPolicies": false,
+      "anonymous": true,
+      "csrfProvided": true,
+      "cookieSet": true
+    },
+    {
+      "port": 18080,
+      "cookieKind": "malformed",
+      "path": "/api/v1/policies",
+      "status": 200,
+      "code": null,
+      "publicPolicies": true,
+      "anonymous": false,
+      "csrfProvided": false,
+      "cookieSet": false
+    },
+    {
+      "port": 18080,
+      "cookieKind": "malformed",
+      "path": "/api/v1/session",
+      "status": 200,
+      "code": null,
+      "publicPolicies": false,
+      "anonymous": true,
+      "csrfProvided": true,
+      "cookieSet": true
+    },
+    {
+      "port": 18080,
+      "cookieKind": "absent-session",
+      "path": "/api/v1/policies",
+      "status": 200,
+      "code": null,
+      "publicPolicies": true,
+      "anonymous": false,
+      "csrfProvided": false,
+      "cookieSet": false
+    },
+    {
+      "port": 18080,
+      "cookieKind": "absent-session",
+      "path": "/api/v1/session",
+      "status": 200,
+      "code": null,
+      "publicPolicies": false,
+      "anonymous": true,
+      "csrfProvided": true,
+      "cookieSet": true
+    },
+    {
+      "port": 5360,
+      "cookieKind": "none",
+      "path": "/api/v1/policies",
+      "status": 200,
+      "code": null,
+      "publicPolicies": true,
+      "anonymous": false,
+      "csrfProvided": false,
+      "cookieSet": false
+    },
+    {
+      "port": 5360,
+      "cookieKind": "none",
+      "path": "/api/v1/session",
+      "status": 200,
+      "code": null,
+      "publicPolicies": false,
+      "anonymous": true,
+      "csrfProvided": true,
+      "cookieSet": true
+    },
+    {
+      "port": 5360,
+      "cookieKind": "malformed",
+      "path": "/api/v1/policies",
+      "status": 200,
+      "code": null,
+      "publicPolicies": true,
+      "anonymous": false,
+      "csrfProvided": false,
+      "cookieSet": false
+    },
+    {
+      "port": 5360,
+      "cookieKind": "malformed",
+      "path": "/api/v1/session",
+      "status": 200,
+      "code": null,
+      "publicPolicies": false,
+      "anonymous": true,
+      "csrfProvided": true,
+      "cookieSet": true
+    },
+    {
+      "port": 5360,
+      "cookieKind": "absent-session",
+      "path": "/api/v1/policies",
+      "status": 200,
+      "code": null,
+      "publicPolicies": true,
+      "anonymous": false,
+      "csrfProvided": false,
+      "cookieSet": false
+    },
+    {
+      "port": 5360,
+      "cookieKind": "absent-session",
+      "path": "/api/v1/session",
+      "status": 200,
+      "code": null,
+      "publicPolicies": false,
+      "anonymous": true,
+      "csrfProvided": true,
+      "cookieSet": true
+    }
+  ],
+  "passed": true,
+  "finding": "Missing, malformed, and deleted Redis-session cookie values do not reproduce a policy authentication error in the currently running API. No exact root cause for the earlier browser policy 401 was established."
+}

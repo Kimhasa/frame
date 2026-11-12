@@ -38,6 +38,20 @@
       "license": "MIT"
     },
     {
+      "name": "hls.js (npm package tarball; the viewer page's HLS player, dist/hls.min.js)",
+      "version": "1.5.20",
+      "file": "hls.js-1.5.20.tgz",
+      "url": "https://registry.npmjs.org/hls.js/-/hls.js-1.5.20.tgz",
+      "sha256": "3791f532701590ec10ecb4a2abf6ea63c65ae9ce91de4cc6f6553ba4629605ce",
+      "npmIntegrity": "sha512-uu0VXUK52JhihhnN/MVVo1lvqNNuhoxkonqgO3IpjvQiGpJBdIXMGkofjQb/j9zvV7a1SW8U9g1FslWx/1HOiQ==",
+      "extract": "hls.js-1.5.20",
+      "files": [
+        { "from": "package/dist/hls.min.js", "to": "outputs/assets/js/hls-1.5.20.min.js", "sha256": "d016c1230496ee59f3f5b01c16cce4cc01b5a1d3d357adec200c908b131ebe49" },
+        { "from": "package/LICENSE", "to": "outputs/assets/js/hls.js-1.5.20-LICENSE.txt", "sha256": "ca8773cf798c7ed997d4dd7c8e23c348699f8d5b7462636694cc14de6cda12db" }
+      ],
+      "license": "Apache-2.0 (LICENSE shipped as ui/assets/js and licenses/hls.js-1.5.20-LICENSE.txt)"
+    },
+    {
       "name": "Microsoft Edge WebView2 Runtime, Evergreen Standalone Installer x64 (offline installer)",
       "version": "as published at download time (fwlink 2124701)",
       "file": "MicrosoftEdgeWebView2RuntimeInstallerX64.exe",

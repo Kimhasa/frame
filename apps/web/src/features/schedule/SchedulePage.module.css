@@ -1,0 +1,17 @@
+.tools { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 18px; }
+.search { flex: 1; max-width: 400px; }
+.status { margin: 0; color: #53725e; font-size: 13px; line-height: 1.65; }
+.status:not(:empty) { margin-bottom: 16px; }
+.actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 8px; }
+.when { display: grid; gap: 5px; }
+.when strong { color: #65786a; font-size: 12px; font-weight: 500; }
+.form { display: grid; gap: 18px; }
+.fields { display: grid; gap: 18px; min-width: 0; margin: 0; padding: 0; border: 0; }
+.form label { display: grid; gap: 8px; min-width: 0; color: #65786a; font-size: 13px; font-weight: 600; }
+.dateFields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.form p, .summary p { margin: 0; color: #829087; font-size: 12px; line-height: 1.7; }
+.form .error, .summary .error { color: #a44d60; font-size: 13px; }
+.summary > strong { display: block; font-size: 15px; line-height: 1.6; overflow-wrap: anywhere; }
+.summary p { margin-top: 8px; }
+@media (max-width: 450px) { .search { flex-basis: 100%; max-width: none; } .tools > select { width: 100%; } .dateFields { grid-template-columns: minmax(0, 1fr); } }
+@container (max-width: 690px) { .when { text-align: right; } }

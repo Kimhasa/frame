@@ -1,0 +1,274 @@
+{
+  "GeneratedAt": "2026-11-12T07:19:58.7529525+00:00",
+  "Command": "gradlew.bat test bootJar",
+  "Suite": {
+    "Tests": 115.0,
+    "Failures": 0.0,
+    "Errors": 0.0,
+    "Skipped": 0.0
+  },
+  "Classes": [
+    {
+      "Name": "frame.api.account.AccountIntegrationTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.AccountSessionRecoveryTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ChannelPollsTest",
+      "Tests": 4,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ChannelProfileTest",
+      "Tests": 6,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ChatModerationTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ChatTicketsTest",
+      "Tests": 5,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ProductMigrationIntegrationTest",
+      "Tests": 9,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ProductNotificationsTest",
+      "Tests": 5,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ProductStorageDisabledTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ReportManagementTest",
+      "Tests": 6,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.ScheduledBroadcastsTest",
+      "Tests": 4,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.account.WatchHistoryTest",
+      "Tests": 5,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.BlankRelayVariablesTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.broadcast.BroadcastRegistryTest",
+      "Tests": 12,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.chat.ChatHandshakeFilterTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.chat.ChatRulesTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.chat.ManagedChatHubTest",
+      "Tests": 2,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.dvr.DvrRulesTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.mediamtx.MediaMtxPathsTest",
+      "Tests": 2,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.obs.ObsBroadcastsTest",
+      "Tests": 10,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.payments.PaymentsTest",
+      "Tests": 10,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.playback.PlaybackRulesTest",
+      "Tests": 7,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.playback.ViewerSessionsTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.ShutdownTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.StartupGraceTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.stats.StatsRowTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.UpstreamBreakTest",
+      "Tests": 1,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    },
+    {
+      "Name": "frame.api.web.JsCompatTest",
+      "Tests": 3,
+      "Failures": 0,
+      "Errors": 0,
+      "Skipped": 0
+    }
+  ],
+  "JarSha256": "23328f29a96cb5689f7193212e822095706ecc876b348bdcaf1d8d985009453d",
+  "Migrations": [
+    {
+      "Name": "V1__accounts_channels_follows.sql",
+      "Sha256": "09aac64c7d820f3ea8b3229b99b4dca11a1de6c104c7da277846415bf8a39b4f"
+    },
+    {
+      "Name": "V2__signup_consents.sql",
+      "Sha256": "5841a933a3fb672ee4876ebf6a4c36247416a126b7e17555151e9ecc8bb4daad"
+    },
+    {
+      "Name": "V3__broadcast_schedules.sql",
+      "Sha256": "8661aecdd2fadaf14a67a36a2ad5e60811dae1a94b77f09ca62480f8a61bea6d"
+    },
+    {
+      "Name": "V4__watch_history.sql",
+      "Sha256": "e5c93b9231061ec8253b160b7de5f5fbbb14ff3e50754e56ba3e6b65340029ca"
+    },
+    {
+      "Name": "V5__channel_profiles_reports.sql",
+      "Sha256": "b82d405664a182606e35cea5919be5096ffdaea1d8a57223eb3be0c95529a0ee"
+    },
+    {
+      "Name": "V6__report_management.sql",
+      "Sha256": "b282072620ab76027dbed89f4d37179e79199c150233eb8722d0d92d15ee3557"
+    },
+    {
+      "Name": "V7__product_notifications.sql",
+      "Sha256": "88f914cbe4137bab2376f84bb78e1b60402b9c4ec9c2c990f27ec78c9947f4ef"
+    },
+    {
+      "Name": "V8__channel_chat_moderation.sql",
+      "Sha256": "c6fd971cfb0dc10dd59bb107dfed6131a1f37ead43f8c1453a071fee03090044"
+    },
+    {
+      "Name": "V9__channel_polls.sql",
+      "Sha256": "65e4689d1b6622b59b541129e6c6742bc8e77458790e53d468dbff8a68721782"
+    }
+  ],
+  "Database": "Native PostgreSQL verification database only; generated schemas and Redis namespaces cleaned",
+  "DockerContainerExecution": false,
+  "MainDatabaseChanged": false,
+  "ActualBroadcastProcessesChanged": false,
+  "PollChecks": [
+    "Owner-only list/detail/create/close use session, CSRF, Origin and optional expected-user scope guards",
+    "Current ready broadcast context is server-derived and activePollId remains independent of filters and pages",
+    "Concurrent creations produce one active poll and one conflict; database partial unique index enforces one raw open slot",
+    "Question, ordered options, Unicode bounds, equivalent choices and fixed durations are validated without trusting supplied IDs, counts or dates",
+    "Anonymous public reads return aggregate results without identities or personal choices and work without Redis when no authentication cookie is sent",
+    "All wrappers return serverNowMs; KST inclusive date, status, query, cursor and limit filters are validated",
+    "Actual database votes preserve one account per poll; equal-choice retry including after close is idempotent and different-choice replacement is rejected",
+    "Concurrent identical vote attempts create one row; owner and two member accounts yield exactly three real votes",
+    "Cross-poll option FK and broadcast path/id mismatch prevent selecting another poll or broadcast context",
+    "Active account blocks and follower-only policy are enforced; owner follows exemption applies and chat slow/word/link filters do not affect votes",
+    "Manual version-checked close, wall-clock expiry, old instance closure and new poll creation preserve historical options and totals",
+    "Old broadcast keys continue to return only their old closed poll after a new broadcast starts",
+    "Poll results and the current account choice survive a fresh Spring Boot instance while the old broadcast instance closes",
+    "V9 preserves existing channel/chat policy data and creates no sample polls or votes",
+    "V1 through V8 SQL hashes remain unchanged and checksum mismatch blocks synthetic pending V10 DDL"
+  ],
+  "Notes": [
+    "HTTP integration uses generated accounts, an isolated Spring API and controlled MediaMTX registry fixtures; actual source/browser QA is reported separately by the root agent",
+    "This feature is actual polls only; Q&A questions, edits, vote replacement and deletion are not implemented",
+    "No scheduler, queue, SSE, durable broadcast catalog or media source identity redesign was added",
+    "No production database changes, existing-account operations, API restart, OBS changes, Docker execution or OS reboot were performed"
+  ]
+}

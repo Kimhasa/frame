@@ -1,0 +1,107 @@
+{
+  "startedAt": "2026-11-11T07:05:26.613Z",
+  "kind": "FFmpeg H264+AAC RTMP/RTMPS protocol sender (OBS GUI not exercised), loopback PC only",
+  "ports": {
+    "rtmp": 29635,
+    "rtmps": 29636,
+    "rtsp": 29554,
+    "rtsps": 29322,
+    "api": 29997,
+    "hls": 29888,
+    "webrtc": 29889,
+    "playback": 29996,
+    "metrics": 29998,
+    "ice": 29189,
+    "spring": 29070
+  },
+  "checks": [
+    {
+      "name": "publisher-only OBS status and no-store",
+      "ok": true,
+      "unsigned": 401,
+      "wrongOwner": 403,
+      "owner": 200
+    },
+    {
+      "name": "authenticated metadata",
+      "ok": true,
+      "status": 204
+    },
+    {
+      "name": "RTMP wrong password rejected",
+      "ok": true,
+      "exit": 4294967295
+    },
+    {
+      "name": "RTMP key cannot publish another path",
+      "ok": true,
+      "exit": 4294967295
+    },
+    {
+      "name": "OBS media auto-registers without announce helper",
+      "ok": true,
+      "id": "eace35bb9b6b42cfbd0a0161a43e0e70",
+      "title": "OBS protocol test"
+    },
+    {
+      "name": "backend heartbeat outlives announce TTL",
+      "ok": true,
+      "ttlMs": 3000,
+      "waitMs": 4500
+    },
+    {
+      "name": "public HLS decodes H264 and single AAC",
+      "ok": true,
+      "code": 0,
+      "video": true,
+      "audio": true,
+      "frames": true
+    },
+    {
+      "name": "DVR retains OBS AAC audio",
+      "ok": true,
+      "code": 0,
+      "video": true,
+      "audio": true,
+      "frames": true
+    },
+    {
+      "name": "public viewer responses contain no publisher secrets",
+      "ok": true,
+      "list": 200,
+      "info": 200
+    },
+    {
+      "name": "OBS reconnect within grace keeps broadcast id",
+      "ok": true,
+      "id": "eace35bb9b6b42cfbd0a0161a43e0e70",
+      "expected": "eace35bb9b6b42cfbd0a0161a43e0e70",
+      "graceMs": 5000
+    },
+    {
+      "name": "stop OBS ends after reconnect grace",
+      "ok": true,
+      "graceMs": 5000,
+      "oldLink": 404
+    },
+    {
+      "name": "RTMPS next broadcast uses new id; old link refused",
+      "ok": true,
+      "newId": "28c60f4ef32b4739b8ffbe003ce8efd0",
+      "oldId": "eace35bb9b6b42cfbd0a0161a43e0e70",
+      "oldLink": 409
+    },
+    {
+      "name": "existing native RTSPS credential still publishes",
+      "ok": true,
+      "path": "screen-01"
+    },
+    {
+      "name": "MediaMTX and Spring logs omit publisher token",
+      "ok": true
+    }
+  ],
+  "finishedAt": "2026-11-11T07:06:01.067Z",
+  "passed": 14,
+  "failed": 0
+}

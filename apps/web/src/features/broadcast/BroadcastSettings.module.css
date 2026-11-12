@@ -1,0 +1,38 @@
+.panel { display: grid; gap: 20px; min-height: 180px; }
+.connectionButton { margin-right: auto; }
+.panel[hidden], .advanced[hidden] { display: none; }
+.fieldPair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.field { display: grid; align-content: start; gap: 8px; min-width: 0; color: #53675d; font-size: 13px; font-weight: 650; }
+.field :is(input, select) { min-width: 0; min-height: 44px; padding: 8px 12px; border: 1px solid #dce5e0; border-radius: 8px; background: #fff; color: #344a3e; font-size: 14px; font-weight: 450; }
+.field > :is(input, select) { width: 100%; }
+.field :is(input, select):disabled { background: #f3f6f4; color: #718176; }
+.field input[aria-invalid='true'] { border-color: #c26070; }
+.fieldHeading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.check { display: flex; align-items: center; gap: 8px; min-height: 36px; color: #53675d; font-size: 13px; font-weight: 600; }
+.check input { width: 18px; height: 18px; margin: 0; accent-color: var(--frame-green); }
+.unitField { display: flex; align-items: center; gap: 10px; }
+.unitField input { flex: 1; width: 0; }
+.unitField span { font-weight: 500; }
+.advancedToggle { display: flex; align-items: center; gap: 8px; width: 100%; min-height: 44px; padding: 9px 0; border: 0; border-top: 1px solid #e9eeeb; background: transparent; color: #53675d; font-size: 13px; font-weight: 650; text-align: left; }
+.advancedToggle svg:last-child { margin-left: auto; transition: transform .15s; }
+.advancedToggle[aria-expanded='true'] svg:last-child { transform: rotate(180deg); }
+.advanced { display: grid; gap: 20px; margin-top: -10px; }
+.help { margin: 0; color: #718176; font-size: 12px; font-weight: 450; line-height: 1.6; }
+.error { margin: 0; color: #a22d3f; font-size: 13px; font-weight: 450; line-height: 1.6; }
+.audioRow { display: grid; gap: 12px; min-width: 0; }
+.audioRow + .audioRow { padding-top: 16px; border-top: 1px solid #e9eeeb; }
+.audioHeading { display: flex; align-items: center; gap: 8px; color: #344a3e; font-size: 14px; font-weight: 650; }
+.audioHeading > span:nth-last-child(2) { margin-left: auto; color: #718176; font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.muteButton { display: grid; place-items: center; width: 44px; min-height: 44px; padding: 6px; border: 1px solid #dce5e0; border-radius: 8px; background: #fff; color: #53675d; }
+.muteButton[aria-pressed='true'] { border-color: var(--frame-green-line); background: var(--frame-green-soft); color: var(--frame-green-ink); }
+.audioRow > input[type='range'] { width: 100%; min-width: 0; height: 24px; margin: 0; accent-color: var(--frame-green); cursor: pointer; }
+.meter { height: 6px; overflow: hidden; border-radius: 3px; background: #edf2ee; }
+.meter span { display: block; height: 100%; border-radius: inherit; background: var(--frame-green-bright); }
+.recordingCheck { justify-content: space-between; min-height: 44px; padding-bottom: 12px; border-bottom: 1px solid #e9eeeb; color: #344a3e; font-size: 14px; }
+.srOnly { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+@media (max-width: 600px) {
+.fieldPair { grid-template-columns: minmax(0, 1fr); }
+.field :is(input, select) { font-size: 16px; }
+
+
+}

@@ -1,0 +1,16 @@
+{
+  "migrations": [
+    "1:true",
+    "2:true",
+    "3:true",
+    "4:true"
+  ],
+  "status": {
+    "health": 200,
+    "policies": 200,
+    "anonymousHistory": 401,
+    "historyPage": 200
+  },
+  "nativeMediaReceiverPreserved": true,
+  "testAccountsNotInsertedIntoProductionDatabase": true
+}

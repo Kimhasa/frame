@@ -1,0 +1,17 @@
+{
+  "verificationDatabaseOnly": true,
+  "results": [
+    {
+      "name": "A persisted block still identifies the real account and restricts its new socket after restart",
+      "pass": true
+    },
+    {
+      "name": "The real WebSocket send path enforces the persisted account block after restart",
+      "pass": true
+    },
+    {
+      "name": "The persisted banned-word policy still applies to the broadcaster after restart",
+      "pass": true
+    }
+  ]
+}

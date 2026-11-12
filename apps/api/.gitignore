@@ -1,0 +1,7 @@
+# Gradle outputs and caches (the wrapper itself is committed: gradlew, gradlew.bat, gradle/wrapper/).
+/build/
+/.gradle/
+/bin/
+/out/
+.idea/
+*.iml

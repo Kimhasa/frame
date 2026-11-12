@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <title>접힌 프레임</title>
+  <path d="M4 4h16l8 8v16H4Z" stroke="#23875e" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M20 4v8h8M10 20h12" stroke="#23875e" stroke-width="4"/>
+</svg>

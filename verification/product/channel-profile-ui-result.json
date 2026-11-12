@@ -1,0 +1,152 @@
+{
+  "origin": "http://127.0.0.1:5365",
+  "api": "http://127.0.0.1:18083",
+  "verificationDatabaseOnly": true,
+  "checks": 33,
+  "passed": 33,
+  "faultInjection": [
+    "Profile PATCH 503",
+    "Delayed profile PATCH",
+    "Report POST 503"
+  ],
+  "actualReportStatuses": [
+    503,
+    201,
+    409
+  ],
+  "results": [
+    {
+      "name": "Owner signs up through the real consent and registration form",
+      "pass": true
+    },
+    {
+      "name": "New channel exposes a real creation timestamp and unknown video metrics as null",
+      "pass": true
+    },
+    {
+      "name": "Unsafe link scheme is rejected before submission without erasing entered fields",
+      "pass": true
+    },
+    {
+      "name": "Pasted mixed-case @handle normalizes to the canonical lowercase handle",
+      "pass": true
+    },
+    {
+      "name": "Reordering public links keeps each title paired with its URL",
+      "pass": true
+    },
+    {
+      "name": "Profile 503 preserves description, handle, country and all links",
+      "pass": true
+    },
+    {
+      "name": "Failed profile save does not change the persisted channel",
+      "pass": true
+    },
+    {
+      "name": "Pending save disables editable controls and the submit action",
+      "pass": true
+    },
+    {
+      "name": "Pending Enter and repeated submit cannot create duplicate writes",
+      "pass": true
+    },
+    {
+      "name": "Real save returns the editor to its clean, editable state",
+      "pass": true
+    },
+    {
+      "name": "Saved profile and ordered links survive a full browser reload",
+      "pass": true
+    },
+    {
+      "name": "Profile changes retain the immutable channel UUID and reach the real backend",
+      "pass": true
+    },
+    {
+      "name": "Channel editor has no horizontal overflow at 390px",
+      "pass": true
+    },
+    {
+      "name": "Channel editor has no horizontal overflow at 320px",
+      "pass": true
+    },
+    {
+      "name": "Retired handle and immutable UUID endpoints resolve the same current channel",
+      "pass": true
+    },
+    {
+      "name": "Retired handle route canonicalizes without losing tab or fragment",
+      "pass": true
+    },
+    {
+      "name": "Immutable channel route opens the same canonical channel",
+      "pass": true
+    },
+    {
+      "name": "Details dialog receives focus and exposes the complete stored description",
+      "pass": true
+    },
+    {
+      "name": "Details show the stored country and actual join date while hiding unknown video metrics",
+      "pass": true
+    },
+    {
+      "name": "Public links open safely and an owner has no report-own-channel action",
+      "pass": true
+    },
+    {
+      "name": "Channel details fit and remain readable at 390px",
+      "pass": true
+    },
+    {
+      "name": "Channel details fit and remain readable at 320px",
+      "pass": true
+    },
+    {
+      "name": "Escape closes the details and restores focus to the opening control",
+      "pass": true
+    },
+    {
+      "name": "Anonymous visitors can read the complete real channel profile",
+      "pass": true
+    },
+    {
+      "name": "Anonymous copy shares the immutable channel URL rather than a renameable handle",
+      "pass": true
+    },
+    {
+      "name": "Web Share receives the canonical channel title and stable URL without launching an OS app",
+      "pass": true
+    },
+    {
+      "name": "Anonymous reporting opens login with the exact return path and no accidental follow request",
+      "pass": true
+    },
+    {
+      "name": "A separately registered account returns to the intended channel after authentication",
+      "pass": true
+    },
+    {
+      "name": "Report validation requires a reason and details for Other before any request",
+      "pass": true
+    },
+    {
+      "name": "Report 503 preserves the open form, selected reason and entered details",
+      "pass": true
+    },
+    {
+      "name": "Real HTTP 201 replaces the form with the accessible received receipt",
+      "pass": true
+    },
+    {
+      "name": "Real duplicate HTTP 409 remains a recoverable form error instead of a second success",
+      "pass": true
+    },
+    {
+      "name": "No browser runtime or request interception errors",
+      "pass": true
+    }
+  ],
+  "runtimeErrors": []
+}

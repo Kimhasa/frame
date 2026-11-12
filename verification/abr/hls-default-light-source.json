@@ -1,0 +1,270 @@
+{
+  "at": "2026-11-02T05:25:06.097Z",
+  "url": "http://127.0.0.1:8889/screen-01",
+  "checks": [
+    {
+      "name": "first frame after navigation",
+      "ok": true,
+      "data": {
+        "firstFrameMs": 513
+      }
+    },
+    {
+      "name": "transport is hls.js",
+      "ok": true,
+      "data": {
+        "transport": "hls.js",
+        "connection": "hls.js"
+      }
+    },
+    {
+      "name": "no RTCPeerConnection created",
+      "ok": true,
+      "data": {
+        "peers": 0
+      }
+    },
+    {
+      "name": "hls.js loaded from the viewer server",
+      "ok": true,
+      "data": {
+        "ms": 13,
+        "bytes": 415553,
+        "from": "/assets/js/hls-1.5.20.min.js"
+      }
+    },
+    {
+      "name": "levels parsed from live.m3u8",
+      "ok": true,
+      "data": [
+        "240p@500k",
+        "360p@1000k",
+        "480p@1500k",
+        "720p@4000k",
+        "1080p@8500k"
+      ]
+    },
+    {
+      "name": "hls.js live latency reported",
+      "ok": true,
+      "data": {
+        "latencyS": [
+          1.555,
+          1.555,
+          1.555,
+          1.557,
+          1.554
+        ],
+        "bufferAheadS": 1.424
+      }
+    },
+    {
+      "name": "live delay (barcode, same clock)",
+      "ok": true,
+      "data": {
+        "delayMs": 1622,
+        "barcodeModulo4000": {
+          "p50": 1622,
+          "samples": 20
+        }
+      }
+    },
+    {
+      "name": "auto level playing",
+      "ok": true,
+      "data": {
+        "level": {
+          "index": 4,
+          "width": 1920,
+          "height": 1080,
+          "bitrate": 8500000
+        },
+        "decoded": "1920x1080",
+        "label": "1080p",
+        "bandwidthEstimate": 1878265,
+        "cap": {
+          "size": 4,
+          "hold": -1,
+          "holdMs": 15000
+        }
+      }
+    },
+    {
+      "name": "quality menu lists 자동 and levels",
+      "ok": true,
+      "data": [
+        {
+          "text": "자동",
+          "checked": "true"
+        },
+        {
+          "text": "1080p",
+          "checked": "false"
+        },
+        {
+          "text": "720p",
+          "checked": "false"
+        },
+        {
+          "text": "480p",
+          "checked": "false"
+        },
+        {
+          "text": "360p",
+          "checked": "false"
+        },
+        {
+          "text": "240p",
+          "checked": "false"
+        }
+      ]
+    },
+    {
+      "name": "manual 720p decodes 720 lines",
+      "ok": true,
+      "data": {
+        "ms": 634,
+        "decoded": "1280x720",
+        "label": "1080p",
+        "auto": false,
+        "level": {
+          "index": 3,
+          "width": 1280,
+          "height": 720,
+          "bitrate": 4000000
+        },
+        "videos": 1,
+        "from": "1920x1080"
+      }
+    },
+    {
+      "name": "자동 returns to the source height",
+      "ok": true,
+      "data": {
+        "ms": 1054,
+        "decoded": "1920x1080",
+        "label": "1080p",
+        "auto": true,
+        "decisions": [
+          "720p>1080p 상향, 대역폭 추정 1.7Mbps, 버퍼 1.3초"
+        ]
+      }
+    },
+    {
+      "name": "DVR seek to the broadcast start",
+      "ok": true,
+      "data": {
+        "ms": 105,
+        "positionFromStartS": 3.05,
+        "decoded": "1920x1080",
+        "videos": 1,
+        "peers": 0
+      }
+    },
+    {
+      "name": "DVR playback progresses",
+      "ok": true,
+      "data": {
+        "t": [
+          3.05,
+          5.07
+        ],
+        "positionMs": [
+          1793597090703.21,
+          1793597092718.9211
+        ]
+      }
+    },
+    {
+      "name": "실시간 returns to live.m3u8",
+      "ok": true,
+      "data": {
+        "ms": 111,
+        "latencyS": 1.558,
+        "decoded": "1920x1080",
+        "videos": 1,
+        "liveButtonDisabled": true,
+        "peers": 0
+      }
+    }
+  ],
+  "log": [
+    "14:25:32수신실시간으로 복귀",
+    "14:25:26수신지난 구간 재생 00:00:00",
+    "14:25:26화질자동 720p → 1080p (상향, 대역폭 추정 1.7Mbps, 버퍼 1.3초, 전환 1.0초)",
+    "14:25:25화질재생 화질 자동",
+    "14:25:22화질재생 화질 720p (수동)",
+    "14:25:06수신screen-01 연결 (HLS)"
+  ],
+  "final": {
+    "transport": "hls.js",
+    "connection": "hls.js",
+    "mode": "live",
+    "auto": true,
+    "level": {
+      "index": 4,
+      "width": 1920,
+      "height": 1080,
+      "bitrate": 8500000
+    },
+    "levels": [
+      {
+        "width": 426,
+        "height": 240,
+        "bitrate": 500000,
+        "averageBitrate": 169312,
+        "errors": 0
+      },
+      {
+        "width": 640,
+        "height": 360,
+        "bitrate": 1000000,
+        "averageBitrate": 219177,
+        "errors": 0
+      },
+      {
+        "width": 852,
+        "height": 480,
+        "bitrate": 1500000,
+        "averageBitrate": 236300,
+        "errors": 0
+      },
+      {
+        "width": 1280,
+        "height": 720,
+        "bitrate": 4000000,
+        "averageBitrate": 293626,
+        "errors": 0
+      },
+      {
+        "width": 1920,
+        "height": 1080,
+        "bitrate": 8500000,
+        "averageBitrate": 468318,
+        "errors": 0
+      }
+    ],
+    "latency": 1.558,
+    "bufferAhead": 1.438,
+    "bandwidthEstimate": 1824556,
+    "cap": {
+      "size": 4,
+      "hold": -1,
+      "holdMs": 15000
+    },
+    "stalls": 0,
+    "lastError": null,
+    "playback": {
+      "mode": "live",
+      "positionMs": null
+    },
+    "decoded": "1920x1080",
+    "t": 10.36,
+    "paused": false,
+    "videos": 1,
+    "peers": 0,
+    "label": "1080p",
+    "status": ""
+  },
+  "passed": true
+}

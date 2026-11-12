@@ -213,7 +213,7 @@ FFmpeg 9.0.2의 `gfxcapture`(Windows Graphics Capture) → `h264_nvenc` 직결�
 
 ## Phase 1 (P0) 결과 요약 (2026-10-28)
 
-모든 수치는 이 PC(i7-11800H, 16 GB, RTX 3060 Laptop, Windows 11 25H2) 한 대에서 잰 값입니다. 별도 표시가 없으면 같은 PC 루프백 또는 LAN 주소 기준입니다. 인터넷이나 1,000명 결과가 아닙니다. 항목별 상태와 근거는 `FEATURE_BACKLOG.csv`의 검토기준 열("2026-10-28 갱신")에 있습니다.
+모든 수치는 이 PC(i7-11800H, 16 GB, RTX 3060 Laptop, Windows 11 25H2) 한 대에서 잰 값입니다. 별도 표시가 없으면 같은 PC 루프백 또는 LAN 주소 기준입니다. 인터넷이나 1,000명 결과가 아닙니다. 항목별 상태와 근거는 `FEATURE_BACKLOG.csv`의 검토기준 열("2026-10-28 갱신")에 있었습니다. 이 파일은 2026-11-09 문서 정리로 지웠고, git 이력과 저장소 밖 백업 zip에 있습니다.
 
 ### 실측한 것
 - **실제 앱 부하** (`verification/load/20261028-181417-real-app`, 고움직임 원본 8.6 Mbps)
@@ -246,3 +246,225 @@ FFmpeg 9.0.2의 `gfxcapture`(Windows Graphics Capture) → `h264_nvenc` 직결�
 - 실제 앱의 동시 입장·혼합(채팅·DVR)·채팅 1,000·장시간 부하: 플랜은 준비만 했습니다.
 - 회선 조건별 자동 화질을 실제 앱으로 측정하는 시험: 에뮬레이터는 준비됐고 fixture만 실행했습니다.
 - 다른 PC 수신
+
+## 일반 시청 HLS 중심 전환 (2026-11-02)
+
+이 절의 수치는 모두 Windows 11 PC 한 대의 루프백 측정입니다(MediaMTX 1.21.3, FFmpeg 9.0.2, NVENC, Edge 156 headless, hls.js 1.5.20).
+측정 중 같은 PC에서 게임과 다른 앱이 함께 돌았습니다(측정 대상 밖 CPU 24~38%, 여유 메모리 0.2~0.9 GB).
+인터넷, 다른 PC, 실제 휴대폰, CDN에서는 측정하지 않았습니다.
+
+### 전송 역할
+- **브라우저 일반 시청: LL-HLS.** 첫 연결, 재연결, 되감기 뒤 실시간 복귀가 모두 `live.m3u8`입니다.
+  - hls.js 1.5.20(배포물에 포함, SHA-256은 `deps/manifest.json`), 그것이 안 되면 Safari 기본 HLS를 씁니다.
+  - 시청 페이지가 RTCPeerConnection을 하나도 만들지 않는 것을 확인했습니다(`tools/test-hls.mjs`, 매 실행 0개).
+- **WebRTC(WHEP)를 남긴 곳**
+  - 데스크톱 앱 자체 수신: 송출자의 자기 방송 확인, 같은 망 '전체 수신 목록'.
+  - HLS를 전혀 못 쓰는 브라우저(MSE도 기본 HLS도 없음).
+  - 전송 방식은 연결마다 한 번 정하고 바꾸지 않습니다. 선택 메뉴도, HLS↔WebRTC 왕복도 없습니다.
+  - 401/403이나 시청자 상한(503)을 받았을 때 다른 프로토콜로 넘어가지 않습니다.
+- **LL-HLS를 고른 이유** (같은 PC·같은 원본·같은 시계, `tools/compare-delay.mjs` → `verification/abr/delay-webrtc-vs-hls.json`)
+  - 실제 지연(화면 바코드) p50: WebRTC 0.133 s, LL-HLS 1.651 s. 이전 일반 HLS(MediaMTX 기본 플레이리스트, 2026-10-28)는 3.66 s였습니다.
+  - 첫 프레임: WebRTC 3.31 s, LL-HLS 0.42 s.
+  - LL-HLS는 일반 HLS보다 약 2 s 빠르면서 HTTP 캐시와 CDN에 얹을 수 있습니다. 대가는 WebRTC보다 약 1.5 s 늘어난 지연입니다.
+  - 설정: 1 s 세그먼트, 200 ms 파트, 블로킹 재요청, hls.js `liveSyncDuration` 1.5 s.
+
+### 화질(ABR)과 화질 래더
+- **화질 래더**: 방송마다 FFmpeg 하나가 원본을 한 번 디코딩해 원본 복사본(`<path>/src`)과 낮은 화질(720/480/360/240p)을 만듭니다.
+  - 모든 출력이 같은 `-start_time_realtime`을 쓰고, MediaMTX `useAbsoluteTimestamp`가 그 시각을 그대로 씁니다.
+  - 원본 fps 유지, 원본 키프레임 위치에 맞춤, H.264 + AAC. 시청자마다 인코더를 만들지 않습니다.
+- **정렬 실측**: 5개 화질의 같은 세그먼트가 PROGRAM-DATE-TIME, fMP4 tfdt(90.0000 s), 디코딩한 첫 프레임까지 모두 같았습니다(`verification/abr/ladder-alignment.json`, `.png`).
+  - 이전 방식(화질마다 따로 띄운 인코더)은 약 0.27 s 어긋나서 화질 전환 때 빈 구간과 비상 하향이 생겼습니다.
+- **시작과 종료**
+  - 래더는 방송 시작 때 함께 뜹니다. MediaMTX가 FFmpeg의 첫 RTCP 송신자 보고를 버려서, 새 경로는 5 s 뒤부터 프레임을 받습니다.
+    요청 때 띄우면 첫 시청자가 8.1 s를 기다렸고, 미리 띄우면 원본 재생 목록 첫 요청이 85 ms였습니다.
+  - 모든 화질에 5분 동안 리더가 없으면 멈춥니다.
+  - 사용 중 자원(1080p60, 4개 화질, NVENC): CPU 약 1.1코어, 메모리 450~590 MB.
+- **실패 대체**
+  - 래더가 시작하지 못하거나 30 s 안에 끝나면 재시작 간격이 3 → 60 s로 늘어납니다.
+  - 그동안 `live.m3u8`은 방송 자체 경로의 원본 하나만 싣습니다. `?q=` 요청에도 원본을 돌려줍니다.
+  - 실측(래더를 PID로 종료): 원본 하나로 바뀌고 원본 재생 목록은 200을 유지했습니다. 3 s 뒤 다시 시작했고, 30 s 안정 후 화질 목록이 돌아왔습니다.
+- **화질 메뉴**: hls.js가 읽은 화질 목록을 그대로 씁니다. '자동'은 hls.js ABR(대역폭, 버퍼, 플레이어 크기)이고, 수동 선택은 '자동'을 고를 때까지 유지됩니다.
+  - 왕복 방지: 15 s 안에 올렸다 내리면 상향을 15→120 s 동안 보류합니다. 화면 크기 때문에 내린 경우는 보류하지 않습니다.
+  - 메뉴 라벨은 실제로 디코딩되는 높이입니다. 화질 전환 뒤 라벨이 이전 높이로 남던 결함을 고쳤습니다(영상 `resize` 때 다시 씀).
+  - 실측(`verification/abr/hls-default.json`, `hls-default-heavy-source.json`, `tools/test-abr.mjs`)
+    - 수동 720p 전환 0.63 s, 자동 복귀 1.06 s.
+    - 같은 검사를 게임 실행 중에 돌리면 5.6 s / 10.9 s까지 늘었습니다(버퍼 0 s에서 하향 발생).
+    - 작은 플레이어에서는 360p로 0.86 s 만에 내려가고, 커지면 15 s 보류 뒤 1080p로 돌아왔습니다.
+    - 앱 자체 수신(WebRTC)은 그동안 1080p를 유지했습니다(시청자끼리 독립).
+
+### 되감기(DVR)
+- `dvr.m3u8`은 방송 녹화(영상 + AAC 복사, 재인코딩 없음)로 만든 HLS EVENT 재생 목록입니다. 짧은 실시간 재생 목록(7 s)과는 따로입니다.
+  - 키프레임에서 자른 약 4 s 세그먼트, PROGRAM-DATE-TIME, 파일 사이 DISCONTINUITY를 씁니다.
+  - 새 시청자는 실시간에서 시작하고, 사용자가 조작할 때만 되감습니다.
+- 실측: 방송 시작점 탐색 105~327 ms(시작점 +3.0 s 재생), 실시간 복귀 111~228 ms(복귀 뒤 지연 1.55 s).
+  - 일시정지·재개와 두 시청자의 독립 위치도 확인했습니다(`tools/smoke-dvr.mjs`).
+  - 마지막 탐색만 적용됩니다. 실시간 복귀나 재연결 중의 탐색 경쟁 조건 3건을 고쳤습니다.
+
+### 부하(같은 PC, 고움직임 원본 8.6 Mbps, 원본 화질만, 단계당 45 s)
+- **이전 WebRTC**(2026-10-28, `verification/load/20261028-181417-real-app`): 25명 100%, 50명에서 24%로 자동 중단(프레임 폐기).
+- **이번 LL-HLS**(`verification/load/20261102-143547-real-app-hls`): 1·10·25·50·75·100명 모두 수신 100%, 원본 속도 100%.
+  - 끊김 0, 429/503 0, 앱 HTTP 거절 0. 100명 합계 855 Mbps.
+  - 앱 프로세스 묶음 CPU 평균 36%, 첫 미디어 p50 0.59 s.
+  - Node 수신기의 지연 추정 p50 2.8 s는 보수적인 모델 값입니다. 실제 화면 지연은 위 1.65 s입니다.
+- 가벼운 원본(0.47 Mbps)으로 먼저 돈 실행(`20261102-142643-real-app-hls`)은 원본 조건이 달라 비교에 쓰지 않았습니다.
+- **한계**
+  - 부하 발생기가 같은 PC의 루프백에서 돌았고, Node 수신기는 영상을 디코딩하지 않습니다.
+  - 따라서 이 값은 인터넷 시청자 수용량이 아닙니다. 100명을 1,000명으로 외삽하지 않습니다.
+  - 앱 서버는 응답마다 연결을 닫고(Connection: close), 동시 요청은 400개가 상한입니다. 수백 명 이상에서의 동작은 측정하지 않았습니다.
+  - 인터넷 시청은 중계 서버(+CDN)가 담당하는 구조이고, 그쪽 1,000명 검증은 하지 않았습니다.
+
+### 중계 서버
+- 같은 래더와 HLS 계약을 씁니다.
+- e2e 93/93 통과(2026-11-02 14:46)
+  - 원본·480p PDT 차이 0 ms.
+  - 480p 전환 1.08 s, 전환 뒤 멈춤 없음. 이전 실행의 3 s 멈춤이 해소됐습니다.
+  - 첫 프레임 HTTP 319 ms / HTTPS 276 ms.
+  - 세션 기준 상한 503 + Retry-After, `Set-Cookie` 0.
+- 코드 검토 수정 후 재실행(15:29)도 93/93 통과했습니다.
+  - 480p 전환 1.20 s, PDT 차이 0 ms.
+  - 원본으로 돌아간 뒤 화질 라벨이 실제 높이와 일치했습니다(수정 전에는 이전 화질로 남음).
+- 수치 표와 CDN 규칙도 `deploy/README.md` 11장과 9장에 있습니다.
+
+### 독립 코드 검토
+- 변경 전체를 읽기 전용 에이전트 5개가 검토하고, 지적마다 다른 에이전트가 반증을 시도했습니다. 21건이 남았습니다.
+- 21건을 모두 고쳤고, 수정 후 교차 검토에서 남은 경계 사례 5건도 고쳤습니다. 주요 항목:
+  - 화질 래더 실패 시 브라우저 전체 재생 불가 → 원본 대체 + 재시작 간격 증가.
+  - 중계 WHEP 프록시가 검사 전 원래 URL을 그대로 전달 → 검사한 경로만 전달하고, 비정상 요청은 400.
+  - 래더 재시작 실패 시 앱 강제 종료(std::terminate).
+  - 시청자 상한 경쟁 조건.
+  - 녹화 파일 번호가 중계 재시작이나 보존 삭제 뒤 바뀜 → 파일 시작 시각으로 식별.
+  - 시청 세션이 끊긴 뒤 다시 열지 않음(세션 없이 60 s 넘게 재생하지 않음).
+  - dvr.m3u8 캐시가 잘못된 요청 때문에 멈춤.
+
+### UI 보존
+- 레이아웃, Pretendard, 색, 아이콘, 메뉴, 슬라이더, 모달은 바꾸지 않았습니다. 바뀐 것은 `work/console-ux.js`의 동작 코드뿐입니다.
+- `tools/verify-ui-v061.mjs`가 0.6.1과 0.6 이하 기준 모두 통과합니다. 새 DOM, CSS, 잠금 해시 변경은 없습니다.
+
+### 재현 절차
+1. `build\vsbuild.cmd`로 빌드하고 `node work/build-console.mjs`를 실행한 뒤, exe와 ui를 dist에 넣습니다.
+2. 앱을 `WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS=--remote-debugging-port=9222`로 띄웁니다.
+3. `tools/motion-test.html`을 Edge 앱 창으로 엽니다(가려져도 그리도록 `--disable-backgrounding-occluded-windows`).
+4. `node tools/app-start.mjs`로 송출을 시작합니다.
+5. 헤드리스 Edge(9334)를 띄운 뒤 다음을 차례로 실행합니다.
+   - `node tools/test-hls.mjs`, `node tools/compare-delay.mjs`, `node tools/test-abr.mjs`, `node tools/smoke-dvr.mjs 9222 9334 0`
+6. 부하: `tools/motion-heavy-test.html`로 송출한 뒤 `node tools/load/run-load.mjs --plan tools/load/plans/real-app-hls.json --host 127.0.0.1 --stages 1,10,25,50,75,100 --hold 45`.
+7. 중계: `node server/verify/e2e.mjs`.
+
+### 미검증
+- iPhone Safari와 Android Chrome 실제 기기(자동재생, 소리 켜기, 회전, 백그라운드 복귀, 회선 변경, 터치 조작 충돌). 데스크톱 Firefox.
+  - Safari 기본 HLS의 `live.m3u8`, `?q=`, `dvr.m3u8`(BYTERANGE init, 재구성 세그먼트) 재생.
+- 앱을 거친 오디오 전체 경로. 앱 시험 송출은 실제 소리를 잡지 않도록 오디오 없이 했습니다.
+  - AAC 음성, 화질 전환과 DVR 중 A/V 연속성은 중계 e2e의 시험음으로만 확인했습니다.
+- 회선 조건별 ABR(대역 제한·손실)을 실제 앱으로 측정하지 않았습니다. 앞의 화질 전환은 루프백에서의 플레이어 크기·수동 조작 기준입니다.
+- 401/403, 429/503 Retry-After, 방송 종료와 새 방송 구분, 서버 재시작
+  - 중계 e2e는 확인했습니다.
+  - 앱 쪽은 코드 검토만 했습니다.
+- 다른 PC나 인터넷 회선에서의 시청, CDN 앞단, 1,000명 시청(중계 서버 + 다른 발생기 PC 필요).
+- 래더를 유휴로 멈춘 뒤 첫 시청자의 약 8 s 대기(앱 실측), Linux 중계 서버의 libx264 래더 CPU.
+
+## 공개 시청 웹(React) 실제 중계 연동 (2026-11-09)
+
+`docs/FRAME_DESIGN.md` 5장의 1단계(실제 공급자와 중계 연동)입니다. 수치는 모두 이 PC 한 대의 루프백 측정입니다.
+- 도구: Node 24.22.1, Yarn 4.18.1, MediaMTX 1.21.3, FFmpeg 9.0.2, hls.js 1.5.20, headless Edge 157(창 1920×1080, `--mute-audio`).
+- 측정 중 메이플스토리가 함께 돌았습니다(측정 대상 밖 CPU 평균 25~26%). 무거운 검사는 한 번에 하나씩 실행했습니다.
+- 송출은 시험 영상·시험음(FFmpeg 합성)과 `tools/motion-test.html` 캡처만 썼습니다.
+- 인터넷, 다른 PC, 실제 휴대폰, CDN에서는 측정하지 않았습니다.
+
+### 바꾼 범위
+- **실제 공급자** `apps/web/src/relay/`: 목록(`live.ts`), 시청(`watch.ts`), HLS 재생·화질(`player.ts`), 시청 세션(`session.ts`), DVR(`dvr.ts`), WHEP(`whep.ts`), 채팅(`chat.ts`), 시험용 읽기 전용 상태 `window.FrameRuntime`(`runtime.ts`).
+- **진입점과 개발 실행**: `main.tsx`가 공급자를 고릅니다(배포 빌드 = 실제, `yarn dev`·`build:design` = 시안 데이터).
+  - `yarn dev:relay`와 `yarn preview:relay`는 `/_frame/` 밖의 요청을 `FRAME_RELAY_URL`(기본 `http://127.0.0.1:8080`)로 넘깁니다.
+  - `hls.js` 1.5.20은 고정 버전이고 시청 화면에서만 지연 로드합니다.
+- **중계**
+  - `server/lib/scope.mjs`, `server/relay.mjs`: 방송 단위 경로 `/<path>/b/<id>/…`. 다른 방송이면 409 `broadcast-changed`, 방송이 없으면 404 `not-running`, 이전 송출 세션의 미디어면 503 + Retry-After.
+  - WHEP `?b=<id>`도 같은 규칙입니다. 이 확인은 상한 계산보다 먼저 합니다.
+  - `server/lib/hls.mjs`: MediaMTX 공유 HLS 세션을 401뿐 아니라 404에서도 한 번 새로 만들고, 래더가 다시 시작하면 그 세션을 버립니다.
+  - `server/lib/ladder.mjs`: 이번 래더가 시작한 뒤 준비된 경로만 준비로 셉니다.
+- **앱**: `native/src/http_server.cpp`에 같은 404 재발급을 넣었습니다(아래 실측).
+- **검증 코드**: `server/verify/web-e2e.mjs`(React 실제 방송 e2e), `server/verify/web-proxy.mjs`(dist 제공, 장애 주입, 요청 기록), `server/verify/e2e.mjs`(방송 단위 경로·경로 재사용·WHEP `?b=` 검사 추가), `tools/test-ladder-restart.mjs`.
+- 바꾸지 않은 것: `App.tsx`, `features/**`, CSS, `viewer-contract.ts`, `preview/**`, `index.html`, `disconnected-viewer.ts`, `reference/`, UI 잠금.
+
+### 빌드 검사 (`apps/web`, `corepack yarn`)
+- `yarn install --immutable`, `yarn typecheck`(종료 코드 0), `yarn build`, `yarn build:design` 모두 통과.
+- 배포 번들(`dist`)에 시안 데이터가 없고, 디자인 번들(`dist-design`)에 hls.js가 없습니다.
+- `yarn dev`(5360)는 시안 데이터 카드 4개를 보여 주고 `FrameRuntime`이 없습니다(미리보기 공급자 선택 확인).
+- `apps/web`에는 아직 UI 검사 스크립트가 없어 '미리보기 공급자로 기존 UI 검사 통과'는 위 빌드와 수동 확인까지만 했습니다.
+
+### React 실제 방송 e2e (`node server/verify/web-e2e.mjs`) — 34/34 통과, 233 s
+결과 `verification/web/web-e2e-result.json`, 화면 `verification/web/*.png`, 로그 `verification/web/logs/`.
+
+| 검사 | 결과 |
+| --- | --- |
+| 목록 | 빈 목록(200 + `[]`)과 실패(500)를 구분합니다. 카드를 누르면 `/_frame/watch/screen-01/<A>`로 갑니다. |
+| 재생 | hls.js, 1280×720, 소리 디코딩(65 KB), RTCPeerConnection 0개. 미디어 요청 106건이 모두 `/screen-01/b/<A>/` 아래입니다. 첫 프레임 7.9 s(방송 시작 직후, 래더 첫 RTCP 대기 포함), 지연 1.28 s. |
+| 화질 | 수동 480p 전환 0.55 s, '자동' 복귀 → 720p 1.07 s. |
+| 채팅 | 전송 응답 66 ms. 다른 출처의 두 번째 페이지가 143 ms 뒤 정확히 한 번 받았습니다. 소켓을 끊으면 1.07 s 안에 재접속하고 서버 이력으로 다시 그립니다(중복 0). |
+| 되감기 | 시작점 근처 탐색 → 목표 +0.96 s 위치. 실시간 복귀 0.22 s, 복귀 뒤 지연 1.73 s. |
+| 경로 재사용 | A가 끝나고 B가 같은 경로에서 시작해도 A 페이지는 '종료'(0.24 s)이고 B의 미디어·DVR·채팅을 한 번도 요청하지 않았습니다. 이전 직접 링크는 재생하지 않습니다. A 송출이 남아 있는 동안 B 주소는 503 + Retry-After로 기다렸다가 B를 재생합니다. 페이지 안에서 B→A로 주소를 바꾸면 B 세션 DELETE, 채팅 소켓 종료, 1.5 s 뒤 B 요청 0건입니다. |
+| 재접속 | 중계 MediaMTX 재시작 → '다시 연결'·'신호 대기' 안내 뒤 1.45 s 만에 영상이 돌아왔습니다(종료·오류·혼잡 표시 없음). |
+| 신호 대기 | 송출이 끊기고 등록만 남으면 '신호 대기'(1.34 s)입니다. Retry-After를 지켜 `/info`는 10 s에 6회였고, 송출이 돌아오자 다시 재생했습니다. |
+| 시청 상한 | 상한 1에서 두 번째 페이지는 '접속자가 많아요'입니다. 세션 재시도가 Retry-After를 지켰고 미디어 요청과 WHEP 요청은 0건입니다. |
+| 권한 | 세션 POST 403 → '볼 수 없어요' + 권한 문구. 시도 1회, 재시도 폭주와 WHEP 우회가 없고 재생하지 않습니다. |
+| 정리 | 시청 화면을 떠나면 18 ms 안에 세션 DELETE와 채팅 소켓 종료가 일어나고, 남은 미디어 요청은 없습니다. |
+| WHEP | MSE도 기본 HLS도 없는 페이지만 WebRTC로 재생했습니다(B 재생, `/info` 방송 ID 전후 확인). 떠나면 WHEP DELETE 200(23 ms)입니다. 상한에서는 '혼잡'만 표시하고 HLS로 넘어가지 않습니다. 1~11번 페이지의 WHEP POST는 0건입니다. |
+
+### 중계 e2e (`node server/verify/e2e.mjs`)
+- 기존 주소(`/:path`)의 회귀 검사와 방송 단위 경로·경로 재사용 검사입니다. 결과 `deploy/verification/e2e-result.json`.
+- 404 재발급 수정 뒤 108/108 통과(123 s).
+- WHEP `?b=` 검사를 경로 재사용 검사에 넣은 뒤에도 108/108 통과(118 s, CPU 평균 22%). 검사 수는 같습니다(기존 검사 7개에 WHEP 항목을 더함).
+  - A 종료 직후 `whep?b=<A>` 404 `not-running`, B 등록 뒤 409 `broadcast-changed`.
+  - 이전 송출 세션이 남은 동안 `whep?b=<B>` 503 + Retry-After 2. 잘못된 ID는 400.
+  - B 자기 세션이 송출한 뒤 `whep?b=<B>`는 묶음 검사를 통과합니다(가짜 SDP라 MediaMTX가 400).
+- 앞선 실행 하나에서 기존 검사 "480p 전환 뒤 480줄 재생"이 한 번 멈춤으로 실패했고, 재실행 두 번 모두 통과했습니다(이번 변경과 무관한 간헐 실패로 봅니다).
+
+### 앱 화질 래더 재시작 (`tools/test-ladder-restart.mjs`, 실제 앱, 1080p60 NVENC, 래더 5화질)
+- 송출 35 s 뒤 래더 FFmpeg를 PID로 종료하고 480p 재생 목록을 앱 시청 포트로 0.5 s마다 요청했습니다.
+- 수정 전(dist의 11-02 빌드): 0.5~3 s 503(재시작 대기), 5~30 s 404 50회, 30.5 s 뒤 200. 결과 `verification/app/ladder-restart-hls-before-fix.json`.
+- 수정 후(`build/native-repo/FrameConsole.exe`): 0.5~3 s 503, 404 0회, 10.8 s 뒤 새 muxer(시퀀스 1)로 200, 이후 안정. 결과 `verification/app/ladder-restart-hls-after-fix.json`.
+- 시험 뒤 `dist/FrameConsole/FrameConsole.exe`는 원래 파일로 되돌렸습니다(SHA-256 `D8549440…414C`). dist와 배포 ZIP은 아직 수정 전 빌드입니다.
+
+### 검증 중 찾아 고친 결함
+- **'자동' 화질이 낮은 화질에 머묾**: MediaMTX가 LL-HLS 파트를 만들면서 보내기 때문에 hls.js 대역 추정이 현재 화질의 비트레이트를 넘지 못합니다. 버퍼가 1 s 이상이고 20 s 동안 멈춤이 없으면 한 단계 올려 보고(`minAutoBitrate` 하한), 버퍼가 0.5 s 아래로 내려가거나 멈추면 하한을 풉니다. 플레이어 크기 제한(`capLevelToPlayerSize`)은 그대로 둡니다.
+- **래더 재시작 뒤 화질 재생 목록 404가 30~40 s 지속**: 중계와 앱 모두 위처럼 고쳤습니다.
+- **WHEP 종료 시 MediaMTX 리더가 남음**: 연결을 먼저 닫아 DELETE가 404였습니다. DELETE를 먼저 보내고 응답(최대 1 s) 뒤 닫습니다.
+- **WHEP가 방송에 묶이지 않음**: 이전 링크의 WebRTC 시청이 다음 방송을 받을 수 있었습니다. `?b=<id>`로 409·404·503을 적용했습니다.
+- **가려진 탭의 시청 세션 만료**: 음소거된 백그라운드 탭은 타이머가 늦어집니다. 탭이 다시 보일 때 늦은 하트비트를 즉시 보냅니다.
+
+### 재현 절차
+1. `cd apps/web`, `corepack yarn install --immutable`, `corepack yarn build`.
+2. 저장소 루트에서 `node server/verify/web-e2e.mjs`를 실행합니다(무거움: 다른 검사와 동시에 돌리지 않음).
+3. 그다음 `node server/verify/e2e.mjs`를 실행합니다.
+4. 앱 래더 시험
+   - 앱을 `WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS=--remote-debugging-port=9222`로 띄웁니다.
+   - `tools/motion-test.html`을 Edge 앱 창으로 엽니다.
+   - `node tools/app-start.mjs`로 송출을 시작하고, 35 s 뒤 `node tools/test-ladder-restart.mjs <앱 PID>`를 실행합니다.
+5. 개발 중 실제 중계 확인: 중계를 띄운 뒤 `FRAME_RELAY_URL=<중계 주소> corepack yarn dev:relay`.
+- `build/native`의 CMake 캐시는 이전 폴더(`C:/Users/wlsdu/OneDrive/Desktop/frame`)를 가리켜 `build\vsbuild.cmd`가 실패합니다. 이번 앱 빌드는 새 폴더 `build/native-repo`에서 했습니다(경고 0, 오류 0).
+
+### Codex에 넘길 것 (화면·계약 변경이 필요한 항목)
+1. **재생 중 안내 문구가 보이지 않음**
+   - 공급자는 재생 중 안내를 `state.kind === 'ready'`의 `state.message`로 6 s 동안 줍니다. 예: "선택한 화질을 지금 재생할 수 없어 자동으로 바꿨어요.", "선택한 시점을 재생할 수 없어 실시간으로 돌아왔어요."
+   - 그런데 `WatchPage.tsx`는 `ready`에서 오버레이를 그리지 않습니다(95행). `state.message`를 읽는 곳은 오버레이 안(169행)뿐이라 이 문구가 표시되지 않습니다. 코드로 확인했고, 화면으로 재현하지는 않았습니다.
+   - 재현 방법(제안): 되감기 중 `web-proxy` 장애 규칙으로 DVR 파일 요청을 실패시키면, 공급자는 실시간으로 돌아오며 안내를 보냅니다.
+   - 필요한 변경: `ready` 상태의 `message`를 토스트나 플레이어 하단 문구로 표시.
+2. **'혼잡'의 다시 시도 버튼이 첫 프레임에 활성**
+   - `retryReady`의 초깃값이 `true`이고 `useEffect`에서 `false`로 바꿉니다. 그래서 `busy`로 바뀐 첫 렌더에서 버튼이 잠깐 활성입니다.
+   - 필요한 변경: 초깃값을 상태에서 계산하거나 `useLayoutEffect`를 사용.
+3. **(선택) 권한 오류와 방송 교체 전용 상태**
+   - 지금은 403을 `unavailable`("이 방송은 지금 볼 수 없어요" + 권한 문구)로, 409를 `ended`(+ "새 방송이 시작됐어요" 문구)로 보냅니다.
+   - 전용 제목이나 '새 방송 보기' 동작이 필요하면 `WatchState.kind`에 `forbidden`·`replaced`를 추가해 주세요. 공급자 쪽 변경은 작습니다.
+4. **(선택) 탐색 중 표시**: 되감기 요청과 실시간 복귀 사이에 `PlaybackView`의 `seeking` 같은 필드가 있으면 진행 표시를 그릴 수 있습니다.
+5. **(선택) 시험 선택자**: e2e는 지금 화면 문구, 역할, 접근성 이름으로 요소를 찾습니다. 오버레이 제목, 채팅 목록·입력, 화질 메뉴에 `data-testid`가 있으면 문구가 바뀌어도 시험이 깨지지 않습니다.
+
+### 미검증
+- iPhone/iPad Safari 실제 기기: 기본 HLS 또는 ManagedMediaSource, LL-HLS 파트, DVR 탐색, 자동재생과 소리 버튼.
+- Android Chrome 실제 기기, 실제 공급자로 본 모바일 배치. headless Edge 밖의 브라우저(Chrome, Firefox, 데스크톱 Safari).
+- Caddy를 거친 HTTPS/WSS(`deploy/Caddyfile.example`), 방송 단위 경로 앞의 CDN, 인터넷 회선, 다른 PC.
+- 시청 중 중계 프로세스 재시작(메모리의 등록·채팅 이력 소실). 이번 재접속 시험은 MediaMTX 재시작입니다.
+- React 화면에서 본 래더 실패(원본만 남은 목록).
+- 미디어 자체(live.m3u8, 파트, DVR 파일)나 WHEP 요청에 대한 401/403. 권한 시험은 세션 POST 403만 주입했습니다.
+- B가 등록됐지만 경로에 이전 송출이 남은 동안의 React WHEP 대체 재생(중계 응답 503은 e2e.mjs로 확인).
+- 이번 실행보다 긴 시청(수 시간 세션 갱신, 60 s 녹화 파일이 많이 쌓인 DVR).
+- 1,000명 시청. 이번 검사는 페이지 최대 3개의 기능 검사이며 수용량 측정이 아닙니다.
+- 모바일 배치는 Codex의 시안 검사 범위이며, 실제 공급자 연결 상태로는 보지 않았습니다.
+- 로그인·DB·제품 API(2단계), 커밋·푸시·배포는 이번 범위가 아닙니다.

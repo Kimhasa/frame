@@ -1,0 +1,25 @@
+{
+  "verificationDatabaseOnly": true,
+  "results": [
+    {
+      "name": "The private question owner session survives the API restart",
+      "pass": true
+    },
+    {
+      "name": "The stored answer and owner history survive while the restarted broadcast instance has no inherited public pin",
+      "pass": true
+    },
+    {
+      "name": "Old-broadcast private submissions persist for their author without leaking a pin or any private history to anonymous viewers",
+      "pass": true
+    },
+    {
+      "name": "The original client request UUID still confirms one saved receipt after restart without creating a second question",
+      "pass": true
+    },
+    {
+      "name": "The new current broadcast does not inherit private submissions or a public pin from the old instance",
+      "pass": true
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "results": [
+    {
+      "check": "paid callback reload fetches stored order without confirming again",
+      "pass": true
+    },
+    {
+      "check": "server payment appears in payment history",
+      "pass": true,
+      "rows": [
+        "2026.11.11\t\n메시지 후원\n개발하는 봄\n\t5,000원\t\n결제 완료\t상세",
+        "2026.11.11\t\n메시지 후원\n개발하는 봄\n\t5,000원\t\n결제 확인 대기\t상세",
+        "2026.11.11\t\n메시지 후원\n개발하는 봄\n\t5,000원\t\n결제 확인 대기\t상세"
+      ]
+    },
+    {
+      "check": "stored order amount mismatch rejected",
+      "status": 400,
+      "code": "AMOUNT_MISMATCH",
+      "pass": true
+    },
+    {
+      "check": "390px payment result layout has no horizontal overflow",
+      "pass": true,
+      "width": 390,
+      "scrollWidth": 390
+    },
+    {
+      "check": "invalid success callback never confirms or reports paid",
+      "pass": true
+    },
+    {
+      "check": "cancel callback has accurate state and ignores untrusted message",
+      "pass": true
+    }
+  ]
+}

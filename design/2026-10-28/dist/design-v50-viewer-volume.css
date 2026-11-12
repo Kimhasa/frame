@@ -1,0 +1,26 @@
+/* UIF-005: the native range keeps its value, thumb and keyboard behavior. Dark-player presentation stays local. */
+.v50-volume-target .v50-volume-range{position:relative;display:inline-flex;align-items:center;flex:0 0 78px;width:78px;height:32px}
+.v50-volume-target #locked-player-volume{appearance:none;width:100%;height:32px;min-height:32px;margin:0;padding:0;border:0!important;border-radius:6px;background:transparent;box-shadow:none!important;outline:0;cursor:pointer;--green:#fff}
+.v50-volume-target #locked-player-volume:focus{border:0!important;box-shadow:none!important;outline:0}
+.v50-volume-target #locked-player-volume:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.v50-volume-target #locked-player-volume::-webkit-slider-runnable-track{height:3px;border-radius:3px;background:linear-gradient(to right,#fff 0 var(--fill),#ffffff50 var(--fill) 100%)}
+.v50-volume-target #locked-player-volume::-webkit-slider-thumb{appearance:none;width:12px;height:12px;margin-top:-4.5px;border:0;border-radius:50%;background:#fff;box-shadow:none;transition:box-shadow .12s ease}
+.v50-volume-target #locked-player-volume:hover:not(:disabled)::-webkit-slider-thumb{box-shadow:0 0 0 3px #ffffff28}
+.v50-volume-target #locked-player-volume:focus-visible::-webkit-slider-thumb{box-shadow:none}
+.v50-volume-target #locked-player-volume::-moz-range-track{height:3px;border-radius:3px;background:#ffffff50}
+.v50-volume-target #locked-player-volume::-moz-range-progress{height:3px;border-radius:3px;background:#fff}
+.v50-volume-target #locked-player-volume::-moz-range-thumb{width:12px;height:12px;border:0;border-radius:50%;background:#fff;box-shadow:none;transition:box-shadow .12s ease}
+.v50-volume-target #locked-player-volume:hover:not(:disabled)::-moz-range-thumb{box-shadow:0 0 0 3px #ffffff28}
+.v50-volume-target #locked-player-volume:focus-visible::-moz-range-thumb{box-shadow:none}
+.v50-volume-target #locked-player-volume:disabled{cursor:not-allowed;opacity:.4;outline:0}
+.v50-volume-target .v50-volume-value{position:absolute;left:clamp(18px,var(--v50-volume-position,50%),calc(100% - 18px));bottom:calc(100% + 4px);transform:translateX(-50%);padding:4px 7px;border-radius:5px;background:#111820f5;color:#fff;font-size:12px;font-weight:550;line-height:1.4;font-variant-numeric:tabular-nums;white-space:nowrap;pointer-events:none;visibility:hidden;opacity:0;z-index:4}
+.v50-volume-target #locked-player-volume:hover:not(:disabled)~.v50-volume-value,.v50-volume-target #locked-player-volume:focus-visible:not(:disabled)~.v50-volume-value,.v50-volume-target .v50-volume-range.is-dragging .v50-volume-value{visibility:visible;opacity:1}
+.v50-volume-target .locked-player-button{outline-offset:2px}
+.v50-volume-target .locked-player-button:hover:not(:disabled){background:#ffffff20;border-color:transparent}
+.v50-volume-target .locked-player-button:active:not(:disabled){background:#ffffff30;border-color:transparent}
+.v50-volume-target .locked-player-button:focus:not(:focus-visible){outline:0;box-shadow:none}
+.v50-volume-target .locked-player-button:focus-visible{outline:2px solid #fff;box-shadow:none}
+.v50-volume-target .locked-player-button:disabled{opacity:.4;cursor:not-allowed}
+.v50-volume-target .locked-player-button>svg{display:block;flex:none}
+@container(max-width:600px){.v50-volume-target .v50-volume-range{flex-basis:80px;width:80px;height:40px}.v50-volume-target #locked-player-volume{height:40px;min-height:40px}}
+@media(prefers-reduced-motion:reduce){.v50-volume-target #locked-player-volume::-webkit-slider-thumb,.v50-volume-target #locked-player-volume::-moz-range-thumb{transition:none}}

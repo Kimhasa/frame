@@ -1,0 +1,142 @@
+{
+  "checks": [
+    "송출 대기 기본 화면·OBS 소유 조작 분리",
+    "송출 주소·키 복사와 표시·숨기기",
+    "OBS 안내와 Escape 포커스 복귀",
+    "방송 정보 수정 오류·한글 바이트 상한·저장",
+    "탭 키보드·주소·정보 수정 취소",
+    "채팅 접기·다시 열기",
+    "송출 중 키 재발급 잠금·시청 링크",
+    "상태별 데스크톱·모바일 레이아웃",
+    "모바일 OBS 안내·공유 대화상자"
+  ],
+  "layouts": [
+    {
+      "width": 1440,
+      "state": "waiting",
+      "overflow": 0,
+      "x": 264,
+      "y": 100
+    },
+    {
+      "width": 1440,
+      "state": "connecting",
+      "overflow": 0,
+      "x": 264,
+      "y": 100
+    },
+    {
+      "width": 1440,
+      "state": "live",
+      "overflow": 0,
+      "x": 264,
+      "y": 100
+    },
+    {
+      "width": 1440,
+      "state": "reconnecting",
+      "overflow": 0,
+      "x": 264,
+      "y": 100
+    },
+    {
+      "width": 1440,
+      "state": "ended",
+      "overflow": 0,
+      "x": 264,
+      "y": 100
+    },
+    {
+      "width": 1440,
+      "state": "error",
+      "overflow": 0,
+      "x": 264,
+      "y": 100
+    },
+    {
+      "width": 390,
+      "state": "waiting",
+      "overflow": 0,
+      "x": 16,
+      "y": 82
+    },
+    {
+      "width": 390,
+      "state": "connecting",
+      "overflow": 0,
+      "x": 16,
+      "y": 82
+    },
+    {
+      "width": 390,
+      "state": "live",
+      "overflow": 0,
+      "x": 16,
+      "y": 82
+    },
+    {
+      "width": 390,
+      "state": "reconnecting",
+      "overflow": 0,
+      "x": 16,
+      "y": 82
+    },
+    {
+      "width": 390,
+      "state": "ended",
+      "overflow": 0,
+      "x": 16,
+      "y": 82
+    },
+    {
+      "width": 390,
+      "state": "error",
+      "overflow": 0,
+      "x": 16,
+      "y": 82
+    },
+    {
+      "width": 320,
+      "state": "waiting",
+      "overflow": 0,
+      "x": 16,
+      "y": 82
+    },
+    {
+      "width": 320,
+      "state": "connecting",
+      "overflow": 0,
+      "x": 16,
+      "y": 82
+    },
+    {
+      "width": 320,
+      "state": "live",
+      "overflow": 0,
+      "x": 16,
+      "y": 82
+    },
+    {
+      "width": 320,
+      "state": "reconnecting",
+      "overflow": 0,
+      "x": 16,
+      "y": 82
+    },
+    {
+      "width": 320,
+      "state": "ended",
+      "overflow": 0,
+      "x": 16,
+      "y": 82
+    },
+    {
+      "width": 320,
+      "state": "error",
+      "overflow": 0,
+      "x": 16,
+      "y": 82
+    }
+  ],
+  "errors": []
+}

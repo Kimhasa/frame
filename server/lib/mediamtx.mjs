@@ -36,7 +36,8 @@ export class MediaMtx {
     if (res.statusCode !== 200) throw new Error(`MediaMTX API ${res.statusCode}`);
     return JSON.parse(body.toString('utf8'));
   }
-  // Map of path name -> { ready, readyMs, tracks, width, height, sourceType, readers, webrtcReaders, inboundBytes, mbps }.
+  // Map of path name -> { ready, readyMs, tracks, width, height, videoProps, sourceType, readers, webrtcReaders, inboundBytes, mbps,
+  // avgMbps }. avgMbps: the average inbound rate since the path became ready (after 10 s), for HLS AVERAGE-BANDWIDTH.
   // When the API failed on the last refresh this is the last good list (this.stale) for up to cfg.staleMs.
   async list() {
     if (Date.now() - this.at < 1000) return this.paths;
@@ -64,11 +65,12 @@ export class MediaMtx {
           mbps = prev.mbps ? prev.mbps * 0.8 + sample * 0.2 : sample;
         }
         this.rates.set(p.name, { bytes: bytesIn, at: now, mbps });
-        const readers = p.readers || [];
+        const readers = p.readers || [], readyMs = Date.parse(p.readyTime || p.availableTime || '') || 0;
         next.set(p.name, {
-          ready: !!(p.ready ?? p.available), readyMs: Date.parse(p.readyTime || p.availableTime || '') || 0,
-          tracks: p.tracks || (p.tracks2 || []).map(t => t.codec), width: video?.codecProps?.width || 0, height: video?.codecProps?.height || 0,
-          sourceType: p.source?.type || '', readers: readers.length, webrtcReaders: readers.filter(r => /webrtc/i.test(r.type)).length, inboundBytes: bytesIn, mbps
+          ready: !!(p.ready ?? p.available), readyMs,
+          tracks: p.tracks || (p.tracks2 || []).map(t => t.codec), width: video?.codecProps?.width || 0, height: video?.codecProps?.height || 0, videoProps: video?.codecProps || null,
+          sourceType: p.source?.type || '', readers: readers.length, webrtcReaders: readers.filter(r => /webrtc/i.test(r.type)).length, inboundBytes: bytesIn, mbps,
+          avgMbps: readyMs && now - readyMs >= 10000 && bytesIn > 0 ? bytesIn * 8 / ((now - readyMs) / 1000) / 1e6 : 0
         });
       }
       for (const name of this.rates.keys()) if (!next.has(name)) this.rates.delete(name);

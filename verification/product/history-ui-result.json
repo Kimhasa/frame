@@ -1,0 +1,108 @@
+{
+  "origin": "http://127.0.0.1:5365",
+  "verificationDatabaseOnly": true,
+  "metadataFixtures": true,
+  "realPlaybackProof": "separate history playback verification",
+  "faultInjection": [
+    "History GET 503",
+    "Cursor GET 503",
+    "Individual delete 503",
+    "Selected delete 503",
+    "Delayed clear and 503"
+  ],
+  "results": [
+    {
+      "name": "Dedicated account receives 53 explicit metadata fixtures",
+      "pass": true
+    },
+    {
+      "name": "List 503 is an error instead of a false empty state",
+      "pass": true
+    },
+    {
+      "name": "First page shows the newest 50 stored records",
+      "pass": true
+    },
+    {
+      "name": "Pagination failure preserves the existing page",
+      "pass": true
+    },
+    {
+      "name": "Pagination retry appends the final three without duplicates",
+      "pass": true
+    },
+    {
+      "name": "Server search finds a record outside the first loaded page",
+      "pass": true
+    },
+    {
+      "name": "Unsupported recording kinds truthfully have no history",
+      "pass": true
+    },
+    {
+      "name": "Preview empty-state query cannot override stored data",
+      "pass": true
+    },
+    {
+      "name": "Ended broadcast keeps its title and has no misleading replay link",
+      "pass": true
+    },
+    {
+      "name": "Failed individual delete preserves its row",
+      "pass": true
+    },
+    {
+      "name": "Individual deletion appears only after server success",
+      "pass": true
+    },
+    {
+      "name": "Individual deletion survives reload",
+      "pass": true
+    },
+    {
+      "name": "Selection uses the custom checkbox and keeps the selected count",
+      "pass": true
+    },
+    {
+      "name": "History selection fits the mobile viewport",
+      "pass": true
+    },
+    {
+      "name": "Failed selected delete keeps the dialog, selection and rows",
+      "pass": true
+    },
+    {
+      "name": "Selected delete removes only the confirmed records",
+      "pass": true
+    },
+    {
+      "name": "Clear-all setup includes unloaded records",
+      "pass": true
+    },
+    {
+      "name": "Clear confirmation explains account-wide deletion",
+      "pass": true
+    },
+    {
+      "name": "Pending clear locks the dialog and prevents duplicate submission",
+      "pass": true
+    },
+    {
+      "name": "Clear failure preserves records and confirmation",
+      "pass": true
+    },
+    {
+      "name": "Real hard deletion has no fabricated undo action",
+      "pass": true
+    },
+    {
+      "name": "Account-wide clear deletes unloaded records and survives reload",
+      "pass": true
+    },
+    {
+      "name": "No browser runtime or interception errors",
+      "pass": true
+    }
+  ],
+  "runtimeErrors": []
+}

@@ -1,0 +1,105 @@
+{
+  "what": "React watch page behind Caddy (https-check.mjs --quality-repeats 12): seconds the video advanced in the 3 s after each switch to 480p; \"stalled\" = 1.5 s or less (the H4a criterion)",
+  "date": "2026-11-10",
+  "host": "one Windows PC, loopback/tailnet, shared with other programs (the 480p encoder, Edge and the game run on it)",
+  "totals": {
+    "spring": {
+      "switches": 26,
+      "stalled": 3,
+      "borderlineUnder2s": 0
+    },
+    "node": {
+      "switches": 26,
+      "stalled": 1,
+      "borderlineUnder2s": 2
+    }
+  },
+  "relayTiming": "Caddy access log of the same sessions: in every switch, stalled ones included, the 480p playlist and first media requests were answered within about 10-20 ms by either backend (non-blocking requests, first 3 s of each switch). The stalls are therefore not relay response delays.",
+  "conclusion": "An intermittent stall right after a quality switch exists with both backends; the sample is too small to tell the backends apart. Cause not identified (player level switch / encoder timing on a loaded PC).",
+  "runs": [
+    {
+      "backend": "spring",
+      "round": 1,
+      "checksPassed": 18,
+      "checksFailed": 0,
+      "firstSwitchAdvancedS": 3.23,
+      "repeatsAdvancedS": [
+        3.01,
+        3.01,
+        3.11,
+        1.4,
+        3.09,
+        3,
+        1.02,
+        3.01,
+        3.08,
+        3.02,
+        3.01,
+        3.01
+      ]
+    },
+    {
+      "backend": "node",
+      "round": 1,
+      "checksPassed": 18,
+      "checksFailed": 0,
+      "firstSwitchAdvancedS": 1.84,
+      "repeatsAdvancedS": [
+        3.31,
+        3.25,
+        3.09,
+        3.18,
+        3.29,
+        3.03,
+        3,
+        1.17,
+        3.01,
+        3.01,
+        3,
+        3
+      ]
+    },
+    {
+      "backend": "spring",
+      "round": 2,
+      "checksPassed": 18,
+      "checksFailed": 0,
+      "firstSwitchAdvancedS": 3.12,
+      "repeatsAdvancedS": [
+        0.88,
+        3.3,
+        3.17,
+        3.13,
+        3.01,
+        3.01,
+        3.02,
+        2.38,
+        3,
+        2.96,
+        3,
+        3.01
+      ]
+    },
+    {
+      "backend": "node",
+      "round": 2,
+      "checksPassed": 18,
+      "checksFailed": 0,
+      "firstSwitchAdvancedS": 1.85,
+      "repeatsAdvancedS": [
+        3.32,
+        3.12,
+        3.15,
+        3.01,
+        3.02,
+        2.99,
+        2.98,
+        2.99,
+        3.01,
+        3.01,
+        2.99,
+        3.01
+      ]
+    }
+  ]
+}

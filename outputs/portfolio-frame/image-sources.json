@@ -1,0 +1,32 @@
+[
+  {
+    "name": "coding-desk",
+    "file": "coding-desk.jpg",
+    "source": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&w=1280&q=85"
+  },
+  {
+    "name": "study-laptop",
+    "file": "study-laptop.jpg",
+    "source": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&w=1280&q=85"
+  },
+  {
+    "name": "gaming-desk",
+    "file": "gaming-desk.jpg",
+    "source": "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&w=1280&q=85"
+  },
+  {
+    "name": "retro-arcade",
+    "file": "retro-arcade.jpg",
+    "source": "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&w=1280&q=85"
+  },
+  {
+    "name": "art-table",
+    "file": "art-table.jpg",
+    "source": "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&w=1280&q=85"
+  },
+  {
+    "name": "landscape",
+    "file": "landscape.jpg",
+    "source": "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&w=1280&q=85"
+  }
+]

@@ -1,0 +1,16 @@
+{
+  "DateKst": "2026-11-12",
+  "DockerDesktopVersion": "4.99.0",
+  "InstallerSha256": "a5e299131c9c53d60f3f752b162078945eb5faf6eedcf0be20a214c6e6cea444",
+  "AuthenticodePublisher": "Docker Inc",
+  "InstallerExitCode": 0,
+  "WslVersion": "3.0.5",
+  "WslUpgradeExitCode": 0,
+  "DockerCliVersion": "29.9.3",
+  "ComposeVersion": "5.7.0",
+  "RestartRequired": true,
+  "AutomaticRestartPerformed": false,
+  "EngineStarted": false,
+  "ContainerVerificationCompleted": false,
+  "ExistingDatabasesPreserved": true
+}

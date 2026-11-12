@@ -1,0 +1,36 @@
+/* The share overlay alone; no player, preview or quality selectors are changed. */
+.product-dialog.v43-share{width:min(520px,calc(100vw - 40px));max-width:520px;border-radius:15px}
+.v43-share [hidden]{display:none!important}
+.v43-share .modal-head{padding:20px 24px 15px}
+.v43-share .modal-head>h2{font-size:21px;line-height:1.4}
+.v43-share .modal-head>button{width:44px;height:44px;min-height:44px;padding:12px}
+.v43-share .modal-body{padding:6px 24px 26px}
+.v43-share .v31-share-summary{margin-bottom:22px;align-items:center}
+.v43-share .v31-share-summary strong{font-size:16px;line-height:1.55;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;overflow-wrap:anywhere}
+.v43-share .v31-share-summary p{font-size:14px;line-height:1.5;color:#64746b;margin-top:4px}
+.v43-share .share-url{display:flex;gap:9px;align-items:center}
+.v43-share .share-url input{width:100%;min-width:0;min-height:46px;height:46px;font-size:14px;padding:11px 13px;border:1px solid #dce5df;background:#f7faf8;border-radius:9px;color:#35483b;text-overflow:ellipsis}
+.v43-share .share-url input:focus{border-color:#6d9f81;outline:0;box-shadow:0 0 0 3px #2e865613}
+.v43-share .v43-share-copy{position:relative;flex:none;min-width:91px;min-height:46px;height:46px;gap:7px;padding:10px 13px;font-size:14px;white-space:nowrap}
+.v43-share .v43-share-copy>svg{width:17px;height:17px;flex:none}
+.v43-share .v43-share-copy[aria-busy=true]>svg{opacity:0}
+.v43-share .v43-share-copy[aria-busy=true]::before{content:"";position:absolute;left:14px;width:15px;height:15px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:v43-share-spin .7s linear infinite}
+.v43-share-time{display:flex;align-items:center;gap:10px;margin-top:13px;min-height:44px;font-size:14px;color:#475d50;cursor:pointer}
+.v43-share-time input{width:18px;height:18px;min-height:0;margin:0;accent-color:#27855b;flex:none}
+.v43-share-time span{min-width:0;line-height:1.5}
+.v43-share-time time{margin-left:auto;font-size:13px;font-variant-numeric:tabular-nums;flex:none;color:#65796d}
+.v43-share-error{margin-top:14px;padding:12px 13px;border-radius:9px;background:#fbf4f2}
+.v43-share-error p{font-size:13px;line-height:1.65;color:#a15342;margin:0}
+.v43-share-error>button{min-height:44px;margin:4px 0 -5px -7px;color:#874b3c;font-size:13px}
+@keyframes v43-share-spin{to{transform:rotate(360deg)}}
+body[data-v39-mobile=true] .v43-share.v39-mobile-sheet{width:var(--v39-width)!important;max-width:none!important;max-height:min(76dvh,var(--v39-height))!important;border-radius:20px 20px 0 0!important}
+body[data-v39-mobile=true] .v43-share .modal-head{padding:17px 18px 9px}
+body[data-v39-mobile=true] .v43-share .modal-head>h2{font-size:20px}
+body[data-v39-mobile=true] .v43-share .modal-body{padding:7px 18px max(24px,env(safe-area-inset-bottom))}
+body[data-v39-mobile=true] .v43-share .v31-share-summary{gap:11px;margin-bottom:21px}
+body[data-v39-mobile=true] .v43-share .v31-share-summary strong{font-size:16px}
+body[data-v39-mobile=true] .v43-share .share-url input{font-size:16px;min-height:48px;height:48px;padding-inline:11px}
+body[data-v39-mobile=true] .v43-share .v43-share-copy{min-width:86px;min-height:48px;height:48px;font-size:14px;padding-inline:11px}
+body[data-v39-mobile=true] .v43-share-time{font-size:14px}
+body[data-v39-mobile=true] .v43-share-time time{font-size:13px}
+@media(prefers-reduced-motion:reduce){.v43-share .v43-share-copy[aria-busy=true]::before{animation:none}}

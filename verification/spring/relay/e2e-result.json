@@ -1,0 +1,2959 @@
+{
+  "startedAt": "2026-11-11T07:10:37.974Z",
+  "host": {
+    "logicalCpus": 16,
+    "cpuLoadPct": {
+      "samples": 25,
+      "min": 17,
+      "avg": 29,
+      "max": 44
+    }
+  },
+  "tools": {
+    "node": "v24.22.1",
+    "mediamtx": "v1.21.3",
+    "ffmpeg": "ffmpeg version 9.0.2-essentials_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers",
+    "edge": "157.0.4341.42"
+  },
+  "ports": {
+    "rtsp": 24554,
+    "rtsps": 24322,
+    "rtp": 24000,
+    "rtcp": 24001,
+    "webrtc": 24889,
+    "ice": 24189,
+    "hls": 24888,
+    "api": 24997,
+    "playback": 24996,
+    "metrics": 24998,
+    "relay": 24080,
+    "relayLimits": 24081,
+    "apiProxy": 24990,
+    "tls": 24443,
+    "edge": 24222,
+    "senderRtsp": 24654,
+    "senderApi": 24697
+  },
+  "checks": [
+    {
+      "name": "mediamtx starts with deploy yml",
+      "ok": true,
+      "log": [
+        "2026/11/11 16:10:39 INF MediaMTX v1.21.3, windows, amd64",
+        "2026/11/11 16:10:39 INF configuration loaded from <home>\\AppData\\Local\\Temp\\frame-relay-e2e-1794381037973\\mediamtx\\mediamtx.yml",
+        "2026/11/11 16:10:39 INF [metrics] started with listener on 127.0.0.1:24998 (TCP/HTTP)"
+      ]
+    },
+    {
+      "name": "relay /healthz ok",
+      "ok": true
+    },
+    {
+      "name": "publisher refuses an untrusted relay certificate",
+      "ok": true,
+      "code": 4294967291,
+      "refused": true,
+      "reason": "[tls @ 0000016cb93aa380] Peer certificate failed verification"
+    },
+    {
+      "name": "publish without credentials refused",
+      "ok": true,
+      "code": 3469724424,
+      "refused": true,
+      "reason": "[rtsp @ 000001bca3412b40] method ANNOUNCE failed: 401 (Unauthorized)"
+    },
+    {
+      "name": "publish with wrong password refused",
+      "ok": true,
+      "code": 3469724424,
+      "refused": true,
+      "reason": "[rtsp @ 000001e54dc42580] method ANNOUNCE failed: 401 (Unauthorized)"
+    },
+    {
+      "name": "anonymous loopback publish to source path refused",
+      "ok": true,
+      "code": 3469724424,
+      "refused": true,
+      "reason": "[rtsp @ 0000017a8c943480] method ANNOUNCE failed: 401 (Unauthorized)"
+    },
+    {
+      "name": "per-sender accounts: a sender cannot publish another sender's path",
+      "ok": true,
+      "bOnA": {
+        "code": 3469724424,
+        "refused": true,
+        "reason": "[rtsp @ 000001930f2e1c00] method ANNOUNCE failed: 401 (Unauthorized)"
+      },
+      "aOnB": {
+        "code": 3469724424,
+        "refused": true,
+        "reason": "[rtsp @ 0000021066b25300] method ANNOUNCE failed: 401 (Unauthorized)"
+      }
+    },
+    {
+      "name": "sender B publishes its own path over RTSPS",
+      "ok": true,
+      "source": "rtspsSession",
+      "tracks2": [
+        "H264",
+        "Opus"
+      ]
+    },
+    {
+      "name": "older sender without AAC: live.m3u8 uses the relay AAC transcode (aac/), original quality only",
+      "ok": true,
+      "announce": 204,
+      "hls": {
+        "master": "live.m3u8",
+        "lowLatency": true,
+        "audio": "aac",
+        "dvr": "dvr.m3u8",
+        "scope": "b/2ecd73e69d9b1962874ad97b8aec55b5/"
+      },
+      "master": [
+        "#EXTM3U",
+        "#EXT-X-VERSION:9",
+        "#EXT-X-INDEPENDENT-SEGMENTS",
+        "#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID=\"aac-source\",NAME=\"audio\",DEFAULT=YES,AUTOSELECT=YES,CHANNELS=\"2\",URI=\"aac/hls/audio2_stream.m3u8\"",
+        "#EXT-X-STREAM-INF:BANDWIDTH=8128000,AVERAGE-BANDWIDTH=8128000,RESOLUTION=1280x720,FRAME-RATE=30.000,CODECS=\"avc1.64001f,mp4a.40.2\",AUDIO=\"aac-source\""
+      ],
+      "audio": {
+        "status": 200,
+        "firstMs": 1296,
+        "probe": {
+          "programs": [],
+          "stream_groups": [],
+          "streams": [
+            {
+              "codec_name": "aac",
+              "profile": "LC",
+              "sample_rate": "48000",
+              "channels": 2,
+              "r_frame_rate": "0/0"
+            }
+          ],
+          "format": {
+            "duration": "11.130667"
+          }
+        }
+      },
+      "setCookie": []
+    },
+    {
+      "name": "forwarder with wrong password: relay refuses, local stream unaffected, app retries",
+      "ok": true,
+      "relayReady": false,
+      "localReady": true,
+      "publisherRunning": true,
+      "attempts": 2,
+      "lastError": "[out#0/rtsp @ 000001fe3be53f40] Could not write header (incorrect codec parameters ?): Server returned 401 Unauthorized (authorization failed)"
+    },
+    {
+      "name": "app-style FFmpeg forwarder (copy, RTSPS, -ca_file) reaches the relay",
+      "ok": true,
+      "readyAfterMs": 1744,
+      "source": "rtspsSession",
+      "tracks2": [
+        "H264",
+        "Opus",
+        "MPEG-4 Audio"
+      ],
+      "attempts": 1
+    },
+    {
+      "name": "publish passwords never appear in MediaMTX logs",
+      "ok": true
+    },
+    {
+      "name": "second publisher on a live path refused (same account)",
+      "ok": true,
+      "code": 3199971767,
+      "refused": true,
+      "reason": "",
+      "mediamtx": "2026/11/11 16:11:00 INF [RTSPS] [conn 127.0.0.1:54592] closed: someone is already publishing to path 'screen-01'"
+    },
+    {
+      "name": "announce without token -> 401",
+      "ok": true,
+      "status": 401,
+      "wwwAuthenticate": "Bearer realm=\"frame-relay\""
+    },
+    {
+      "name": "announce with wrong token -> 401",
+      "ok": true,
+      "status": 401
+    },
+    {
+      "name": "announce with invalid item -> 400",
+      "ok": true,
+      "status": 400,
+      "body": "invalid title"
+    },
+    {
+      "name": "announce with token -> 204, media ready",
+      "ok": true,
+      "status": 204,
+      "mediaReady": "1"
+    },
+    {
+      "name": "path ownership: a token may only announce its own path(s)",
+      "ok": true,
+      "tokenBOnA": {
+        "status": 403,
+        "body": "path not assigned to this publisher token"
+      },
+      "tokenAOnB": {
+        "status": 403,
+        "body": "path not assigned to this publisher token"
+      }
+    },
+    {
+      "name": "bye with other token -> 403",
+      "ok": true,
+      "status": 403
+    },
+    {
+      "name": "invalid optional field dropped, not refused",
+      "ok": true,
+      "status": 204,
+      "ignored": "audio"
+    },
+    {
+      "name": "thumbnail without token -> 401",
+      "ok": true,
+      "status": 401
+    },
+    {
+      "name": "thumbnail > 256 KB -> 413",
+      "ok": true,
+      "status": 413
+    },
+    {
+      "name": "thumbnail wrong type -> 415",
+      "ok": true,
+      "status": 415
+    },
+    {
+      "name": "thumbnail with other token -> 403",
+      "ok": true,
+      "status": 403
+    },
+    {
+      "name": "thumbnail upload -> 204",
+      "ok": true,
+      "status": 204,
+      "bytes": 9968
+    },
+    {
+      "name": "thumbnail served",
+      "ok": true,
+      "status": 200,
+      "type": "image/jpeg",
+      "cache": "max-age=4",
+      "bytes": 9968
+    },
+    {
+      "name": "list contains broadcast with relay baseUrl",
+      "ok": true,
+      "item": {
+        "id": "15a13788f1a9ade7fe2ea682f564ba61",
+        "title": "중계 검증 방송",
+        "publisher": "RELAY-TEST",
+        "baseUrl": "http://127.0.0.1:24080",
+        "path": "screen-01",
+        "thumbnailUrl": "http://127.0.0.1:24080/thumbnails/15a13788f1a9ade7fe2ea682f564ba61.jpg",
+        "width": 1280,
+        "height": 720,
+        "fps": 30,
+        "running": true,
+        "startedAtMs": 1794381057219
+      }
+    },
+    {
+      "name": "info running, mediaReady, TURN credentials",
+      "ok": true,
+      "info": {
+        "running": true,
+        "mediaReady": true,
+        "path": "screen-01",
+        "width": 1280,
+        "height": 720,
+        "fps": 30,
+        "bitrate": 3,
+        "audio": "system",
+        "codec": "H.264",
+        "elapsedMs": 3166,
+        "startedAtMs": 1794381057219,
+        "broadcastId": "15a13788f1a9ade7fe2ea682f564ba61",
+        "dvr": true,
+        "title": "중계 검증 방송",
+        "publisher": "RELAY-TEST",
+        "renditions": [
+          {
+            "name": "480p",
+            "width": 854,
+            "height": 480,
+            "mbps": 1.8,
+            "fps": 30,
+            "codec": "H.264"
+          }
+        ],
+        "hls": {
+          "master": "live.m3u8",
+          "lowLatency": true,
+          "audio": "aac",
+          "dvr": "dvr.m3u8",
+          "scope": "b/15a13788f1a9ade7fe2ea682f564ba61/"
+        },
+        "hlsVariants": {
+          "opus": "hls/index.m3u8",
+          "aac": "aac/hls/index.m3u8"
+        },
+        "iceServers": [
+          {
+            "urls": [
+              "turn:turn.example.invalid:3478?transport=udp"
+            ],
+            "username": "1794381660:frame",
+            "credential": "(hmac)"
+          }
+        ]
+      }
+    },
+    {
+      "name": "info renditions carry name,width,height,mbps,fps,codec (relay encoder: 854x480)",
+      "ok": true,
+      "renditions": [
+        {
+          "name": "480p",
+          "width": 854,
+          "height": 480,
+          "mbps": 1.8,
+          "fps": 30,
+          "codec": "H.264"
+        }
+      ]
+    },
+    {
+      "name": "info advertises HLS (live.m3u8, AAC, dvr.m3u8)",
+      "ok": true,
+      "hls": {
+        "master": "live.m3u8",
+        "lowLatency": true,
+        "audio": "aac",
+        "dvr": "dvr.m3u8",
+        "scope": "b/15a13788f1a9ade7fe2ea682f564ba61/"
+      },
+      "hlsVariants": {
+        "opus": "hls/index.m3u8",
+        "aac": "aac/hls/index.m3u8"
+      }
+    },
+    {
+      "name": "sentAtMs corrects a sender clock 60 s ahead",
+      "ok": true,
+      "elapsedMs": 3166,
+      "startedAtMs": 1794381057219,
+      "senderStartedAtMs": 1794381117216,
+      "skewMs": 60000
+    },
+    {
+      "name": "info for unknown path -> running:false",
+      "ok": true,
+      "running": false,
+      "path": "nothing"
+    },
+    {
+      "name": "not exposed: GET /v3/paths/list",
+      "ok": true,
+      "status": 404
+    },
+    {
+      "name": "not exposed: GET /v3/config/global/get",
+      "ok": true,
+      "status": 404
+    },
+    {
+      "name": "not exposed: POST /screen-01/whip",
+      "ok": true,
+      "status": 404
+    },
+    {
+      "name": "not exposed: GET /list?path=screen-01",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "not exposed: GET /screen-01/dvr/../../v3/paths/list",
+      "ok": true,
+      "status": 404
+    },
+    {
+      "name": "stats beacon: 204, 1 per 4 s per page (429), JSON or text/plain, <= 2 KB, 415/404/400",
+      "ok": true,
+      "first": 204,
+      "sameSessionWithin4s": 429,
+      "retryAfter": "4",
+      "json": 204,
+      "over2KB": 413,
+      "wrongType": 415,
+      "unknownPath": 404,
+      "noSid": 400
+    },
+    {
+      "name": "stats CSV: daily file, exact columns, no IP address, formula text neutralised",
+      "ok": true,
+      "file": "stats-2026-11-11.csv",
+      "header": "time,path,session,broadcast,transport,mode,quality,height,fps,loss_pct,jitter_ms,freezes,mbps,abr_switches,last_switch,event,device",
+      "rows": 2,
+      "containsLoopbackAddress": false,
+      "sample": {
+        "time": "2026-11-11T07:11:00.422Z",
+        "path": "screen-01",
+        "session": "e2e1",
+        "broadcast": "15a13788f1a9ade7fe2ea682f564ba61",
+        "transport": "webrtc",
+        "mode": "auto",
+        "quality": "720p",
+        "height": "720",
+        "fps": "29.9",
+        "loss_pct": "0.12",
+        "jitter_ms": "14",
+        "freezes": "0",
+        "mbps": "2.9",
+        "abr_switches": "1",
+        "last_switch": "720p>480p loss, \"x\"",
+        "event": "'=HYPERLINK(\"x\")",
+        "device": "desktop"
+      }
+    },
+    {
+      "name": "DVR index has the current broadcast",
+      "ok": true,
+      "ranges": [
+        {
+          "startMs": 1794381061062,
+          "endMs": 1794381066958.4
+        }
+      ],
+      "segments": 1,
+      "behindMs": -476.39990234375
+    },
+    {
+      "name": "DVR chunk is playable fMP4 (H.264 + AAC, recorded from <path>/rec)",
+      "ok": true,
+      "status": 200,
+      "te": "chunked",
+      "bytes": 1223285,
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "profile": "High",
+            "width": 1280,
+            "height": 720,
+            "r_frame_rate": "30/1"
+          },
+          {
+            "codec_name": "aac",
+            "profile": "LC",
+            "sample_rate": "48000",
+            "channels": 2,
+            "r_frame_rate": "0/0"
+          }
+        ],
+        "format": {
+          "duration": "3.036860"
+        }
+      }
+    },
+    {
+      "name": "DVR chunk for another broadcast id -> 409",
+      "ok": true,
+      "status": 409,
+      "body": {
+        "error": "broadcast-changed"
+      }
+    },
+    {
+      "name": "DVR chunk before this broadcast -> 404",
+      "ok": true,
+      "status": 404,
+      "body": {
+        "error": "no-data"
+      }
+    },
+    {
+      "name": "DVR chunk too long -> 400",
+      "ok": true,
+      "status": 400
+    },
+    {
+      "name": "DVR chunk past live edge -> 404 no-data",
+      "ok": true,
+      "status": 404,
+      "body": {
+        "error": "no-data"
+      }
+    },
+    {
+      "name": "live.m3u8: source + 480p, AAC group each, real CODECS, AVERAGE-BANDWIDTH, max-age=2, same bytes for all",
+      "ok": true,
+      "status": 200,
+      "ms": 3,
+      "type": "application/vnd.apple.mpegurl",
+      "cache": "max-age=2",
+      "sameForTwoViewers": true,
+      "streamInf": [
+        "#EXT-X-STREAM-INF:BANDWIDTH=3128000,AVERAGE-BANDWIDTH=3128000,RESOLUTION=1280x720,FRAME-RATE=30.000,CODECS=\"avc1.64001f,mp4a.40.2\",AUDIO=\"aac-source\"",
+        "#EXT-X-STREAM-INF:BANDWIDTH=1928000,AVERAGE-BANDWIDTH=1928000,RESOLUTION=854x480,FRAME-RATE=30.000,CODECS=\"avc1.64001f,mp4a.40.2\",AUDIO=\"aac-480p\""
+      ],
+      "media": [
+        "#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID=\"aac-source\",NAME=\"audio\",DEFAULT=YES,AUTOSELECT=YES,CHANNELS=\"2\",URI=\"src/hls/audio3_stream.m3u8\"",
+        "#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID=\"aac-480p\",NAME=\"audio\",DEFAULT=YES,AUTOSELECT=YES,CHANNELS=\"2\",URI=\"480p/hls/audio3_stream.m3u8\""
+      ]
+    },
+    {
+      "name": "live.m3u8?q=480p lists that quality only",
+      "ok": true,
+      "status": 200,
+      "uris": [
+        "480p/hls/video1_stream.m3u8"
+      ]
+    },
+    {
+      "name": "HLS media playlists load directly: no cookie, no MediaMTX session, max-age=1, parts/init public max-age=60",
+      "ok": true,
+      "video": {
+        "status": 200,
+        "firstMs": 1545,
+        "cache": "max-age=1",
+        "sessionInBody": false,
+        "partInf": "0.20000",
+        "mediaCache": [
+          "public, max-age=60",
+          "public, max-age=60"
+        ],
+        "probe": {
+          "programs": [],
+          "stream_groups": [],
+          "streams": [
+            {
+              "codec_name": "h264",
+              "profile": "High",
+              "width": 1280,
+              "height": 720,
+              "r_frame_rate": "30/1"
+            }
+          ],
+          "format": {
+            "duration": "17.579811"
+          }
+        },
+        "sameForSecondViewer": true
+      },
+      "audio": {
+        "status": 200,
+        "firstMs": 5,
+        "cache": "max-age=1",
+        "sessionInBody": false,
+        "partInf": "0.20000",
+        "mediaCache": [
+          "public, max-age=60",
+          "public, max-age=60"
+        ],
+        "probe": {
+          "programs": [],
+          "stream_groups": [],
+          "streams": [
+            {
+              "codec_name": "aac",
+              "profile": "LC",
+              "sample_rate": "48000",
+              "channels": 2,
+              "r_frame_rate": "0/0"
+            }
+          ],
+          "format": {
+            "duration": "17.566667"
+          }
+        }
+      }
+    },
+    {
+      "name": "LL-HLS blocking reload (_HLS_msn/_HLS_part) answered when the part exists",
+      "ok": true,
+      "msn": 9,
+      "status": 200,
+      "waitMs": 1078,
+      "cache": "max-age=1",
+      "hasNext": true
+    },
+    {
+      "name": "HLS source copy and 480p share one timeline (nearest PROGRAM-DATE-TIME within 40 ms)",
+      "ok": true,
+      "sourceMediaSequence": 2,
+      "renditionMediaSequence": 2,
+      "sourcePdtMs": [
+        7091,
+        8091
+      ],
+      "renditionPdtMs": [
+        7091,
+        8091
+      ],
+      "nearestOffsetMs": 0
+    },
+    {
+      "name": "HLS 480p playlist loads directly (on-demand encoder), 854x480 + AAC",
+      "ok": true,
+      "status": 200,
+      "firstMs": 7,
+      "cache": "max-age=1",
+      "sessionInBody": false,
+      "partInf": "0.20100",
+      "mediaCache": [
+        "public, max-age=60",
+        "public, max-age=60"
+      ],
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "profile": "High",
+            "width": 854,
+            "height": 480,
+            "r_frame_rate": "30/1"
+          }
+        ],
+        "format": {
+          "duration": "18.579822"
+        }
+      },
+      "audioStatus": 200
+    },
+    {
+      "name": "no Set-Cookie on any HLS response; MediaMTX cookie check answered by the relay",
+      "ok": true,
+      "setCookieOn": [],
+      "legacyIndex": {
+        "status": 200,
+        "cache": "max-age=1"
+      }
+    },
+    {
+      "name": "viewer session: POST 200 {sid, heartbeatMs 15000}, PUT 204, DELETE 204, then 404; counted in /healthz",
+      "ok": true,
+      "post": 200,
+      "cache": "no-store",
+      "sidOk": true,
+      "heartbeatMs": 15000,
+      "put": 204,
+      "sessionsWhileOpen": 1,
+      "delete": 204,
+      "putAfterDelete": 404,
+      "sessionsAfter": 0,
+      "unknownPath": 404,
+      "get": 405
+    },
+    {
+      "name": "dvr.m3u8: EVENT, EXT-X-MAP byte range, ~4 s keyframe segments with PROGRAM-DATE-TIME, file id = its recording start, no-cache",
+      "ok": true,
+      "cache": "no-cache",
+      "event": true,
+      "segments": 2,
+      "map": "#EXT-X-MAP:URI=\"dvr/file.mp4?id=15a13788f1a9ade7fe2ea682f564ba61&f=1794381061062\",BYTERANGE=\"1218@0\"",
+      "first": "dvr/file.mp4?id=15a13788f1a9ade7fe2ea682f564ba61&f=1794381061062&s=0",
+      "firstFile": "2026-11-11_16-11-01-062720+0900.mp4",
+      "pdt": "2026-11-11T07:11:01.062Z",
+      "extinf": [
+        3.9964,
+        4
+      ]
+    },
+    {
+      "name": "dvr/file Range: 206 + Content-Range equal to the recording, 416 past the listed bytes, suffix range",
+      "ok": true,
+      "init": {
+        "status": 206,
+        "contentRange": "bytes 0-1217/*",
+        "acceptRanges": "bytes",
+        "equalsDisk": true,
+        "cache": "no-cache"
+      },
+      "middle": {
+        "status": 206,
+        "equalsDisk": true
+      },
+      "outside": {
+        "status": 416,
+        "contentRange": "bytes */3896295"
+      },
+      "suffix": {
+        "status": 206,
+        "bytes": 500,
+        "equalsDisk": true
+      },
+      "listedBytes": 3896295,
+      "fileOnDisk": 4288426
+    },
+    {
+      "name": "dvr segment (cut at a keyframe from the parts): init + segment = H.264 + AAC, frames = EXTINF x 30 fps, max-age=3600",
+      "ok": true,
+      "status": 200,
+      "bytes": 1580251,
+      "cache": "public, max-age=3600",
+      "extinf": 4,
+      "decodedFrames": 120,
+      "expectedFrames": 120,
+      "decodeErrors": [],
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "profile": "High",
+            "width": 1280,
+            "height": 720,
+            "r_frame_rate": "30/1"
+          },
+          {
+            "codec_name": "aac",
+            "profile": "LC",
+            "sample_rate": "48000",
+            "channels": 2,
+            "r_frame_rate": "0/0"
+          }
+        ],
+        "format": {
+          "duration": "8.014225"
+        }
+      }
+    },
+    {
+      "name": "dvr/file errors: other broadcast 409, unknown file 404, bad query 400, unknown segment 404",
+      "ok": true,
+      "otherBroadcast": 409,
+      "noSuchFile": 404,
+      "badFile": 400,
+      "noSuchSegment": 404
+    },
+    {
+      "name": "FFmpeg plays dvr.m3u8 from its start: 6 s decoded without errors",
+      "ok": true,
+      "exit": 0,
+      "frames": 180,
+      "errors": []
+    },
+    {
+      "name": "info hls.scope is b/<broadcastId>/ (relative to /<path>/)",
+      "ok": true,
+      "hls": {
+        "master": "live.m3u8",
+        "lowLatency": true,
+        "audio": "aac",
+        "dvr": "dvr.m3u8",
+        "scope": "b/15a13788f1a9ade7fe2ea682f564ba61/"
+      }
+    },
+    {
+      "name": "scoped live.m3u8: 200, max-age=2, the path route's variants, every URI resolves under /<path>/b/<id>/, ?q=480p",
+      "ok": true,
+      "status": 200,
+      "cache": "max-age=2",
+      "uris": [
+        "src/hls/video1_stream.m3u8",
+        "480p/hls/video1_stream.m3u8",
+        "src/hls/audio3_stream.m3u8",
+        "480p/hls/audio3_stream.m3u8"
+      ],
+      "sameVariantsAsPathRoute": true,
+      "allUnderPrefix": true,
+      "single480p": true
+    },
+    {
+      "name": "scoped HLS: media playlist max-age=1, init/segment/part public max-age=60 (H.264 720p), HEAD 200, audio 200, all under the prefix",
+      "ok": true,
+      "status": 200,
+      "cache": "max-age=1",
+      "mediaCache": [
+        "public, max-age=60",
+        "public, max-age=60"
+      ],
+      "sessionInBody": false,
+      "allUnderPrefix": true,
+      "part": {
+        "status": 200,
+        "cache": "public, max-age=60",
+        "bytes": 83348
+      },
+      "headSegment": 200,
+      "audio": 200,
+      "probe": [
+        "h264 720p"
+      ]
+    },
+    {
+      "name": "scoped DVR: index of this broadcast, dvr.m3u8 URIs under the prefix, init 206 (= path route bytes), segment 200 max-age=3600, another id query -> 409",
+      "ok": true,
+      "index": {
+        "status": 200,
+        "id": "15a13788f1a9ade7fe2ea682f564ba61",
+        "ranges": 1
+      },
+      "playlist": {
+        "status": 200,
+        "cache": "no-cache",
+        "segments": 2,
+        "allUnderPrefix": true,
+        "onlyThisBroadcast": true
+      },
+      "init": {
+        "status": 206,
+        "sameBytesAsPathRoute": true
+      },
+      "segment": {
+        "status": 200,
+        "cache": "public, max-age=3600",
+        "bytes": 1580251
+      },
+      "otherIdQuery": {
+        "status": 409,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "broadcast-changed",
+        "setCookie": false
+      }
+    },
+    {
+      "name": "scoped session: POST 200 {sid, heartbeatMs}, PUT 204, DELETE 204, then 404; a heartbeat under another id -> 409 and the session is closed",
+      "ok": true,
+      "post": 200,
+      "cache": "no-store",
+      "sidOk": true,
+      "heartbeatMs": 15000,
+      "put": 204,
+      "hlsSessionsWhileOpen": 1,
+      "delete": 204,
+      "putAfterDelete": 404,
+      "putUnderOtherId": {
+        "status": 409,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "broadcast-changed",
+        "setCookie": false
+      },
+      "putAfterOtherId": 404
+    },
+    {
+      "name": "another broadcast id under the prefix -> 409 broadcast-changed, no-store (master, media playlist, part, segment, audio, DVR, session)",
+      "ok": true,
+      "master": {
+        "status": 409,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "broadcast-changed",
+        "setCookie": false
+      },
+      "mediaPlaylist": {
+        "status": 409,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "broadcast-changed",
+        "setCookie": false
+      },
+      "part": {
+        "status": 409,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "broadcast-changed",
+        "setCookie": false
+      },
+      "segment": {
+        "status": 409,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "broadcast-changed",
+        "setCookie": false
+      },
+      "audio": {
+        "status": 409,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "broadcast-changed",
+        "setCookie": false
+      },
+      "dvrIndex": {
+        "status": 409,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "broadcast-changed",
+        "setCookie": false
+      },
+      "dvrPlaylist": {
+        "status": 409,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "broadcast-changed",
+        "setCookie": false
+      },
+      "dvrFile": {
+        "status": 409,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "broadcast-changed",
+        "setCookie": false
+      },
+      "sessionPost": {
+        "status": 409,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "broadcast-changed",
+        "setCookie": false
+      },
+      "segmentHead": {
+        "status": 409,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": null,
+        "setCookie": false
+      }
+    },
+    {
+      "name": "scoped: path without a broadcast -> 404 not-running; info/whep under the prefix -> 404; POST live.m3u8 -> 405",
+      "ok": true,
+      "noBroadcast": {
+        "status": 404,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "not-running",
+        "setCookie": false
+      },
+      "notCarried": {
+        "status": 404,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": null,
+        "setCookie": false
+      },
+      "whepUnderPrefix": {
+        "status": 404,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": null,
+        "setCookie": false
+      },
+      "wrongMethod": {
+        "status": 405,
+        "cache": null,
+        "retryAfter": null,
+        "error": null,
+        "setCookie": false
+      }
+    },
+    {
+      "name": "scoped: no Set-Cookie on any response",
+      "ok": true,
+      "setCookieOn": [],
+      "refusedWithCookie": 0
+    },
+    {
+      "name": "chat: stale broadcast id refused and closed",
+      "ok": true,
+      "connected": false,
+      "error": "방송이 종료되었거나 다른 방송으로 바뀌었습니다.",
+      "closed": true
+    },
+    {
+      "name": "chat: name normalised, same address may share it",
+      "ok": true,
+      "a": "검증 사용자",
+      "b": "검증 사용자",
+      "bError": ""
+    },
+    {
+      "name": "chat: name rules match native",
+      "ok": true,
+      "empty": {
+        "ok": false,
+        "displayName": "검증 사용자",
+        "error": "1~20자의 이름을 입력하십시오."
+      },
+      "21 chars": {
+        "ok": false,
+        "displayName": "검증 사용자",
+        "error": "1~20자의 이름을 입력하십시오."
+      },
+      "20 chars": {
+        "ok": true,
+        "displayName": "가가가가가가가가가가가가가가가가가가가가"
+      },
+      "reserved": {
+        "ok": false,
+        "displayName": "가가가가가가가가가가가가가가가가가가가가",
+        "error": "사용할 수 없는 이름입니다."
+      },
+      "control": {
+        "ok": false,
+        "displayName": "가가가가가가가가가가가가가가가가가가가가",
+        "error": "이름에 사용할 수 없는 문자가 있습니다."
+      },
+      "zero width": {
+        "ok": false,
+        "displayName": "가가가가가가가가가가가가가가가가가가가가",
+        "error": "이름에 사용할 수 없는 문자가 있습니다."
+      },
+      "html": {
+        "ok": true,
+        "displayName": "<b>굵게</b>"
+      }
+    },
+    {
+      "name": "chat: message delivered as text with ack",
+      "ok": true,
+      "ackOk": true,
+      "received": "<img src=x onerror=alert(1)> 한글 메시지",
+      "author": "검증 A",
+      "roundTripMs": 31
+    },
+    {
+      "name": "chat: text limits match native",
+      "ok": true,
+      "1000 chars": true,
+      "1001 chars": false,
+      "empty": false,
+      "control": false
+    },
+    {
+      "name": "chat: 8 messages / 10 s per connection",
+      "ok": true,
+      "accepted": 8,
+      "refused": 4
+    },
+    {
+      "name": "chat: late joiner gets history",
+      "ok": true,
+      "messages": 10
+    },
+    {
+      "name": "websocket: unmasked/oversized rejected, fragments+ping handled",
+      "ok": true,
+      "unmaskedClosed": true,
+      "unmaskedCloseCode": 1002,
+      "oversizeClosed": true,
+      "oversizeCloseCode": 1009,
+      "badKeyStatus": 400,
+      "badVersionStatus": 426,
+      "fragmentedJoin": true,
+      "pong": true
+    },
+    {
+      "name": "headless Edge DevTools up",
+      "ok": true
+    },
+    {
+      "name": "Edge(HTTP): card listed, click plays HLS (hls.js from /assets/js), no WebRTC",
+      "ok": true,
+      "cards": 1,
+      "cardText": "실시간\n720p / 30fps\n중계 검증 방송\nRELAY-TEST",
+      "firstFrameMs": 323,
+      "first": {
+        "w": 1280,
+        "h": 720,
+        "t": 8.10225,
+        "paused": false,
+        "muted": true,
+        "src": "blob",
+        "mode": "live",
+        "transport": "hls.js",
+        "latency": null,
+        "quality": "1080p"
+      },
+      "second": {
+        "w": 1280,
+        "h": 720,
+        "t": 11.242967,
+        "paused": false,
+        "muted": false,
+        "src": "blob",
+        "mode": "live",
+        "transport": "hls.js",
+        "latency": 1.897,
+        "quality": "720p"
+      },
+      "advancedS": 3.14,
+      "pcs": 0,
+      "hlsLoaded": true,
+      "version": "1.5.20",
+      "script": "http://127.0.0.1:24080/assets/js/hls-1.5.20.min.js"
+    },
+    {
+      "name": "Edge: switch to relay 480p rendition plays 480 lines",
+      "ok": true,
+      "switchMs": 1513,
+      "firstTwoSecondsAdvancedS": 2.14,
+      "latencyAfterSwitch": 1.625,
+      "first": {
+        "w": 854,
+        "h": 480,
+        "t": 15.14301,
+        "paused": false,
+        "muted": false,
+        "src": "blob",
+        "mode": "live",
+        "transport": "hls.js",
+        "latency": 1.625,
+        "quality": "480p"
+      },
+      "second": {
+        "w": 854,
+        "h": 480,
+        "t": 18.214712,
+        "paused": false,
+        "muted": false,
+        "src": "blob",
+        "mode": "live",
+        "transport": "hls.js",
+        "latency": 1.557,
+        "quality": "480p"
+      },
+      "advancedS": 3.07
+    },
+    {
+      "name": "Edge: back to source quality",
+      "ok": true,
+      "state": {
+        "w": 1280,
+        "h": 720,
+        "t": 19.077379,
+        "paused": false,
+        "muted": false,
+        "src": "blob",
+        "mode": "live",
+        "transport": "hls.js",
+        "latency": 1.56,
+        "quality": "720p"
+      }
+    },
+    {
+      "name": "viewer cap via sessions: 503 + Retry-After for WHEP and a new session, media never capped, a client without session counted",
+      "ok": true,
+      "cap": 1,
+      "session1": 200,
+      "whep": 503,
+      "whepRetryAfter": "15",
+      "session2": 503,
+      "session2RetryAfter": "15",
+      "noSessionMaster": 200,
+      "noSessionMedia": 200,
+      "setCookie": false,
+      "hlsSessions": 1,
+      "hlsViewers": 2,
+      "heartbeat": 204,
+      "leave": 204,
+      "sessionAfterLeaveWhileNoSessionClientActive": 503
+    },
+    {
+      "name": "chat cap reached -> 503 + Retry-After",
+      "ok": true,
+      "opened": [
+        "open",
+        "open",
+        "error"
+      ],
+      "thirdUpgradeResponse": "HTTP/1.1 503 \r\nX-Content-Type-Options: nosniff\r\nReferrer-Policy: no-referrer\r\nAccess-Control-Allow-Origin: *\r\nAccess-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS\r\nAccess-Control-Allow-Headers: Content-Type, If-Match, Range\r\nAccess-Control-Expose-Headers: Location, ETag, Link, Accept-Patch, Retry-After, Content-Range, Content-Length, Accept-Ranges\r\nConnection: close\r\nRetry-After: 10\r\nContent-Type: text/plain;charset=utf-8\r\nContent-Length: 12\r\nDate: Wed, 11 Nov 2026 07:11:41 GMT"
+    },
+    {
+      "name": "socket cap reached -> 503 + Retry-After (not a dropped socket)",
+      "ok": true,
+      "idleSockets": 22,
+      "status": 503,
+      "retryAfter": "5"
+    },
+    {
+      "name": "media grace: running+mediaReady:false+Retry-After, WHEP/HLS 503, then running:false after the grace",
+      "ok": true,
+      "announce": 204,
+      "during": {
+        "running": true,
+        "mediaReady": false,
+        "retryAfter": "2",
+        "broadcastId": true,
+        "whep": 503,
+        "whepRetryAfter": "2",
+        "hls": 503,
+        "dvrRanges": 0,
+        "dvrRecording": false
+      },
+      "after": {
+        "running": false,
+        "whep": 404
+      }
+    },
+    {
+      "name": "stalled MediaMTX API: last good list kept (marked stale), no viewer sees the broadcast offline",
+      "ok": true,
+      "samples": 8,
+      "notReady": 0,
+      "notListed": 0,
+      "staleSeen": true,
+      "slowestMs": 1518,
+      "recovered": true
+    },
+    {
+      "name": "announce flood from one token -> 429",
+      "ok": true,
+      "sent": 45,
+      "accepted": 30,
+      "limited": 15
+    },
+    {
+      "name": "repeated wrong tokens -> 429 after 10",
+      "ok": true,
+      "statuses": "401,401,401,401,401,401,401,401,401,401,429,429,429,429",
+      "correctTokenAfter": 429,
+      "thumbnailAfter": 429,
+      "retryAfterS": 6
+    },
+    {
+      "name": "limiter before token comparison: a correct token is refused (429) while the address is limited",
+      "ok": true,
+      "statuses": "401,401,401,401,401,401,401,401,401,401,429,429,429,429",
+      "correctTokenAfter": 429,
+      "thumbnailAfter": 429,
+      "retryAfterS": 6
+    },
+    {
+      "name": "Edge(HTTPS): list baseUrl is https origin, HLS plays",
+      "ok": true,
+      "baseUrl": "https://127.0.0.1:24443",
+      "cards": 1,
+      "cardText": "실시간\n720p / 30fps\n중계 검증 방송\nRELAY-TEST",
+      "firstFrameMs": 336,
+      "first": {
+        "w": 1280,
+        "h": 720,
+        "t": 5.530107,
+        "paused": false,
+        "muted": false,
+        "src": "blob",
+        "mode": "live",
+        "transport": "hls.js",
+        "latency": 1.874,
+        "quality": "720p"
+      },
+      "second": {
+        "w": 1280,
+        "h": 720,
+        "t": 8.766628,
+        "paused": false,
+        "muted": false,
+        "src": "blob",
+        "mode": "live",
+        "transport": "hls.js",
+        "latency": 1.657,
+        "quality": "720p"
+      },
+      "advancedS": 3.24
+    },
+    {
+      "name": "Edge chat round trip ws <-> wss",
+      "ok": true,
+      "httpToHttpsMs": 14,
+      "httpsToHttpMs": 5,
+      "wsUrls": {
+        "p1": "ws://127.0.0.1:24080/screen-01/chat",
+        "p2": "wss://127.0.0.1:24443/screen-01/chat"
+      }
+    },
+    {
+      "name": "Edge: DVR seek plays the recording (hls.js, dvr.m3u8) near the chosen time",
+      "ok": true,
+      "recordedMs": 60997,
+      "seekMs": 109,
+      "positionMinusTargetMs": 3010,
+      "first": {
+        "w": 1280,
+        "h": 720,
+        "t": 46.015038,
+        "paused": false,
+        "muted": false,
+        "src": "blob",
+        "mode": "history",
+        "transport": "hls.js",
+        "latency": 14.045,
+        "quality": "720p"
+      },
+      "second": {
+        "w": 1280,
+        "h": 720,
+        "t": 49.005128,
+        "paused": false,
+        "muted": false,
+        "src": "blob",
+        "mode": "history",
+        "transport": "hls.js",
+        "latency": 13.064,
+        "quality": "720p"
+      },
+      "advancedS": 2.99
+    },
+    {
+      "name": "Edge: return to live after DVR (live.m3u8)",
+      "ok": true,
+      "state": {
+        "w": 1280,
+        "h": 720,
+        "t": 6.326439,
+        "paused": false,
+        "muted": false,
+        "src": "blob",
+        "mode": "live",
+        "transport": "hls.js",
+        "latency": 1.748,
+        "quality": "720p"
+      }
+    },
+    {
+      "name": "WebRTC readers released after pages close",
+      "ok": true,
+      "paths": [
+        {
+          "name": "screen-01",
+          "readers": 3
+        },
+        {
+          "name": "screen-01/480p",
+          "readers": 1
+        },
+        {
+          "name": "screen-01/rec",
+          "readers": 0
+        },
+        {
+          "name": "screen-01/src",
+          "readers": 1
+        }
+      ]
+    },
+    {
+      "name": "chat sockets released after pages close",
+      "ok": true,
+      "healthz": {
+        "ok": true,
+        "version": "0.3.0-spring",
+        "backend": "spring",
+        "mediamtx": true,
+        "mediamtxListStale": false,
+        "broadcasts": 1,
+        "receiving": 1,
+        "hlsViewers": 2,
+        "hlsSessions": 2,
+        "chatClients": 0,
+        "sockets": 12,
+        "statsRows": 4,
+        "qualityEncoders": 1,
+        "uptimeS": 92
+      }
+    },
+    {
+      "name": "HLS viewer sessions closed when the pages leave (DELETE)",
+      "ok": true,
+      "healthz": {
+        "ok": true,
+        "version": "0.3.0-spring",
+        "backend": "spring",
+        "mediamtx": true,
+        "mediamtxListStale": false,
+        "broadcasts": 1,
+        "receiving": 1,
+        "hlsViewers": 1,
+        "hlsSessions": 0,
+        "chatClients": 0,
+        "sockets": 12,
+        "statsRows": 4,
+        "qualityEncoders": 1,
+        "uptimeS": 92
+      }
+    },
+    {
+      "name": "UI pages' playback reports reach the daily CSV (transport hls)",
+      "ok": true,
+      "uiRows": 2,
+      "sample": [
+        {
+          "time": "2026-11-11T07:11:42.363Z",
+          "path": "screen-01",
+          "session": "7ipsr1l761",
+          "broadcast": "15a13788f1a9ade7fe2ea682f564ba61",
+          "transport": "hls",
+          "mode": "manual",
+          "quality": "720p",
+          "height": "720",
+          "fps": "29.9",
+          "loss_pct": "",
+          "jitter_ms": "",
+          "freezes": "0",
+          "mbps": "12.6",
+          "abr_switches": "0",
+          "last_switch": "",
+          "event": "",
+          "device": "desktop"
+        },
+        {
+          "time": "2026-11-11T07:11:57.349Z",
+          "path": "screen-01",
+          "session": "7ipsr1l761",
+          "broadcast": "15a13788f1a9ade7fe2ea682f564ba61",
+          "transport": "hls",
+          "mode": "manual",
+          "quality": "720p",
+          "height": "720",
+          "fps": "29.9",
+          "loss_pct": "",
+          "jitter_ms": "",
+          "freezes": "0",
+          "mbps": "9.6",
+          "abr_switches": "0",
+          "last_switch": "",
+          "event": "",
+          "device": "desktop"
+        }
+      ]
+    },
+    {
+      "name": "DVR spans the 60 s segment boundary as one range",
+      "ok": true,
+      "span": {
+        "ranges": 1,
+        "recordedS": 70,
+        "segments": 2,
+        "behindLiveMs": 658
+      },
+      "crossBoundaryChunk": {
+        "status": 200,
+        "bytes": 1614308,
+        "probe": {
+          "duration": "4.017003"
+        }
+      }
+    },
+    {
+      "name": "dvr.m3u8: next recorded file after EXT-X-DISCONTINUITY with its own EXT-X-MAP",
+      "ok": true,
+      "segments": 18,
+      "discontinuities": 1
+    },
+    {
+      "name": "no RTP repacketising with -pkt_size 1190",
+      "ok": true,
+      "lines": []
+    },
+    {
+      "name": "relay MediaMTX restart: forwarder restarts with backoff, listed again, DVR keeps earlier part",
+      "ok": true,
+      "backAfterMs": 2963,
+      "forwarderStarts": 1,
+      "restartDelaysMs": [
+        1000
+      ],
+      "ranges": [
+        {
+          "startMs": 1794381061062,
+          "s": 71
+        },
+        {
+          "startMs": 1794381136066,
+          "s": 1
+        }
+      ]
+    },
+    {
+      "name": "media gap: /info stays running (mediaReady:false + Retry-After), WHEP 503 + Retry-After",
+      "ok": true,
+      "samples": 17,
+      "runningFalse": 0,
+      "mediaNotReady": 8,
+      "retryAfter": [
+        "2"
+      ],
+      "whep": {
+        "status": 503,
+        "retryAfter": "2"
+      }
+    },
+    {
+      "name": "while A reconnects, sender B can neither publish nor announce A's path",
+      "ok": true,
+      "aReadyAtAttempt": false,
+      "publishRefused": true,
+      "reason": "[rtsp @ 000002d7ba7539c0] method ANNOUNCE failed: 401 (Unauthorized)",
+      "announceStatus": 403
+    },
+    {
+      "name": "bye removes the broadcast at once (no grace after bye)",
+      "ok": true,
+      "status": 204,
+      "items": 0,
+      "info": {
+        "running": false,
+        "path": "screen-01"
+      }
+    },
+    {
+      "name": "path reuse: after bye, broadcast A's prefix -> 404 not-running (no-store) on every route",
+      "ok": true,
+      "master": {
+        "status": 404,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "not-running",
+        "setCookie": false
+      },
+      "media": {
+        "status": 404,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "not-running",
+        "setCookie": false
+      },
+      "dvrIndex": {
+        "status": 404,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "not-running",
+        "setCookie": false
+      },
+      "dvrPlaylist": {
+        "status": 404,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "not-running",
+        "setCookie": false
+      },
+      "dvrFile": {
+        "status": 404,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "not-running",
+        "setCookie": false
+      },
+      "sessionPost": {
+        "status": 404,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "not-running",
+        "setCookie": false
+      },
+      "whep": {
+        "status": 404,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "not-running",
+        "setCookie": false
+      }
+    },
+    {
+      "name": "path reuse: once B has the path, A's prefix and whep?b=<A> -> 409 broadcast-changed (no-store) on every route",
+      "ok": true,
+      "master": {
+        "status": 409,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "broadcast-changed",
+        "setCookie": false
+      },
+      "media": {
+        "status": 409,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "broadcast-changed",
+        "setCookie": false
+      },
+      "dvrIndex": {
+        "status": 409,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "broadcast-changed",
+        "setCookie": false
+      },
+      "dvrPlaylist": {
+        "status": 409,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "broadcast-changed",
+        "setCookie": false
+      },
+      "dvrFile": {
+        "status": 409,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "broadcast-changed",
+        "setCookie": false
+      },
+      "sessionPost": {
+        "status": 409,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "broadcast-changed",
+        "setCookie": false
+      },
+      "whep": {
+        "status": 409,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "broadcast-changed",
+        "setCookie": false
+      }
+    },
+    {
+      "name": "path reuse: B's prefix and whep?b=<B> wait (503 + Retry-After) while the path carries a publisher session older than B; a malformed ?b= -> 400",
+      "ok": true,
+      "sessionAgeAtAnnounceMs": 12002,
+      "info": {
+        "isB": true,
+        "mediaReady": true,
+        "scope": "b/72769433643f76a2076f2e74ab493152/"
+      },
+      "a": {
+        "master": {
+          "status": 409,
+          "cache": "no-store",
+          "retryAfter": null,
+          "error": "broadcast-changed",
+          "setCookie": false
+        },
+        "media": {
+          "status": 409,
+          "cache": "no-store",
+          "retryAfter": null,
+          "error": "broadcast-changed",
+          "setCookie": false
+        },
+        "dvrIndex": {
+          "status": 409,
+          "cache": "no-store",
+          "retryAfter": null,
+          "error": "broadcast-changed",
+          "setCookie": false
+        },
+        "dvrPlaylist": {
+          "status": 409,
+          "cache": "no-store",
+          "retryAfter": null,
+          "error": "broadcast-changed",
+          "setCookie": false
+        },
+        "dvrFile": {
+          "status": 409,
+          "cache": "no-store",
+          "retryAfter": null,
+          "error": "broadcast-changed",
+          "setCookie": false
+        },
+        "sessionPost": {
+          "status": 409,
+          "cache": "no-store",
+          "retryAfter": null,
+          "error": "broadcast-changed",
+          "setCookie": false
+        },
+        "whep": {
+          "status": 409,
+          "cache": "no-store",
+          "retryAfter": null,
+          "error": "broadcast-changed",
+          "setCookie": false
+        }
+      },
+      "bMaster": {
+        "status": 503,
+        "cache": "no-store",
+        "retryAfter": "2",
+        "error": null,
+        "setCookie": false
+      },
+      "bMedia": {
+        "status": 503,
+        "cache": "no-store",
+        "retryAfter": "2",
+        "error": null,
+        "setCookie": false
+      },
+      "bWhep": {
+        "status": 503,
+        "cache": "no-store",
+        "retryAfter": "2",
+        "error": null,
+        "setCookie": false
+      },
+      "badWhep": {
+        "status": 400,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": null,
+        "setCookie": false
+      },
+      "pathMaster": 200
+    },
+    {
+      "name": "path reuse: chat join with A's id refused once B has the path",
+      "ok": true,
+      "connected": false,
+      "broadcastId": "A"
+    },
+    {
+      "name": "path reuse: B plays under its own prefix once its own session publishes (H.264), its DVR never names A, whep?b=<B> passes the binding, no Set-Cookie",
+      "ok": true,
+      "masterAfterMs": 4087,
+      "video": {
+        "status": 200,
+        "mediaCache": [
+          "public, max-age=60",
+          "public, max-age=60"
+        ],
+        "probe": [
+          "h264"
+        ]
+      },
+      "dvr": {
+        "status": 200,
+        "mentionsA": false,
+        "uris": 2,
+        "index": {
+          "id": "B",
+          "ranges": 1
+        }
+      },
+      "bWhep": {
+        "status": 400,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "SetRemoteDescription called with no ice-ufrag",
+        "setCookie": false
+      },
+      "session": true,
+      "a": {
+        "master": {
+          "status": 409,
+          "cache": "no-store",
+          "retryAfter": null,
+          "error": "broadcast-changed",
+          "setCookie": false
+        },
+        "media": {
+          "status": 409,
+          "cache": "no-store",
+          "retryAfter": null,
+          "error": "broadcast-changed",
+          "setCookie": false
+        },
+        "dvrIndex": {
+          "status": 409,
+          "cache": "no-store",
+          "retryAfter": null,
+          "error": "broadcast-changed",
+          "setCookie": false
+        },
+        "dvrPlaylist": {
+          "status": 409,
+          "cache": "no-store",
+          "retryAfter": null,
+          "error": "broadcast-changed",
+          "setCookie": false
+        },
+        "dvrFile": {
+          "status": 409,
+          "cache": "no-store",
+          "retryAfter": null,
+          "error": "broadcast-changed",
+          "setCookie": false
+        },
+        "sessionPost": {
+          "status": 409,
+          "cache": "no-store",
+          "retryAfter": null,
+          "error": "broadcast-changed",
+          "setCookie": false
+        },
+        "whep": {
+          "status": 409,
+          "cache": "no-store",
+          "retryAfter": null,
+          "error": "broadcast-changed",
+          "setCookie": false
+        }
+      },
+      "path": {
+        "master": 200,
+        "infoIsB": true
+      },
+      "setCookie": []
+    },
+    {
+      "name": "path reuse: A's prefix and whep?b=<A> still 409 on every route while B plays; the path routes play B",
+      "ok": true,
+      "a": {
+        "master": {
+          "status": 409,
+          "cache": "no-store",
+          "retryAfter": null,
+          "error": "broadcast-changed",
+          "setCookie": false
+        },
+        "media": {
+          "status": 409,
+          "cache": "no-store",
+          "retryAfter": null,
+          "error": "broadcast-changed",
+          "setCookie": false
+        },
+        "dvrIndex": {
+          "status": 409,
+          "cache": "no-store",
+          "retryAfter": null,
+          "error": "broadcast-changed",
+          "setCookie": false
+        },
+        "dvrPlaylist": {
+          "status": 409,
+          "cache": "no-store",
+          "retryAfter": null,
+          "error": "broadcast-changed",
+          "setCookie": false
+        },
+        "dvrFile": {
+          "status": 409,
+          "cache": "no-store",
+          "retryAfter": null,
+          "error": "broadcast-changed",
+          "setCookie": false
+        },
+        "sessionPost": {
+          "status": 409,
+          "cache": "no-store",
+          "retryAfter": null,
+          "error": "broadcast-changed",
+          "setCookie": false
+        },
+        "whep": {
+          "status": 409,
+          "cache": "no-store",
+          "retryAfter": null,
+          "error": "broadcast-changed",
+          "setCookie": false
+        }
+      },
+      "path": {
+        "master": 200,
+        "infoIsB": true
+      }
+    },
+    {
+      "name": "path reuse: media before the announcement waits under the prefix (503 + Retry-After) until the broadcast announces again; the path route plays it",
+      "ok": true,
+      "pausedForMs": 5008,
+      "newSession": true,
+      "info": {
+        "running": true,
+        "mediaReady": true,
+        "isB": true
+      },
+      "master": {
+        "status": 503,
+        "cache": "no-store",
+        "retryAfter": "2",
+        "error": null,
+        "setCookie": false
+      },
+      "media": {
+        "status": 503,
+        "cache": "no-store",
+        "retryAfter": "2",
+        "error": null,
+        "setCookie": false
+      },
+      "dvrIndex": {
+        "status": 503,
+        "cache": "no-store",
+        "retryAfter": "2",
+        "error": null,
+        "setCookie": false
+      },
+      "pathMaster": 200,
+      "pausedForMsAtCheck": 5030,
+      "afterAnnounce": 200
+    }
+  ],
+  "notes": [
+    "FFmpeg forwarder output mentions the password: false (saved logs are masked either way; the password is on the FFmpeg command line of the sender PC)",
+    "HLS source vs 480p segment timeline (PDT, media sequence): {\"sourceMediaSequence\":2,\"renditionMediaSequence\":2,\"sourcePdtMs\":[7091,8091],\"renditionPdtMs\":[7091,8091],\"nearestOffsetMs\":0}",
+    "Edge native HLS: {\"canPlayType\":\"maybe\",\"w\":854,\"t\":0,\"error\":4}"
+  ],
+  "backend": {
+    "kind": "spring",
+    "jar": "apps/api/build/libs/frame-api.jar",
+    "jvmOptions": "-Xms64m"
+  },
+  "olderSender": {
+    "announce": 204,
+    "hls": {
+      "master": "live.m3u8",
+      "lowLatency": true,
+      "audio": "aac",
+      "dvr": "dvr.m3u8",
+      "scope": "b/2ecd73e69d9b1962874ad97b8aec55b5/"
+    },
+    "master": [
+      "#EXTM3U",
+      "#EXT-X-VERSION:9",
+      "#EXT-X-INDEPENDENT-SEGMENTS",
+      "#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID=\"aac-source\",NAME=\"audio\",DEFAULT=YES,AUTOSELECT=YES,CHANNELS=\"2\",URI=\"aac/hls/audio2_stream.m3u8\"",
+      "#EXT-X-STREAM-INF:BANDWIDTH=8128000,AVERAGE-BANDWIDTH=8128000,RESOLUTION=1280x720,FRAME-RATE=30.000,CODECS=\"avc1.64001f,mp4a.40.2\",AUDIO=\"aac-source\""
+    ],
+    "audio": {
+      "status": 200,
+      "firstMs": 1296,
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "aac",
+            "profile": "LC",
+            "sample_rate": "48000",
+            "channels": 2,
+            "r_frame_rate": "0/0"
+          }
+        ],
+        "format": {
+          "duration": "11.130667"
+        }
+      }
+    },
+    "setCookie": [],
+    "bye": 204
+  },
+  "passwordInMediamtxLogs": false,
+  "stats": {
+    "statuses": {
+      "first": 204,
+      "sameSessionWithin4s": 429,
+      "retryAfter": "4",
+      "json": 204,
+      "over2KB": 413,
+      "wrongType": 415,
+      "unknownPath": 404,
+      "noSid": 400
+    },
+    "csv": {
+      "file": "stats-2026-11-11.csv",
+      "header": "time,path,session,broadcast,transport,mode,quality,height,fps,loss_pct,jitter_ms,freezes,mbps,abr_switches,last_switch,event,device",
+      "rows": 2,
+      "containsLoopbackAddress": false,
+      "sample": {
+        "time": "2026-11-11T07:11:00.422Z",
+        "path": "screen-01",
+        "session": "e2e1",
+        "broadcast": "15a13788f1a9ade7fe2ea682f564ba61",
+        "transport": "webrtc",
+        "mode": "auto",
+        "quality": "720p",
+        "height": "720",
+        "fps": "29.9",
+        "loss_pct": "0.12",
+        "jitter_ms": "14",
+        "freezes": "0",
+        "mbps": "2.9",
+        "abr_switches": "1",
+        "last_switch": "720p>480p loss, \"x\"",
+        "event": "'=HYPERLINK(\"x\")",
+        "device": "desktop"
+      }
+    }
+  },
+  "hls": {
+    "master": {
+      "status": 200,
+      "ms": 3,
+      "type": "application/vnd.apple.mpegurl",
+      "cache": "max-age=2",
+      "sameForTwoViewers": true,
+      "streamInf": [
+        "#EXT-X-STREAM-INF:BANDWIDTH=3128000,AVERAGE-BANDWIDTH=3128000,RESOLUTION=1280x720,FRAME-RATE=30.000,CODECS=\"avc1.64001f,mp4a.40.2\",AUDIO=\"aac-source\"",
+        "#EXT-X-STREAM-INF:BANDWIDTH=1928000,AVERAGE-BANDWIDTH=1928000,RESOLUTION=854x480,FRAME-RATE=30.000,CODECS=\"avc1.64001f,mp4a.40.2\",AUDIO=\"aac-480p\""
+      ],
+      "media": [
+        "#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID=\"aac-source\",NAME=\"audio\",DEFAULT=YES,AUTOSELECT=YES,CHANNELS=\"2\",URI=\"src/hls/audio3_stream.m3u8\"",
+        "#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID=\"aac-480p\",NAME=\"audio\",DEFAULT=YES,AUTOSELECT=YES,CHANNELS=\"2\",URI=\"480p/hls/audio3_stream.m3u8\""
+      ]
+    },
+    "source": {
+      "video": {
+        "status": 200,
+        "firstMs": 1545,
+        "cache": "max-age=1",
+        "sessionInBody": false,
+        "partInf": "0.20000",
+        "mediaCache": [
+          "public, max-age=60",
+          "public, max-age=60"
+        ],
+        "probe": {
+          "programs": [],
+          "stream_groups": [],
+          "streams": [
+            {
+              "codec_name": "h264",
+              "profile": "High",
+              "width": 1280,
+              "height": 720,
+              "r_frame_rate": "30/1"
+            }
+          ],
+          "format": {
+            "duration": "17.579811"
+          }
+        },
+        "sameForSecondViewer": true
+      },
+      "audio": {
+        "status": 200,
+        "firstMs": 5,
+        "cache": "max-age=1",
+        "sessionInBody": false,
+        "partInf": "0.20000",
+        "mediaCache": [
+          "public, max-age=60",
+          "public, max-age=60"
+        ],
+        "probe": {
+          "programs": [],
+          "stream_groups": [],
+          "streams": [
+            {
+              "codec_name": "aac",
+              "profile": "LC",
+              "sample_rate": "48000",
+              "channels": 2,
+              "r_frame_rate": "0/0"
+            }
+          ],
+          "format": {
+            "duration": "17.566667"
+          }
+        }
+      }
+    },
+    "blocking": {
+      "msn": 9,
+      "status": 200,
+      "waitMs": 1078,
+      "cache": "max-age=1",
+      "hasNext": true
+    },
+    "rendition": {
+      "status": 200,
+      "firstMs": 7,
+      "cache": "max-age=1",
+      "sessionInBody": false,
+      "partInf": "0.20100",
+      "mediaCache": [
+        "public, max-age=60",
+        "public, max-age=60"
+      ],
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "profile": "High",
+            "width": 854,
+            "height": 480,
+            "r_frame_rate": "30/1"
+          }
+        ],
+        "format": {
+          "duration": "18.579822"
+        }
+      },
+      "audioStatus": 200
+    },
+    "alignment": {
+      "sourceMediaSequence": 2,
+      "renditionMediaSequence": 2,
+      "sourcePdtMs": [
+        7091,
+        8091
+      ],
+      "renditionPdtMs": [
+        7091,
+        8091
+      ],
+      "nearestOffsetMs": 0
+    },
+    "legacyIndex": {
+      "status": 200,
+      "cache": "max-age=1"
+    },
+    "setCookie": []
+  },
+  "sessions": {
+    "post": 200,
+    "cache": "no-store",
+    "sidOk": true,
+    "heartbeatMs": 15000,
+    "put": 204,
+    "sessionsWhileOpen": 1,
+    "delete": 204,
+    "putAfterDelete": 404,
+    "sessionsAfter": 0,
+    "unknownPath": 404,
+    "get": 405
+  },
+  "dvrHls": {
+    "playlist": {
+      "cache": "no-cache",
+      "event": true,
+      "segments": 2,
+      "map": "#EXT-X-MAP:URI=\"dvr/file.mp4?id=15a13788f1a9ade7fe2ea682f564ba61&f=1794381061062\",BYTERANGE=\"1218@0\"",
+      "first": "dvr/file.mp4?id=15a13788f1a9ade7fe2ea682f564ba61&f=1794381061062&s=0",
+      "firstFile": "2026-11-11_16-11-01-062720+0900.mp4",
+      "pdt": "2026-11-11T07:11:01.062Z",
+      "extinf": [
+        3.9964,
+        4
+      ]
+    },
+    "ranges": {
+      "init": {
+        "status": 206,
+        "contentRange": "bytes 0-1217/*",
+        "acceptRanges": "bytes",
+        "equalsDisk": true,
+        "cache": "no-cache"
+      },
+      "middle": {
+        "status": 206,
+        "equalsDisk": true
+      },
+      "outside": {
+        "status": 416,
+        "contentRange": "bytes */3896295"
+      },
+      "suffix": {
+        "status": 206,
+        "bytes": 500,
+        "equalsDisk": true
+      },
+      "listedBytes": 3896295,
+      "fileOnDisk": 4288426
+    },
+    "segment": {
+      "status": 200,
+      "bytes": 1580251,
+      "cache": "public, max-age=3600",
+      "extinf": 4,
+      "decodedFrames": 120,
+      "expectedFrames": 120,
+      "decodeErrors": [],
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "profile": "High",
+            "width": 1280,
+            "height": 720,
+            "r_frame_rate": "30/1"
+          },
+          {
+            "codec_name": "aac",
+            "profile": "LC",
+            "sample_rate": "48000",
+            "channels": 2,
+            "r_frame_rate": "0/0"
+          }
+        ],
+        "format": {
+          "duration": "8.014225"
+        }
+      }
+    },
+    "errors": {
+      "otherBroadcast": 409,
+      "noSuchFile": 404,
+      "badFile": 400,
+      "noSuchSegment": 404
+    },
+    "ffmpeg": {
+      "exit": 0,
+      "frames": 180,
+      "errors": []
+    }
+  },
+  "scoped": {
+    "master": {
+      "status": 200,
+      "cache": "max-age=2",
+      "uris": [
+        "src/hls/video1_stream.m3u8",
+        "480p/hls/video1_stream.m3u8",
+        "src/hls/audio3_stream.m3u8",
+        "480p/hls/audio3_stream.m3u8"
+      ],
+      "sameVariantsAsPathRoute": true,
+      "allUnderPrefix": true,
+      "single480p": true
+    },
+    "media": {
+      "status": 200,
+      "cache": "max-age=1",
+      "mediaCache": [
+        "public, max-age=60",
+        "public, max-age=60"
+      ],
+      "sessionInBody": false,
+      "allUnderPrefix": true,
+      "part": {
+        "status": 200,
+        "cache": "public, max-age=60",
+        "bytes": 83348
+      },
+      "headSegment": 200,
+      "audio": 200,
+      "probe": [
+        "h264 720p"
+      ]
+    },
+    "dvr": {
+      "index": {
+        "status": 200,
+        "id": "15a13788f1a9ade7fe2ea682f564ba61",
+        "ranges": 1
+      },
+      "playlist": {
+        "status": 200,
+        "cache": "no-cache",
+        "segments": 2,
+        "allUnderPrefix": true,
+        "onlyThisBroadcast": true
+      },
+      "init": {
+        "status": 206,
+        "sameBytesAsPathRoute": true
+      },
+      "segment": {
+        "status": 200,
+        "cache": "public, max-age=3600",
+        "bytes": 1580251
+      },
+      "otherIdQuery": {
+        "status": 409,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "broadcast-changed",
+        "setCookie": false
+      }
+    },
+    "session": {
+      "post": 200,
+      "cache": "no-store",
+      "sidOk": true,
+      "heartbeatMs": 15000,
+      "put": 204,
+      "hlsSessionsWhileOpen": 1,
+      "delete": 204,
+      "putAfterDelete": 404,
+      "putUnderOtherId": {
+        "status": 409,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "broadcast-changed",
+        "setCookie": false
+      },
+      "putAfterOtherId": 404
+    },
+    "otherId": {
+      "master": {
+        "status": 409,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "broadcast-changed",
+        "setCookie": false
+      },
+      "mediaPlaylist": {
+        "status": 409,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "broadcast-changed",
+        "setCookie": false
+      },
+      "part": {
+        "status": 409,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "broadcast-changed",
+        "setCookie": false
+      },
+      "segment": {
+        "status": 409,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "broadcast-changed",
+        "setCookie": false
+      },
+      "audio": {
+        "status": 409,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "broadcast-changed",
+        "setCookie": false
+      },
+      "dvrIndex": {
+        "status": 409,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "broadcast-changed",
+        "setCookie": false
+      },
+      "dvrPlaylist": {
+        "status": 409,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "broadcast-changed",
+        "setCookie": false
+      },
+      "dvrFile": {
+        "status": 409,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "broadcast-changed",
+        "setCookie": false
+      },
+      "sessionPost": {
+        "status": 409,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "broadcast-changed",
+        "setCookie": false
+      },
+      "segmentHead": {
+        "status": 409,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": null,
+        "setCookie": false
+      }
+    },
+    "misc": {
+      "noBroadcast": {
+        "status": 404,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "not-running",
+        "setCookie": false
+      },
+      "notCarried": {
+        "status": 404,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": null,
+        "setCookie": false
+      },
+      "whepUnderPrefix": {
+        "status": 404,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": null,
+        "setCookie": false
+      },
+      "wrongMethod": {
+        "status": 405,
+        "cache": null,
+        "retryAfter": null,
+        "error": null,
+        "setCookie": false
+      }
+    },
+    "setCookie": []
+  },
+  "chatRules": {
+    "staleRoom": {
+      "connected": false,
+      "error": "방송이 종료되었거나 다른 방송으로 바뀌었습니다.",
+      "closed": true
+    },
+    "join": {
+      "a": "검증 사용자",
+      "b": "검증 사용자",
+      "bError": ""
+    },
+    "names": {
+      "empty": {
+        "ok": false,
+        "displayName": "검증 사용자",
+        "error": "1~20자의 이름을 입력하십시오."
+      },
+      "21 chars": {
+        "ok": false,
+        "displayName": "검증 사용자",
+        "error": "1~20자의 이름을 입력하십시오."
+      },
+      "20 chars": {
+        "ok": true,
+        "displayName": "가가가가가가가가가가가가가가가가가가가가"
+      },
+      "reserved": {
+        "ok": false,
+        "displayName": "가가가가가가가가가가가가가가가가가가가가",
+        "error": "사용할 수 없는 이름입니다."
+      },
+      "control": {
+        "ok": false,
+        "displayName": "가가가가가가가가가가가가가가가가가가가가",
+        "error": "이름에 사용할 수 없는 문자가 있습니다."
+      },
+      "zero width": {
+        "ok": false,
+        "displayName": "가가가가가가가가가가가가가가가가가가가가",
+        "error": "이름에 사용할 수 없는 문자가 있습니다."
+      },
+      "html": {
+        "ok": true,
+        "displayName": "<b>굵게</b>"
+      }
+    },
+    "message": {
+      "ackOk": true,
+      "received": "<img src=x onerror=alert(1)> 한글 메시지",
+      "author": "검증 A",
+      "roundTripMs": 31
+    },
+    "limits": {
+      "1000 chars": true,
+      "1001 chars": false,
+      "empty": false,
+      "control": false
+    },
+    "rate": {
+      "accepted": 8,
+      "refused": 4
+    },
+    "lateHistory": 10,
+    "rfc6455": {
+      "unmaskedClosed": true,
+      "unmaskedCloseCode": 1002,
+      "oversizeClosed": true,
+      "oversizeCloseCode": 1009,
+      "badKeyStatus": 400,
+      "badVersionStatus": 426,
+      "fragmentedJoin": true,
+      "pong": true
+    }
+  },
+  "page1": {
+    "cards": 1,
+    "cardText": "실시간\n720p / 30fps\n중계 검증 방송\nRELAY-TEST",
+    "firstFrameMs": 323,
+    "first": {
+      "w": 1280,
+      "h": 720,
+      "t": 8.10225,
+      "paused": false,
+      "muted": true,
+      "src": "blob",
+      "mode": "live",
+      "transport": "hls.js",
+      "latency": null,
+      "quality": "1080p"
+    },
+    "second": {
+      "w": 1280,
+      "h": 720,
+      "t": 11.242967,
+      "paused": false,
+      "muted": false,
+      "src": "blob",
+      "mode": "live",
+      "transport": "hls.js",
+      "latency": 1.897,
+      "quality": "720p"
+    },
+    "advancedS": 3.14,
+    "ok": true,
+    "stats": {
+      "thumbnailShown": true,
+      "fps": "30 fps",
+      "bitrate": "3.0 Mbps",
+      "resolution": "720p (자동)"
+    }
+  },
+  "limits": {
+    "webrtcViewers": 0,
+    "hlsCap": {
+      "cap": 1,
+      "session1": 200,
+      "whep": 503,
+      "whepRetryAfter": "15",
+      "session2": 503,
+      "session2RetryAfter": "15",
+      "noSessionMaster": 200,
+      "noSessionMedia": 200,
+      "setCookie": false,
+      "hlsSessions": 1,
+      "hlsViewers": 2,
+      "heartbeat": 204,
+      "leave": 204,
+      "sessionAfterLeaveWhileNoSessionClientActive": 503
+    },
+    "chatCap": {
+      "opened": [
+        "open",
+        "open",
+        "error"
+      ],
+      "thirdUpgradeResponse": "HTTP/1.1 503 \r\nX-Content-Type-Options: nosniff\r\nReferrer-Policy: no-referrer\r\nAccess-Control-Allow-Origin: *\r\nAccess-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS\r\nAccess-Control-Allow-Headers: Content-Type, If-Match, Range\r\nAccess-Control-Expose-Headers: Location, ETag, Link, Accept-Patch, Retry-After, Content-Range, Content-Length, Accept-Ranges\r\nConnection: close\r\nRetry-After: 10\r\nContent-Type: text/plain;charset=utf-8\r\nContent-Length: 12\r\nDate: Wed, 11 Nov 2026 07:11:41 GMT"
+    },
+    "socketCap": {
+      "idleSockets": 22,
+      "status": 503,
+      "retryAfter": "5"
+    },
+    "grace": {
+      "announce": 204,
+      "during": {
+        "running": true,
+        "mediaReady": false,
+        "retryAfter": "2",
+        "broadcastId": true,
+        "whep": 503,
+        "whepRetryAfter": "2",
+        "hls": 503,
+        "dvrRanges": 0,
+        "dvrRecording": false
+      },
+      "after": {
+        "running": false,
+        "whep": 404
+      }
+    },
+    "staleList": {
+      "samples": 8,
+      "notReady": 0,
+      "notListed": 0,
+      "staleSeen": true,
+      "slowestMs": 1518,
+      "recovered": true
+    },
+    "announceRate": {
+      "sent": 45,
+      "accepted": 30,
+      "limited": 15
+    },
+    "authFailures": {
+      "statuses": "401,401,401,401,401,401,401,401,401,401,429,429,429,429",
+      "correctTokenAfter": 429,
+      "thumbnailAfter": 429,
+      "retryAfterS": 6
+    }
+  },
+  "page2": {
+    "cards": 1,
+    "cardText": "실시간\n720p / 30fps\n중계 검증 방송\nRELAY-TEST",
+    "firstFrameMs": 336,
+    "first": {
+      "w": 1280,
+      "h": 720,
+      "t": 5.530107,
+      "paused": false,
+      "muted": false,
+      "src": "blob",
+      "mode": "live",
+      "transport": "hls.js",
+      "latency": 1.874,
+      "quality": "720p"
+    },
+    "second": {
+      "w": 1280,
+      "h": 720,
+      "t": 8.766628,
+      "paused": false,
+      "muted": false,
+      "src": "blob",
+      "mode": "live",
+      "transport": "hls.js",
+      "latency": 1.657,
+      "quality": "720p"
+    },
+    "advancedS": 3.24,
+    "ok": true
+  },
+  "edgeHls": {
+    "canPlayType": "maybe",
+    "w": 854,
+    "t": 0,
+    "error": 4
+  },
+  "healthz": {
+    "ok": true,
+    "version": "0.3.0-spring",
+    "backend": "spring",
+    "mediamtx": true,
+    "mediamtxListStale": false,
+    "broadcasts": 1,
+    "receiving": 1,
+    "hlsViewers": 1,
+    "hlsSessions": 0,
+    "chatClients": 0,
+    "sockets": 12,
+    "statsRows": 4,
+    "qualityEncoders": 1,
+    "uptimeS": 92
+  },
+  "mediamtxWarnings": {
+    "rtpRepacketised": [],
+    "llhlsPartDurationChanged": 18,
+    "errors": []
+  },
+  "senderMediamtxErrors": [],
+  "mediamtxPath": {
+    "name": "screen-01",
+    "confName": "~^[a-zA-Z0-9][a-zA-Z0-9_-]{0,63}$",
+    "ready": true,
+    "readyTime": "2026-11-11T16:11:00.0316382+09:00",
+    "available": true,
+    "availableTime": "2026-11-11T16:11:00.0316382+09:00",
+    "online": true,
+    "onlineTime": "2026-11-11T16:11:00.0316382+09:00",
+    "source": {
+      "type": "rtspsSession",
+      "id": "b169ce06-bbc9-4cce-8cc2-25ec0c74af5f"
+    },
+    "tracks": [
+      "H264",
+      "Opus",
+      "MPEG-4 Audio"
+    ],
+    "tracks2": [
+      {
+        "codec": "H264",
+        "codecProps": {
+          "width": 1280,
+          "height": 720,
+          "profile": "High",
+          "level": "3.1"
+        }
+      },
+      {
+        "codec": "Opus",
+        "codecProps": {
+          "channelCount": 2
+        }
+      },
+      {
+        "codec": "MPEG-4 Audio",
+        "codecProps": {
+          "sampleRate": 48000,
+          "channelCount": 2
+        }
+      }
+    ],
+    "readers": [
+      {
+        "type": "hlsSession",
+        "id": "f17254f2-6418-41bc-950c-f15e3415bdb1"
+      },
+      {
+        "type": "rtspSession",
+        "id": "33db8758-3c31-4982-a3ef-d7c2538eb826"
+      },
+      {
+        "type": "rtspSession",
+        "id": "ab9d7995-ac00-4bcf-9cd1-2b885187b67d"
+      }
+    ],
+    "inboundBytes": 30295694,
+    "outboundBytes": 97111575,
+    "inboundFramesInError": 0,
+    "bytesReceived": 30295694,
+    "bytesSent": 97111575
+  },
+  "reuse": {
+    "aAfterBye": {
+      "master": {
+        "status": 404,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "not-running",
+        "setCookie": false
+      },
+      "media": {
+        "status": 404,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "not-running",
+        "setCookie": false
+      },
+      "dvrIndex": {
+        "status": 404,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "not-running",
+        "setCookie": false
+      },
+      "dvrPlaylist": {
+        "status": 404,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "not-running",
+        "setCookie": false
+      },
+      "dvrFile": {
+        "status": 404,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "not-running",
+        "setCookie": false
+      },
+      "sessionPost": {
+        "status": 404,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "not-running",
+        "setCookie": false
+      },
+      "whep": {
+        "status": 404,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "not-running",
+        "setCookie": false
+      }
+    },
+    "announceB": 204,
+    "previousSession": {
+      "sessionAgeAtAnnounceMs": 12002,
+      "info": {
+        "isB": true,
+        "mediaReady": true,
+        "scope": "b/72769433643f76a2076f2e74ab493152/"
+      },
+      "a": {
+        "master": {
+          "status": 409,
+          "cache": "no-store",
+          "retryAfter": null,
+          "error": "broadcast-changed",
+          "setCookie": false
+        },
+        "media": {
+          "status": 409,
+          "cache": "no-store",
+          "retryAfter": null,
+          "error": "broadcast-changed",
+          "setCookie": false
+        },
+        "dvrIndex": {
+          "status": 409,
+          "cache": "no-store",
+          "retryAfter": null,
+          "error": "broadcast-changed",
+          "setCookie": false
+        },
+        "dvrPlaylist": {
+          "status": 409,
+          "cache": "no-store",
+          "retryAfter": null,
+          "error": "broadcast-changed",
+          "setCookie": false
+        },
+        "dvrFile": {
+          "status": 409,
+          "cache": "no-store",
+          "retryAfter": null,
+          "error": "broadcast-changed",
+          "setCookie": false
+        },
+        "sessionPost": {
+          "status": 409,
+          "cache": "no-store",
+          "retryAfter": null,
+          "error": "broadcast-changed",
+          "setCookie": false
+        },
+        "whep": {
+          "status": 409,
+          "cache": "no-store",
+          "retryAfter": null,
+          "error": "broadcast-changed",
+          "setCookie": false
+        }
+      },
+      "bMaster": {
+        "status": 503,
+        "cache": "no-store",
+        "retryAfter": "2",
+        "error": null,
+        "setCookie": false
+      },
+      "bMedia": {
+        "status": 503,
+        "cache": "no-store",
+        "retryAfter": "2",
+        "error": null,
+        "setCookie": false
+      },
+      "bWhep": {
+        "status": 503,
+        "cache": "no-store",
+        "retryAfter": "2",
+        "error": null,
+        "setCookie": false
+      },
+      "badWhep": {
+        "status": 400,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": null,
+        "setCookie": false
+      },
+      "pathMaster": 200
+    },
+    "chatOldLink": {
+      "connected": false,
+      "broadcastId": "A"
+    },
+    "ownSession": {
+      "masterAfterMs": 4087,
+      "video": {
+        "status": 200,
+        "mediaCache": [
+          "public, max-age=60",
+          "public, max-age=60"
+        ],
+        "probe": [
+          "h264"
+        ]
+      },
+      "dvr": {
+        "status": 200,
+        "mentionsA": false,
+        "uris": 2,
+        "index": {
+          "id": "B",
+          "ranges": 1
+        }
+      },
+      "bWhep": {
+        "status": 400,
+        "cache": "no-store",
+        "retryAfter": null,
+        "error": "SetRemoteDescription called with no ice-ufrag",
+        "setCookie": false
+      },
+      "session": true,
+      "a": {
+        "master": {
+          "status": 409,
+          "cache": "no-store",
+          "retryAfter": null,
+          "error": "broadcast-changed",
+          "setCookie": false
+        },
+        "media": {
+          "status": 409,
+          "cache": "no-store",
+          "retryAfter": null,
+          "error": "broadcast-changed",
+          "setCookie": false
+        },
+        "dvrIndex": {
+          "status": 409,
+          "cache": "no-store",
+          "retryAfter": null,
+          "error": "broadcast-changed",
+          "setCookie": false
+        },
+        "dvrPlaylist": {
+          "status": 409,
+          "cache": "no-store",
+          "retryAfter": null,
+          "error": "broadcast-changed",
+          "setCookie": false
+        },
+        "dvrFile": {
+          "status": 409,
+          "cache": "no-store",
+          "retryAfter": null,
+          "error": "broadcast-changed",
+          "setCookie": false
+        },
+        "sessionPost": {
+          "status": 409,
+          "cache": "no-store",
+          "retryAfter": null,
+          "error": "broadcast-changed",
+          "setCookie": false
+        },
+        "whep": {
+          "status": 409,
+          "cache": "no-store",
+          "retryAfter": null,
+          "error": "broadcast-changed",
+          "setCookie": false
+        }
+      },
+      "path": {
+        "master": 200,
+        "infoIsB": true
+      },
+      "setCookie": []
+    },
+    "announceAfterMedia": {
+      "pausedForMs": 5008,
+      "newSession": true,
+      "info": {
+        "running": true,
+        "mediaReady": true,
+        "isB": true
+      },
+      "master": {
+        "status": 503,
+        "cache": "no-store",
+        "retryAfter": "2",
+        "error": null,
+        "setCookie": false
+      },
+      "media": {
+        "status": 503,
+        "cache": "no-store",
+        "retryAfter": "2",
+        "error": null,
+        "setCookie": false
+      },
+      "dvrIndex": {
+        "status": 503,
+        "cache": "no-store",
+        "retryAfter": "2",
+        "error": null,
+        "setCookie": false
+      },
+      "pathMaster": 200,
+      "pausedForMsAtCheck": 5030,
+      "afterAnnounce": 200
+    },
+    "byeB": 204
+  },
+  "finishedAt": "2026-11-11T07:12:43.553Z",
+  "durationS": 126,
+  "passed": 108,
+  "failed": 0
+}

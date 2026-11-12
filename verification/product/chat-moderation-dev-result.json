@@ -1,0 +1,34 @@
+{
+  "origin": "http://127.0.0.1:5366",
+  "developmentStrictMode": true,
+  "readOnly": true,
+  "dedicatedFixtureCookiesOnly": true,
+  "results": [
+    {
+      "name": "Real development StrictMode loads the captured owner’s actual settings once without a duplicate editor or error",
+      "pass": true
+    },
+    {
+      "name": "Unsaved settings survive tab changes and local cancellation restores the server snapshot without saving",
+      "pass": true
+    },
+    {
+      "name": "The add dialog survives effect replay, cancels draft input and restores its opener after Cancel and Escape",
+      "pass": true
+    },
+    {
+      "name": "Settings fit 390px and the block list and add dialog fit 320px",
+      "pass": true
+    },
+    {
+      "name": "Both real management reads carry the captured owner, with no writes, chat sockets or runtime errors",
+      "pass": true
+    }
+  ],
+  "runtimeErrors": [],
+  "dataChangingRequests": 0,
+  "blockedWrites": 0,
+  "chatSockets": 0,
+  "ownerHeadersMatched": true,
+  "complete": true
+}

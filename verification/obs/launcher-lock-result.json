@@ -1,0 +1,20 @@
+{
+  "verifiedAt": "2026-11-11T07:34:54.356Z",
+  "concurrentStartGuarded": true,
+  "staleDeadOwnerRecovered": true,
+  "runtimePidsUnchanged": true,
+  "tokenPreserved": true,
+  "lockReleased": true,
+  "concurrentResults": [
+    {
+      "code": 1,
+      "already": false,
+      "busy": true
+    },
+    {
+      "code": 0,
+      "already": true,
+      "busy": false
+    }
+  ]
+}

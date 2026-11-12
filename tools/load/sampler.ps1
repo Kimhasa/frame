@@ -12,7 +12,8 @@ function Describe($p, $group) {
   @{ g = $group; id = $p.Id; name = $p.ProcessName; path = $p.Path; cpuMs = [math]::Round($p.TotalProcessorTime.TotalMilliseconds); ws = $p.WorkingSet64; priv = $p.PrivateMemorySize64; threads = $p.Threads.Count; handles = $p.HandleCount }
 }
 
-# Non-empty values only (@($null) has one element in PowerShell 5.1).
+# Non-empty values only (@($null) has one element in PowerShell 5.1). A function returns a one-element array as a scalar,
+# so callers that add to the result wrap it in @() again.
 function L($v) { @($v | Where-Object { $_ }) }
 
 function Tree($roots, $all) {
@@ -33,9 +34,9 @@ while ($true) {
   $all = $null
   if ((L $c.targetTree).Count -or (L $c.browser).Count) { $all = @(Get-CimInstance Win32_Process -Property ProcessId, ParentProcessId) }
   $groups = @{}
-  foreach ($id in (L $c.gen) + @($PID)) { $groups[[int]$id] = 'g' }
+  foreach ($id in @(L $c.gen) + @($PID)) { $groups[[int]$id] = 'g' }
   if ($all) { foreach ($id in (Tree (L $c.browser) $all)) { if (-not $groups.ContainsKey([int]$id)) { $groups[[int]$id] = 'b' } } }
-  $targetIds = L $c.targetPids
+  $targetIds = @(L $c.targetPids)
   if ($all -and (L $c.targetTree).Count) { $targetIds += Tree (L $c.targetTree) $all }
   foreach ($id in $targetIds) { if (-not $groups.ContainsKey([int]$id)) { $groups[[int]$id] = 't' } }
   $procs = @()

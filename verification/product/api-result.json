@@ -1,0 +1,122 @@
+{
+  "base": "http://127.0.0.1:18081",
+  "verificationDatabaseOnly": true,
+  "results": [
+    {
+      "name": "Anonymous session bootstrap and CSRF token",
+      "pass": true
+    },
+    {
+      "name": "Session response is not cached",
+      "pass": true
+    },
+    {
+      "name": "Required signup documents are publicly available",
+      "pass": true
+    },
+    {
+      "name": "Signup requires CSRF",
+      "pass": true
+    },
+    {
+      "name": "Signup without consent is rejected",
+      "pass": true
+    },
+    {
+      "name": "Signup without privacy consent is rejected",
+      "pass": true
+    },
+    {
+      "name": "Signup with an outdated policy is rejected",
+      "pass": true
+    },
+    {
+      "name": "Signup creates account and channel and authenticates",
+      "pass": true
+    },
+    {
+      "name": "Session cookie is HttpOnly and SameSite Lax",
+      "pass": true
+    },
+    {
+      "name": "New account receives no existing OBS credentials",
+      "pass": true
+    },
+    {
+      "name": "Own channel fields and banner save to server",
+      "pass": true
+    },
+    {
+      "name": "Own profile name saves to server",
+      "pass": true
+    },
+    {
+      "name": "Foreign Origin write is rejected",
+      "pass": true
+    },
+    {
+      "name": "Invalid stream ownership proof is rejected",
+      "pass": true
+    },
+    {
+      "name": "Second signup has separate identity",
+      "pass": true
+    },
+    {
+      "name": "Follow and notification preference save",
+      "pass": true
+    },
+    {
+      "name": "Repeated follow remains one row",
+      "pass": true
+    },
+    {
+      "name": "Following list comes from server",
+      "pass": true
+    },
+    {
+      "name": "Channel detail reflects authenticated follow state",
+      "pass": true
+    },
+    {
+      "name": "Anonymous account cannot follow",
+      "pass": true
+    },
+    {
+      "name": "Public channel exposes count without private follow state",
+      "pass": true
+    },
+    {
+      "name": "Unfollow decrements authoritative count",
+      "pass": true
+    },
+    {
+      "name": "Repeated unfollow remains zero",
+      "pass": true
+    },
+    {
+      "name": "Logout completes",
+      "pass": true
+    },
+    {
+      "name": "Logged-out cookie cannot restore authentication",
+      "pass": true
+    },
+    {
+      "name": "Incorrect password cannot authenticate",
+      "pass": true
+    },
+    {
+      "name": "Correct password restores existing account",
+      "pass": true
+    },
+    {
+      "name": "Remember login uses a persistent cookie",
+      "pass": true
+    },
+    {
+      "name": "Session bootstrap restores own channel",
+      "pass": true
+    }
+  ]
+}

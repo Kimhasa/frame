@@ -1,8 +1,13 @@
 // Standalone load target that mirrors FRAME Console's media path without running the app: MediaMTX with the streaming
-// settings streamer.cpp generates, FFmpeg publishing testsrc2 with the app's H.264 (High, no B-frames, 1 s GOP) and Opus
-// arguments, optional on-demand lower qualities and DVR recording, and the app-shim for /info, WHEP proxy, /chat and /dvr.
+// settings streamer.cpp generates, FFmpeg publishing testsrc2 with the app's H.264 (High, no B-frames, 1 s GOP) and its
+// two audio tracks (Opus for WebRTC first, AAC-LC 48 kHz 128 kb/s for HLS second), optional on-demand lower qualities
+// (both audio tracks copied, keyframes forced at the source's, source frame rate kept) and DVR recording, optional
+// LL-HLS (--hls: 1 s segments, 200 ms parts, 7 segments, as the app), and the app-shim for /info, WHEP proxy, /chat,
+// /dvr and (with --hls) live.m3u8, /<path>[/<q>]/hls/<file>, /<path>/session and /assets/js.
 // With --source live every frame carries a wall-clock barcode (tools/motion-test.html format) for the browser latency.
-// usage: node tools/load/target.mjs [--config target.json] [--mbps 8 --fps 60 --size 1920x1080 --renditions 720p,480p --record]
+// usage: node tools/load/target.mjs [--config target.json] [--mbps 8 --fps 60 --size 1920x1080 --renditions 720p,480p --record --hls]
+//        [--audio aac|opus|none] (aac = Opus + AAC as the app publishes now; opus = the older Opus-only publish)
+//        [--session-cap N] (HLS viewer sessions: 503 + Retry-After past N, 0 = no cap like the app) [--hls-connection close]
 // Stops on Ctrl+C, on "q" + Enter, or after --duration seconds. Writes <dir>/state.json (PIDs, ports, URLs) for the runner.
 import { mkdirSync, writeFileSync, appendFileSync, existsSync, renameSync } from 'node:fs';
 import { join, dirname } from 'node:path';
@@ -13,7 +18,8 @@ import { startShim } from './lib/app-shim.mjs';
 
 const defaults = {
   dir: '', path: 'screen-01', size: '1920x1080', fps: 60, mbps: 8, audioKbps: 128, encoder: 'h264_nvenc', rateControl: 'cbr',
-  rtspPort: 21554, webrtcPort: 21889, icePort: 21189, apiPort: 21997, playbackPort: 21996, shimPort: 21888,
+  rtspPort: 21554, webrtcPort: 21889, icePort: 21189, apiPort: 21997, playbackPort: 21996, shimPort: 21888, hlsPort: 21887,
+  hls: false, audio: 'aac', sessionCap: 0, hlsConnection: 'keep-alive',
   webrtcBind: '127.0.0.1',  // the app binds MediaMTX's WHEP server to loopback behind its proxy; 0.0.0.0 lets remote generators use it directly
   // The shim (test picture, chat, DVR, /api/stats) listens on loopback only; --shim-bind 0.0.0.0 opens it for a generator on another PC.
   shimBind: '127.0.0.1', interfaces: '', additionalHosts: '', renditions: '', record: false, barcode: true, shim: true, duration: 0,
@@ -66,7 +72,9 @@ function mediamtxConfig() {
     `api: true`, `apiAddress: 127.0.0.1:${o.apiPort}`, 'metrics: false', 'pprof: false',
     `playback: ${o.record ? 'true' : 'false'}`, `playbackAddress: 127.0.0.1:${o.playbackPort}`,
     'rtsp: true', 'rtspTransports: [tcp]', 'rtspEncryption: "no"', `rtspAddress: 127.0.0.1:${o.rtspPort}`,
-    'rtmp: false', 'hls: false', 'srt: false', 'moq: false',
+    'rtmp: false', 'srt: false', 'moq: false',
+    // Same low-latency HLS as streamer.cpp (on loopback; the shim proxies it with one shared MediaMTX session per path).
+    ...(o.hls ? ['hls: true', `hlsAddress: 127.0.0.1:${o.hlsPort}`, 'hlsVariant: lowLatency', 'hlsAlwaysRemux: false', 'hlsSegmentCount: 7', 'hlsSegmentDuration: 1s', 'hlsPartDuration: 200ms', "hlsAllowOrigins: ['*']"] : ['hls: false']),
     'webrtc: true', `webrtcAddress: ${o.webrtcBind}:${o.webrtcPort}`, 'webrtcEncryption: false', "webrtcAllowOrigins: ['*']", "webrtcTrustedProxies: ['127.0.0.1']",
     `webrtcLocalUDPAddress: ':${o.icePort}'`, "webrtcLocalTCPAddress: ''", 'webrtcIPsFromInterfaces: true',
     `webrtcIPsFromInterfacesList: ${list(o.interfaces)}`, `webrtcAdditionalHosts: ${list(o.additionalHosts)}`, 'webrtcICEServers2: []',
@@ -75,9 +83,10 @@ function mediamtxConfig() {
   if (o.record) y.push(`    record: true`, `    recordPath: ${q(join(o.dir, 'rec', '%path', '%Y-%m-%d_%H-%M-%S-%f').replace(/\\/g, '/'))}`, '    recordFormat: fmp4',
     '    recordPartDuration: 1s', '    recordMaxPartSize: 100M', '    recordSegmentDuration: 60s', '    recordDeleteAfter: 0s');
   for (const r of o.renditionList) {
-    const cmd = `${sh(bin.ffmpeg.replace(/\\/g, '/'))} -hide_banner -nostdin -loglevel warning -rtsp_transport tcp -i rtsp://127.0.0.1:$RTSP_PORT/${o.path} -map 0:v:0 -map 0:a? -vf scale=${r.width}:${r.height}:flags=bilinear ` +
-      videoArgs(o.encoder, o.fps, r.mbps, o.rateControl).join(' ') + ' -c:a copy -f rtsp -rtsp_transport tcp -pkt_size 1200 rtsp://127.0.0.1:$RTSP_PORT/$MTX_PATH';
-    y.push(`  ${q(o.path + '/' + r.name)}:`, `    runOnDemand: ${q(cmd)}`, '    runOnDemandStartTimeout: 15s', '    runOnDemandCloseAfter: 10s');
+    // As Streamer::RenditionCommand: every audio track copied, source frame rate kept, keyframes where the source has them.
+    const cmd = `${sh(bin.ffmpeg.replace(/\\/g, '/'))} -hide_banner -nostdin -loglevel warning -rtsp_transport tcp -i rtsp://127.0.0.1:$RTSP_PORT/${o.path} -map 0:v:0 -map 0:a? -vf scale=${r.width}:${r.height}:flags=bilinear -fps_mode passthrough ` +
+      videoArgs(o.encoder, o.fps, r.mbps, o.rateControl).join(' ') + ' -force_key_frames source -c:a copy -f rtsp -rtsp_transport tcp -pkt_size 1200 rtsp://127.0.0.1:$RTSP_PORT/$MTX_PATH';
+    y.push(`  ${q(o.path + '/' + r.name)}:`, `    runOnDemand: ${q(cmd)}`, '    runOnDemandStartTimeout: 15s', '    runOnDemandCloseAfter: 30s');
   }
   return y.join('\n') + '\n';
 }
@@ -92,7 +101,10 @@ function videoFilter() {
     `[m][bar]overlay=0:0,setpts=N/${o.fps}/TB,format=nv12[v]`;
 }
 
-const audioArgs = () => ['-c:a', 'libopus', '-b:a', `${o.audioKbps}k`, '-ac', '2', '-application', 'lowdelay', '-frame_duration', '10'];
+// streamer.cpp: first audio Opus (WebRTC picks it), second AAC-LC 48 kHz 128 kb/s (HLS and recording).
+const audioArgs = () => (o.audio === 'none' ? [] : o.audio === 'opus' ? ['-c:a', 'libopus', '-b:a', `${o.audioKbps}k`, '-ac', '2', '-application', 'lowdelay', '-frame_duration', '10']
+  : ['-ac', '2', '-c:a:0', 'libopus', '-b:a:0', `${o.audioKbps}k`, '-application:a:0', 'lowdelay', '-frame_duration:a:0', '10', '-c:a:1', 'aac', '-b:a:1', '128k', '-ar:a:1', '48000']);
+const audioMaps = input => (o.audio === 'none' ? [] : o.audio === 'opus' ? ['-map', input] : ['-map', input, '-map', input]);
 const rtspOut = () => ['-f', 'rtsp', '-rtsp_transport', 'tcp', '-pkt_size', '1200', `rtsp://127.0.0.1:${o.rtspPort}/${o.path}`];
 
 // source "live": testsrc2 encoded in real time with the barcode (~2 CPU cores for 1080p60 generation on a laptop).
@@ -101,18 +113,18 @@ const rtspOut = () => ['-f', 'rtsp', '-rtsp_transport', 'tcp', '-pkt_size', '120
 // h264_mp4toannexb puts SPS/PPS in band before every IDR (MP4 keeps them only in the header), like a live encoder.
 function publisherArgs() {
   const head = ['-hide_banner', '-nostdin', '-loglevel', 'warning', '-nostats', '-progress', 'pipe:1', '-stats_period', '5'];
-  if (o.source === 'clip') return [...head, '-re', '-stream_loop', '-1', '-i', clipFile, '-map', '0:v', '-map', '0:a', '-c', 'copy', '-bsf:v', 'h264_mp4toannexb', ...rtspOut()];
+  if (o.source === 'clip') return [...head, '-re', '-stream_loop', '-1', '-i', clipFile, '-map', '0:v', ...(o.audio === 'none' ? [] : ['-map', '0:a']), '-c', 'copy', '-bsf:v', 'h264_mp4toannexb', ...rtspOut()];
   return [...head, '-re', '-f', 'lavfi', '-i', `testsrc2=size=${W}x${H}:rate=${o.fps}`, '-re', '-f', 'lavfi', '-i', 'sine=frequency=440:sample_rate=48000',
-    '-filter_complex', videoFilter(), '-map', '[v]', '-map', '1:a', ...videoArgs(o.encoder, o.fps, o.mbps, o.rateControl), ...audioArgs(), ...rtspOut()];
+    '-filter_complex', videoFilter(), '-map', '[v]', ...audioMaps('1:a'), ...videoArgs(o.encoder, o.fps, o.mbps, o.rateControl), ...audioArgs(), ...rtspOut()];
 }
 
-const clipFile = join(tmpdir(), 'frame-load-clips', `testsrc2-${W}x${H}-${o.fps}fps-${o.mbps}M-${o.encoder}-${o.rateControl}-${o.clipSec}s.mp4`);
+const clipFile = join(tmpdir(), 'frame-load-clips', `testsrc2-${W}x${H}-${o.fps}fps-${o.mbps}M-${o.encoder}-${o.rateControl}-${o.clipSec}s${o.audio === 'opus' ? '' : '-a' + o.audio}.mp4`);
 function ensureClip() {
   if (o.source !== 'clip') return null;
   if (!existsSync(clipFile)) {
     mkdirSync(dirname(clipFile), { recursive: true });
     const r = spawnSync(bin.ffmpeg, ['-hide_banner', '-loglevel', 'error', '-y', '-f', 'lavfi', '-i', `testsrc2=size=${W}x${H}:rate=${o.fps}`, '-f', 'lavfi', '-i', 'sine=frequency=440:sample_rate=48000',
-      '-t', String(o.clipSec), '-map', '0:v', '-map', '1:a', '-vf', 'format=nv12', ...videoArgs(o.encoder, o.fps, o.mbps, o.rateControl), ...audioArgs(), clipFile + '.tmp.mp4'], { encoding: 'utf8', windowsHide: true });
+      '-t', String(o.clipSec), '-map', '0:v', ...audioMaps('1:a'), '-vf', 'format=nv12', ...videoArgs(o.encoder, o.fps, o.mbps, o.rateControl), ...audioArgs(), clipFile + '.tmp.mp4'], { encoding: 'utf8', windowsHide: true });
     if (r.status !== 0) { console.log(JSON.stringify({ event: 'target-failed', reason: 'clip encode failed', detail: (r.stderr || '').slice(-500) })); process.exit(1); }
     renameSync(clipFile + '.tmp.mp4', clipFile);
   }
@@ -140,7 +152,7 @@ function stop(reason) {
 
 killOnExit();
 const busy = [];
-for (const [port, type] of [[o.rtspPort, 'tcp'], [o.webrtcPort, 'tcp'], [o.apiPort, 'tcp'], [o.playbackPort, 'tcp'], [o.icePort, 'udp'], ...(o.shim ? [[o.shimPort, 'tcp']] : [])])
+for (const [port, type] of [[o.rtspPort, 'tcp'], [o.webrtcPort, 'tcp'], [o.apiPort, 'tcp'], [o.playbackPort, 'tcp'], [o.icePort, 'udp'], ...(o.hls ? [[o.hlsPort, 'tcp']] : []), ...(o.shim ? [[o.shimPort, 'tcp']] : [])])
   if (!(await portFree(port, type, type === 'udp' ? '0.0.0.0' : port === o.shimPort ? o.shimBind : '127.0.0.1'))) busy.push(`${type}/${port}`);
 if (busy.length) { console.log(JSON.stringify({ event: 'target-failed', reason: 'ports in use', busy })); process.exit(1); }
 const clip = ensureClip();
@@ -190,6 +202,7 @@ state = {
     base: shim ? `http://127.0.0.1:${o.shimPort}` : null, viewerPage: shim ? `http://127.0.0.1:${o.shimPort}/${o.path}` : null,
     mediamtxPage: `http://127.0.0.1:${o.webrtcPort}/${o.path}/`, api: `http://127.0.0.1:${o.apiPort}`,
     appStats: shim ? `http://127.0.0.1:${o.shimPort}/api/stats` : null,
+    hlsMaster: shim && o.hls ? `http://127.0.0.1:${o.shimPort}/${o.path}/live.m3u8` : null, hlsDirect: o.hls ? `http://127.0.0.1:${o.hlsPort}/${o.path}/index.m3u8` : null,
   },
   shimLimits: shim?.limits || null,
   broadcastId: shim?.broadcastId || null,

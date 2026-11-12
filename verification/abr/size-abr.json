@@ -1,6 +1,6 @@
 {
-  "at": "2026-10-28T05:27:30.682Z",
-  "base": "http://192.168.1.27:8889/screen-01",
+  "at": "2026-11-02T05:33:47.988Z",
+  "base": "http://192.168.1.3:8889/screen-01",
   "note": "single PC LAN, size-driven only (no network shaping)",
   "results": [
     {
@@ -42,26 +42,34 @@
     },
     {
       "step": "viewer start",
+      "transport": "hls.js",
       "mode": "auto",
       "playing": "1920x1080",
       "decoded": "1920x1080",
       "label": "1080p",
-      "holdUpMs": 12000,
-      "decisions": []
+      "holdUpMs": 15000,
+      "decisions": [
+        "480p>720p 상향, 대역폭 추정 1.7Mbps, 버퍼 0.7초 72ms",
+        "480p>1080p 상향, 대역폭 추정 2.4Mbps, 버퍼 0.9초 82ms"
+      ]
     },
     {
       "step": "small player",
+      "transport": "hls.js",
       "mode": "auto",
       "playing": "640x360",
       "decoded": "640x360",
       "label": "360p",
-      "holdUpMs": 12000,
+      "holdUpMs": 30000,
       "decisions": [
-        "1080p>360p 표시 크기 274px 3280ms"
+        "480p>720p 상향, 대역폭 추정 1.7Mbps, 버퍼 0.7초 72ms",
+        "480p>1080p 상향, 대역폭 추정 2.4Mbps, 버퍼 0.9초 82ms",
+        "1080p>360p 하향, 표시 크기 71px, 대역폭 추정 1.9Mbps, 버퍼 1.4초, 상향 15초 보류 855ms"
       ]
     },
     {
       "step": "app viewer",
+      "transport": "webrtc",
       "mode": "auto",
       "playing": "1920x1080",
       "decoded": "1920x1080",
@@ -71,44 +79,54 @@
     },
     {
       "step": "full size again",
+      "transport": "hls.js",
       "mode": "auto",
       "playing": "1920x1080",
       "decoded": "1920x1080",
       "label": "1080p",
-      "holdUpMs": 12000,
+      "holdUpMs": 30000,
       "decisions": [
-        "1080p>360p 표시 크기 274px 3280ms",
-        "360p>1080p 표시 크기 870px 1007ms"
+        "480p>720p 상향, 대역폭 추정 1.7Mbps, 버퍼 0.7초 72ms",
+        "480p>1080p 상향, 대역폭 추정 2.4Mbps, 버퍼 0.9초 82ms",
+        "1080p>360p 하향, 표시 크기 71px, 대역폭 추정 1.9Mbps, 버퍼 1.4초, 상향 15초 보류 855ms",
+        "360p>1080p 상향, 대역폭 추정 1.1Mbps, 버퍼 1.5초 586ms"
       ],
-      "secondsToOriginal": 5
+      "secondsToOriginal": 15
     },
     {
       "step": "manual 480p",
+      "transport": "hls.js",
       "mode": "854x480",
       "playing": "854x480",
       "decoded": "852x480",
       "label": "480p",
-      "holdUpMs": 12000,
+      "holdUpMs": 30000,
       "decisions": [
-        "1080p>360p 표시 크기 274px 3280ms",
-        "360p>1080p 표시 크기 870px 1007ms"
+        "480p>720p 상향, 대역폭 추정 1.7Mbps, 버퍼 0.7초 72ms",
+        "480p>1080p 상향, 대역폭 추정 2.4Mbps, 버퍼 0.9초 82ms",
+        "1080p>360p 하향, 표시 크기 71px, 대역폭 추정 1.9Mbps, 버퍼 1.4초, 상향 15초 보류 855ms",
+        "360p>1080p 상향, 대역폭 추정 1.1Mbps, 버퍼 1.5초 586ms"
       ]
     },
     {
       "step": "auto again",
+      "transport": "hls.js",
       "mode": "auto",
-      "playing": "854x480",
-      "decoded": "852x480",
-      "label": "480p",
-      "holdUpMs": 12000,
+      "playing": "1920x1080",
+      "decoded": "1920x1080",
+      "label": "1080p",
+      "holdUpMs": 30000,
       "decisions": [
-        "1080p>360p 표시 크기 274px 3280ms",
-        "360p>1080p 표시 크기 870px 1007ms"
+        "480p>720p 상향, 대역폭 추정 1.7Mbps, 버퍼 0.7초 72ms",
+        "480p>1080p 상향, 대역폭 추정 2.4Mbps, 버퍼 0.9초 82ms",
+        "1080p>360p 하향, 표시 크기 71px, 대역폭 추정 1.9Mbps, 버퍼 1.4초, 상향 15초 보류 855ms",
+        "360p>1080p 상향, 대역폭 추정 1.1Mbps, 버퍼 1.5초 586ms",
+        "480p>1080p 상향, 대역폭 추정 1.1Mbps, 버퍼 1.4초 798ms"
       ]
     },
     {
       "step": "menu detail",
-      "value": "현재 480p"
+      "value": "현재 1080p 원본"
     }
   ]
 }

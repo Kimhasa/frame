@@ -27,9 +27,18 @@ for (const item of manifest.packages) {
   if (item.extract) {
     const target = join(thirdParty, item.extract);
     if (!existsSync(target)) {
-      const destination = item.extract === 'mediamtx' || item.extract === 'webview2' ? target : thirdParty;
+      // Archives without a top folder of their own (and npm tarballs, whose top folder is "package") get one.
+      const destination = item.extract === 'mediamtx' || item.extract === 'webview2' || item.files ? target : thirdParty;
       await mkdir(destination, { recursive: true });
       execFileSync(tar, ['-xf', file, '-C', destination], { stdio: 'inherit' });
+    }
+    // Single files placed into the source tree (e.g. hls.js into outputs/assets/js), each checked against its own hash.
+    for (const entry of item.files || []) {
+      const from = join(target, entry.from), to = join(root, entry.to);
+      const actualFile = sha256(await readFile(from));
+      if (actualFile !== entry.sha256) throw new Error(entry.from + ': SHA-256 mismatch ' + actualFile);
+      await mkdir(join(to, '..'), { recursive: true });
+      await copyFile(from, to);
     }
   }
   if (item.copyTo) await copyFile(file, join(root, item.copyTo));

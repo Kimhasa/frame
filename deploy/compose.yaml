@@ -1,0 +1,68 @@
+# Local development dependencies. Spring Boot, Vite and MediaMTX run on the host.
+# Prepare private files: node server/product-docker.mjs prepare
+name: frame-product-dev
+
+services:
+  postgres:
+    image: postgres:17.11
+    environment:
+      POSTGRES_USER: frame_admin
+      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_admin_password
+      POSTGRES_INITDB_ARGS: --auth-host=scram-sha-256
+    ports:
+      - "127.0.0.1:25432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/01-product.sql:/docker-entrypoint-initdb.d/01-product.sql:ro
+    secrets:
+      - postgres_admin_password
+      - postgres_app_password
+    healthcheck:
+      test: [CMD-SHELL, 'PGPASSWORD="$$(cat /run/secrets/postgres_app_password)" psql -h 127.0.0.1 -U frame_app -d frame_product -Atqc "SELECT 1" | grep -qx 1']
+      interval: 3s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
+    restart: unless-stopped
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  redis:
+    image: redis:8.10.3
+    command: [redis-server, /usr/local/etc/redis/redis.conf]
+    ports:
+      - "127.0.0.1:26379:6379"
+    volumes:
+      - redis_data:/data
+      - ./docker/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    secrets:
+      - redis_acl
+      - redis_password
+    healthcheck:
+      test: [CMD-SHELL, 'REDISCLI_AUTH="$$(cat /run/secrets/redis_password)" redis-cli --no-auth-warning ping | grep -qx PONG']
+      interval: 3s
+      timeout: 3s
+      retries: 20
+      start_period: 5s
+    restart: unless-stopped
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  postgres_data:
+  redis_data:
+
+secrets:
+  postgres_admin_password:
+    file: ${FRAME_DOCKER_DIR:?Run node server/product-docker.mjs prepare}/postgres-admin-password.txt
+  postgres_app_password:
+    file: ${FRAME_DOCKER_DIR:?Run node server/product-docker.mjs prepare}/postgres-app-password.txt
+  redis_password:
+    file: ${FRAME_DOCKER_DIR:?Run node server/product-docker.mjs prepare}/redis-password.txt
+  redis_acl:
+    file: ${FRAME_DOCKER_DIR:?Run node server/product-docker.mjs prepare}/redis-users.acl

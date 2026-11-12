@@ -1,0 +1,23 @@
+{
+  "verifiedAt": "2026-11-11T07:21:37.091Z",
+  "kind": "Persistent loopback local OBS runtime, no media generator running",
+  "configPath": "%LOCALAPPDATA%/Frame/obs-local/studio.json",
+  "backendUrl": "http://127.0.0.1:18080",
+  "serverUrl": "rtmp://127.0.0.1:1935",
+  "path": "obs-spring",
+  "unauthenticated": 401,
+  "authenticated": 200,
+  "state": "waiting",
+  "keyMatches": true,
+  "fps": null,
+  "noSecretInLogs": true,
+  "noStore": true,
+  "launcherLifecycle": {
+    "start": true,
+    "status": true,
+    "idempotentStart": true,
+    "stop": true,
+    "restart": true,
+    "tokenPreserved": true
+  }
+}

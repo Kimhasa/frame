@@ -1,6 +1,6 @@
-# /etc/systemd/system/frame-relay.service — 중계 웹 서비스 server/relay.mjs (deploy/README.md 참고)
+# /etc/systemd/system/frame-relay.service — 중계 웹 서비스 frame-api.jar (Spring Boot, apps/api, Java 21 이상; deploy/README.md 참고)
 [Unit]
-Description=FRAME relay web service (viewer UI, WHEP/HLS/DVR proxy, chat)
+Description=FRAME relay web service (API, HLS/DVR/WHEP relay, chat)
 After=network-online.target mediamtx-relay.service
 Wants=network-online.target mediamtx-relay.service
 
@@ -9,19 +9,31 @@ Type=simple
 User=frame-relay
 Group=frame-relay
 WorkingDirectory=/opt/frame-relay
+# 설정(RELAY_*)과 JVM 옵션(JDK_JAVA_OPTIONS: java 실행 파일이 직접 읽는다)은 모두 이 파일에서 온다.
 EnvironmentFile=/etc/frame-relay/relay.env
-ExecStart=/usr/bin/node /opt/frame-relay/server/relay.mjs
+# 서버의 로캘 설정(/etc/locale.conf)과 무관하게 같은 동작: 파일 이름·환경변수를 UTF-8로 읽는다.
+Environment=LC_ALL=C.UTF-8
+# 절대 경로. java가 여러 개 설치돼 있으면 /usr/lib/jvm/java-21-openjdk-<arch>/bin/java처럼 21 이상인 것을 직접 적는다.
+ExecStart=/usr/bin/java -jar /opt/frame-relay/frame-api.jar
+# JVM은 SIGTERM을 받으면 정리(채팅 종료 알림, 진행 중 요청 최대 2초 대기)한 뒤 143으로 끝난다. 이것을 정상 종료로 본다.
+SuccessExitStatus=143
+# 정상 종료는 5초 안쪽이다. 그보다 오래 걸리면 남은 프로세스를 강제로 끝낸다.
+TimeoutStopSec=10
+# 기본값을 적어 둔다: 종료·재시작 때 서비스가 띄운 화질 래더 FFmpeg까지 함께 끝낸다(process로 바꾸지 않는다).
+KillMode=control-group
 Restart=on-failure
 RestartSec=2
-# 채팅 WebSocket과 시청 요청이 모두 소켓 하나씩이므로 기본 1024개 제한을 넘긴다.
+# 채팅 WebSocket과 시청 요청이 모두 소켓 하나씩이고, HLS·DVR·WHEP 요청은 MediaMTX 쪽 소켓도 하나씩 쓴다. 기본 1024개 제한을 넘긴다.
 LimitNOFILE=65536
 NoNewPrivileges=true
 ProtectSystem=strict
 ProtectHome=true
+# JVM과 내장 Tomcat은 임시 폴더(/tmp)에만 쓴다. 서비스 전용 /tmp를 받는다.
 PrivateTmp=true
 # 녹화 폴더는 읽기만 한다(DVR 키프레임 기준점). 쓰는 곳은 재생 통계 CSV 폴더(RELAY_STATS_DIR) 하나뿐이다.
 ReadOnlyPaths=/var/lib/frame-relay
 ReadWritePaths=-/var/lib/frame-relay/stats
+# MemoryDenyWriteExecute는 넣지 않는다(JVM의 JIT 컴파일과 함께 쓸 수 없다).
 
 [Install]
 WantedBy=multi-user.target

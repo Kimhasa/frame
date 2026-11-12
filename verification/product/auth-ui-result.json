@@ -1,0 +1,153 @@
+{
+  "origin": "http://127.0.0.1:5364",
+  "verificationDatabaseOnly": true,
+  "faultInjection": [
+    "Policy GET 401 and 503",
+    "Stale consent response",
+    "Expired session cookie",
+    "Delayed signup request"
+  ],
+  "results": [
+    {
+      "name": "Login intro and conversational footer removed",
+      "pass": true
+    },
+    {
+      "name": "Login has exactly the three requested links",
+      "pass": true
+    },
+    {
+      "name": "Account links are bold and have no separator lines",
+      "pass": true
+    },
+    {
+      "name": "Logo has more space above the login form",
+      "pass": true
+    },
+    {
+      "name": "Remember checkbox uses the custom control",
+      "pass": true
+    },
+    {
+      "name": "Remember checkbox supports Space and visible keyboard focus",
+      "pass": true
+    },
+    {
+      "name": "Password visibility toggles without clearing input",
+      "pass": true
+    },
+    {
+      "name": "ID link explains the existing email ID",
+      "pass": true
+    },
+    {
+      "name": "Dialog close restores focus and keeps input",
+      "pass": true
+    },
+    {
+      "name": "Password recovery is honest about its unconnected state",
+      "pass": true
+    },
+    {
+      "name": "Policy fetch failure blocks signup and agreement",
+      "pass": true
+    },
+    {
+      "name": "A policy 401 never asks an anonymous signup user to log in",
+      "pass": true
+    },
+    {
+      "name": "Policy outage remains an honest error instead of allowing signup",
+      "pass": true
+    },
+    {
+      "name": "Policy retry loads server documents",
+      "pass": true
+    },
+    {
+      "name": "Public policy requests do not send the account cookie",
+      "pass": true
+    },
+    {
+      "name": "Signup title centered and intro removed",
+      "pass": true
+    },
+    {
+      "name": "Signup has no channel ID field or extra agreement card wrapper",
+      "pass": true
+    },
+    {
+      "name": "Missing consent focuses first unchecked item without an API call",
+      "pass": true
+    },
+    {
+      "name": "One accepted document shows the mixed selection state",
+      "pass": true
+    },
+    {
+      "name": "Only missing privacy consent receives focus",
+      "pass": true
+    },
+    {
+      "name": "Agree all selects both and clears the error",
+      "pass": true
+    },
+    {
+      "name": "Agree all can clear both consents",
+      "pass": true
+    },
+    {
+      "name": "Terms dialog shows the server document and version",
+      "pass": true
+    },
+    {
+      "name": "Reading or closing terms does not silently consent",
+      "pass": true
+    },
+    {
+      "name": "Privacy dialog explains the collected data and retention",
+      "pass": true
+    },
+    {
+      "name": "Stale consent reloads documents and resets consent while keeping entered fields",
+      "pass": true
+    },
+    {
+      "name": "Changed-document notice clears after renewed consent",
+      "pass": true
+    },
+    {
+      "name": "Signup has no horizontal overflow at 390px",
+      "pass": true
+    },
+    {
+      "name": "Signup has no horizontal overflow at 320px",
+      "pass": true
+    },
+    {
+      "name": "Expired session refresh keeps inputs and consent without replaying signup",
+      "pass": true
+    },
+    {
+      "name": "Pending signup disables fields, helpers, back and mode switching",
+      "pass": true
+    },
+    {
+      "name": "Real browser signup succeeds with required consent",
+      "pass": true
+    },
+    {
+      "name": "Browser sends both booleans and fetched policy versions",
+      "pass": true
+    },
+    {
+      "name": "Signup identity and server-generated channel ID survive reload",
+      "pass": true
+    },
+    {
+      "name": "No browser runtime or interception errors",
+      "pass": true
+    }
+  ],
+  "runtimeErrors": []
+}
