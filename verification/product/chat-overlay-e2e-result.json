@@ -1,0 +1,73 @@
+{
+  "complete": true,
+  "verificationDatabaseOnly": true,
+  "productionUserDataUntouched": true,
+  "nativeObsReceiverUntouched": true,
+  "testedJarSha256": "f1ce4f86fa880625cd4f6ae4eb07b6fad4bf6e3d27b8d872a9691c09c15bcc55",
+  "results": [
+    {
+      "name": "Production management and anonymous live overlay checks pass",
+      "pass": true
+    },
+    {
+      "name": "One tiny media source ends and restarts as a distinct broadcast on the same path",
+      "pass": true
+    },
+    {
+      "name": "Development StrictMode overlay and management checks pass",
+      "pass": true
+    },
+    {
+      "name": "The existing backend JAR remains immutable throughout verification",
+      "pass": true
+    }
+  ],
+  "ports": [
+    {
+      "port": 18083,
+      "free": true
+    },
+    {
+      "port": 5365,
+      "free": true
+    },
+    {
+      "port": 5366,
+      "free": true
+    },
+    {
+      "port": 2935,
+      "free": true
+    },
+    {
+      "port": 29554,
+      "free": true
+    },
+    {
+      "port": 29997,
+      "free": true
+    },
+    {
+      "port": 29888,
+      "free": true
+    },
+    {
+      "port": 29996,
+      "free": true
+    },
+    {
+      "port": 9550,
+      "free": true
+    },
+    {
+      "port": 9551,
+      "free": true
+    }
+  ],
+  "fixture": "Dedicated MediaMTX + one 320x180 15fps H.264/AAC FFmpeg source + immutable Spring JAR + React production and StrictMode development + headless Edge",
+  "limits": [
+    "OBS CEF rendering was not exercised",
+    "Single PC and loopback only",
+    "No physical mobile device or load/capacity coverage"
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "complete": true,
+  "mode": "dev",
+  "origin": "http://127.0.0.1:5365",
+  "dedicatedFixtureCookiesOnly": true,
+  "browser": "Headless Microsoft Edge (Chromium); OBS CEF not exercised",
+  "results": [
+    {
+      "name": "Only isolated owner cookies are installed in the private browser profile",
+      "pass": true
+    },
+    {
+      "name": "Owned management exposes the real public channel URL, documented defaults and no fixture URL or secret query",
+      "pass": true
+    },
+    {
+      "name": "Every display option updates the source URL and the separate preview link opens safely in a new tab",
+      "pass": true
+    },
+    {
+      "name": "Copy invokes the clipboard API with the complete configured public URL",
+      "pass": true
+    },
+    {
+      "name": "Clipboard denial explains manual copying and selects the complete read-only URL",
+      "pass": true
+    },
+    {
+      "name": "A failed status request preserves the usable URL and exposes a retryable error",
+      "pass": true
+    },
+    {
+      "name": "Management URL and display controls fit the 390px viewport",
+      "pass": true
+    },
+    {
+      "name": "Management URL and display controls fit the 320px viewport",
+      "pass": true
+    },
+    {
+      "name": "Development StrictMode mounts one standalone overlay against the real running broadcast",
+      "pass": true
+    },
+    {
+      "name": "Polling unchanged live metadata retains exactly one active chat socket",
+      "pass": true
+    },
+    {
+      "name": "The cookie-bearing browser uses only cookie-free public metadata GETs and ticketless join frames; no session, ticket, media, history, points or send writes occur",
+      "pass": true
+    },
+    {
+      "name": "Management URL options, copy handling, status retry and mobile views make no data-changing requests",
+      "pass": true
+    },
+    {
+      "name": "SPA unmount closes every overlay socket, stops its poll and restores the normal page background",
+      "pass": true
+    },
+    {
+      "name": "All overlay and management interactions finish without browser runtime exceptions",
+      "pass": true
+    }
+  ],
+  "runtimeExceptionCount": 0,
+  "browserDataChangingRequestCount": 0,
+  "overlayProductRequestCount": 3,
+  "overlayJoinFrameCount": 1,
+  "overlayUnexpectedFrameCount": 0,
+  "publicMetadataCookieHeaderCount": 0,
+  "overlaySocketsCreated": 1,
+  "overlaySocketClosedEvents": 1,
+  "overlayActiveSocketsAfterUnmount": 0
+}

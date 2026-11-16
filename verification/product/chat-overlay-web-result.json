@@ -1,0 +1,27 @@
+{
+  "checkedAt": "2026-11-16T10:09:22.201Z",
+  "commands": {
+    "typecheck": true,
+    "build": true,
+    "buildDesign": true
+  },
+  "packageManager": "yarn@4.18.1",
+  "node": "v24.22.1",
+  "productionHtmlSha256": "90572091e8473ebe8f2c0da3a2d257261aea69c8b127cead1ad2fc223d9c0839",
+  "designHtmlSha256": "43ba77072aed023379b2d6ae031602d76183b87090c3543c0117163f94c212d3",
+  "productionHasOverlayChunk": true,
+  "designHasOverlayChunk": false,
+  "designHasHlsChunk": false,
+  "sourceSha256": {
+    "apps/web/src/App.tsx": "25eacc7257a21ae0685b244a7b97beab1fc4da590a81701e407ecee9393683c1",
+    "apps/web/src/features/account/ConnectedCommunity.tsx": "80ec9fce13075195b4e06cff127513a84945fc40be1038d4327a9f9da65b8dd4",
+    "apps/web/src/relay/chat.ts": "047e52d561e5b764768b769df531b6af83c35a9603241211e219366575c6e2da",
+    "apps/web/src/features/integrations/ChatOverlayPage.module.css": "0a9e783b163e5f03fa2e0e9525d12bde22052d7c09fdf08e89aea46edb0039a2",
+    "apps/web/src/features/integrations/ChatOverlayPage.tsx": "f9d47ee3c8e279b5908709022761f81722bb2972060d485fd8f68316c9af1ea6",
+    "apps/web/src/features/integrations/ConnectedIntegrationsPage.module.css": "bab1f4ca383e101030f702fd41842c68f954df7b5872685c175f58b824956753",
+    "apps/web/src/features/integrations/ConnectedIntegrationsPage.tsx": "0078328c18c1b169298e7f8c8501c6a4b7fd182be8a5be2a0b95b57d3a80388d",
+    "apps/web/src/features/integrations/overlay-client.ts": "d8589280ded7a34fbb33924fad3dd0fc62cd31a8a7b90be921e4bacd57c32aba",
+    "apps/web/src/features/integrations/overlay-options.ts": "405e245a7a5542db1f897a7460beb0736ef8e587269d9785c7c3692018caf203"
+  },
+  "complete": true
+}

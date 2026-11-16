@@ -24,6 +24,9 @@ const PreviewCommunity = import.meta.env.MODE === 'design'
 const ConnectedCommunity = import.meta.env.MODE !== 'design'
   ? lazy(() => import('./features/account/ConnectedCommunity'))
   : null;
+const ChatOverlayPage = import.meta.env.MODE !== 'design'
+  ? lazy(() => import('./features/integrations/ChatOverlayPage'))
+  : null;
 
 function LiveRoute({ viewer, channelHrefFor }: { viewer: ViewerAdapter; channelHrefFor?: CommunityPreviewRoutes['channelHrefFor'] }) {
   const { state, retry } = viewer.useLive();
@@ -99,6 +102,10 @@ function FollowedSidebar({ channels, onNavigate }: { channels: readonly PreviewC
 type AppProps = { viewer: ViewerAdapter; designPreview: boolean };
 
 export function App({ viewer, designPreview }: AppProps) {
+  const overlay = useMatch('/overlay/chat/:channelId');
+  if (!designPreview && overlay && ChatOverlayPage) return <Suspense fallback={null}>
+    <ChatOverlayPage channelId={overlay.params.channelId ?? ''} />
+  </Suspense>;
   if (designPreview && PreviewCommunity) {
     return <Suspense fallback={<p className="preview-loading" role="status">화면을 불러오는 중이에요.</p>}>
       <PreviewCommunity viewer={viewer} render={community => <AppShell viewer={viewer} community={community} />} />

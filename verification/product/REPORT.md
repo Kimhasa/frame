@@ -424,3 +424,23 @@ headless Edge에서 VOD 시간 0→2.024740초·디코딩 11→33프레임을 �
 실제 확인 범위는 한 PC loopback·headless Edge와 모바일 너비 에뮬레이션이다. 휴대폰 실기기·다른 브라우저·Caddy HTTPS·외부 회선·장시간·부하/수용량 검사는 하지 않았다. 보상/조회수 집계나 마지막 프레임까지의 종료 저장을 증명하지 않는다. 재부팅·외부 배포는 하지 않았다.
 
 실행: Java 21의 JAVA_HOME과 별도 Docker 검증 설정의 FRAME_PRODUCT_TEST_CONFIG를 지정하고 API·웹 빌드 후 node server/verify/archive-history-e2e.mjs를 단독 실행한다. 결과: [백엔드](archive-history-backend-result.json), [실제 미디어·통합](archive-history-e2e-result.json), [배포 UI](archive-history-ui-result.json), [개발 UI](archive-history-dev-result.json), [현재 PC 적용](archive-history-local-result.json). 화면: [시청 기록](archive-history-ui.png), [이어보기](archive-history-resume-ui.png), [390px](archive-history-390-ui.png), [320px](archive-history-320-ui.png). 현재 [시청 기록](http://127.0.0.1:5360/_frame/history)에서 본인 계정으로 재생한 공개 영상을 확인할 수 있다.
+
+
+## OBS 브라우저 소스용 공개 채팅 오버레이
+
+2026-11-16. 방송 스튜디오의 외부 도구 연결을 실제 공개 채팅에 연결했다. 기존 녹색·Pretendard·ManagementPage·입력/버튼·콘텐츠 여백을 유지하면서 내 채널 UUID의 OBS 브라우저 소스 URL, 테마·글자 크기·최대 메시지 수·표시 시간, URL 복사·실패 시 수동 선택과 실제 채팅 미리보기를 제공한다. 설정은 URL에 반영하고 DB 저장·OBS 접속 완료로 표시하지 않는다. 방송 중/대기 표시는 실제 공개 채널 메타데이터다. 외부 채팅봇·API 키·웹훅에는 가짜 연결이나 저장 성공을 만들지 않았다.
+
+기존 공개 채널 조회와 Java 채팅의 티켓 없는 읽기를 재사용했다. 새 API·DB·마이그레이션·라이브러리·서비스는 추가하지 않았고 C++ 앱·미디어·기존 Flyway V1~V17 SQL을 변경하지 않았다. 일반 로그인 채팅의 동작은 유지하고 ChatClient에 명시적인 readOnly 옵션만 더했다. 오버레이는 로그인·앱 탐색 초기화 밖에서 실행하며 세션·채팅 티켓·송출 정보·영상·시청 기록·포인트를 요청하지 않는다. 관리 주소나 공개 주소에 송출 키와 비밀 토큰을 넣지 않는다. WebSocket의 같은 출처 쿠키가 있더라도 티켓을 발급하지 않아 회원 신원·송신 권한으로 사용하지 않는다.
+
+채널 UUID URL은 핸들 변경에 영향을 받지 않고 현재 방송을 약 5초마다 재조회한다. 같은 방송은 기존 소켓을 유지하고 종료·교체·조회 실패에서는 이전 메시지를 지운다. 메시지는 텍스트로 렌더하고 개수·서버 전송 시각에 따른 표시 시간을 제한한다. 일반 OBS 주소의 빈 상태·오류는 투명하며 preview=1의 새 탭에서만 체크무늬·상태·재시도를 보여 준다. 화면 이탈은 요청·소켓·타이머와 html/body/root에 임시 적용한 배경을 정리한다. URL·화면 크기와 OBS 사용 안내는 [OBS 공식 브라우저 소스 문서](https://obsproject.com/kb/Browser-Source)를 참고했다.
+Yarn Berry 4.18.1의 typecheck·build·build:design을 통과했다. 배포 번들에는 전용 overlay chunk가 있고 디자인 번들에는 overlay·hls chunk가 없다. 별도 verify DB·Redis namespace·두 시험 계정과 전용 MediaMTX, 단일 320×180/15fps H.264/AAC FFmpeg 소스를 사용한 최종 통합 실행은 **4/4**, 배포 React **24/24**, 개발 StrictMode **14/14**를 통과했다. 통합 4개에는 배포/개발 집계와 실제 송출 종료·동일 경로 새 방송, JAR 불변 확인이 포함되며 세 숫자를 독립 기능 검사 총수로 합산하지 않는다. Java 소스·SQL은 수정하지 않아 이번 작업에서 Java 전체 테스트를 다시 실행하지 않았고 이전에 검증한 동일 JAR를 사용했다.
+
+실제 회원 티켓으로 보낸 기존 이력·새 채팅을 로그인 쿠키가 들어 있는 브라우저의 익명 오버레이에서 받았다. 메시지의 HTML 모양 문자열은 실행되지 않고 텍스트로 표시됐다. 마지막 두 개 표시·1초 표시 시간·투명 html/body/root·preview 전용 체크무늬와 상태, 실제 송출 종료 후 초기화와 같은 경로의 새 방송에서 이전 내용 비노출을 확인했다. 같은 방송의 metadata 갱신은 새 소켓을 만들지 않았고 SPA 이탈 후 활성 소켓 0·폴링 중지·페이지 배경 복원을 확인했다. 관리 화면은 실제 채널 UUID URL·모든 표시 옵션·오류 재조회·320px/390px을 확인했다. Clipboard API는 성공/거절을 제어해 정확한 URL 전달과 실패 시 전체 URL 선택을 검증했으며 OS 클립보드 내용 자체를 측정한 것은 아니다.
+
+배포/개발 모두 브라우저 런타임 예외·브라우저 데이터 변경 요청·join 이외의 WS 프레임·공개 metadata의 관측 Cookie 헤더가 0이었다. 배포는 문서 탐색·오류 복구·방송 교체를 합쳐 소켓 7개, 개발은 실제 소켓 1개를 생성했다. 전체 문서 탐색 때 CDP가 과거 소켓의 closed 이벤트를 항상 보내는 것은 아니므로 현재 문서 기준의 활성 소켓을 추적했고, 같은 문서를 유지한 마지막 SPA 이탈에서 실제 close와 0개를 확인했다. 초기 검증 도구의 API 경로·화면 밖 클릭·소켓 계측·StrictMode 입력 렌더 대기를 바로잡은 뒤 새 격리 실행 전체가 통과했다.
+
+제품 DB의 계정·채널·운영자·녹화·VOD·클립·시청 기록은 작업 전후 모두 0개, Flyway는 17개를 유지했다. API PID 39480·MediaMTX PID 34664와 JAR f1ce4f86fa880625cd4f6ae4eb07b6fad4bf6e3d27b8d872a9691c09c15bcc55를 유지했고 V1~V17 원본 SQL이 이전 main과 일치함을 확인했다. 로컬 /healthz·관리 페이지·오버레이 HTML은 200, 비로그인 시청 기록은 401이다. 서버 교체·재부팅 없이 현재 웹에 반영했고 시험 포트 10개와 소유 프로세스를 정리했다. 비밀 설정·쿠키·시험 프로필·로그·checkpoint는 저장소 밖에만 뒀다.
+
+개발 검증은 기존 Java의 정확한 Origin 정책을 바꾸거나 헤더를 속이지 않고, 배포 preview를 종료한 뒤 같은 5365 포트에서 Vite 개발 서버를 실행했다. 한 PC loopback·headless Edge와 모바일 너비 에뮬레이션의 기능 검사다. OBS는 설치돼 있으나 실제 OBS CEF의 장면 합성은 실행하지 않았고, 휴대폰 실기기·Caddy HTTPS/WSS·외부 회선·장시간·부하/수용량은 검증하지 않았다. WS 연결·브라우저 렌더만 확인했으며 영상 디코딩이나 오디오 청취 결과로 표현하지 않는다.
+
+재현: 웹·API 빌드 후 Java 21의 JAVA_HOME과 별도 Docker 검증 설정 FRAME_PRODUCT_TEST_CONFIG를 지정하고 node server/verify/chat-overlay-e2e.mjs를 단독 실행한다. 결과: [웹 빌드](chat-overlay-web-result.json), [통합](chat-overlay-e2e-result.json), [배포 UI](chat-overlay-production-result.json), [개발 UI](chat-overlay-dev-result.json), [현재 PC](chat-overlay-local-result.json). 화면: [실제 채팅 미리보기](chat-overlay-production-preview.png), [390px](chat-overlay-production-management-390.png), [320px](chat-overlay-production-management-320.png), [개발 390px](chat-overlay-dev-management-390.png), [개발 320px](chat-overlay-dev-management-320.png). [외부 도구 연결](http://127.0.0.1:5360/_frame/studio/integrations)에서 로그인한 본인 채널의 주소를 복사한다.

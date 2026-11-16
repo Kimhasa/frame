@@ -188,6 +188,24 @@ Spring Session 필터 자체도 `/api/v1/*`에만 등록한다. 로그인 쿠키
 
 거절 ack는 기존 `{type:'ack',clientId,ok:false,error}`에 `code`와 필요한 경우 `retryAfterMs`를 더한다. 회원 정책 코드는 `CHAT_LOGIN_REQUIRED`, `CHAT_SESSION_EXPIRED`, `CHAT_AUTH_INVALID`, `CHAT_CHANNEL_UNAVAILABLE`, `CHAT_BLOCKED`, `CHAT_FOLLOW_REQUIRED`, `CHAT_SLOW_MODE`, `CHAT_LINK_BLOCKED`, `CHAT_WORD_BLOCKED`, `CHAT_UNAVAILABLE`다. 임시 차단·느린 모드는 남은 대기 시간을 보내며 영구 차단에는 만료 시각을 만들어내지 않는다. 차단은 읽기를 막지 않고 송신만 제한한다. 채팅 메시지는 기존 서버 메모리 최근 200건·입장 시 100건 계약을 유지하며 DB에 메시지 이력을 새로 저장하지 않는다. 제품 기능 OFF에서는 기존 이름 설정·relay 프로토콜·테스트 계약을 유지한다.
 
+## OBS 공개 채팅 오버레이
+
+외부 도구 연결 화면은 본인 채널 UUID의 `/_frame/overlay/chat/{channelId}` 주소를 생성한다. [OBS 브라우저 소스](https://obsproject.com/kb/Browser-Source)의 URL에 이 주소를 넣어 공개 채팅을 표시한다. 채널 UUID를 사용하므로 핸들을 바꿔도 주소를 유지한다. 공개 읽기 주소이며 송출 키·API 키·비밀 토큰·로그인 권한을 넣지 않는다. 외부 채팅봇·API 키·웹훅은 아직 제공하지 않는다.
+
+| Query | 기본값 | 범위 |
+|---|---|---|
+| `theme` | `dark` | `dark`, `light` |
+| `fontSize` | `20` | 정수 14~32 px |
+| `maxMessages` | `8` | 정수 1~20 |
+| `hideAfterSeconds` | `30` | 정수 0~120초, 0은 계속 표시 |
+| `preview` | 없음 | `1`일 때만 체크무늬·연결 상태·재시도 표시 |
+
+잘못된 옵션은 해당 기본값으로 해석한다. 표시는 주소에 저장하며 DB의 채널 설정이나 연결 상태를 변경하지 않는다. 관리 화면의 방송 중/대기는 실제 공개 메타데이터 기준이며 OBS가 주소를 열었다는 확인 표시가 아니다. 주소를 바꿨으면 OBS 브라우저 소스의 URL도 갱신한다.
+
+오버레이는 앱 탐색·로그인 초기화 밖에서 실행한다. 기존 `GET /api/v1/channel-ids/{channelId}`를 `credentials: omit`, `cache: no-store`로 조회하고 현재 방송의 기존 `/{path}/chat` WebSocket에 티켓 없는 `join`만 보낸다. 세션·CSRF·채팅 티켓·송출 정보·시청 세션·영상·시청 기록·포인트 API를 호출하지 않는다. WebSocket handshake의 같은 출처 쿠키가 있더라도 회원 티켓을 발급하지 않아 계정 신원이나 송신 권한으로 사용하지 않는다. 읽기 전용 클라이언트의 전송·닉네임 변경도 막으며 기존 회원 채팅의 티켓 인증·Origin·연결 상한은 유지한다.
+
+공개 채널을 약 5초마다 확인해 방송 시작·종료·교체를 따라가고 같은 방송은 소켓을 다시 만들지 않는다. 종료·교체·메타데이터 조회 실패 시 이전 메시지를 비우고, 재연결은 기존 채팅 지연 정책을 사용한다. 새 기록 저장이나 시청자·포인트 집계를 만들지 않는다. 메시지 표시 시간은 서버 메시지의 전송 시각 기준으로 적용하며 최대 개수 안에서 마지막 메시지를 남긴다. 텍스트는 React 텍스트로 렌더한다. 일반 OBS 주소는 빈 상태·오류에서도 투명하고, 연결 안내는 명시적인 미리보기 주소에만 표시한다. 페이지 이탈 시 요청·소켓·타이머와 임시 배경 스타일을 정리한다.
+
 ## 실제 투표
 
 `Poll`은 `{id,channelId,broadcastId,path,question,createdAtMs,endsAtMs,status:'active'|'closed',closeReason:null|'manual'|'expired'|'broadcast_ended',version,options:[{id,text,votes}],totalVotes,myOptionId:null|UUID}`다. 선택지는 생성 순서를 유지하며 표 수와 합계는 실제 투표 행을 집계한다. 개인 선택은 현재 인증 계정의 `myOptionId`만 반환하고 투표자 UUID·이메일·명단·내부 방송 instance를 공개하지 않는다. 소유자·공개 조회·투표 응답 모두 같은 `Poll` 형식이다. 모든 wrapper의 `serverNowMs`는 서버 epoch milliseconds이며 클라이언트 시계 차이를 보정하는 기준으로 사용한다.

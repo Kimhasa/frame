@@ -67,7 +67,8 @@ export class ChatClient {
   private expectedUserId: string | null = null;
   private authAbort: AbortController | null = null;
 
-  constructor(private readonly path: string, private readonly broadcastId: string, private readonly onChange: () => void) {}
+  constructor(private readonly path: string, private readonly broadcastId: string, private readonly onChange: () => void,
+    private readonly options: { readOnly?: boolean } = {}) {}
 
   open() { if (!this.started && !this.closed) { this.started = true; void this.connect(); } }
   close() {
@@ -83,6 +84,7 @@ export class ChatClient {
     this.status = 'connecting'; this.changed(); void this.connect();
   }
   send(text: string) {
+    if (this.options.readOnly) return;
     if (this.pending) return;
     const ws = this.ws;
     if (!ws || ws.readyState !== WebSocket.OPEN || this.status !== 'connected' || this.paused) {
@@ -99,6 +101,7 @@ export class ChatClient {
     this.changed();
   }
   setNickname(name: string) {
+    if (this.options.readOnly) return;
     if (this.account) { this.error = messages.CHAT_IDENTITY_FIXED; this.changed(); return; }
     const ws = this.ws;
     if (!ws || ws.readyState !== WebSocket.OPEN || this.status !== 'connected') { this.error = '채팅에 연결되어 있지 않아요.'; this.changed(); return; }
@@ -128,9 +131,9 @@ export class ChatClient {
   private async connect() {
     if (this.closed || this.paused) return;
     const version = ++this.generation, abort = new AbortController(); this.authAbort?.abort(); this.authAbort = abort;
-    this.canSend = false; this.account = { state: 'checking', userId: this.expectedUserId }; this.lastAckId = null; this.changed();
+    this.canSend = false; this.account = this.options.readOnly ? undefined : { state: 'checking', userId: this.expectedUserId }; this.lastAckId = null; this.changed();
     let ticket: string | undefined;
-    try {
+    if (!this.options.readOnly) try {
       let session;
       try { session = await accountApi.session(abort.signal); }
       catch (failure) {
@@ -198,6 +201,8 @@ export class ChatClient {
   }
   private toMessage(item: ServerMessage): ChatMessage | null {
     if (typeof item.id !== 'string' || typeof item.text !== 'string' || (typeof item.broadcastId === 'string' && item.broadcastId !== this.broadcastId)) return null;
+    if (this.options.readOnly && (!item.id || item.id.length > 128 || item.text.length > 4000 || typeof item.author !== 'string' || item.author.length > 200
+      || typeof item.ts !== 'number' || !Number.isSafeInteger(item.ts) || item.ts < 0)) return null;
     return { id: item.id, author: typeof item.author === 'string' ? item.author : '', text: item.text,
       sentAtMs: typeof item.ts === 'number' && Number.isFinite(item.ts) && item.ts >= 0 ? item.ts : Date.now(),
       ...(typeof item.authorChannelId === 'string' && uuid.test(item.authorChannelId) ? { authorChannelId: item.authorChannelId } : {}),
@@ -211,13 +216,13 @@ export class ChatClient {
     switch (event.type) {
       case 'state': {
         const code = typeof event.code === 'string' ? event.code : '';
-        if (code === 'CHAT_AUTH_INVALID' || code === 'CHAT_SESSION_EXPIRED' || code === 'SESSION_CHANGED') {
+        if (!this.options.readOnly && (code === 'CHAT_AUTH_INVALID' || code === 'CHAT_SESSION_EXPIRED' || code === 'SESSION_CHANGED')) {
           this.pauseAccount(code === 'CHAT_SESSION_EXPIRED' ? 'expired' : 'changed', code, messages[code] ?? messages.CHAT_AUTH_INVALID); return;
         }
         if (event.connected !== true) {
           this.closed = true; this.stopConnection(); this.endPending('채팅이 종료돼 메시지를 보내지 못했어요.'); this.canSend = false; this.status = 'closed'; break;
         }
-        if (!this.legacy || typeof event.authenticated === 'boolean') {
+        if (!this.options.readOnly && (!this.legacy || typeof event.authenticated === 'boolean')) {
           this.legacy = false;
           if (event.authenticated === true) {
             if (typeof event.userId !== 'string' || !uuid.test(event.userId) || event.userId !== this.expectedUserId) { this.pauseAccount('changed', 'SESSION_CHANGED', messages.SESSION_CHANGED); return; }
@@ -227,11 +232,11 @@ export class ChatClient {
         }
         window.clearTimeout(this.joinTimer); window.clearTimeout(this.restrictionTimer); this.retries = 0; this.status = 'connected';
         this.nickname = typeof event.displayName === 'string' ? event.displayName : '';
-        this.canSend = event.canSend === true && (!this.account || this.account.state === 'authenticated'); this.restriction = undefined; this.error = null;
+        this.canSend = !this.options.readOnly && event.canSend === true && (!this.account || this.account.state === 'authenticated'); this.restriction = undefined; this.error = null;
         const policy = event.policy as Record<string, unknown> | null;
         if (policy && typeof policy.slowMode === 'boolean' && typeof policy.slowSeconds === 'number' && Number.isInteger(policy.slowSeconds) && policy.slowSeconds >= 1 && policy.slowSeconds <= 120
           && typeof policy.followersOnly === 'boolean' && typeof policy.blockLinks === 'boolean') this.policy = { slowMode: policy.slowMode, slowSeconds: policy.slowSeconds, followersOnly: policy.followersOnly, blockLinks: policy.blockLinks };
-        if (code) this.restrict(code, event.error, event.retryAfterMs);
+        if (code && !(this.options.readOnly && code === 'CHAT_LOGIN_REQUIRED')) this.restrict(code, event.error, event.retryAfterMs);
         break;
       }
       case 'history': {
@@ -241,7 +246,9 @@ export class ChatClient {
       }
       case 'message': {
         const message = this.toMessage(event as ServerMessage); if (!message || this.seen.has(message.id)) return;
-        this.seen.add(message.id); this.messages = [...this.messages, message].slice(-KEEP); break;
+        this.seen.add(message.id); this.messages = [...this.messages, message].slice(-KEEP);
+        if (this.options.readOnly && this.seen.size > KEEP * 2) this.seen = new Set(this.messages.map(item => item.id));
+        break;
       }
       case 'ack': {
         if (!this.pending || event.clientId !== this.pendingId) return;

@@ -134,6 +134,10 @@ java -jar build/libs/frame-api.jar
 
 계정 기대 헤더와 행 version으로 계정 전환·동시 탭의 오래된 요청을 거절하고, 삭제마다 올리는 계정 epoch로 이미 열린 보관 영상 화면이 삭제한 기록을 다시 생성하지 못하게 합니다. 기존 라이브 POST의 두 필드·204 계약은 유지하며 이 epoch 조건은 보관 영상 GET/PUT에 적용합니다. 정확한 DTO·공개 gate·완료 위치·충돌과 재연결은 [시청 기록 계약](PRODUCT_API.md#시청-기록)을 따릅니다.
 
+## OBS 채팅 오버레이
+
+외부 도구 연결 화면에서 본인 채널의 공개 채팅 오버레이 주소를 복사하고 OBS 브라우저 소스에 넣을 수 있습니다. 투명 배경·표시 테마·글자 크기·최대 개수·표시 시간을 지원하며 설정은 URL에 반영합니다. 기존 공개 채널 조회와 익명 읽기 채팅을 재사용하고 새 API·DB·비밀 토큰은 추가하지 않습니다. 정확한 범위와 입력은 [OBS 공개 채팅 오버레이](PRODUCT_API.md#obs-공개-채팅-오버레이)를 따릅니다.
+
 ## 검증
 
 ```bash
@@ -144,9 +148,10 @@ node server/verify/chat-load.mjs --clients 1000 --senders 2 --messages 5 --backe
 node server/verify/vod-e2e.mjs                  # 검증 DB·실제 녹화·공개 복사·익명 재생·React/개발 모드(빌드 후, 단독 실행)
 node server/verify/clips-e2e.mjs                # 검증 DB·실제 FFmpeg 구간·부모 공개 연동·익명 재생·React/개발 모드(빌드 후, 단독 실행)
 node server/verify/archive-history-e2e.mjs       # 실제 VOD·클립 시청 위치·이어보기·삭제 경합·계정 전환(빌드 후, 단독 실행)
+node server/verify/chat-overlay-e2e.mjs          # 실제 공개 채팅·투명 오버레이·방송 교체·OBS 관리 UI(빌드 후, 단독 실행)
 node server/verify/deploy-check.mjs               # deploy/의 단위 파일·환경 예시·설치 절차와 jar의 정합(Linux 없이), 포트 28080
 node server/verify/https-session.mjs --host <test-host> --tls internal --bind <주소> --backend spring   # Caddy 경유 시험 세션
 node server/verify/https-check.mjs                # 그 세션에서 HTTPS/WSS, 재생, 채팅, 서비스 재시작(H10)
 ```
 
-중계 검증 결과는 `verification/spring/RESULTS.md`, 제품 다시보기·클립 결과는 [제품 검증 기록](../../verification/product/REPORT.md)에 있습니다.
+중계 검증 결과는 `verification/spring/RESULTS.md`, 제품 기능과 채팅 오버레이 결과는 [제품 검증 기록](../../verification/product/REPORT.md)에 있습니다.
