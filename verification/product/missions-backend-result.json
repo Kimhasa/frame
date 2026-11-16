@@ -1,0 +1,306 @@
+{
+  "generatedAt": "2026-11-16T02:36:58.1538822Z",
+  "command": ".\\gradlew.bat test bootJar --rerun-tasks",
+  "workingDirectory": "apps/api",
+  "exitCode": 0,
+  "runtime": {
+    "kind": "docker-compose",
+    "configPath": "%LOCALAPPDATA%/Frame/product-docker/config.json",
+    "postgresHost": "127.0.0.1",
+    "postgresPort": 25432,
+    "redisHost": "127.0.0.1",
+    "redisPort": 26379,
+    "database": "separate verification database and generated schemas",
+    "jdk": "Temurin 21.0.13+9"
+  },
+  "results": {
+    "tests": 127,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "classes": 31
+  },
+  "testClasses": [
+    {
+      "name": "frame.api.account.AccountIntegrationTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "durationSeconds": 21.947
+    },
+    {
+      "name": "frame.api.account.AccountSessionRecoveryTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "durationSeconds": 0.143
+    },
+    {
+      "name": "frame.api.account.ChannelMissionsTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "durationSeconds": 0.015
+    },
+    {
+      "name": "frame.api.account.ChannelPollsTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "durationSeconds": 0.026
+    },
+    {
+      "name": "frame.api.account.ChannelProfileTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "durationSeconds": 0.026
+    },
+    {
+      "name": "frame.api.account.ChannelQuestionsTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "durationSeconds": 0.015
+    },
+    {
+      "name": "frame.api.account.ChannelRewardsTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "durationSeconds": 0.013
+    },
+    {
+      "name": "frame.api.account.ChatModerationTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "durationSeconds": 0.009
+    },
+    {
+      "name": "frame.api.account.ChatTicketsTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "durationSeconds": 0.367
+    },
+    {
+      "name": "frame.api.account.ProductMigrationIntegrationTest",
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "durationSeconds": 5.517
+    },
+    {
+      "name": "frame.api.account.ProductNotificationsTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "durationSeconds": 0.219
+    },
+    {
+      "name": "frame.api.account.ProductStorageDisabledTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "durationSeconds": 0.655
+    },
+    {
+      "name": "frame.api.account.ReportManagementTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "durationSeconds": 0.012
+    },
+    {
+      "name": "frame.api.account.ScheduledBroadcastsTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "durationSeconds": 0.004
+    },
+    {
+      "name": "frame.api.account.WatchHistoryTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "durationSeconds": 0.008
+    },
+    {
+      "name": "frame.api.BlankRelayVariablesTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "durationSeconds": 0.126
+    },
+    {
+      "name": "frame.api.broadcast.BroadcastRegistryTest",
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "durationSeconds": 0.024
+    },
+    {
+      "name": "frame.api.chat.ChatHandshakeFilterTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "durationSeconds": 0.001
+    },
+    {
+      "name": "frame.api.chat.ChatRulesTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "durationSeconds": 0.006
+    },
+    {
+      "name": "frame.api.chat.ManagedChatHubTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "durationSeconds": 0.178
+    },
+    {
+      "name": "frame.api.dvr.DvrRulesTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "durationSeconds": 0.029
+    },
+    {
+      "name": "frame.api.mediamtx.MediaMtxPathsTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "durationSeconds": 0.001
+    },
+    {
+      "name": "frame.api.obs.ObsBroadcastsTest",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "durationSeconds": 0.037
+    },
+    {
+      "name": "frame.api.payments.PaymentsTest",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "durationSeconds": 1.789
+    },
+    {
+      "name": "frame.api.playback.PlaybackRulesTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "durationSeconds": 0.008
+    },
+    {
+      "name": "frame.api.playback.ViewerSessionsTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "durationSeconds": 0.006
+    },
+    {
+      "name": "frame.api.ShutdownTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "durationSeconds": 7.003
+    },
+    {
+      "name": "frame.api.StartupGraceTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "durationSeconds": 6.219
+    },
+    {
+      "name": "frame.api.stats.StatsRowTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "durationSeconds": 0.003
+    },
+    {
+      "name": "frame.api.UpstreamBreakTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "durationSeconds": 1.09
+    },
+    {
+      "name": "frame.api.web.JsCompatTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "durationSeconds": 0.01
+    }
+  ],
+  "missionChecks": [
+    "authenticated private owner and author scopes",
+    "CSRF origin and expected-account guards",
+    "strict canonical free-only proposal inputs",
+    "accepted-only global 3 per 60 seconds quota",
+    "chat block follower word link policies without slow timer consumption",
+    "idempotent concurrent retry and owner-versus-viewer race",
+    "owner state transitions and required terminal reasons",
+    "private cursor pagination and filtered management list",
+    "deadline expiry persists despite 409 and records actual deadline time",
+    "broadcast replacement and application restart expire unresolved only",
+    "two-connection Hikari pool with six concurrent mission reads",
+    "V11 to V12 migration preserves existing wallets redemptions and ledger",
+    "Redis unavailable leaves anonymous mission current request safe"
+  ],
+  "runtimeJarSha256": "ac8567c60a814edd9ed091c2f6f189c7ad918169678a80a4aa37887e4bafb991",
+  "jarFrozenForE2e": true,
+  "previousMigrationsUnchanged": true,
+  "migrationHashes": {
+    "V1__accounts_channels_follows.sql": "09aac64c7d820f3ea8b3229b99b4dca11a1de6c104c7da277846415bf8a39b4f",
+    "V10__channel_questions.sql": "e7e7eceacdd6e3871317e8e5167670a355510524d09f088134acbecb965dd50c",
+    "V11__channel_points_rewards.sql": "90df9d920a7f2d7e69578e29cf84d17cc040ab076629a3e73d936139f2a20653",
+    "V12__channel_missions.sql": "86267b2812918ef883afbc0a4063297b5627a519a1803fbc682f637000685d34",
+    "V2__signup_consents.sql": "5841a933a3fb672ee4876ebf6a4c36247416a126b7e17555151e9ecc8bb4daad",
+    "V3__broadcast_schedules.sql": "8661aecdd2fadaf14a67a36a2ad5e60811dae1a94b77f09ca62480f8a61bea6d",
+    "V4__watch_history.sql": "e5c93b9231061ec8253b160b7de5f5fbbb14ff3e50754e56ba3e6b65340029ca",
+    "V5__channel_profiles_reports.sql": "b82d405664a182606e35cea5919be5096ffdaea1d8a57223eb3be0c95529a0ee",
+    "V6__report_management.sql": "b282072620ab76027dbed89f4d37179e79199c150233eb8722d0d92d15ee3557",
+    "V7__product_notifications.sql": "88f914cbe4137bab2376f84bb78e1b60402b9c4ec9c2c990f27ec78c9947f4ef",
+    "V8__channel_chat_moderation.sql": "c6fd971cfb0dc10dd59bb107dfed6131a1f37ead43f8c1453a071fee03090044",
+    "V9__channel_polls.sql": "65e4689d1b6622b59b541129e6c6742bc8e77458790e53d468dbff8a68721782"
+  },
+  "complete": true
+}

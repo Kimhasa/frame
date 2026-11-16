@@ -1,0 +1,33 @@
+{
+  "checkedAt": "2026-11-16T02:12:30.813Z",
+  "dockerDesktopVersion": "4.99.0.245822",
+  "installerUrl": "https://desktop.docker.com/win/main/amd64/245822/Docker%20Desktop%20Installer.exe",
+  "officialChecksumUrl": "https://desktop.docker.com/win/main/amd64/245822/checksums.txt",
+  "installerSha256": "a5e299131c9c53d60f3f752b162078945eb5faf6eedcf0be20a214c6e6cea444",
+  "authenticodeValid": true,
+  "publisher": "Docker Inc",
+  "mode": "per-user",
+  "installerExitCode": 0,
+  "registrationRestored": true,
+  "engineVersion": "29.9.3",
+  "osType": "linux",
+  "nativePostgresRedisPreserved": true,
+  "existingDataRemoved": false,
+  "manualRegistryChange": false,
+  "osRestarted": false,
+  "privateCredentialsPrinted": false,
+  "composeServices": [
+    {
+      "name": "postgres",
+      "port": 25432,
+      "health": "healthy"
+    },
+    {
+      "name": "redis",
+      "port": 26379,
+      "health": "healthy"
+    }
+  ],
+  "nativeFallbackStoppedGracefully": true,
+  "nativeDatabaseFilesPreserved": true
+}

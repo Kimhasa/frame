@@ -1,0 +1,34 @@
+{
+  "origin": "http://127.0.0.1:5366",
+  "developmentStrictMode": true,
+  "readOnly": true,
+  "dedicatedFixtureCookiesOnly": true,
+  "results": [
+    {
+      "name": "Development StrictMode retains one actual owner mission page and seven status tabs without runtime errors",
+      "pass": true
+    },
+    {
+      "name": "The real mission editor survives effect replay, discards a local status and reason draft, and Escape restores its opener",
+      "pass": true
+    },
+    {
+      "name": "All seven status tabs read actual owner data; the legacy canceled mapping and completed three-entry history remain read-only",
+      "pass": true
+    },
+    {
+      "name": "The 390px mission list and 320px status editor retain readable controls and complete server history without horizontal overflow",
+      "pass": true
+    },
+    {
+      "name": "The saved mission and history remain unchanged; every owner read is guarded with no writes, chat sockets or runtime errors",
+      "pass": true
+    }
+  ],
+  "runtimeErrors": [],
+  "dataChangingRequests": 0,
+  "blockedWrites": 0,
+  "chatSockets": 0,
+  "ownerHeadersMatched": true,
+  "complete": true
+}

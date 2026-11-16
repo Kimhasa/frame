@@ -88,6 +88,19 @@ function ensureProduct(){
   cwd:ROOT,env:docker?{...process.env,FRAME_DOCKER_DIR:resolve(file,'..')}:process.env,windowsHide:true,stdio:['ignore','pipe','pipe'],timeout:docker?180000:60000});}
  catch{throw Error(`The FRAME database or Redis is not ready. Run node server/${docker?'product-docker':'product-local'}.mjs status; no media process was stopped.`);}
 }
+function javaExecutable(){
+ if(process.env.FRAME_JAVA){
+  if(!existsSync(process.env.FRAME_JAVA))throw Error('FRAME_JAVA must point to an installed Java executable; no process was changed.');
+  return process.env.FRAME_JAVA;
+ }
+ const configured=process.env.JAVA_HOME&&join(process.env.JAVA_HOME,'bin','java.exe');
+ if(configured&&existsSync(configured))return configured;
+ try{
+  const found=execFileSync('where.exe',['java'],{windowsHide:true,stdio:['ignore','pipe','ignore']}).toString().trim().split(/\r?\n/)[0];
+  if(found&&existsSync(found))return found;
+ }catch{}
+ throw Error('Java 21 is required. Set JAVA_HOME to its JDK folder or FRAME_JAVA to java.exe; no process was changed.');
+}
 function startApi(java,config){
  // A new build must not replace a JAR still being read lazily by the running JVM.
  const runtimeJar=join(DIR,`api-${Date.now()}-${randomBytes(3).toString('hex')}.jar`);
@@ -149,7 +162,7 @@ if(command==='stop'){
  const config=read(CONFIG);
  if(config?.backendUrl!==URL||config?.path!==PATH||typeof config?.token!=='string'||!/^[a-f0-9]{64}$/.test(config.token)||!existsSync(JAR))throw Error('API restart configuration is incomplete.');
  productEnv();paymentEnv();ensureProduct();
- const java=process.env.FRAME_JAVA||execFileSync('where.exe',['java'],{windowsHide:true}).toString().trim().split(/\r?\n/)[0];
+ const java=javaExecutable();
  // Only the API is replaced. OBS input and the recording process owned by MediaMTX keep running.
  if(apiOwned)execFileSync('taskkill.exe',['/PID',String(state.spring),'/T','/F'],{windowsHide:true,stdio:'ignore'});
  if(!await wait(()=>free(PORT.spring),5000))throw Error('The old API port did not close; the media receiver is still running.');
@@ -167,7 +180,7 @@ if(command==='stop'){
   let config=read(CONFIG);
   if(!config){config={version:1,backendUrl:URL,path:PATH,token:randomBytes(32).toString('hex')};write(CONFIG,config);}
   if(config.backendUrl!==URL||config.path!==PATH||typeof config.token!=='string'||!/^[a-f0-9]{64}$/.test(config.token))throw Error('Local studio config is invalid; it was not overwritten.');
-  const java=process.env.FRAME_JAVA||execFileSync('where.exe',['java'],{windowsHide:true}).toString().trim().split(/\r?\n/)[0];
+  const java=javaExecutable();
   const mtxConfig=join(DIR,'mediamtx.yml');writeFileSync(mtxConfig,mediaConfig(config.token),{mode:0o600});
   paymentEnv();productEnv();ensureProduct();
   state={root:ROOT,marker:DIR,phase:'starting',startedAt:new Date().toISOString()};

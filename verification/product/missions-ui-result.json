@@ -1,0 +1,242 @@
+{
+  "verificationDatabaseOnly": true,
+  "origin": "http://127.0.0.1:5365",
+  "api": "http://127.0.0.1:18083",
+  "checks": 49,
+  "passed": 49,
+  "realSources": [
+    "One isolated 320x180/15fps MediaMTX/FFmpeg source replaced sequentially on the same path",
+    "Real PostgreSQL accounts, private proposals, owner transitions and moderation rules"
+  ],
+  "deadlineFixture": {
+    "controlledVerificationDatabaseShift": true,
+    "actualElapsedMinutes": false,
+    "productionDataChanged": false
+  },
+  "watchMedia": "Video playback is paused during mission UI checks; the separate small live publisher continues. These checks claim no viewing reward or playback measurements.",
+  "paginationInstrumentation": "Owner GET limit lowered to 2; mission rows and opaque cursors remain real server responses.",
+  "faultInjection": [
+    "Owner initial/cursor GET 503",
+    "Owner PATCH 503/delay",
+    "Actual version conflict",
+    "Offline/online eligibility",
+    "Submission request-stage 503/delay",
+    "Submission response-stage 503 after actual HTTP 201 commit",
+    "Cancel 503/delay"
+  ],
+  "results": [
+    {
+      "name": "Invalid titles, durations and payment fields are rejected without saving or charging a mission quota",
+      "pass": true
+    },
+    {
+      "name": "Concurrent retries of the same account UUID create one received mission and one initial history event",
+      "pass": true
+    },
+    {
+      "name": "A request UUID cannot silently replace its original canonical mission proposal",
+      "pass": true
+    },
+    {
+      "name": "Only the proposal author and channel owner receive private missions, without internal account identifiers",
+      "pass": true
+    },
+    {
+      "name": "Private mission calls enforce expected account scope and authenticated mutations require CSRF",
+      "pass": true
+    },
+    {
+      "name": "Three accepted proposals consume the account minute quota and a fourth returns its real retry interval",
+      "pass": true
+    },
+    {
+      "name": "Stored follow, block, word and Unicode-link rules reject new missions without consuming quota or applying the 120-second chat slow timer",
+      "pass": true
+    },
+    {
+      "name": "The server requires terminal reasons and prevents skipping directly from received to completed",
+      "pass": true
+    },
+    {
+      "name": "Starting a mission preserves its fixed deadline and an old version cannot overwrite the owner transition",
+      "pass": true
+    },
+    {
+      "name": "Only the broadcaster can finish a running mission; terminal state and its three private history events remain immutable",
+      "pass": true
+    },
+    {
+      "name": "A viewer can cancel only a received proposal, while owner rejection stores a mandatory reason and exactly one terminal event",
+      "pass": true
+    },
+    {
+      "name": "A controlled verify-database deadline fixture expires durably before a rejected command, with one event at the deadline; no real fifteen-minute wait is claimed",
+      "pass": true
+    },
+    {
+      "name": "An actual stopped and replaced same-path media source expires open missions, preserves old private history and isolates the new broadcast",
+      "pass": true
+    },
+    {
+      "name": "An existing request UUID confirms its original receipt after broadcast closure and participant blocking without another proposal",
+      "pass": true
+    },
+    {
+      "name": "Opaque cursor and date validation reject malformed filters while an inclusive KST day finds real stored missions",
+      "pass": true
+    },
+    {
+      "name": "All real mission acceptance, rejection, cancellation, completion and expiry operations leave every account point balance and ledger empty",
+      "pass": true
+    },
+    {
+      "name": "Owner list and cursor failures are recoverable and append actual server pages without duplicate missions",
+      "pass": true
+    },
+    {
+      "name": "Owner search waits for its matching real response and final row instead of filtering only the current cursor page",
+      "pass": true
+    },
+    {
+      "name": "The requested mission detail opens with its heading focused",
+      "pass": true
+    },
+    {
+      "name": "An empty terminal reason is rejected locally and focuses its field without a write",
+      "pass": true
+    },
+    {
+      "name": "A failed owner write preserves the complete multiline reason and selected status",
+      "pass": true
+    },
+    {
+      "name": "A pending owner mutation locks all controls, prevents Escape dismissal and sends only one request",
+      "pass": true
+    },
+    {
+      "name": "A confirmed owner start stores one transition and focuses the acknowledgement after closing the editor",
+      "pass": true
+    },
+    {
+      "name": "The UI completes a running mission with its real reason and exactly three chronological history events",
+      "pass": true
+    },
+    {
+      "name": "A real competing version preserves the draft and prevents automatic stale resubmission",
+      "pass": true
+    },
+    {
+      "name": "Declining the latest-state confirmation retains the owner draft",
+      "pass": true
+    },
+    {
+      "name": "Only explicit confirmation replaces a conflicting draft with the latest real running state",
+      "pass": true
+    },
+    {
+      "name": "The owner mission detail and fields fit the 390px viewport",
+      "pass": true
+    },
+    {
+      "name": "The owner mission detail and fields fit the 320px viewport",
+      "pass": true
+    },
+    {
+      "name": "Closing the mission detail returns focus to its original row action",
+      "pass": true
+    },
+    {
+      "name": "An anonymous mission panel contains no private proposal title or history",
+      "pass": true
+    },
+    {
+      "name": "Mission login preserves the exact current broadcast return route",
+      "pass": true
+    },
+    {
+      "name": "An oversized viewer title is rejected locally and focuses the title input",
+      "pass": true
+    },
+    {
+      "name": "Going offline preserves the complete viewer draft and disables sending",
+      "pass": true
+    },
+    {
+      "name": "An unknown submission failure freezes the exact title, description and duration without inventing a receipt",
+      "pass": true
+    },
+    {
+      "name": "An uncertain retry sends the original body and UUID once while pending controls prevent duplicate submission or Escape",
+      "pass": true
+    },
+    {
+      "name": "A confirmed real proposal appears once in private history and focuses the acknowledgement",
+      "pass": true
+    },
+    {
+      "name": "An actual HTTP 201 commit followed by an injected 503 recovers its own saved receipt without duplicates",
+      "pass": true
+    },
+    {
+      "name": "An uncertain cancellation preserves the exact confirmation target instead of dismissing the dialog",
+      "pass": true
+    },
+    {
+      "name": "Pending cancellation disables every action and cannot be sent twice or dismissed",
+      "pass": true
+    },
+    {
+      "name": "Confirmed viewer cancellation stores its actor and one terminal event and focuses the acknowledgement",
+      "pass": true
+    },
+    {
+      "name": "Private mission detail expands its saved description, actors, times and chronological change history",
+      "pass": true
+    },
+    {
+      "name": "Closing the viewer mission panel returns focus to its opener",
+      "pass": true
+    },
+    {
+      "name": "Real private proposal and cancellation history survives browser reload",
+      "pass": true
+    },
+    {
+      "name": "The viewer mission panel and history fit the 390px viewport",
+      "pass": true
+    },
+    {
+      "name": "The viewer mission panel and history fit the 320px viewport",
+      "pass": true
+    },
+    {
+      "name": "A shared-cookie account change discards the previous account private mission history",
+      "pass": true
+    },
+    {
+      "name": "The final fixtures contain one untouched active editable mission and one durable completed mission for read-only development and restart checks",
+      "pass": true
+    },
+    {
+      "name": "No browser runtime or unconfirmed interception errors; every private management/write call captures its account header",
+      "pass": true
+    }
+  ],
+  "runtimeErrors": [],
+  "offlineState": {
+    "online": false,
+    "disabled": true,
+    "hasOfflineHint": true,
+    "titleMatches": true,
+    "descriptionMatches": true,
+    "durationMatches": true
+  },
+  "confirmedCanceledInterceptions": [
+    {
+      "method": "GET",
+      "path": "/api/v1/me/missions",
+      "command": "Fetch.continueRequest",
+      "confirmedBy": "Network.loadingFailed:canceled"
+    }
+  ]
+}

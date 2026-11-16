@@ -75,7 +75,7 @@ node server/product-docker.mjs stop
 | `docker/01-product.sql` | 빈 PostgreSQL 볼륨에 관리 역할·제한된 앱 역할·제품/검증 DB 준비 |
 | `apps/api/src/main/resources/db/migration/` | Spring Boot 시작 시 Flyway가 제품 테이블의 버전과 변경 이력을 관리 |
 
-앱 테이블을 Docker 초기화 SQL에 복사하지 않는다. 최초 실행에는 `db/migration`의 버전들이 순서대로 적용되고 재시작에는 이미 적용한 SQL을 재실행하지 않는다. 현재 V1(회원·채널·팔로우), V2(가입 동의), V3(방송 예약), V4(시청 기록), V5(채널 프로필·주소 예약·신고 접수), V6(운영자 플래그·신고 관리), V7(개인 알림·전송 표식·시작 기준 시각), V8(채팅 정책·계정 차단), V9(방송 투표·선택지·계정별 표), V10(비공개 질문·답변·명시적 공개 고정), V11(채널 포인트·원장·보상·교환 요청)을 사용한다. 적용한 SQL은 수정하지 않고 다음 `V12__설명.sql`을 추가한다. checksum 불일치 시 시작을 실패시키며 자동 `repair`·`clean`·baseline 처리를 하지 않는다. Redis는 세션 저장소라 Flyway 대상이 아니다.
+앱 테이블을 Docker 초기화 SQL에 복사하지 않는다. 최초 실행에는 `db/migration`의 버전들이 순서대로 적용되고 재시작에는 이미 적용한 SQL을 재실행하지 않는다. 현재 V1(회원·채널·팔로우), V2(가입 동의), V3(방송 예약), V4(시청 기록), V5(채널 프로필·주소 예약·신고 접수), V6(운영자 플래그·신고 관리), V7(개인 알림·전송 표식·시작 기준 시각), V8(채팅 정책·계정 차단), V9(방송 투표·선택지·계정별 표), V10(비공개 질문·답변·명시적 공개 고정), V11(채널 포인트·원장·보상·교환 요청), V12(무료 미션·상태 변경 이력)을 사용한다. 적용한 SQL은 수정하지 않고 다음 `V13__설명.sql`을 추가한다. checksum 불일치 시 시작을 실패시키며 자동 `repair`·`clean`·baseline 처리를 하지 않는다. Redis는 세션 저장소라 Flyway 대상이 아니다.
 
 PostgreSQL의 `frame_admin`은 최초 준비용이고 API는 `frame_app`으로 접속한다. 비밀번호는 Compose secrets 파일로 전달한다. Redis 인증은 ACL 파일로 설정하며 환경 변수 `REDIS_PASSWORD`만 선언하는 방식을 사용하지 않는다. healthcheck는 실제 앱 DB 인증과 Redis 인증을 확인한다. [PostgreSQL 이미지](https://hub.docker.com/_/postgres), [Redis 이미지](https://hub.docker.com/_/redis), [Compose secrets](https://docs.docker.com/compose/how-tos/use-secrets/), [Flyway 설정](https://docs.spring.io/spring-boot/appendix/application-properties/)
 
@@ -83,4 +83,6 @@ PostgreSQL의 `frame_admin`은 최초 준비용이고 API는 `frame_app`으로 �
 
 2026-11-12 사용자 요청으로 공식 서명·SHA-256을 확인한 Docker Desktop 4.99.0을 사용자 범위에 설치하고 WSL을 3.0.5로 갱신했다. 가상 머신 플랫폼·WSL 선택 기능을 활성화했으며 설치 결과가 Windows 재시작 필요를 반환했다. Docker CLI 29.9.3·Compose 5.7.0·WSL 버전 조회와 Compose 구성 검사를 확인했다.
 
-재부팅은 자동으로 실행하지 않았다. 실제 컨테이너 시작·Docker 볼륨 재시작·컨테이너 DB의 Flyway 적용은 재부팅 후 확인한다. Flyway의 실제 PostgreSQL 검사는 기존 전용 검증 DB에서 수행했다. [검증 결과](../verification/product/REPORT.md)
+당시 재부팅은 자동으로 실행하지 않았고, 컨테이너 시작과 Docker DB의 Flyway 적용은 확인하지 않았다. 당시 Flyway의 실제 PostgreSQL 검사는 별도 네이티브 검증 DB에서 수행했다.
+
+2026-11-16 현재 PC에서는 Docker Desktop 실행 파일은 있으나 설치 등록이 없어 시작이 실패했다. 사용자의 재설치 요청으로 공식 Docker Desktop 4.99.0 설치 프로그램의 SHA-256과 Docker Inc 서명을 확인하고 사용자 범위에 다시 설치했다. 설치 등록 복구, Linux 엔진 29.9.3 응답, 이 Compose의 PostgreSQL `25432`·Redis `26379` 인증 healthcheck `healthy`를 확인했다. 제거 명령·수동 레지스트리 수정·기존 데이터 삭제·OS 재부팅은 하지 않았다. 준비 과정에 사용한 별도 네이티브 PostgreSQL·Redis는 정상 종료했으며 데이터 파일을 보존했다. Docker 재설치 결과는 [안전한 실행 결과](../verification/product/docker-reinstall-result.json), 제품 기능과 DB 검증은 [제품 검증 기록](../verification/product/REPORT.md)에 기록한다.

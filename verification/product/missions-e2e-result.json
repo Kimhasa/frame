@@ -1,0 +1,36 @@
+{
+  "verificationDatabaseOnly": true,
+  "productionUserDataUntouched": true,
+  "nativeObsReceiverUntouched": true,
+  "complete": true,
+  "testedJarSha256": "ac8567c60a814edd9ed091c2f6f189c7ad918169678a80a4aa37887e4bafb991",
+  "databaseRuntime": "docker",
+  "results": [
+    {
+      "name": "Real free mission proposals and management UI verification pass",
+      "pass": true
+    },
+    {
+      "name": "One low-resolution source is replaced sequentially to verify old broadcast protection",
+      "pass": true
+    },
+    {
+      "name": "Read-only development StrictMode management UI verification passes",
+      "pass": true
+    },
+    {
+      "name": "Mission state, history and old-broadcast privacy persist after restart",
+      "pass": true
+    },
+    {
+      "name": "The tested private JAR stays immutable throughout verification",
+      "pass": true
+    }
+  ],
+  "fixture": "Dedicated MediaMTX + 320x180 15fps H.264/AAC FFmpeg source + immutable Spring JAR + production React + headless Edge",
+  "limits": [
+    "Single PC and loopback only",
+    "No Caddy HTTPS/WSS or physical mobile device coverage",
+    "No load or capacity claim"
+  ]
+}

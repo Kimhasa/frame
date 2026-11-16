@@ -1,6 +1,6 @@
 # 제품 API
 
-같은 Spring Boot 프로세스의 `/api/v1/*`가 제품 API다. PostgreSQL에는 계정·채널 프로필·주소 예약·신고·팔로우·방송 예약·시청 기록·알림·채팅 정책·투표·질문과 답변·비현금 포인트와 보상을 저장하고, Redis에는 Spring Session 로그인 세션만 저장한다. SQL은 `JdbcClient`, 스키마 변경은 Flyway의 `db/migration/V*.sql`로 관리한다. 기본값은 비활성화이며 기존 중계·HLS·채팅·운영자 Bearer API는 이전 계약을 유지한다.
+같은 Spring Boot 프로세스의 `/api/v1/*`가 제품 API다. PostgreSQL에는 계정·채널 프로필·주소 예약·신고·팔로우·방송 예약·시청 기록·알림·채팅 정책·투표·질문과 답변·비현금 포인트와 보상·무료 미션과 상태 이력을 저장하고, Redis에는 Spring Session 로그인 세션만 저장한다. SQL은 `JdbcClient`, 스키마 변경은 Flyway의 `db/migration/V*.sql`로 관리한다. 기본값은 비활성화이며 기존 중계·HLS·채팅·운영자 Bearer API는 이전 계약을 유지한다.
 
 ## 실행 설정
 
@@ -103,6 +103,12 @@ Spring Session 필터 자체도 `/api/v1/*`에만 등록한다. 로그인 쿠키
 | `POST /api/v1/me/channel/connection` | `{streamKey}` → 200 `Channel`. 아래 명시적 OBS 소유권 연결 |
 | `GET /api/v1/studio` | 200 현재 사용자의 기존 OBS 상태·송출 정보. 미연결은 403 `CHANNEL_NOT_CONNECTED` |
 | `PUT /api/v1/studio`, `PATCH /api/v1/studio` | `{title,publisher?}` → 200 갱신된 스튜디오 상태. DB에 연결된 자기 경로만 변경 |
+| `GET /api/v1/me/missions` | 소유 채널의 무료 미션 목록. `status=all|received|running|completed|rejected|canceled|expired|failed`, `q`, `from`, `to`, `limit`, `cursor` |
+| `GET /api/v1/me/missions/{id}` | 소유 미션 상세와 상태 변경 이력 |
+| `PATCH /api/v1/me/missions/{id}` | `{version,status,reason}`으로 방송자 수락·최종 처리 |
+| `GET /api/v1/missions/current` | 현재/과거 방송 키의 내 제안·참여 가능 상태. 공개 미션 목록은 없음 |
+| `POST /api/v1/missions` | 현재 방송에 무료 미션 제안. UUID 멱등 접수 |
+| `POST /api/v1/missions/{id}/cancel` | 제안자가 접수 상태 미션을 `{version}`으로 취소 |
 
 필수 텍스트 값과 JSON 객체를 서버에서 검증한다. 쓰기 본문은 최대 8KB이며 채팅 설정 PATCH만 최대 16KB다. 초과하면 413 `BODY_TOO_LARGE`다. 비밀번호는 Unicode 문자 10~128자, 계정·채널 표시 이름은 공백 제거 후 1~30자다. 가입 요청에 `handle`이 없거나 `null`이면 서버가 `ch-`와 80bit 암호학적 난수의 소문자 16진수 20자를 조합한 고유 주소를 발급한다. 이메일이나 닉네임에서 주소를 유추하지 않는다. 응답의 `channel.handle`이 현재 주소이며 채널 UUID는 주소·이름 수정에도 유지한다.
 
@@ -290,6 +296,24 @@ V2 마이그레이션은 기존 계정의 세 필드를 모두 `NULL`로 둔다.
 
 채널 정보·팔로우·송출 경로 연결은 PostgreSQL에 남지만 현재 방송 제목·방송 ID의 수명은 기존 OBS 중계의 메모리 계약을 따른다. Spring 재시작 후 계속 송출 중인 경로는 새 방송 ID로 등록될 수 있고 방송 제목은 초기값으로 돌아간다. 이를 영속 방송 이력으로 표현하지 않는다.
 
+## 무료 미션과 진행 이력
+
+미션은 **무료 제안만** 처리한다. 유료 미션·후원 금액·포인트 차감·보상 지급·토스 결제에 연결하지 않으며, 완료 처리도 금전 거래를 생성하지 않는다. PostgreSQL V12의 `product_missions`, `product_mission_history`에 저장한다. 제안은 제안한 회원과 해당 채널 소유자만 읽는다. 다른 시청자에게 공개되는 미션 큐·설명·진행 사유는 없다. 익명 `GET /missions/current`는 `userId:null,mine:[]`와 로그인/방송 불가 사유만 반환한다.
+
+제안 입력은 `{path,broadcastId,title,description,durationMinutes,clientRequestId}`다. 제목은 1~100자·한 줄, 설명은 0~1,000자·여러 줄이며 NFC·CRLF→LF·앞뒤 공백을 정규화한다. `durationMinutes`는 15/30/60 중 하나이고 **접수 시각부터** 기한을 계산한다. 수락 때 연장하지 않는다. 클라이언트가 author·결제 금액·포인트·기한 시각을 지정할 수 없다. 생성은 201, 동일 계정·UUID와 같은 정규 본문의 확인은 200이며 다른 본문 재사용은 409 `MISSION_REQUEST_CONFLICT`다. 기존 영수증 확인은 방송 종료·차단·참여 제한 뒤에도 새 제안을 생성하지 않고 먼저 반환한다. 새로 접수한 제안만 계정 전체 60초에 3개까지이며 동일 요청 확인·검증/정책 거절은 횟수를 소비하지 않는다. 429 `MISSION_RATE_LIMITED`는 `Retry-After`를 포함한다.
+
+새 제안은 실제 fresh 원본과 현재 방송 ID·경로·내부 instance를 확인한다. 채팅의 차단·팔로워 전용·금칙어·링크 정책을 제안 제목/설명에 적용하고 채팅 느린 전송 간격은 소비하지 않는다. 소유자는 팔로워 조건만 면제한다. 제안 후 받은 미션은 원래 채널 UUID와 방송 instance를 보존하며 같은 경로의 새 방송이나 새 소유자에게 옮기지 않는다.
+
+`Mission`은 `{id,channelId,broadcastId,path,title,description,durationMinutes,deadlineAtMs,status,reason,version,createdAtMs,updatedAtMs,broadcastActive,author,history}`다. 저자는 공개 채널 프로필 `{channelId,handle,displayName}`이며 이메일·내부 계정 UUID·방송 instance·비밀값을 넣지 않는다. `OwnMission`에만 본인 요청 확인용 `clientRequestId`가 추가된다. 이력은 `{id,status,reason,actor,createdAtMs}`이며 `actor`는 viewer/owner/system이다. 생성→수락→최종의 최대 세 항목을 DB version 순서로 반환하므로 같은 밀리초에도 순서가 고정된다. 마지막 이력 상태는 미션 현재 상태와 같다.
+
+방송자의 전이는 received→running/rejected/canceled, running→completed/failed/canceled다. running으로 바꿀 때만 사유가 선택이고 완료·실패·거절·취소에는 1~500자 사유가 필요하다. 제안자는 received일 때만 취소할 수 있다. 완료·실패·거절·취소·만료는 최종 상태로 다시 열지 않는다. 현재 버전이 다르면 409 `MISSION_CONFLICT`, 진행 뒤 직접 취소나 허용되지 않은 전이는 `MISSION_INVALID_TRANSITION`, 최종 처리는 `MISSION_ALREADY_CLOSED`다. 소유자 요청에는 `X-FRAME-USER-ID`로 캡처한 계정을 검증하며 쿠키 계정 변경은 409 `SESSION_CHANGED`다.
+
+접수/진행 상태가 기한을 지나거나 방송 종료·교체·API 재시작으로 원래 instance가 사라지면 expired가 된다. 기한 초과 이력은 실제 `deadlineAtMs`, 방송 종료/재시작 이력은 관측 시각과 각각의 시스템 사유를 저장한다. 별도 worker 대신 조회·변경 요청에서 관측한 만료를 영구 반영하므로 요청이 없는 동안 백그라운드 작업이 수행됐다고 표현하지 않는다. 권한을 확인한 뒤 독립 만료 트랜잭션을 끝내고, 별도 읽기/쓰기 트랜잭션을 시작해 작은 커넥션 풀의 중첩 점유를 피한다. 읽기는 repeatable-read로 미션과 이력을 같은 snapshot에서 조회한다. 변경의 마지막 잠금 안에서 새로 관측한 만료도 커밋하고 컨트롤러가 그 뒤 409 `MISSION_EXPIRED`를 반환하므로 실패 응답 때문에 만료 이력이 rollback되거나 완료로 되살아나지 않는다.
+
+소유자 목록은 `{userId,items,nextCursor,serverNowMs}`, 상세/처리는 `{userId,item,serverNowMs}`다. 시청자 current는 `{userId,mine,nextCursor,canSubmit,reason,retryAfterMs,serverNowMs}`이고 이유는 null/login_required/blocked/followers_only/broadcast_unavailable/rate_limited다. 종료된 방송에서도 본인의 제안과 결과는 조회할 수 있다. 목록은 실제 생성 시각·UUID의 내림차순 keyset이며 소유자 검색/한국 날짜 범위/상태 필터를 지원한다. `limit`는 1~100, 소유자 기본 50·시청자 기본 20이다. 상태 처리와 취소는 미션 행 잠금·버전 검사로 직렬화하고 이력의 `(mission_id,version)` 고유 제약으로 한 전이를 한 번만 저장한다.
+
+주요 거절은 404 `MISSION_NOT_FOUND`, 409 `MISSION_BROADCAST_UNAVAILABLE`, 403 `MISSION_PARTICIPATION_BLOCKED`/`MISSION_FOLLOW_REQUIRED`, 400 `MISSION_WORD_BLOCKED`/`MISSION_LINK_BLOCKED`다. 형식/필터/커서는 400 `INVALID_MISSION_INPUT`/`INVALID_MISSION_FILTER`/`INVALID_MISSION_CURSOR`다. 응답과 오류는 모두 no-store이며 차단 사유·다른 제안자의 개인 내용을 포함하지 않는다.
+
 ## 검증
 
 기존 기본 회귀 검사에는 외부 DB·Redis가 필요하지 않다.
@@ -301,9 +325,9 @@ cd apps/api
 
 실제 PostgreSQL·Redis 통합 검사는 저장소 밖 검증 설정 파일의 경로를 지정한다. 테스트는 루프백 `127.0.0.1`의 FRAME 전용 포트 `15432`(네이티브) 또는 `25432`(Docker), DB 이름 `frame_product_verify` 또는 고유 접미사가 붙은 검증 DB인지 먼저 검사한다. 쿼리 매개변수·URL 안의 자격증명·외부 호스트·사용자 DB `frame_product`는 허용하지 않는다. 해당 DB의 임의 생성 스키마와 임의 Redis namespace만 사용하며, 종료 시 생성한 스키마·namespace 키만 정리한다. 실제 DB의 사용자·스키마·운영자 키를 읽거나 변경하지 않는다. 설정에는 `verifyDbUrl`, `dbUsername`, `dbPassword`, `redisHost`, `redisPort`, `redisPassword`가 필요하다.
 
-Flyway는 제품 기능을 활성화한 Spring Boot의 시작 과정에서 `db/migration`을 적용한다. 현재 V1(회원·채널·팔로우), V2(가입 동의), V3(방송 예약), V4(시청 기록), V5(채널 프로필·주소 예약·신고 접수), V6(운영자 플래그·신고 관리), V7(개인 알림·전송 표식·시작 기준 시각), V8(채팅 정책·계정 차단), V9(방송 투표·선택지·계정별 표), V10(비공개 질문·답변·명시적 공개 고정), V11(채널 포인트·원장·보상·교환 요청)을 사용한다. `validate-on-migrate: true`, `clean-disabled: true`, `baseline-on-migrate: false`를 명시한다. 적용한 SQL은 수정하지 않고 새 `V12__설명.sql` 같은 다음 버전을 추가한다. Redis는 Flyway 관리 대상이 아니다. 기존 Flyway 기록이 없는 비어 있지 않은 스키마를 자동으로 기존 운영 DB라고 간주하거나, checksum 오류를 자동으로 `repair`해서 넘기지 않는다.
+Flyway는 제품 기능을 활성화한 Spring Boot의 시작 과정에서 `db/migration`을 적용한다. 현재 V1(회원·채널·팔로우), V2(가입 동의), V3(방송 예약), V4(시청 기록), V5(채널 프로필·주소 예약·신고 접수), V6(운영자 플래그·신고 관리), V7(개인 알림·전송 표식·시작 기준 시각), V8(채팅 정책·계정 차단), V9(방송 투표·선택지·계정별 표), V10(비공개 질문·답변·명시적 공개 고정), V11(채널 포인트·원장·보상·교환 요청), V12(비공개 무료 미션·상태 이력)을 사용한다. `validate-on-migrate: true`, `clean-disabled: true`, `baseline-on-migrate: false`를 명시한다. 적용한 SQL은 수정하지 않고 새 `V13__설명.sql` 같은 다음 버전을 추가한다. Redis는 Flyway 관리 대상이 아니다. 기존 Flyway 기록이 없는 비어 있지 않은 스키마를 자동으로 기존 운영 DB라고 간주하거나, checksum 오류를 자동으로 `repair`해서 넘기지 않는다.
 
-`ProductMigrationIntegrationTest`는 별도 PostgreSQL DB의 임의 생성 스키마에서 빈 DB의 V11까지 적용·재시작 시 미적용, V1 데이터의 최신 업그레이드 보존·기존 동의 NULL 유지, V3·V4에서 최신으로 업그레이드한 뒤 기존 방송 예약·시청 기록·채널 생성일 보존과 주소 백필·삭제 후 예약 동작, V5 신고의 원문·시각 보존과 운영자 자동 승격 없음, V6 알림 설정 보존·시작 기준 생성·과거 알림 미생성, V7 프로필·팔로우·알림 확인 상태 보존과 기본 채팅 정책 추가, V8 기존 정책 보존과 투표 단일 슬롯·계정별 한 표·선택지 복합 FK, V9 투표·선택지·표 보존과 질문 요청 멱등 키·단일 고정·답변 시각 제약, V10 기존 비공개 답변 보존과 빈 포인트 저장소·음수 잔액·1회 신청·중복 환불 제약, 임시 복사 SQL 변조 시 checksum 검증으로 후속 V12 DDL 차단을 검사한다. 이 검사는 비밀 설정의 `verifyDbUrl` 중 루프백 주소와 `frame_product_verify` 또는 고유 접미사를 붙인 이름만 허용하며, 실행 시 생성한 `migration_verify_*` 스키마만 정리한다. 실제 DB와 저장소의 V1~V10 SQL은 변경하지 않는다. `ProductStorageDisabledTest`는 DB·Redis가 연결되지 않아도 제품 기능 비활성 상태의 미디어 서버가 해당 구성 요소 없이 시작되는지 검사한다.
+`ProductMigrationIntegrationTest`는 별도 PostgreSQL DB의 임의 생성 스키마에서 빈 DB의 V12까지 적용·재시작 시 미적용, V1 데이터의 최신 업그레이드 보존·기존 동의 NULL 유지, V3·V4에서 최신으로 업그레이드한 뒤 기존 방송 예약·시청 기록·채널 생성일 보존과 주소 백필·삭제 후 예약 동작, V5 신고의 원문·시각 보존과 운영자 자동 승격 없음, V6 알림 설정 보존·시작 기준 생성·과거 알림 미생성, V7 프로필·팔로우·알림 확인 상태 보존과 기본 채팅 정책 추가, V8 기존 정책 보존과 투표 단일 슬롯·계정별 한 표·선택지 복합 FK, V9 투표·선택지·표 보존과 질문 요청 멱등 키·단일 고정·답변 시각 제약, V10 기존 비공개 답변 보존과 빈 포인트 저장소·음수 잔액·1회 신청·중복 환불 제약, V11 잔액·부분 시청·원장·보상 신청 보존과 미션 요청/기한/이력 고유 제약, 임시 복사 SQL 변조 시 checksum 검증으로 후속 V13 DDL 차단을 검사한다. 이 검사는 비밀 설정의 `verifyDbUrl` 중 루프백 주소와 `frame_product_verify` 또는 고유 접미사를 붙인 이름만 허용하며, 실행 시 생성한 `migration_verify_*` 스키마만 정리한다. 실제 DB와 저장소의 V1~V11 SQL은 변경하지 않는다. `ProductStorageDisabledTest`는 DB·Redis가 연결되지 않아도 제품 기능 비활성 상태의 미디어 서버가 해당 구성 요소 없이 시작되는지 검사한다.
 
 ```powershell
 $env:FRAME_PRODUCT_TEST_CONFIG = '<저장소 밖 검증 설정 JSON 경로>'

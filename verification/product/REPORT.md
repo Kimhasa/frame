@@ -292,3 +292,24 @@ Flyway V11의 보상·계정별 채널 지갑·신청·원장 네 테이블에 �
 결과: [백엔드](rewards-backend-result.json), [실제 API·시청·화면](rewards-ui-result.json), [개발 모드](rewards-dev-result.json), [재시작](rewards-restart-result.json), [통합 실행](rewards-e2e-result.json), [현재 PC 적용](rewards-local-result.json).
 
 화면: [보상 설정](rewards-owner-ui.png), [모바일 보상 수정](rewards-owner-mobile-ui.png), [교환 요청](rewards-owner-requests-ui.png), [모바일 처리 오류](rewards-owner-request-mobile-ui.png), [시청자 신청](rewards-viewer-requests-ui.png), [모바일 포인트 원장](rewards-viewer-mobile-ui.png).
+
+
+## Docker 재설치·무료 미션 제안과 진행 이력
+
+2026-11-16. 새 PC에서 남은 제품 기능을 확인하고 무료 미션 관리부터 실제 연동했다. 기존 색·글꼴·스튜디오 폭·여백과 7개 상태 탭을 유지한다. 시청자는 현재 방송에 제목 1~100자·설명 0~1,000자·접수부터 15/30/60분의 무료 미션을 제안하고, 자기 미션의 상태·사유·변경 이력을 확인한다. 방송자만 제안을 수락·진행·완료·실패·거절·취소로 처리하고, 제안자는 접수 상태일 때만 직접 취소한다. 완료를 포함한 최종 처리 사유는 필수이며 수락 사유는 선택이다. 유료 미션·PG 결제·포인트 차감·보상 지급과 연결하지 않았다. 미연동된 녹화/다시보기·클립·분석·멤버십·수익/정산·외부 도구/개발자 설정은 README에 후속 작업으로 구분한다.
+
+제안과 이력은 제안한 회원과 해당 채널 소유자만 읽는다. 익명과 다른 시청자에게 미션 제목·설명·사유·요청 UUID를 공유하지 않는다. 작성자 정보는 공개 채널 UUID·핸들·이름으로 표시하고, 방송자 응답에 작성자의 내부 계정 UUID·이메일·요청 UUID를 넣지 않는다. 새 제안은 현재 방송의 ID·경로·내부 instance와 fresh한 실제 원본, 실제 차단·팔로워·금칙어·링크 정책을 확인한다. 채팅의 느린 간격은 소비하지 않는다. 계정당 새 접수 3건/60초만 허용하고 거절과 동일 UUID 재확인은 횟수를 소비하지 않는다. 동일 정규 본문의 UUID 재시도는 종료·제한 이후에도 원래 접수를 확인하며, 다른 내용 재사용은 409다.
+
+Flyway V12의 미션·이력 두 테이블이 제안·현재 상태·버전·기한과 생성→진행→최종의 최대 3개 이력을 보존한다. 기한은 접수 시점부터 계산하고 수락으로 연장하지 않는다. 미완료 미션의 기한 초과·방송 종료·교체·API 재시작은 다음 권한 있는 조회나 변경 요청에서 만료와 시스템 이력을 실제로 저장한다. 기한 만료 시각은 지정한 기한, 방송 종료는 서버 관측 시각으로 기록한다. 별도 만료 트랜잭션을 먼저 마친 후 일반 읽기/쓰기 트랜잭션을 시작해 작은 연결 풀의 중첩 대기를 피한다. 잠금 직전의 만료 경합도 다시 판단하며, 새로 관측한 만료는 커밋한 뒤 controller가 409를 반환해 실패 요청이 만료 이력을 롤백하지 않게 한다. 채널·행 잠금과 버전 검사로 동시 수락/취소·최종 상태 덮어쓰기를 막는다. 종료 상태는 되돌리지 않으며 새 방송에 이전 진행 상태를 이식하지 않는다.
+
+관리 목록은 상태 탭·검색·한국 날짜 범위·실제 cursor 더 보기·재시도를 제공한다. 새 제안은 행 사이로 자동 삽입하지 않고 ‘변경 확인’으로 알린다. 상세에서는 저장 실패 때 사유·선택을 유지하고, 409/만료에는 자동 덮어쓰기 없이 최신 내용으로 바꾸기 전 입력 폐기를 확인한다. 성공하면 실제 결과 상태 탭으로 이동하고 확인 문구에 포커스를 돌린다. 시청자 제안의 통신/5xx는 최초 제목·설명·기간·UUID를 동결해 같은 요청만 재확인하며 자동 재전송하지 않는다. 내 목록에서 실제 접수가 확인되면 오류를 정리한다. 오프라인은 입력을 유지하고 전송을 잠그며, 로그인 만료·쿠키 계정 전환·방송 변경은 범위/응답 소유자 검사와 취소·세대 검사로 이전 개인 상태를 정리한다. 처리 중 중복 제출·Escape·닫기를 막고 닫기/성공 후 유효한 대상으로 포커스를 돌린다.
+
+Docker PostgreSQL 17.11·Redis 8.10.3을 사용하는 백엔드 전체 `test bootJar --rerun-tasks` **127/127**(31개 클래스, 실패·오류·스킵 0), 실제 API·배포 React **49/49**, 개발 StrictMode 읽기 전용 **5/5**, 실제 API 재시작 **7/7**을 통과했다. 연결 풀 2개에서 동시 조회 6개의 종료도 확인했다. V11 데이터의 V12 승급·제약, 본문 정규화·제안/취소/수락 경합·멱등·권한·실제 429·만료 요청 409 뒤 영구 이력, 실제 소스 교체·재시작 보호, 503/지연/중복 방지·포커스·390px/320px을 포함한다. 브라우저 런타임·미확인 요청 가로채기 오류는 0건이다. `corepack yarn install --immutable`, `typecheck`, `build`, `build:design`도 통과했다. 일반 시청·포인트·기존 FrameRuntime 재생 계약은 바꾸지 않았다.
+
+시험 데이터는 별도 verify DB·Redis namespace·임의 `obs-mission-*` 경로의 네 계정에만 만들었다. 전용 MediaMTX와 320×180/15fps H.264/AAC FFmpeg 소스 하나를 순차로 교체하며, 인증된 OBS 상태의 이전 `broadcastId:null`을 확인한 뒤 다음 송출을 시작했다. 15분 만료는 guard가 확인한 새 received/version0 시험 미션과 초기 이력만 함께 과거로 옮긴 제어 fixture로 검사했으며 실제 15분을 기다린 결과로 표현하지 않는다. 방송 교체와 재시작 만료는 실제 프로세스/소스 전환으로 확인했다. 페이지 구간만 요청 limit을 2로 줄였고 행·cursor는 실제 서버 값이다. 실제 201 접수 뒤 응답만 503으로 바꾼 경우에도 GET receipt가 한 접수만 복구하는지 확인했다. 미션 UI 검사 중 영상은 일시정지해 기존 시청 포인트 적립과 무료 미션의 회계 분리를 혼동하지 않게 했다. 개발 검사는 실제 읽기만 사용하며 쓰기 0건이다. 자격 증명·쿠키·checkpoint·시험 브라우저 소유 정보는 저장소 밖에만 둔다. `missions-e2e-result.json`의 다섯 항목은 배포/개발 집계·실제 소스 교체·재시작 집계·JAR 불변 확인이며, 명령은 Java 21의 `JAVA_HOME`과 Docker 비밀 설정 파일의 `FRAME_PRODUCT_TEST_CONFIG`를 선택한 뒤 `node server/verify/missions-e2e.mjs`다.
+
+초기 Docker Desktop 실행은 설치 레지스트리 등록 누락으로 실패했다. 사용자의 재설치 요청 후 공식 4.99.0 설치 프로그램의 공개 SHA-256·Docker Inc 서명을 확인하고 같은 사용자 범위에 정상 재설치했다. 설치 등록·winget 인식 복구, Linux 엔진 29.9.3 응답, FRAME PostgreSQL 25432·Redis 26379의 인증 healthcheck healthy를 확인했다. 제거/볼륨 삭제·WSL reset·수동 레지스트리 조작·OS 재부팅은 하지 않았다. 먼저 준비했던 별도 네이티브 DB/Redis는 본인이 띄운 인스턴스의 소유권을 확인하고 정상 종료했으며 파일은 보존했다. Docker 재설치 결과의 공개 필드만 [별도 결과](docker-reinstall-result.json)에 남겼다.
+
+검증한 JAR `ac8567c60a814edd9ed091c2f6f189c7ad918169678a80a4aa37887e4bafb991`를 실제 로컬 API에 적용했다. 이번 Docker 제품 DB는 처음에 제품 테이블 0개인 새 DB였고, 시작 뒤 V1~V12 적용 성공·V1~V11 원본 SQL 불변·실행 JAR 해시 일치를 확인했다. 실제 제품 DB의 계정·채널·운영자·미션·이력·포인트 저장 행은 0개로 유지했다. `/healthz`·약관·미션 화면·익명 현재 조회 200과 익명 개인 이력 비노출, 비로그인 소유자 목록/상세·정상 익명 CSRF의 제안/취소 401을 확인했다. 새 PC에서 PATH에 Java가 없을 때 실행기가 JAVA_HOME을 무시하던 부분도 수정해 FRAME_JAVA→JAVA_HOME→PATH 순서로 찾게 하고, 실제 시작·API만 재시작하며 MediaMTX 유지까지 검증했다. 로컬 웹은 `http://127.0.0.1:5360/_frame/`에서 확인할 수 있다. 시험 프로세스·포트는 정리했다. 이 검사는 같은 PC loopback·headless Edge·모바일 viewport 기준이며 휴대폰 실기기·Caddy HTTPS/WSS·외부 회선·부하/수용량 검증을 포함하지 않는다.
+
+결과: [백엔드](missions-backend-result.json), [실제 API·화면](missions-ui-result.json), [개발 모드](missions-dev-result.json), [재시작](missions-restart-result.json), [통합 실행](missions-e2e-result.json), [현재 PC 적용](missions-local-result.json). 화면: [관리](missions-owner-ui.png), [모바일 상세](missions-owner-mobile-ui.png), [시청자 이력](missions-viewer-ui.png), [모바일 이력](missions-viewer-mobile-ui.png).

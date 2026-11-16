@@ -1,0 +1,34 @@
+{
+  "verificationDatabaseOnly": true,
+  "actualProcessRestart": true,
+  "results": [
+    {
+      "name": "The private mission owner session survives the real API process restart",
+      "pass": true
+    },
+    {
+      "name": "A completed mission and its three chronological history events persist unchanged across restart",
+      "pass": true
+    },
+    {
+      "name": "The previously active received mission expires durably after restart with one system event and repeated reads add nothing",
+      "pass": true
+    },
+    {
+      "name": "Authors retain old-broadcast private proposals and system expiry while anonymous users receive no private history",
+      "pass": true
+    },
+    {
+      "name": "The original request UUID confirms the expired saved receipt after restart without creating another proposal",
+      "pass": true
+    },
+    {
+      "name": "A fresh current broadcast does not inherit private missions from the prior API instance",
+      "pass": true
+    },
+    {
+      "name": "Confirming an old receipt and reading a new broadcast never mutate completed mission history",
+      "pass": true
+    }
+  ]
+}
