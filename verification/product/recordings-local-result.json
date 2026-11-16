@@ -1,0 +1,31 @@
+{
+  "checkedAt": "2026-11-16",
+  "databaseRuntime": "docker",
+  "counts": {
+    "accounts": 0,
+    "channels": 0,
+    "operators": 0,
+    "missions": 0,
+    "analytics": 0,
+    "recordingWindows": 0,
+    "recordingFiles": 0,
+    "migrations": 14,
+    "v14Success": true,
+    "recordingTestAccounts": 0
+  },
+  "statuses": {
+    "health": 200,
+    "apiOk": true,
+    "mediaReady": true,
+    "recordingsPage": 200,
+    "anonymousCatalog": 401,
+    "anonymousPrivateRowsHidden": true
+  },
+  "mediaReceiverPid": 34664,
+  "mediaReceiverPreserved": true,
+  "runtimeJarSha256": "68dbcbe8ad4883b74a61fc1eb529983f09212cbffced8bccdde7b09aaf35bf4f",
+  "testedJarApplied": true,
+  "previousMigrationsUnchanged": true,
+  "productionTestRowsAbsent": true,
+  "complete": true
+}

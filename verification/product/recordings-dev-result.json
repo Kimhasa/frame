@@ -1,0 +1,23 @@
+{
+  "verificationDatabaseOnly": true,
+  "checks": 2,
+  "passed": 2,
+  "results": [
+    {
+      "name": "Actual recording files use the existing management layout without a fabricated storage quota",
+      "pass": true
+    },
+    {
+      "name": "Recording JSON and media requests carry their expected owner without runtime or unconfirmed interception errors",
+      "pass": true
+    }
+  ],
+  "runtimeErrors": [],
+  "writes": [],
+  "videoMetrics": null,
+  "paginationInstrumentation": null,
+  "limits": [
+    "Headless Edge on one PC only",
+    "Mobile sizes are emulated viewports, not physical phones"
+  ]
+}

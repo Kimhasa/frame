@@ -1,0 +1,145 @@
+{
+  "verificationDatabaseOnly": true,
+  "productionUserDataUntouched": true,
+  "nativeObsReceiverUntouched": true,
+  "complete": true,
+  "testedJarSha256": "68dbcbe8ad4883b74a61fc1eb529983f09212cbffced8bccdde7b09aaf35bf4f",
+  "databaseRuntime": "docker",
+  "results": [
+    {
+      "name": "Anonymous recordings are denied and a fresh owner receives an actual empty catalog",
+      "pass": true
+    },
+    {
+      "name": "The dedicated recording path is bound using the actual publisher proof",
+      "pass": true
+    },
+    {
+      "name": "A changed cookie account is rejected by the expected-owner header",
+      "pass": true
+    },
+    {
+      "name": "Invalid catalog status, limit and cursor are rejected",
+      "pass": true
+    },
+    {
+      "name": "A growing recording is listed but cannot be replayed or downloaded",
+      "pass": true
+    },
+    {
+      "name": "Fresh recording catalog exposes only real completed files with measured duration and byte totals",
+      "pass": true
+    },
+    {
+      "name": "Pre-existing files are not imported and another account sees no owning-channel recordings",
+      "pass": true
+    },
+    {
+      "name": "Authenticated recording download returns the exact finalized raw file with no-store and attachment headers",
+      "pass": true
+    },
+    {
+      "name": "Private media implements real HEAD, ranged HEAD, bounded and suffix byte ranges",
+      "pass": true
+    },
+    {
+      "name": "Unsatisfiable, multiple and malformed ranges return 416 without full-file fallback",
+      "pass": true
+    },
+    {
+      "name": "Every media request checks cookie ownership and the explicit expected owner",
+      "pass": true
+    },
+    {
+      "name": "Recording details are private and no-store",
+      "pass": true
+    },
+    {
+      "name": "An observed ownership-boundary recording remains explicitly unplayable",
+      "pass": true
+    },
+    {
+      "name": "Finalized metadata survives a source-continuing API restart without adopting a valid pre-existing recording",
+      "pass": true
+    },
+    {
+      "name": "Files spanning unverified recording boundaries stay restricted after source-continuing restart",
+      "pass": true
+    },
+    {
+      "name": "Catalog visibility mutations require the real CSRF token",
+      "pass": true
+    },
+    {
+      "name": "Another signed-in account cannot change a foreign recording catalog entry",
+      "pass": true
+    },
+    {
+      "name": "Hiding a recording changes only catalog visibility and blocks playback without deleting raw bytes",
+      "pass": true
+    },
+    {
+      "name": "Hidden recordings leave the normal catalog and appear in the actual hidden filter",
+      "pass": true
+    },
+    {
+      "name": "Stale visibility revisions are rejected instead of overwriting the latest state",
+      "pass": true
+    },
+    {
+      "name": "Restoring a catalog item re-enables its verified recording without changing the source file",
+      "pass": true
+    },
+    {
+      "name": "An identical visibility request at the current revision is an actual no-op",
+      "pass": true
+    },
+    {
+      "name": "A missing recording is reported from actual file disappearance and cannot leak cached bytes",
+      "pass": true
+    },
+    {
+      "name": "A changed corrupt recording is re-probed and never served using stale ready metadata",
+      "pass": true
+    },
+    {
+      "name": "A real directory junction escaping the configured recording root cannot serve even a byte-identical file",
+      "pass": true
+    },
+    {
+      "name": "Search uses actual persisted recording catalog rows",
+      "pass": true
+    },
+    {
+      "name": "Actual opaque cursor pages separate recorded files without duplicating rows",
+      "pass": true
+    },
+    {
+      "name": "Actual private recording video, catalog mutations, failure recovery and responsive UI pass",
+      "pass": true
+    },
+    {
+      "name": "Development StrictMode renders the same real recording metadata without mutation",
+      "pass": true
+    },
+    {
+      "name": "The tested private JAR stays immutable throughout recording and restart verification",
+      "pass": true
+    }
+  ],
+  "observations": [
+    {
+      "readyFilesBeforeRestart": 4,
+      "verifiedDownloadBytes": 344081,
+      "verifiedDownloadSha256": "d163f8b16eca968a062186f3ef50ae5d0ee17be2842200b538ecd2747bfb8795",
+      "rawBytesPreservedByVisibilityChanges": true
+    }
+  ],
+  "recordingSegmentDurationSeconds": 5,
+  "productionSegmentDurationSeconds": 60,
+  "fixture": "Dedicated MediaMTX + tiny 320x180 15fps H.264/AAC FFmpeg source + actual fMP4 recording files + immutable Spring JAR + production React + headless Edge",
+  "limits": [
+    "Single PC loopback and emulated mobile viewports only",
+    "No physical phones, Caddy HTTPS or load/capacity verification"
+  ]
+}

@@ -332,3 +332,26 @@ Docker PostgreSQL·Redis 기반 전체 test bootJar --rerun-tasks는 **132/132**
 현재 수치는 경로의 활성 세션과 최근 미디어 요청·WebRTC reader 기반 동시 접속 추정치다. 고유 사람 수나 실제 영상 재생 시간을 뜻하지 않는다. 직전 방송의 경로 세션이 기본 30초까지 남거나 여러 탭이 따로 집계될 수 있다. 도입 전 과거 방송과 한 번도 관찰하지 못한 짧은 방송은 생성하지 않는다. 하나의 API 프로세스가 수집하는 배치이며 여러 API의 분산 집계를 검증하지 않았다. API 재시작 뒤 새 관찰의 방송 제목이 기본 경로 제목으로 돌아가는 기존 OBS 메타데이터의 메모리 보관 특성도 남아 있다. 종료된 과거 분석 행의 제목은 보존한다. 이번 검사는 같은 PC loopback·headless Edge와 390px/320px viewport 기준이며 실제 휴대폰·Caddy HTTPS/WSS·외부 회선·부하/수용량 검증은 포함하지 않는다.
 
 재현: Java 21의 JAVA_HOME과 저장소 밖 Docker 비밀 설정의 FRAME_PRODUCT_TEST_CONFIG를 지정하고 웹·API 빌드 후 node server/verify/analytics-e2e.mjs를 실행한다. 결과: [백엔드](analytics-backend-result.json), [실제 API·송출·재시작](analytics-e2e-result.json), [배포 화면](analytics-ui-result.json), [개발 모드](analytics-dev-result.json), [현재 PC 적용](analytics-local-result.json). 화면: [데스크톱](analytics-owner-ui.png), [390px](analytics-owner-390-ui.png), [320px](analytics-owner-320-ui.png).
+
+
+## 비공개 서버 녹화 관리
+
+2026-11-16. 녹화 관리를 실제 계정·PostgreSQL·서버 fMP4 파일에 연결했다. 기존 관리 화면의 초록색·글꼴·여백·표를 유지하고 검색·상태·cursor 목록, 파일 상세, 비공개 영상 재생·다운로드, 단건 숨김·복원을 제공한다. 숨김은 목록 메타데이터만 변경하며 원본 파일을 삭제하지 않는다. 숨김 버전만 증가하므로 녹화 중 크기 갱신 때문에 불필요하게 충돌하지 않는다. 시안의 가짜 100GB 한도·보관 설정을 실제 기능으로 표시하지 않고 확인한 파일 수·바이트 합계를 사용한다. 기존 RecordingsPage·디자인 데이터·일반 시청 플레이어·DVR·MediaMTX/FFmpeg 설정·C++ 앱은 수정하지 않았다. 공개 다시보기는 후속 범위다.
+
+V14는 별도 관찰 구간과 파일 카탈로그 두 테이블만 추가한다. 단일 제품 worker가 2초 간격으로 fresh 원본·방송 instance·현재 채널 연결 세대를 확인하고, 6초를 넘는 관찰 공백·원본/방송 교체·재시작은 마지막 확인 시각에서 구간을 닫는다. 파일명 시각만으로 현재 채널에 소급 귀속하지 않는다. 새 관찰 이전 파일은 등록하지 않으며, 새로 발견한 파일도 실제 전체 길이가 같은 관찰 구간 안에 양끝 1초 여유로 들어와야 재생 가능하다. 닫힌 구간의 미완료 파일은 계속 녹화 중으로 남기지 않고 최종 저장 확인 불가 상태로 구분한다. 실제 구조 손상·파일 누락·경계 확인 불가를 따로 표시한다.
+
+완료 판정은 파일 크기 안정만 사용하지 않는다. 고정 [MediaMTX 1.21.3의 close 처리](https://raw.githubusercontent.com/bluenviron/mediamtx/v1.21.3/internal/recorder/format_fmp4_segment.go)가 기록하는 mvhd duration과 전체 영상·음성 sample 범위, 기존 RecordFile 파싱을 함께 확인한다. 정상 header-only/첫 part 대기를 손상으로 처리하지 않고, 파일 날짜는 STRICT 파싱으로 존재하지 않는 날짜를 거절한다. metadata 16MB·box 4096·파일 64GB의 검사 상한과 worker IO 예산을 둔다. 경로는 서버가 보유한 UUID 행에서만 찾고 정규 경로·NOFOLLOW·일반 파일 여부를 확인한다. 심볼릭 링크와 루트 밖 junction을 거부하며 MediaMTX API·파일시스템 경로를 응답에 노출하지 않는다.
+
+JSON과 영상 모두 현재 쿠키 소유자를 확인한다. 영상/다운로드는 expected-owner query도 필수이며 숨김·다른 계정·미확인 파일을 열지 않는다. 매 전송 때 파일 식별자·크기·수정 시각·완료/구간 정보를 다시 검사한다. no-store, HEAD, 단일 Range 206·suffix·엄격 416을 지원하고 DB 트랜잭션을 끝낸 뒤 파일을 전송한다. 사용자당 전송 2개·전체 4개 상한이 있으며 실제 수용량을 의미하지 않는다. 초기/새로고침/상세/다음 페이지 실패, 503 결과 불명 후 최신 상태 확인, 실제 버전 409, pending 중 중복·Escape 방지, 오프라인 입력 보존, 감지한 계정 전환 때 영상 정지·src 제거를 처리한다. 일반 상세 닫기는 더보기 페이지를 보존해 원래 버튼으로 포커스를 돌리고, 버튼이 없어진 경우만 유효한 제목으로 보완한다.
+
+Docker PostgreSQL·Redis의 전체 test bootJar --rerun-tasks **140/140**(35개 클래스, 실패·오류·스킵 0), 실제 파일·권한·송출/재시작 통합 **30/30**, 배포 React **19/19**, 개발 StrictMode **2/2**를 통과했다. 프론트 typecheck·build·build:design도 통과했다. 제어 metadata/시각 fixture의 단위·실DB 검사는 실제 MP4 디코딩과 구분한다. V13 분석 데이터 보존·V14 제약/복합 FK·미완료 상태·첫 검사 전 사라진 파일의 null 처리·표시 파일명 그대로 검색·비활성 수집 때 기존 상태 보존도 확인했다. 실제 UI의 런타임·미확인 요청 가로채기 오류는 0건이고 개발 화면의 쓰기 요청은 0건이다.
+
+실제 검사는 별도 verify DB·Redis namespace·임의 obs-recording 경로·두 시험 계정·저장소 밖 전용 녹화 폴더만 사용했다. 320×180/15fps H.264/AAC 송출 하나와 기존과 같은 복사 녹화 경로를 사용했다. 시험 단축을 위해 전용 MediaMTX의 파일 최소 길이만 5초로 설정했으며 실제 설정의 60초는 바꾸지 않았다. 완료 파일 4개를 확보했고, 344,081바이트 다운로드의 SHA-256 d163f8b16eca968a062186f3ef50ae5d0ee17be2842200b538ecd2747bfb8795가 원본과 일치했다. headless Edge에서 실제 영상 320×180·시간 0.338초 진행·디코딩 10프레임·오디오 디코딩 3,955바이트, 2.604→2.777초 seek 뒤 디코딩 27프레임까지 확인했다. 실제 브라우저 다운로드도 확인했다. 소리가 사람 귀에 들리는지나 실기기 재생 품질을 검사한 것은 아니다.
+
+송출을 계속 유지한 채 API만 재시작해 이전 완료 파일의 메타데이터를 보존하고 유효한 과거 fMP4도 소급 등록하지 않는지 확인했다. 실제 파일 누락·손상·디렉터리 junction을 본인 임시 fixture 안에서만 재현했고 원본 백업을 복원했다. 숨김·복원이 원본 바이트를 바꾸지 않는지와 경계 파일 차단, 미디어 cookie/ownerquery·Range/HEAD/416, 실제 409·CSRF·503·지연·포커스·계정 전환·390px/320px을 확인했다. 목록 페이지 검사만 GET limit을 2로 낮췄으며 행·커서는 실제 응답이다. 자격 증명·쿠키·체크포인트·로그·시험 브라우저 소유 정보는 저장소 밖에만 두고 시험 포트 10개와 소유 프로세스를 정리했다.
+
+현재 원본은 저장소의 MediaMTX 기본 설정대로 최소 60초 단위·6시간 보관이다. 목록 숨김은 보관 기간을 연장하지 않는다. 보수적인 전체 파일 귀속 확인 때문에 첫/마지막·재시작·단절 경계 파일은 등록되지 않거나 재생이 제한될 수 있고, 짧은 방송에는 재생 가능한 파일이 없을 수 있다. 전체 방송을 빠짐없이 공개 다시보기로 제공하거나 경계 구간을 잘라 내는 기능은 이번 단계에 포함하지 않는다. 한 API 프로세스의 수집을 전제로 하며 실기기·Caddy HTTPS·외부 회선·부하/수용량 검증은 하지 않았다.
+
+검증한 JAR 68dbcbe8ad4883b74a61fc1eb529983f09212cbffced8bccdde7b09aaf35bf4f를 현재 로컬 API에 적용했다. Flyway V1~V14 성공·V1~V13 원본 SQL 불변·실행 JAR 일치와 기존 MediaMTX PID 34664 보존을 확인했다. 실제 제품 DB는 작업 전후 계정·채널·운영자·미션·분석 0개를 유지했고 녹화 관찰 구간·파일·시험 계정도 0개다. healthz·녹화 페이지 200, 미디어 ready, 비로그인 목록 401과 개인 행 비노출을 확인했다. [녹화 관리](http://127.0.0.1:5360/_frame/studio/recordings)에서 로그인한 본인 채널의 새 녹화를 확인할 수 있다.
+
+재현은 Java 21의 JAVA_HOME과 저장소 밖 Docker 설정의 FRAME_PRODUCT_TEST_CONFIG를 지정한 뒤 웹·API 빌드 후 node server/verify/recordings-e2e.mjs를 실행한다. 결과: [백엔드](recordings-backend-result.json), [실제 파일·송출·재시작](recordings-e2e-result.json), [배포 화면](recordings-ui-result.json), [개발 모드](recordings-dev-result.json), [현재 PC 적용](recordings-local-result.json). 화면: [데스크톱](recordings-owner-ui.png), [390px](recordings-owner-390-ui.png), [320px](recordings-owner-320-ui.png).

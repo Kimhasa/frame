@@ -62,6 +62,7 @@ class AccountIntegrationTest {
         properties.put("frame.publisher-tokens", TOKEN + " obs-verify history-unlinked"); properties.put("frame.publisher-tokens-file", "");
         properties.put("frame.payments.enabled", "false");
         properties.put("frame.quality.renditions", "");
+        properties.put("frame.dvr.record-dir", "");
         ConfigurableApplicationContext app = null;
         try {
             app = start(properties);
@@ -195,6 +196,7 @@ class AccountIntegrationTest {
             assertEquals(200, orphan.get("/api/v1/policies").status());
             assertEquals(200, anonymous.get("/api/broadcasts").status()); assertTrue(anonymous.get("/api/broadcasts").raw().headers().allValues("set-cookie").isEmpty());
             String savedAnalytics=analytics(a,b,anonymous,sql,app,UUID.fromString(ownerId),UUID.fromString(channelId));
+            String savedRecording=recordings(a,b,anonymous,sql,app,UUID.fromString(channelId));
             String savedSchedule = schedules(a, b, anonymous, sql, UUID.fromString(channelId));
             String savedHistory = histories(a, b, anonymous, sql, app.getBean(frame.api.broadcast.BroadcastRegistry.class), UUID.fromString(ownerId));
             channelProfiles(a, b, anonymous, sql, app.getBean(Accounts.class), UUID.fromString(channelId), UUID.fromString(secondChannel));
@@ -214,6 +216,7 @@ class AccountIntegrationTest {
             var restoredAnalytics=a.get("/api/v1/me/analytics?q=analytics-preserved").json().path("items").get(0);
             assertEquals(savedAnalytics,restoredAnalytics.path("id").asString());assertEquals("interrupted",restoredAnalytics.path("status").asString());assertEquals("server_restart",restoredAnalytics.path("endReason").asString());
             assertEquals(10000,restoredAnalytics.path("broadcastDurationMs").longValue());assertEquals(restoredAnalytics.path("lastObservedAtMs").longValue(),restoredAnalytics.path("endedAtMs").longValue());
+            var restoredRecording=a.get("/api/v1/me/recordings/"+savedRecording);assertEquals(200,restoredRecording.status());assertEquals("ready",restoredRecording.json().path("item").path("status").asString());assertEquals(2,restoredRecording.json().path("item").path("version").longValue());assertFalse(restoredRecording.json().path("item").path("readyPlayable").asBoolean());
             assertTrue(a.get("/api/v1/me/schedules").json().path("items").valueStream().anyMatch(item -> item.path("id").asString().equals(savedSchedule)));
             JsonNode restoredHistory = a.get("/api/v1/me/history").json().path("items");
             assertEquals(1, restoredHistory.size()); assertEquals(savedHistory, restoredHistory.get(0).path("id").asString());
@@ -290,6 +293,38 @@ class AccountIntegrationTest {
             // Only this generated schema in the hard-checked verification database is removed.
             try (var connection = DriverManager.getConnection(database, username, password); var statement = connection.createStatement()) { statement.execute("DROP SCHEMA " + schema + " CASCADE"); }
         }
+    }
+    /** Controlled metadata/window time fixtures; actual MP4 transfer and decoding are verified separately. */
+    private static String recordings(Browser owner,Browser other,Browser anonymous,JdbcClient sql,ConfigurableApplicationContext app,UUID channel)throws Exception{
+        app.getBean(RecordingCollector.class).stop();app.getBean(RecordingCollector.class).reconcile();ChannelRecordings service=app.getBean(ChannelRecordings.class);String route="/api/v1/me/recordings";
+        assertEquals(401,anonymous.get(route).status());assertEquals(400,owner.get(route+"?status=unknown").status());assertEquals(400,owner.get(route+"?limit=0").status());assertEquals(400,owner.get(route+"?cursor=invalid").status());
+        owner.expectedUserId=UUID.randomUUID().toString();assertEquals("SESSION_CHANGED",owner.get(route).code());owner.expectedUserId=null;
+        long start=System.currentTimeMillis()-120000;UUID instance=UUID.randomUUID();String source="a".repeat(64);
+        var observation=new ChannelRecordings.Observation(instance,"a".repeat(32),"obs-verify",source,"녹화 검증\0 방송");
+        var windows=service.observe(java.util.List.of(observation),start,false);for(int step=1;step<=4;step++)windows=service.observe(java.util.List.of(observation),start+step*5000,true);var window=windows.getFirst();
+        var formatter=java.time.format.DateTimeFormatter.ofPattern("uuuu-MM-dd_HH-mm-ss-SSSSSSxx").withZone(java.time.ZoneOffset.UTC);
+        String old=formatter.format(java.time.Instant.ofEpochMilli(start-1000))+".mp4";service.discover(window,old,start-1000,start+25000);assertEquals(0,service.inspect(50).size());
+        for(long offset:new long[]{5000,10000,19500}){long at=start+offset;service.discover(window,formatter.format(java.time.Instant.ofEpochMilli(at))+".mp4",at,start+25000);}
+        for(var row:service.inspect(50))service.inspected(row,new frame.api.dvr.RecordedAssetProbe.Info(100,start+1000,"controlled-key",3000L,true,false),false,start+30000);
+        app.getBean(RecordingCollector.class).reconcile();assertEquals(2,sql.sql("SELECT count(*) FROM product_recording_files WHERE status='ready'").query(Integer.class).single());
+        var listed=owner.get(route);assertEquals(200,listed.status());assertTrue(listed.raw().headers().firstValue("cache-control").orElse("").contains("no-store"));assertEquals(3,listed.json().path("items").size());assertEquals(2,owner.get(route+"?status=ready").json().path("items").size());assertEquals(1,owner.get(route+"?status=ambiguous").json().path("items").size());
+        assertFalse(listed.json().path("collectionEnabled").asBoolean());assertEquals(6,listed.json().path("retentionHours").intValue());assertEquals(300,listed.json().path("storage").path("knownSizeBytes").longValue());
+        var item=owner.get(route+"?status=ready").json().path("items").get(0);String id=item.path("id").asString();assertEquals("녹화 검증� 방송",item.path("title").asString());assertFalse(item.path("readyPlayable").asBoolean());
+        String display=java.net.URLEncoder.encode(item.path("displayName").asString(),java.nio.charset.StandardCharsets.UTF_8);assertEquals(1,owner.get(route+"?q="+display).json().path("items").size());
+        assertEquals(0,other.get(route).json().path("items").size());assertEquals(404,other.get(route+"/"+id).status());assertEquals(404,other.write("PATCH",route+"/"+id,Map.of("version",0,"hidden",true)).status());
+        assertEquals(0,owner.write("PATCH",route+"/"+id,Map.of("version",0,"hidden",false)).json().path("item").path("version").longValue());
+        assertEquals(400,owner.write("PATCH",route+"/"+id,Map.of("version",0,"hidden","yes")).status());
+        var hidden=owner.write("PATCH",route+"/"+id,Map.of("version",0,"hidden",true));assertEquals(200,hidden.status());assertEquals(1,hidden.json().path("item").path("version").longValue());assertEquals(1,owner.get(route+"?status=hidden").json().path("items").size());assertEquals(2,owner.get(route).json().path("items").size());
+        assertEquals("RECORDING_CONFLICT",owner.write("PATCH",route+"/"+id,Map.of("version",0,"hidden",false)).code());
+        try(var pool=java.util.concurrent.Executors.newVirtualThreadPerTaskExecutor()){var one=pool.submit(()->owner.write("PATCH",route+"/"+id,Map.of("version",1,"hidden",false)));var two=pool.submit(()->owner.write("PATCH",route+"/"+id,Map.of("version",1,"hidden",false)));assertEquals(java.util.Set.of(200,409),java.util.Set.of(one.get().status(),two.get().status()));}
+        var page=owner.get(route+"?limit=1").json();String cursor=page.path("nextCursor").asString();assertFalse(cursor.isEmpty());assertNotEquals(page.path("items").get(0).path("id").asString(),owner.get(route+"?limit=1&cursor="+cursor).json().path("items").get(0).path("id").asString());assertEquals("INVALID_RECORDING_CURSOR",other.get(route+"?limit=1&cursor="+cursor).code());assertEquals("INVALID_RECORDING_CURSOR",owner.get(route+"?limit=1&q=changed&cursor="+cursor).code());
+        var row=service.inspect(50).stream().filter(value->value.id().toString().equals(id)).findFirst().orElseThrow();service.inspected(row,null,true,start+40000);assertEquals("missing",owner.get(route+"/"+id).json().path("item").path("status").asString());assertEquals(2,owner.get(route+"/"+id).json().path("item").path("version").longValue());
+        service.inspected(row,new frame.api.dvr.RecordedAssetProbe.Info(100,start+1000,"controlled-key",3000L,true,false),false,start+45000);assertEquals("ready",owner.get(route+"/"+id).json().path("item").path("status").asString());
+        service.availability(false);assertEquals("RECORDINGS_UNAVAILABLE",owner.get(route).code());service.availability(true);
+        long vanishedAt=start+19700;String vanishedName=formatter.format(java.time.Instant.ofEpochMilli(vanishedAt))+".mp4";service.discover(window,vanishedName,vanishedAt,start+25000);var vanished=service.inspect(50).stream().filter(value->value.name().equals(vanishedName)).findFirst().orElseThrow();assertNull(vanished.size());assertNull(vanished.modified());service.inspected(vanished,null,true,start+45000);var vanishedResult=owner.get(route+"/"+vanished.id()).json().path("item");assertEquals("missing",vanishedResult.path("status").asString());assertTrue(vanishedResult.path("sizeBytes").isNull());
+        sql.sql("UPDATE product_channels SET notification_live_after_ms=notification_live_after_ms+1 WHERE id=:id").param("id",channel).update();service.observe(java.util.List.of(observation),start+25000,true);assertEquals("ownership_changed",sql.sql("SELECT reason FROM product_recording_windows WHERE id=:id").param("id",window.id()).query(String.class).single());
+        var unfinished=service.inspect(50).stream().filter(value->value.status().equals("ambiguous")).findFirst().orElseThrow();service.inspected(unfinished,new frame.api.dvr.RecordedAssetProbe.Info(100,start+1000,"controlled-prefix",null,false,false),false,start+45000);var unfinishedResult=owner.get(route+"/"+unfinished.id()).json().path("item");assertEquals("ambiguous",unfinishedResult.path("status").asString());assertTrue(unfinishedResult.path("reason").asString().contains("최종 저장"));
+        assertEquals(4,sql.sql("SELECT count(*) FROM product_recording_files").query(Integer.class).single());return id;
     }
     private static String analytics(Browser owner,Browser other,Browser anonymous,JdbcClient sql,ConfigurableApplicationContext app,UUID ownerId,UUID channel)throws Exception{
         // Controlled observation clock fixture; the separate media e2e verifies the actual worker and RTMP source.

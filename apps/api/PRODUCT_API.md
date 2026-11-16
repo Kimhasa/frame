@@ -332,6 +332,32 @@ V2 마이그레이션은 기존 계정의 세 필드를 모두 `NULL`로 둔다.
 
 V13은 방송별 누적과 방송별 한국 날짜 집계의 두 테이블만 추가한다. 채널 UUID 이외의 회원·시청자 식별자를 집계 저장소에 보관하지 않는다. 채널의 현재 `id+stream_path`를 기존 행 갱신 전에도 확인한다. DB/MediaMTX 장애 때는 해당 worker의 집계를 건너뛰고 반복 상세 로그나 개인 원문을 출력하지 않는다. 읽기 DB 실패는 기존 503 `PRODUCT_UNAVAILABLE`이며 미디어 요청은 제품 집계 오류로 중단하지 않는다. 단일 API 프로세스가 한 제품 DB를 수집하는 현재 배치가 전제다. 여러 collector의 leader 선출·분산 집계는 구현하지 않는다. 도입 전 과거 방송과 5초보다 짧아 한 번도 관찰되지 않은 방송을 소급 생성하지 않는다.
 
+## 비공개 녹화 관리
+
+이 단계는 FRAME 서버가 기록한 파일의 소유자 전용 카탈로그다. OBS가 방송자 PC에 보관한 로컬 파일이나 공개 다시보기 발행 기능이 아니다. 기존 DVR·MediaMTX 출력 경로와 원본 파일을 바꾸지 않고, 제품 기능을 활성화했을 때만 전용 worker가 읽어서 V14의 관찰 창·파일 두 테이블에 보존한다. 기존 파일을 현재 채널에 소급 귀속하거나 파일을 실제로 삭제·이동·재인코딩하지 않는다.
+
+`GET /api/v1/me/recordings?status=all&q=&cursor=&limit=20`은 로그인 소유자의 채널 파일만 반환한다. status는 all/ready/recording/ambiguous/missing/corrupt/hidden이며 all은 숨김을 제외하고 hidden은 숨긴 행의 원래 상태를 유지한다. q는 제목·화면 표시 파일명·원본 파일명의 대소문자 무시 부분 검색(최대 120자)이고 limit은 1~100이다. 목록은 기록 시각·UUID 내림차순이며 커서는 계정·상태·검색·limit에 묶인다. 잘못된 필터/커서는 400 INVALID_RECORDING_FILTER/INVALID_RECORDING_CURSOR다. GET 목록·상세와 PATCH에는 기존 X-FRAME-USER-ID 기대 계정 검사를 적용하며 다른 쿠키 계정이면 409 SESSION_CHANGED다.
+
+목록 응답은 `{userId,items,nextCursor,storage,serverNowMs,collectionEnabled,retentionHours}`다. item은 `{id,title,displayName,recordedAtMs,durationMs,sizeBytes,status,version,hidden,readyPlayable,updatedAtMs,broadcastId,reason}`다. durationMs와 sizeBytes는 아직 확인하지 못했으면 null이다. 파일이 사라진 뒤 sizeBytes는 마지막 확인값을 유지한다. reason은 안전한 고정 사용자 설명이며 경로·원본 예외·source ID·송출 키·다른 계정의 정보를 넣지 않는다. displayName은 한국 날짜의 녹화_YYYY-MM-DD_HH-mm-ss.mp4이고 같은 이름을 복사해 검색할 수 있다.
+
+`storage`는 `{knownFileCount,knownSizeBytes,availableFileCount,availableSizeBytes}`다. known은 숨김·누락을 포함한 전체 카탈로그와 최근 확인 크기 합, available은 누락이 아니며 실제 크기를 한 번 이상 확인한 파일들의 수·최근 확인 크기 합이다. ready만의 합이 아니며 녹화 중·경계 미확인·손상·숨김 파일도 실제 존재를 확인했다면 포함한다. 디스크 전체 용량이나 계정 할당량을 뜻하지 않는다. collectionEnabled는 현재 DVR와 recordDir 설정이 활성인지다. 설정이 꺼져 있어도 이전 카탈로그 조회와 숨김/복원을 보존하지만 readyPlayable은 false이고 실제 파일 전송을 막는다.
+
+현재 저장소의 MediaMTX 설정과 로컬 실행기는 원본을 6시간 보관한다. retentionHours=6은 이 고정 기본 설정의 안내이며 제품 API가 보관 기간이나 디스크 한도를 집행하지 않는다. 7/30/90일 설정이나 100GB 할당량을 제공하지 않는다. 운영자가 MediaMTX 보관 설정을 변경하면 이 표시 계약도 함께 조정해야 한다. 보관 기간이 지나 실제 파일이 사라지면 missing으로 갱신하며, 목록을 복원해도 원본 파일을 되살리지 않는다.
+
+`GET /api/v1/me/recordings/{id}`는 `{userId,item,serverNowMs}`다. `PATCH /api/v1/me/recordings/{id}`의 본문은 정확히 `{version,hidden:boolean}`이며 같은 상세 응답을 돌려준다. 숨김/복원의 실제 변경만 version을 1 증가시킨다. 같은 버전과 같은 hidden은 no-op 200, 버전 불일치는 값이 같아도 409 RECORDING_CONFLICT다. worker의 크기·상태·관찰 갱신은 이 사용자 편집 버전을 바꾸지 않는다. 파일은 원래 위치에 남고 숨기는 동안 전송은 차단한다. 동시 숨김/복원은 해당 행 잠금으로 직렬화한다. 다른 소유자나 없는 UUID는 404 RECORDING_NOT_FOUND다.
+
+`GET` 및 `HEAD /api/v1/me/recordings/{id}/media?owner=<기대 계정 UUID>&download=0|1`은 쿠키 로그인과 필수 owner 기대 계정을 매 요청 확인한다. owner는 인증 토큰이 아니며 현재 쿠키 계정과 다르면 409 SESSION_CHANGED다. JSON 목록에 서버 파일 경로나 원본 이름을 노출하지 않고 이 UUID URL만 구성한다. ready이고 숨김이 아닐 때만 전달하며 나머지는 409 RECORDING_NOT_PLAYABLE다. download=1은 attachment이고 기본값 0은 inline video/mp4다. 모든 응답은 no-store다. 단일 bytes Range·suffix는 206/Content-Range를 제공하고 HEAD는 같은 헤더만 반환한다. 잘못된 단위·다중 범위·역순·범위 밖 요청은 416 및 bytes */size다. 전송은 전역 최대 4개·계정당 2개, 계정 rate limit을 넘으면 503/429와 Retry-After를 반환한다.
+
+미디어 요청은 DB 소유권과 descriptor를 조회한 트랜잭션을 끝낸 뒤 파일을 열어 전달한다. 열린 전송 동안 DB 연결이나 행 잠금을 유지하지 않는다. 파일 크기·mtime·file key·완료 표시·전체 귀속을 다시 검사하고 달라지면 409 RECORDING_CHANGED다. 사라진 파일은 404 RECORDING_FILE_MISSING, 저장소 접근 실패는 503 RECORDINGS_UNAVAILABLE다. 파일 응답 헤더를 설정한 뒤 아직 전송하지 않은 상태에서 IO가 실패하면 헤더를 초기화해 JSON 오류의 길이를 오염시키지 않고, 이미 전송한 응답은 연결을 중단한다. 클라이언트가 파일명·상대/절대 경로를 지정하는 API는 없다.
+
+관찰 worker는 2초 간격이다. fresh한 MediaMTX 원본과 registry의 실제 관찰 지문, immutable broadcast instance, 현재 채널 경로와 연결 기준 시각을 함께 확인해 그 시각부터 새 관찰 창을 연다. 6초보다 긴 worker 지연·stale/원본 미확인·source/instance/소유 연결 변경 때 이전 창을 마지막 확인 시각으로 닫고 새 관찰부터 다시 시작한다. API 재시작도 기존 열린 창을 마지막 확인 시각에서 닫는다. V13 분석 행이나 sender 시작 시각으로 녹화 경계를 추측하지 않는다. DB 작업은 미디어 요청·registry 이벤트 처리와 분리한다. 이 보수적 polling 방식은 짧은 방송이나 관찰 사이에 지난 경계를 복원하지 않는다.
+
+새 관찰 창보다 이른 파일명 시각의 미등록 파일은 읽어서 현재 채널에 가져오지 않는다. 파일 하나의 소유 window_id와 path/file_name 고유 키는 처음 등록 후 다른 방송·계정으로 재배정하지 않는다. 파일명 시각부터 파싱한 전체 트랙 길이까지가 같은 관찰 창 안에 포함되고 양 끝 1초 여유까지 확인돼야 ready다. 첫 파일은 아예 등록되지 않을 수 있으며, 마지막 파일이나 방송·재접속·재시작 경계를 걸친 파일은 ambiguous로 차단될 수 있다. 오래된 완료 ready 파일의 검증된 구간은 이후 창 종료에도 보존한다. 기록된 파일의 실제 귀속이 불확실한 상황을 성공으로 처리하지 않는다.
+
+완료 증거는 고정된 [MediaMTX 1.21.3 close 구현](https://github.com/bluenviron/mediamtx/blob/v1.21.3/internal/recorder/format_fmp4_segment.go)에 따른 mvhd duration 양수, fMP4 box 완결, 기존 RecordFile 영상 파서와 모든 트랙 시간 범위의 유효성, 최종 mtime 4초 경과다. 단순히 몇 초 동안 크기가 같다는 이유만으로 완료로 판단하지 않는다. 정상 ftyp/moov만 있고 첫 part를 기다리는 파일은 손상이 아니라 녹화 중이다. 최종 저장 표시 없는 정상 prefix가 닫힌 관찰 창에 남으면 ambiguous/최종 저장 확인 불가이며 구조적으로 잘못된 파일과 구분한다. 원본이 정상적으로 돌아오면 missing/corrupt/미완료 상태도 재검사하고 안전 조건을 다시 확인한다.
+
+RecordedAssetProbe는 recordDir 아래의 정규 디렉터리·파일만 읽으며 realpath 일치와 NOFOLLOW_LINKS로 심볼릭 링크·junction·다른 경로 탈출을 거부한다. 설정된 디렉터리가 아직 없다고 API 시작을 실패시키거나 제품 코드가 임의로 녹화 디렉터리를 생성하지 않는다. 파일 상한은 64GB, top-level box 4096개, box별 메타데이터 8MB·총 16MB다. discovery는 한 경로에 최대 2048 entry·한 번에 16개 경로, FS 작업 목표 예산 1.5초이며 기존 카탈로그 검사는 오래 확인하지 않은 순서로 최대 24개씩 회전한다. 접근 거부·링크·스캔 예산 초과·DB 실패는 파일이 사라졌다고 확정하지 않고 이전 카탈로그를 보존하며 조회에 503을 반환한다. 단일 제품 API 프로세스가 공유 녹화 폴더를 관찰하는 현재 배치가 전제다.
+
 ## 검증
 
 기존 기본 회귀 검사에는 외부 DB·Redis가 필요하지 않다.
@@ -343,9 +369,9 @@ cd apps/api
 
 실제 PostgreSQL·Redis 통합 검사는 저장소 밖 검증 설정 파일의 경로를 지정한다. 테스트는 루프백 `127.0.0.1`의 FRAME 전용 포트 `15432`(네이티브) 또는 `25432`(Docker), DB 이름 `frame_product_verify` 또는 고유 접미사가 붙은 검증 DB인지 먼저 검사한다. 쿼리 매개변수·URL 안의 자격증명·외부 호스트·사용자 DB `frame_product`는 허용하지 않는다. 해당 DB의 임의 생성 스키마와 임의 Redis namespace만 사용하며, 종료 시 생성한 스키마·namespace 키만 정리한다. 실제 DB의 사용자·스키마·운영자 키를 읽거나 변경하지 않는다. 설정에는 `verifyDbUrl`, `dbUsername`, `dbPassword`, `redisHost`, `redisPort`, `redisPassword`가 필요하다.
 
-Flyway는 제품 기능을 활성화한 Spring Boot의 시작 과정에서 `db/migration`을 적용한다. 현재 V1(회원·채널·팔로우), V2(가입 동의), V3(방송 예약), V4(시청 기록), V5(채널 프로필·주소 예약·신고 접수), V6(운영자 플래그·신고 관리), V7(개인 알림·전송 표식·시작 기준 시각), V8(채팅 정책·계정 차단), V9(방송 투표·선택지·계정별 표), V10(비공개 질문·답변·명시적 공개 고정), V11(채널 포인트·원장·보상·교환 요청), V12(비공개 무료 미션·상태 이력), V13(방송별·일별 실제 관찰 집계)을 사용한다. `validate-on-migrate: true`, `clean-disabled: true`, `baseline-on-migrate: false`를 명시한다. 적용한 SQL은 수정하지 않고 새 `V14__설명.sql` 같은 다음 버전을 추가한다. Redis는 Flyway 관리 대상이 아니다. 기존 Flyway 기록이 없는 비어 있지 않은 스키마를 자동으로 기존 운영 DB라고 간주하거나, checksum 오류를 자동으로 `repair`해서 넘기지 않는다.
+Flyway는 제품 기능을 활성화한 Spring Boot의 시작 과정에서 `db/migration`을 적용한다. 현재 V1(회원·채널·팔로우), V2(가입 동의), V3(방송 예약), V4(시청 기록), V5(채널 프로필·주소 예약·신고 접수), V6(운영자 플래그·신고 관리), V7(개인 알림·전송 표식·시작 기준 시각), V8(채팅 정책·계정 차단), V9(방송 투표·선택지·계정별 표), V10(비공개 질문·답변·명시적 공개 고정), V11(채널 포인트·원장·보상·교환 요청), V12(비공개 무료 미션·상태 이력), V13(방송별·일별 실제 관찰 집계), V14(비공개 녹화 관찰 창·파일 카탈로그)을 사용한다. `validate-on-migrate: true`, `clean-disabled: true`, `baseline-on-migrate: false`를 명시한다. 적용한 SQL은 수정하지 않고 새 `V15__설명.sql` 같은 다음 버전을 추가한다. Redis는 Flyway 관리 대상이 아니다. 기존 Flyway 기록이 없는 비어 있지 않은 스키마를 자동으로 기존 운영 DB라고 간주하거나, checksum 오류를 자동으로 `repair`해서 넘기지 않는다.
 
-`ProductMigrationIntegrationTest`는 별도 PostgreSQL DB의 임의 생성 스키마에서 빈 DB의 V13까지 적용·재시작 시 미적용, V1 데이터의 최신 업그레이드 보존·기존 동의 NULL 유지, V3·V4에서 최신으로 업그레이드한 뒤 기존 방송 예약·시청 기록·채널 생성일 보존과 주소 백필·삭제 후 예약 동작, V5 신고의 원문·시각 보존과 운영자 자동 승격 없음, V6 알림 설정 보존·시작 기준 생성·과거 알림 미생성, V7 프로필·팔로우·알림 확인 상태 보존과 기본 채팅 정책 추가, V8 기존 정책 보존과 투표 단일 슬롯·계정별 한 표·선택지 복합 FK, V9 투표·선택지·표 보존과 질문 요청 멱등 키·단일 고정·답변 시각 제약, V10 기존 비공개 답변 보존과 빈 포인트 저장소·음수 잔액·1회 신청·중복 환불 제약, V11 잔액·부분 시청·원장·보상 신청 보존과 미션 요청/기한/이력 고유 제약, V12 미션·이력 보존과 빈 방송 분석 저장소·관찰 제약·FK 및 채널 삭제 연쇄, 임시 복사 SQL 변조 시 checksum 검증으로 후속 V14 DDL 차단을 검사한다. 이 검사는 비밀 설정의 `verifyDbUrl` 중 루프백 주소와 `frame_product_verify` 또는 고유 접미사를 붙인 이름만 허용하며, 실행 시 생성한 `migration_verify_*` 스키마만 정리한다. 실제 DB와 저장소의 V1~V12 SQL은 변경하지 않는다. `ProductStorageDisabledTest`는 DB·Redis가 연결되지 않아도 제품 기능 비활성 상태의 미디어 서버가 해당 구성 요소 없이 시작되는지 검사한다.
+`ProductMigrationIntegrationTest`는 별도 PostgreSQL DB의 임의 생성 스키마에서 빈 DB의 V14까지 적용·재시작 시 미적용, V1 데이터의 최신 업그레이드 보존·기존 동의 NULL 유지, V3·V4에서 최신으로 업그레이드한 뒤 기존 방송 예약·시청 기록·채널 생성일 보존과 주소 백필·삭제 후 예약 동작, V5 신고의 원문·시각 보존과 운영자 자동 승격 없음, V6 알림 설정 보존·시작 기준 생성·과거 알림 미생성, V7 프로필·팔로우·알림 확인 상태 보존과 기본 채팅 정책 추가, V8 기존 정책 보존과 투표 단일 슬롯·계정별 한 표·선택지 복합 FK, V9 투표·선택지·표 보존과 질문 요청 멱등 키·단일 고정·답변 시각 제약, V10 기존 비공개 답변 보존과 빈 포인트 저장소·음수 잔액·1회 신청·중복 환불 제약, V11 잔액·부분 시청·원장·보상 신청 보존과 미션 요청/기한/이력 고유 제약, V12 미션·이력 보존과 빈 방송 분석 저장소·관찰 제약·FK 및 채널 삭제 연쇄, 임시 복사 SQL 변조 시 checksum 검증으로 후속 V15 DDL 차단을 검사한다. 이 검사는 비밀 설정의 `verifyDbUrl` 중 루프백 주소와 `frame_product_verify` 또는 고유 접미사를 붙인 이름만 허용하며, 실행 시 생성한 `migration_verify_*` 스키마만 정리한다. 실제 DB와 저장소의 V1~V13 SQL은 변경하지 않는다. `ProductStorageDisabledTest`는 DB·Redis가 연결되지 않아도 제품 기능 비활성 상태의 미디어 서버가 해당 구성 요소 없이 시작되는지 검사한다.
 
 ```powershell
 $env:FRAME_PRODUCT_TEST_CONFIG = '<저장소 밖 검증 설정 JSON 경로>'

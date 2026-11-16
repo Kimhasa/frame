@@ -1,0 +1,129 @@
+{
+  "verificationDatabaseOnly": true,
+  "checks": 19,
+  "passed": 19,
+  "results": [
+    {
+      "name": "An initial recording failure provides retry without fabricated file rows",
+      "pass": true
+    },
+    {
+      "name": "Actual recording files use the existing management layout without a fabricated storage quota",
+      "pass": true
+    },
+    {
+      "name": "A catalog refresh failure preserves the last real rows for the same filters",
+      "pass": true
+    },
+    {
+      "name": "A failed recording cursor page keeps the already loaded files",
+      "pass": true
+    },
+    {
+      "name": "Actual opaque cursor pages append distinct file rows",
+      "pass": true
+    },
+    {
+      "name": "A changed search never reuses rows from the previous private query",
+      "pass": true
+    },
+    {
+      "name": "Private file playback requires an explicit action and does not autoplay",
+      "pass": true
+    },
+    {
+      "name": "The actual finalized fMP4 file decodes frames and advances time in native HTML video",
+      "pass": true,
+      "detail": {
+        "width": 320,
+        "height": 180,
+        "currentTime": 0.338683,
+        "duration": 5.209084,
+        "decodedFrames": 10,
+        "audioDecodedBytes": 3955,
+        "seek": {
+          "target": 2.604542,
+          "currentTime": 2.777584,
+          "decodedFrames": 27
+        }
+      }
+    },
+    {
+      "name": "The completed recording decodes additional frames after a real native seek instead of a manifest-only check",
+      "pass": true
+    },
+    {
+      "name": "The recording download control transfers the real authenticated bytes to the private download folder",
+      "pass": true
+    },
+    {
+      "name": "Closing file details removes the player and restores focus to the file action",
+      "pass": true
+    },
+    {
+      "name": "A pending visibility mutation locks duplicate actions and dialog dismissal",
+      "pass": true
+    },
+    {
+      "name": "An uncertain hide failure requires an explicit receipt check instead of automatically repeating the mutation",
+      "pass": true
+    },
+    {
+      "name": "An actual revision conflict keeps the dialog open instead of overwriting another visibility change",
+      "pass": true
+    },
+    {
+      "name": "Offline mode retains the last catalog and prevents new requests",
+      "pass": true
+    },
+    {
+      "name": "Recording list and controls fit the 390px viewport",
+      "pass": true
+    },
+    {
+      "name": "Recording list and controls fit the 320px viewport",
+      "pass": true
+    },
+    {
+      "name": "A media request after a cookie-account change clears the previous private player and catalog",
+      "pass": true
+    },
+    {
+      "name": "Recording JSON and media requests carry their expected owner without runtime or unconfirmed interception errors",
+      "pass": true
+    }
+  ],
+  "runtimeErrors": [],
+  "writes": [
+    {
+      "method": "PATCH",
+      "hidden": true
+    },
+    {
+      "method": "PATCH",
+      "hidden": true
+    },
+    {
+      "method": "PATCH",
+      "hidden": false
+    }
+  ],
+  "videoMetrics": {
+    "width": 320,
+    "height": 180,
+    "currentTime": 0.338683,
+    "duration": 5.209084,
+    "decodedFrames": 10,
+    "audioDecodedBytes": 3955,
+    "seek": {
+      "target": 2.604542,
+      "currentTime": 2.777584,
+      "decodedFrames": 27
+    }
+  },
+  "paginationInstrumentation": "Recording catalog GET limit lowered to 2; row and cursor values remain actual server responses.",
+  "limits": [
+    "Headless Edge on one PC only",
+    "Mobile sizes are emulated viewports, not physical phones"
+  ]
+}
