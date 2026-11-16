@@ -358,6 +358,55 @@ V13은 방송별 누적과 방송별 한국 날짜 집계의 두 테이블만 �
 
 RecordedAssetProbe는 recordDir 아래의 정규 디렉터리·파일만 읽으며 realpath 일치와 NOFOLLOW_LINKS로 심볼릭 링크·junction·다른 경로 탈출을 거부한다. 설정된 디렉터리가 아직 없다고 API 시작을 실패시키거나 제품 코드가 임의로 녹화 디렉터리를 생성하지 않는다. 파일 상한은 64GB, top-level box 4096개, box별 메타데이터 8MB·총 16MB다. discovery는 한 경로에 최대 2048 entry·한 번에 16개 경로, FS 작업 목표 예산 1.5초이며 기존 카탈로그 검사는 오래 확인하지 않은 순서로 최대 24개씩 회전한다. 접근 거부·링크·스캔 예산 초과·DB 실패는 파일이 사라졌다고 확정하지 않고 이전 카탈로그를 보존하며 조회에 503을 반환한다. 단일 제품 API 프로세스가 공유 녹화 폴더를 관찰하는 현재 배치가 전제다.
 
+## 공개 다시보기
+
+V15 `product_vods`는 방송자가 **명시적으로 공개한 완료 녹화 하나**의 보관본을 관리한다. 기존 비공개 녹화 카탈로그·원본·MediaMTX DVR 설정은 그대로 둔다. raw 녹화의 기본 6시간 보관과 별도로 제품 API가 UUID 이름의 MP4를 `FRAME_PRODUCT_VOD_DIR`에 복제한다. 기본은 설정한 recordDir의 형제 `vod`이고 원본과 보관 폴더가 같거나 어느 쪽이 다른 쪽을 포함하면 시작을 거부한다. 원본 경로도 보관 경로도 없으면 `storageEnabled:false`로 조회하고 새 발행은 503 `VOD_STORAGE_UNAVAILABLE`다. 이 값은 경로 설정 여부이며 디스크 접근 가능·여유 공간의 보장이 아니다.
+
+### 시청자 조회와 재생
+
+| 요청 | 응답 |
+| --- | --- |
+| `GET /api/v1/vods?q=&channel=&cursor=&limit=20` | `{items,nextCursor,serverNowMs}` |
+| `GET /api/v1/vods/{id}` | `{item,serverNowMs}` |
+| `GET/HEAD /api/v1/vods/{id}/media` | `video/mp4`, 전체 200 또는 단일 bytes Range 206 |
+
+이 GET/HEAD만 익명 공개한다. `Item`은 `{id,title,description,durationMs,sizeBytes,publishedAtMs,channel:{id,handle,displayName,avatarUrl}}`다. id는 서버 UUID이며 채널 정보는 현재 공개 프로필이다. avatarUrl은 아직 저장된 아바타가 없으므로 null이고 가짜 썸네일·조회수를 생성하지 않는다. 원본 이름·경로·recordingId·계정 이메일·source 지문을 공개 응답에 넣지 않는다. ready+public이고 현재 보관본 지문이 맞는 항목만 공개한다. 준비 중·실패·비공개·보관본 누락/변경·없는 UUID의 공개 상세와 미디어는 모두 404 `VOD_NOT_FOUND`다.
+
+q는 제목·채널 표시 이름의 대소문자 무시 부분 검색, 최대 120자다. channel은 소문자 채널 handle이며 과거 예약 주소도 같은 채널 UUID에 연결한다. limit은 1~100이다. 게시 시각·UUID 내림차순 keyset cursor는 검색·채널·limit에 묶인다. 유효하지 않은 검색은 400 `INVALID_VOD_FILTER`, 다른 조건의 cursor는 `INVALID_VOD_CURSOR`다. DB에 행은 남았지만 보관본이 없는 항목은 목록에서 제외하므로 한 페이지의 items가 limit보다 적어도 nextCursor가 있을 수 있다.
+
+미디어는 DB 공개 상태를 확인한 트랜잭션을 끝낸 뒤 열어 전송한다. 매 새 요청에서 공개 여부와 정규 파일의 size/mtime/file key를 확인한다. HEAD는 같은 길이·미디어 헤더와 빈 본문을 반환한다. Range의 단일 구간·suffix는 206/Content-Range, 잘못된 단위·다중·역순·범위 밖은 416 및 `bytes */size`다. 모든 정상·오류 응답은 no-store다. 전역 8개/IP당 4개 전송 상한은 503 `VOD_STREAM_BUSY`, IP 전송 요청 rate 제한은 429 `VOD_RATE_LIMITED`와 Retry-After다. 헤더 전 IO 실패는 JSON 503 `VOD_MEDIA_UNAVAILABLE` 또는 파일 없음 404로 답하고 이미 시작한 응답은 연결을 중단한다.
+
+비공개 전환 뒤 **새로운 목록·상세·미디어 요청**은 404다. 이미 전달한 바이트나 허용돼 진행 중인 전송까지 회수하지 않는다. 페이지는 재조회로 공개 철회를 감지하지만 이미 내려받은 파일을 제거하는 기능은 아니다.
+
+### 방송자 발행과 관리
+
+| 요청 | 본문 및 결과 |
+| --- | --- |
+| `GET /api/v1/me/vods?status=all&q=&cursor=&limit=20` | `{userId,items,nextCursor,serverNowMs,storageEnabled}` |
+| `GET /api/v1/me/vods/{id}` | `{userId,item,serverNowMs,storageEnabled}` |
+| `GET /api/v1/me/vods/by-recording/{recordingId}` | 같은 상세 envelope, 기존 발행이 없으면 item:null |
+| `POST /api/v1/me/vods` | 정확히 `{recordingId,title,description}`, 새 요청 202 preparing, 동일 영수증 200 |
+| `PATCH /api/v1/me/vods/{id}` | 정확히 `{version,title,description,visibility}`; public/private 설정, 상세 200 |
+| `POST /api/v1/me/vods/{id}/retry` | 정확히 `{version}`; failed 항목을 같은 UUID로 202 preparing |
+
+위 API는 쿠키 로그인·소유 채널로 한정하고 쓰기는 기존 CSRF/Origin 검사를 적용한다. `X-FRAME-USER-ID`를 보내면 현재 쿠키 계정과 일치해야 하며 다르면 409 `SESSION_CHANGED`다. 다른 회원의 VOD 상세/수정과 다른 회원·없는 원본으로 새 발행은 404다. 다른 회원의 by-recording 조회는 item:null이다. title은 1~100자 한 줄, description은 0~2,000자 여러 줄이며 NFC·CRLF→LF·앞뒤 공백을 정규화한다. 정해진 필드 이외 값·잘못된 타입은 400 `INVALID_VOD_INPUT`다.
+
+`OwnItem`은 공개 Item 필드에 `{recordingId,status,visibility,published,available,version,reason,createdAtMs,updatedAtMs}`를 더하며 publishedAtMs는 아직 공개된 적 없으면 null이다. recordingId는 카탈로그가 삭제되면 null이 될 수 있어도 보관본을 지우지 않는다. status는 preparing/ready/failed, visibility는 원하는 public/private 설정, available은 ready 보관본의 현재 지문 확인 결과다. published는 세 조건 ready+public+available이 모두 맞을 때만 true다. reason은 경로·예외·비밀값을 포함하지 않는 고정 설명이다. owner 목록 status는 all/preparing/ready/failed, q는 제목 부분 검색이며 cursor는 계정·상태·검색·limit에 묶인다.
+
+새 요청은 원본이 소유자의 ready·비숨김 파일이고 실제 완료/귀속 검증이 맞을 때만 받는다. 한 원본에는 unique recording_id로 다시보기를 하나만 만든다. 같은 정규화 제목·설명으로 재확인하면 기존 행을 먼저 반환하므로 원본이 이미 사라졌어도 중복 복제를 만들지 않는다. 기존 행에 다른 본문을 보내면 409 `VOD_ALREADY_EXISTS`이며 PATCH를 사용한다. 계정당 preparing 최대 2개는 503 `VOD_PREPARATION_BUSY`와 Retry-After다. 발행·retry 요청 rate 제한은 429다. 202는 준비 완료가 아니며 owner 상세로 상태를 확인한다. 응답을 받지 못한 네트워크/503 상황은 by-recording으로 결과를 먼저 확인하고 무조건 새 POST를 반복하지 않는다.
+
+PATCH와 retry는 행 잠금·version 검사로 직렬화하며 버전이 다르면 409 `VOD_CONFLICT`다. 실제 제목·설명·공개 설정 변경과 retry만 version을 증가시키고 같은 값의 PATCH는 no-op 200이다. worker의 준비 완료/실패는 이 편집 버전을 바꾸거나 새 제목·설명·visibility를 이전 snapshot으로 덮지 않는다. preparing 중 private로 바꾸면 완료 뒤에도 비공개다. ready 보관본을 다시 공개하려면 현재 보관 파일이 있어야 하며 없으면 409 `VOD_ARCHIVE_UNAVAILABLE`다. **비공개 전환은 원본·보관 디스크가 없어도 DB에서 처리**한다.
+
+이미 준비한 보관본은 raw 원본이 숨겨지거나 missing이 되거나 6시간 TTL로 삭제되어도 조회·수정·공개/비공개를 계속할 수 있다. 원본 숨김은 별도 VOD의 공개 철회를 대신하지 않는다. 기존 발행 by-recording 조회 역시 원본의 현재 상태에 의존하지 않는다. failed만 retry 가능하고 나머지는 409 `VOD_NOT_FAILED`다. retry는 현재 원본을 다시 검증하고 길이·크기 snapshot을 새로 저장한다. 재시도할 원본이 현재 불가하면 409 `VOD_SOURCE_UNAVAILABLE`이며 자동으로 다른 녹화에 바꾸지 않는다.
+
+### 보관 worker와 재시작
+
+제품 API 한 프로세스의 단일 worker가 매초 준비 행을 하나씩 처리한다. HTTP 요청이나 DB 트랜잭션/커넥션을 붙잡고 복사하지 않는다. 소유권·완료 증거·크기/mtime/file key·귀속 경계를 다시 확인한 원본을 읽기 전용으로 열어 앱 소유 UUID.part에 복사하고 SHA-256을 계산한다. fsync·원본 재검증 뒤 원자 rename으로 UUID.mp4를 만들고 최종 파일을 다시 해시 검사한 뒤에만 DB ready로 전환한다. 관찰 창의 현재 끝이 계속 늘어나는 상황을 파일 변경으로 오인하지 않는다. 복사·검증 읽기 루프는 중단 요청과 각각 2분 예산을 확인한다. FS/DB 오류는 공개 성공으로 표시하지 않는다.
+
+파일 접근은 root/정규 파일의 realpath 일치와 NOFOLLOW_LINKS를 검사하며 심볼릭 링크·junction·외부 경로를 거부한다. 클라이언트는 경로/파일명을 지정하지 못한다. 재시작은 이전 preparing을 failed/준비 중단으로 바꿔 소유자가 재시도하게 한다. 자신이 만든 UUID.part만 정리하고 원본이나 폴더 전체를 재귀 삭제하지 않는다. crash 뒤 남은 **아직 ready가 아닌 같은 UUID 보관물**은 재시도 때 검증한 원본과 같으면 재사용하고 크기/해시가 다르면 새 part로 원자 교체한다. 이미 ready인 공개/비공개 보관본은 복사 worker 대상이 아니다.
+
+현재는 녹화 파일 하나를 같은 원본 화질로 발행한다. 여러 파일 병합·별도 FFmpeg 재인코딩·VOD 화질 래더·썸네일 생성·조회수 집계·결제·CDN·분산 worker는 추가하지 않는다. 보관본 자동 만료·사용자 삭제·용량 할당 API도 없으며 보관 용량은 운영자가 관리한다. 단일 제품 API 인스턴스 전제이며 여러 API의 worker를 같은 DB/폴더에 동시에 연결하지 않는다.
+
 ## 검증
 
 기존 기본 회귀 검사에는 외부 DB·Redis가 필요하지 않다.
@@ -369,9 +418,9 @@ cd apps/api
 
 실제 PostgreSQL·Redis 통합 검사는 저장소 밖 검증 설정 파일의 경로를 지정한다. 테스트는 루프백 `127.0.0.1`의 FRAME 전용 포트 `15432`(네이티브) 또는 `25432`(Docker), DB 이름 `frame_product_verify` 또는 고유 접미사가 붙은 검증 DB인지 먼저 검사한다. 쿼리 매개변수·URL 안의 자격증명·외부 호스트·사용자 DB `frame_product`는 허용하지 않는다. 해당 DB의 임의 생성 스키마와 임의 Redis namespace만 사용하며, 종료 시 생성한 스키마·namespace 키만 정리한다. 실제 DB의 사용자·스키마·운영자 키를 읽거나 변경하지 않는다. 설정에는 `verifyDbUrl`, `dbUsername`, `dbPassword`, `redisHost`, `redisPort`, `redisPassword`가 필요하다.
 
-Flyway는 제품 기능을 활성화한 Spring Boot의 시작 과정에서 `db/migration`을 적용한다. 현재 V1(회원·채널·팔로우), V2(가입 동의), V3(방송 예약), V4(시청 기록), V5(채널 프로필·주소 예약·신고 접수), V6(운영자 플래그·신고 관리), V7(개인 알림·전송 표식·시작 기준 시각), V8(채팅 정책·계정 차단), V9(방송 투표·선택지·계정별 표), V10(비공개 질문·답변·명시적 공개 고정), V11(채널 포인트·원장·보상·교환 요청), V12(비공개 무료 미션·상태 이력), V13(방송별·일별 실제 관찰 집계), V14(비공개 녹화 관찰 창·파일 카탈로그)을 사용한다. `validate-on-migrate: true`, `clean-disabled: true`, `baseline-on-migrate: false`를 명시한다. 적용한 SQL은 수정하지 않고 새 `V15__설명.sql` 같은 다음 버전을 추가한다. Redis는 Flyway 관리 대상이 아니다. 기존 Flyway 기록이 없는 비어 있지 않은 스키마를 자동으로 기존 운영 DB라고 간주하거나, checksum 오류를 자동으로 `repair`해서 넘기지 않는다.
+Flyway는 제품 기능을 활성화한 Spring Boot의 시작 과정에서 `db/migration`을 적용한다. 현재 V1(회원·채널·팔로우), V2(가입 동의), V3(방송 예약), V4(시청 기록), V5(채널 프로필·주소 예약·신고 접수), V6(운영자 플래그·신고 관리), V7(개인 알림·전송 표식·시작 기준 시각), V8(채팅 정책·계정 차단), V9(방송 투표·선택지·계정별 표), V10(비공개 질문·답변·명시적 공개 고정), V11(채널 포인트·원장·보상·교환 요청), V12(비공개 무료 미션·상태 이력), V13(방송별·일별 실제 관찰 집계), V14(비공개 녹화 관찰 창·파일 카탈로그), V15(명시적 공개 다시보기·별도 보관본 메타데이터)를 사용한다. `validate-on-migrate: true`, `clean-disabled: true`, `baseline-on-migrate: false`를 명시한다. 적용한 SQL은 수정하지 않고 새 `V16__설명.sql` 같은 다음 버전을 추가한다. Redis는 Flyway 관리 대상이 아니다. 기존 Flyway 기록이 없는 비어 있지 않은 스키마를 자동으로 기존 운영 DB라고 간주하거나, checksum 오류를 자동으로 `repair`해서 넘기지 않는다.
 
-`ProductMigrationIntegrationTest`는 별도 PostgreSQL DB의 임의 생성 스키마에서 빈 DB의 V14까지 적용·재시작 시 미적용, V1 데이터의 최신 업그레이드 보존·기존 동의 NULL 유지, V3·V4에서 최신으로 업그레이드한 뒤 기존 방송 예약·시청 기록·채널 생성일 보존과 주소 백필·삭제 후 예약 동작, V5 신고의 원문·시각 보존과 운영자 자동 승격 없음, V6 알림 설정 보존·시작 기준 생성·과거 알림 미생성, V7 프로필·팔로우·알림 확인 상태 보존과 기본 채팅 정책 추가, V8 기존 정책 보존과 투표 단일 슬롯·계정별 한 표·선택지 복합 FK, V9 투표·선택지·표 보존과 질문 요청 멱등 키·단일 고정·답변 시각 제약, V10 기존 비공개 답변 보존과 빈 포인트 저장소·음수 잔액·1회 신청·중복 환불 제약, V11 잔액·부분 시청·원장·보상 신청 보존과 미션 요청/기한/이력 고유 제약, V12 미션·이력 보존과 빈 방송 분석 저장소·관찰 제약·FK 및 채널 삭제 연쇄, 임시 복사 SQL 변조 시 checksum 검증으로 후속 V15 DDL 차단을 검사한다. 이 검사는 비밀 설정의 `verifyDbUrl` 중 루프백 주소와 `frame_product_verify` 또는 고유 접미사를 붙인 이름만 허용하며, 실행 시 생성한 `migration_verify_*` 스키마만 정리한다. 실제 DB와 저장소의 V1~V13 SQL은 변경하지 않는다. `ProductStorageDisabledTest`는 DB·Redis가 연결되지 않아도 제품 기능 비활성 상태의 미디어 서버가 해당 구성 요소 없이 시작되는지 검사한다.
+`ProductMigrationIntegrationTest`는 별도 PostgreSQL DB의 임의 생성 스키마에서 빈 DB의 V15까지 적용·재시작 시 미적용, V1 데이터의 최신 업그레이드 보존·기존 동의 NULL 유지, V3·V4에서 최신으로 업그레이드한 뒤 기존 방송 예약·시청 기록·채널 생성일 보존과 주소 백필·삭제 후 예약 동작, V5 신고의 원문·시각 보존과 운영자 자동 승격 없음, V6 알림 설정 보존·시작 기준 생성·과거 알림 미생성, V7 프로필·팔로우·알림 확인 상태 보존과 기본 채팅 정책 추가, V8 기존 정책 보존과 투표 단일 슬롯·계정별 한 표·선택지 복합 FK, V9 투표·선택지·표 보존과 질문 요청 멱등 키·단일 고정·답변 시각 제약, V10 기존 비공개 답변 보존과 빈 포인트 저장소·음수 잔액·1회 신청·중복 환불 제약, V11 잔액·부분 시청·원장·보상 신청 보존과 미션 요청/기한/이력 고유 제약, V12 미션·이력 보존과 빈 방송 분석 저장소·관찰 제약·FK 및 채널 삭제 연쇄, V14 녹화 관찰 창·파일 보존과 V15 빈 다시보기 저장소·원본당 고유 제약·ready의 검증 해시 필수 조건, 임시 복사 SQL 변조 시 checksum 검증으로 후속 V16 DDL 차단을 검사한다. 이 검사는 비밀 설정의 `verifyDbUrl` 중 루프백 주소와 `frame_product_verify` 또는 고유 접미사를 붙인 이름만 허용하며, 실행 시 생성한 `migration_verify_*` 스키마만 정리한다. 실제 DB와 저장소의 V1~V14 SQL은 변경하지 않는다. `ProductStorageDisabledTest`는 DB·Redis가 연결되지 않아도 제품 기능 비활성 상태의 미디어 서버가 해당 구성 요소 없이 시작되는지 검사한다.
 
 ```powershell
 $env:FRAME_PRODUCT_TEST_CONFIG = '<저장소 밖 검증 설정 JSON 경로>'

@@ -1,0 +1,27 @@
+{
+  "verificationDatabaseOnly": true,
+  "checks": 3,
+  "passed": 3,
+  "results": [
+    {
+      "name": "Development StrictMode renders actual anonymous public VOD cards",
+      "pass": true
+    },
+    {
+      "name": "Development VOD detail uses the real archive player without fake chat or autoplay",
+      "pass": true
+    },
+    {
+      "name": "VOD management carries the expected owner and has no runtime or unconfirmed interception errors",
+      "pass": true
+    }
+  ],
+  "runtimeErrors": [],
+  "writes": [],
+  "videoMetrics": null,
+  "paginationInstrumentation": null,
+  "limits": [
+    "Headless Edge on one PC only",
+    "Mobile sizes are emulated viewports, not physical phones"
+  ]
+}

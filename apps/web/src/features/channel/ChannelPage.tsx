@@ -32,6 +32,8 @@ interface ChannelPageProps {
   ownChannel?: boolean;
   notice?: string;
   scheduleFeedback?: ReactNode;
+  videosContent?: ReactNode;
+  recentVideosContent?: ReactNode;
   signedIn?: boolean;
   onRequireLogin?: () => void;
   onReport?: (input: ChannelReportInput) => Promise<void>;
@@ -98,7 +100,8 @@ function VideoList({ videos, handle }: { videos: readonly PreviewVideo[]; handle
   );
 }
 
-function ChannelContent({ channel, activeTab, selectTab, scheduleFeedback, onShowDetails }: { channel: PreviewChannel; activeTab: ChannelTab; selectTab: (tab: ChannelTab) => void; scheduleFeedback?: ReactNode; onShowDetails: () => void }) {
+function ChannelContent({ channel, activeTab, selectTab, scheduleFeedback, onShowDetails, videosContent, recentVideosContent }: { channel: PreviewChannel; activeTab: ChannelTab; selectTab: (tab: ChannelTab) => void; scheduleFeedback?: ReactNode; videosContent?: ReactNode; recentVideosContent?: ReactNode; onShowDetails: () => void }) {
+  if (activeTab === 'videos' && videosContent !== undefined) return <>{videosContent}</>;
   if (activeTab === 'videos' || activeTab === 'clips') {
     const isClip = activeTab === 'clips';
     const videos = channel.videos.filter((video) => video.kind === (isClip ? 'clip' : 'vod'));
@@ -175,7 +178,8 @@ function ChannelContent({ channel, activeTab, selectTab, scheduleFeedback, onSho
           <button type="button" onClick={() => selectTab('schedule')}><ChevronRight size={17} aria-hidden="true" />방송 일정 보기</button>
         </div>
       </div>
-      {recent.length > 0 && (
+      {recentVideosContent}
+      {recentVideosContent === undefined && recent.length > 0 && (
         <section className={styles.recent}>
           <div className={styles.sectionHeading}>
             <h2 className={styles.heading}>최근 다시보기</h2>
@@ -188,7 +192,7 @@ function ChannelContent({ channel, activeTab, selectTab, scheduleFeedback, onSho
   );
 }
 
-export function ChannelPage({ channel, state, followed, notificationsOn, onToggleFollow, onToggleNotifications, actions, pending = false, actionError, ownChannel = false, notice, scheduleFeedback, signedIn = false, onRequireLogin, onReport }: ChannelPageProps) {
+export function ChannelPage({ channel, state, followed, notificationsOn, onToggleFollow, onToggleNotifications, actions, pending = false, actionError, ownChannel = false, notice, scheduleFeedback, videosContent, recentVideosContent, signedIn = false, onRequireLogin, onReport }: ChannelPageProps) {
   const [params, setParams] = useSearchParams();
   const tabId = useId();
   const requestedTab = params.get('tab');
@@ -285,7 +289,7 @@ export function ChannelPage({ channel, state, followed, notificationsOn, onToggl
             ))}
           </div>
           <div className={styles.panel} role="tabpanel" id={`${tabId}-panel`} aria-labelledby={`${tabId}-${activeTab}`} tabIndex={0}>
-            <ChannelContent channel={channel} activeTab={activeTab} scheduleFeedback={scheduleFeedback} selectTab={(tab) => { selectTab(tab); focusTab(tab); }} onShowDetails={() => setDetailMode('about')} />
+            <ChannelContent channel={channel} activeTab={activeTab} scheduleFeedback={scheduleFeedback} videosContent={videosContent} recentVideosContent={recentVideosContent} selectTab={(tab) => { selectTab(tab); focusTab(tab); }} onShowDetails={() => setDetailMode('about')} />
           </div>
         </>
       )}

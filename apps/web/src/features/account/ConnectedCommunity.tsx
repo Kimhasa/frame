@@ -29,6 +29,7 @@ import { ViewerMissionsPanel } from '../missions/ViewerMissionsPanel';
 import { ConnectedMissionsPage } from '../missions/ConnectedMissionsPage';
 import { ConnectedAnalyticsPage } from '../analytics/ConnectedAnalyticsPage';
 import { ConnectedRecordingsPage } from '../recordings/ConnectedRecordingsPage';
+import { ConnectedVodList, ConnectedVodWatch } from '../vod/ConnectedVodPages';
 import { channelSchedule } from '../schedule/SchedulePage';
 import { AccountError, accountApi, safeReturnPath } from './account-client';
 import type { AccountSession, ProductChannel } from './account-client';
@@ -96,7 +97,7 @@ function ConnectedChannel({ session, sessionReady, requestLogin, onChannelChange
   const own = channel?.id === session?.channel?.id;
   const scheduleFeedback = schedulePhase === 'loading' ? <p role="status">방송 일정을 불러오는 중이에요.</p>
     : schedulePhase === 'error' ? <div role="alert"><p>방송 일정을 불러오지 못했어요.</p><button type="button" className={ui.button} onClick={() => setScheduleAttempt(value => value + 1)}>다시 시도</button></div> : undefined;
-  return <ChannelPage channel={channel ? { ...pageChannel(channel), schedule: channelSchedule(schedule) } : null} scheduleFeedback={scheduleFeedback} state="ready" followed={channel?.following ?? false} notificationsOn={channel?.notificationsOn ?? false}
+  return <ChannelPage channel={channel ? { ...pageChannel(channel), schedule: channelSchedule(schedule) } : null} scheduleFeedback={scheduleFeedback} videosContent={channel ? <ConnectedVodList key={channel.id} channelHandle={channel.handle} /> : undefined} recentVideosContent={channel ? <ConnectedVodList key={channel.id} channelHandle={channel.handle} recent /> : undefined} state="ready" followed={channel?.following ?? false} notificationsOn={channel?.notificationsOn ?? false}
     pending={pending || !sessionReady} actionError={error} ownChannel={own} notice={channel?.notice} onToggleFollow={() => void toggle()} onToggleNotifications={() => void toggle(true)}
     signedIn={Boolean(session?.user)} onRequireLogin={() => requestLogin()} onReport={report}
     actions={own && <Link className={ui.button} to="/studio/channel">채널 관리</Link>} />;
@@ -285,7 +286,7 @@ export default function ConnectedCommunity({ viewer, render }: { viewer: ViewerA
     channelManage: requireAccount(owned && session ? <ConnectedChannelManagePage key={owned.id} channel={owned} onSave={async changes => { const updated = await authorized(() => accountApi.updateChannel(changes, session.csrfToken)); updateChannel(updated); return updated; }} /> : <StatePage title="채널 관리" description="채널 정보를 불러오지 못했어요." />),
     broadcast: requireAccount(session && owned ? <ConnectedStudio key={owned.id} viewer={viewer} session={session} onConnected={updateChannel} onRequireLogin={() => requestLogin()} chatAccount={chatAccount} participationFor={participationFor} /> : null),
     search: <ChannelSearch />,
-    vod: <StatePage title="다시보기" description="아직 공개된 다시보기가 없어요." />, vodWatch: <StatePage title="다시보기" description="영상을 찾을 수 없어요." />,
+    vod: <ConnectedVodList />, vodWatch: <ConnectedVodWatch />,
     clips: <StatePage title="클립" description="아직 공개된 클립이 없어요." />, clipWatch: <StatePage title="클립" description="영상을 찾을 수 없어요." />,
     history: requireAccount(session && user ? <ConnectedHistoryPage key={user.id} session={session} onRequireLogin={() => requestLogin()} /> : null),
     notifications: requireAccount(session && user ? <ConnectedNotificationsPage key={user.id} session={session} onRequireLogin={() => requestLogin()} onSessionChanged={notificationSessionChanged} onUnreadCountChange={changeNotificationUnreadCount} unreadCount={notificationUnreadCount} /> : null),

@@ -13,9 +13,9 @@
 // Not covered (needs a Linux server): systemd itself (sandboxing, SuccessExitStatus, stop time), the java package, Caddy.
 // Light: one JVM at a time (five starts), no MediaMTX, no browser. Port 28080 only. Windows only (bin/java.exe, taskkill).
 // usage: node server/verify/deploy-check.mjs   (JAVA_HOME or FRAME_JAVA = a JDK 21; build the jar first)
-import { mkdirSync, writeFileSync, readFileSync, existsSync, copyFileSync, readdirSync, rmSync } from 'node:fs';
+import { mkdirSync, writeFileSync, readFileSync, existsSync, copyFileSync, readdirSync, rmSync, realpathSync } from 'node:fs';
 import { tmpdir, networkInterfaces } from 'node:os';
-import { join, resolve, dirname } from 'node:path';
+import { join, resolve, dirname, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { randomBytes } from 'node:crypto';
 import { start, stop, waitFor, sleep, checks, portFree, scrub } from './harness.mjs';
@@ -65,15 +65,15 @@ for (const raw of envText.split('\n')) {
   env[m[1]] = m[2];
 }
 check('1d relay.env.example: plain NAME=value lines only (no quotes, backslashes, $, %, inline comments)', odd.length === 0 && Object.keys(env).length > 40, { variables: Object.keys(env).length, odd });
-const paths = { stats: env.RELAY_STATS_DIR, records: env.RELAY_RECORD_DIR, ui: env.RELAY_UI_FILE, tokens: env.RELAY_PUBLISHER_TOKENS_FILE };
-check('1e the unit lets the service write only where relay.env.example points the stats, and the guide creates those folders',
-  unitValue('ReadWritePaths') === '-' + paths.stats && paths.records.startsWith(unitValue('ReadOnlyPaths') + '/') && guide.includes(paths.stats) && guide.includes(dirname(paths.ui)) && guide.includes(paths.tokens),
+const paths = { stats: env.RELAY_STATS_DIR, records: env.RELAY_RECORD_DIR, vod: env.FRAME_PRODUCT_VOD_DIR, ui: env.RELAY_UI_FILE, tokens: env.RELAY_PUBLISHER_TOKENS_FILE };
+check('1e the unit permits only stats and VOD archive writes while source recordings stay read-only',
+  unitValue('ReadWritePaths') === ['-' + paths.stats, '-' + paths.vod].join(' ') && paths.records.startsWith(unitValue('ReadOnlyPaths') + '/') && paths.vod.startsWith(unitValue('ReadOnlyPaths') + '/') && !paths.vod.startsWith(paths.records + '/') && guide.includes(paths.vod) && guide.includes(paths.stats) && guide.includes(dirname(paths.ui)) && guide.includes(paths.tokens),
   { readWrite: unitValue('ReadWritePaths'), readOnly: unitValue('ReadOnlyPaths'), ...paths });
 
 // ---- 2 start --------------------------------------------------------------------------------------------------------------
 // The server layout of the install guide, under a temporary folder.
 const map = p => TMP + p;
-for (const d of ['/etc/frame-relay', '/opt/frame-relay/ui/assets/fonts', '/opt/frame-relay/ui/assets/js', '/var/lib/frame-relay/stats', '/var/lib/frame-relay/recordings']) mkdirSync(map(d), { recursive: true });
+for (const d of ['/etc/frame-relay', '/opt/frame-relay/ui/assets/fonts', '/opt/frame-relay/ui/assets/js', '/var/lib/frame-relay/stats', '/var/lib/frame-relay/recordings', '/var/lib/frame-relay/vod']) mkdirSync(map(d), { recursive: true });
 copyFileSync(API_JAR, map('/opt/frame-relay/frame-api.jar'));
 copyFileSync(join(ROOT, 'outputs/index.html'), map('/opt/frame-relay/ui/index.html'));
 for (const f of ['PretendardVariable.woff2', 'OFL.txt']) copyFileSync(join(ROOT, 'outputs/assets/fonts', f), map('/opt/frame-relay/ui/assets/fonts/' + f));
@@ -158,7 +158,10 @@ try {
     })();
     check('4d on/off are read as switches (RELAY_DVR=off, RELAY_HLS=on): the service starts with DVR off', !!on.up && /DVR off/.test(on.summary), on);
   } catch (error) { check('4 refusals run', false, { error: String(error.stack || error.message).slice(0, 500) }); }
-  try { rmSync(TMP, { recursive: true, force: true }); } catch {}
+  const cleanupTarget = resolve(TMP), cleanupParent = resolve(tmpdir());
+  if (dirname(cleanupTarget).toLowerCase() !== cleanupParent.toLowerCase() || !/^frame-deploy-check-[0-9]+$/.test(basename(cleanupTarget))) throw Error('Refusing cleanup outside the exact deployment fixture.');
+  if (existsSync(cleanupTarget) && realpathSync(cleanupTarget).toLowerCase() !== cleanupTarget.toLowerCase()) throw Error('Refusing cleanup through a redirected deployment fixture.');
+  try { rmSync(cleanupTarget, { recursive: true, force: true }); } catch {}
 }
 result.finishedAt = new Date().toISOString();
 result.passed = list.filter(c => c.ok).length; result.failed = list.filter(c => c.ok === false).length;

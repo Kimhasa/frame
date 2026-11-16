@@ -29,6 +29,7 @@ import tools.jackson.databind.json.JsonMapper;
 class AccountIntegrationTest {
     private static final JsonMapper JSON = JsonMapper.builder().build();
     private static final String ORIGIN = "http://127.0.0.1:5360", TOKEN = "product-verification-only-publisher-token-1234567890";
+    @org.junit.jupiter.api.io.TempDir Path vodDirectory;
     @Test void realCookiesCsrfAccountsFollowsAndOwnedStudioSurviveServerRestart() throws Exception {
         JsonNode privateConfig = JSON.readTree(Files.readAllBytes(Path.of(System.getenv("FRAME_PRODUCT_TEST_CONFIG"))));
         String database = privateConfig.path("verifyDbUrl").asString();
@@ -63,6 +64,7 @@ class AccountIntegrationTest {
         properties.put("frame.payments.enabled", "false");
         properties.put("frame.quality.renditions", "");
         properties.put("frame.dvr.record-dir", "");
+        properties.put("frame.product.vod-dir", vodDirectory.toString());
         ConfigurableApplicationContext app = null;
         try {
             app = start(properties);
@@ -197,6 +199,7 @@ class AccountIntegrationTest {
             assertEquals(200, anonymous.get("/api/broadcasts").status()); assertTrue(anonymous.get("/api/broadcasts").raw().headers().allValues("set-cookie").isEmpty());
             String savedAnalytics=analytics(a,b,anonymous,sql,app,UUID.fromString(ownerId),UUID.fromString(channelId));
             String savedRecording=recordings(a,b,anonymous,sql,app,UUID.fromString(channelId));
+            VodState savedVod=vods(a,b,anonymous,sql,app,UUID.fromString(channelId),UUID.fromString(savedRecording),vodDirectory);
             String savedSchedule = schedules(a, b, anonymous, sql, UUID.fromString(channelId));
             String savedHistory = histories(a, b, anonymous, sql, app.getBean(frame.api.broadcast.BroadcastRegistry.class), UUID.fromString(ownerId));
             channelProfiles(a, b, anonymous, sql, app.getBean(Accounts.class), UUID.fromString(channelId), UUID.fromString(secondChannel));
@@ -217,6 +220,10 @@ class AccountIntegrationTest {
             assertEquals(savedAnalytics,restoredAnalytics.path("id").asString());assertEquals("interrupted",restoredAnalytics.path("status").asString());assertEquals("server_restart",restoredAnalytics.path("endReason").asString());
             assertEquals(10000,restoredAnalytics.path("broadcastDurationMs").longValue());assertEquals(restoredAnalytics.path("lastObservedAtMs").longValue(),restoredAnalytics.path("endedAtMs").longValue());
             var restoredRecording=a.get("/api/v1/me/recordings/"+savedRecording);assertEquals(200,restoredRecording.status());assertEquals("ready",restoredRecording.json().path("item").path("status").asString());assertEquals(2,restoredRecording.json().path("item").path("version").longValue());assertFalse(restoredRecording.json().path("item").path("readyPlayable").asBoolean());
+            var restoredVod=a.get("/api/v1/me/vods/"+savedVod.id());assertEquals(200,restoredVod.status());assertEquals("ready",restoredVod.json().path("item").path("status").asString());assertTrue(restoredVod.json().path("item").path("published").asBoolean());
+            assertEquals(200,new Browser(base(app)).get("/api/v1/vods/"+savedVod.id()).status());
+            long vodUntil=System.nanoTime()+java.time.Duration.ofSeconds(5).toNanos();while(System.nanoTime()<vodUntil&&a.get("/api/v1/me/vods/"+savedVod.interrupted()).json().path("item").path("status").asString().equals("preparing"))Thread.sleep(25);
+            var interruptedVod=a.get("/api/v1/me/vods/"+savedVod.interrupted()).json().path("item");assertEquals("failed",interruptedVod.path("status").asString());assertFalse(interruptedVod.path("published").asBoolean());assertTrue(interruptedVod.path("reason").asString().contains("다시 시작"));assertEquals(404,new Browser(base(app)).get("/api/v1/vods/"+savedVod.interrupted()).status());
             assertTrue(a.get("/api/v1/me/schedules").json().path("items").valueStream().anyMatch(item -> item.path("id").asString().equals(savedSchedule)));
             JsonNode restoredHistory = a.get("/api/v1/me/history").json().path("items");
             assertEquals(1, restoredHistory.size()); assertEquals(savedHistory, restoredHistory.get(0).path("id").asString());
@@ -293,6 +300,62 @@ class AccountIntegrationTest {
             // Only this generated schema in the hard-checked verification database is removed.
             try (var connection = DriverManager.getConnection(database, username, password); var statement = connection.createStatement()) { statement.execute("DROP SCHEMA " + schema + " CASCADE"); }
         }
+    }
+    private record VodState(UUID id,UUID interrupted){}
+    /** Synthetic archive bytes verify auth, range, metadata and DB recovery; media e2e validates real MP4 publishing/decoding. */
+    private static VodState vods(Browser owner,Browser other,Browser anonymous,JdbcClient sql,ConfigurableApplicationContext app,UUID channel,UUID recording,Path directory)throws Exception{
+        app.getBean(VodPublisher.class).stop();var files=app.getBean(VodFiles.class);var service=app.getBean(ProductVods.class);
+        String own="/api/v1/me/vods",pub="/api/v1/vods";UUID id=UUID.randomUUID();byte[] bytes="synthetic archive bytes for range and authorization checks".getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        Path archive=directory.resolve(id+".mp4");Files.write(archive,bytes);var info=files.inspect(id);String hash=java.util.HexFormat.of().formatHex(java.security.MessageDigest.getInstance("SHA-256").digest(bytes));long now=System.currentTimeMillis();
+        sql.sql("""
+                INSERT INTO product_vods(id,channel_id,recording_id,title,description,status,visibility,duration_ms,size_bytes,archive_modified_ms,archive_key,archive_sha256,published_at_ms,created_at_ms,updated_at_ms)
+                VALUES(:id,:channel,:recording,'vod-preserved','saved description','ready','public',3000,:size,:modified,:key,:hash,:now,:now,:now)
+                """).param("id",id).param("channel",channel).param("recording",recording).param("size",bytes.length).param("modified",info.modified()).param("key",info.key()).param("hash",hash).param("now",now).update();
+        assertEquals(401,anonymous.get(own).status());assertEquals(401,anonymous.get(own+"/"+id).status());assertEquals(404,other.get(own+"/"+id).status());
+        assertTrue(other.get(own+"/by-recording/"+recording).json().path("item").isNull());assertEquals(0,other.get(own).json().path("items").size());
+        assertEquals(400,owner.get(own+"?status=unknown").status());assertEquals(400,owner.get(pub+"?limit=0").status());assertEquals(400,anonymous.get(pub+"?cursor=broken").status());
+        owner.expectedUserId=UUID.randomUUID().toString();assertEquals("SESSION_CHANGED",owner.get(own).code());owner.expectedUserId=null;
+        var view=anonymous.get(pub+"/"+id);assertEquals(200,view.status());assertEquals("vod-preserved",view.json().path("item").path("title").asString());assertFalse(view.json().path("item").has("recordingId"));assertFalse(view.json().path("item").has("archive_key"));assertTrue(view.raw().headers().firstValue("cache-control").orElse("").contains("no-store"));
+        assertEquals(id.toString(),anonymous.get(pub).json().path("items").get(0).path("id").asString());assertEquals(1,anonymous.get(pub+"?channel=spring-owner").json().path("items").size());assertEquals(0,anonymous.get(pub+"?q=nonexistent").json().path("items").size());
+        try(var http=HttpClient.newHttpClient()){
+            var full=http.send(HttpRequest.newBuilder(URI.create(owner.base+pub+"/"+id+"/media")).GET().build(),HttpResponse.BodyHandlers.ofByteArray());assertEquals(200,full.statusCode());assertArrayEquals(bytes,full.body());assertEquals("video/mp4",full.headers().firstValue("content-type").orElse(""));assertTrue(full.headers().firstValue("cache-control").orElse("").contains("no-store"));
+            var head=http.send(HttpRequest.newBuilder(URI.create(owner.base+pub+"/"+id+"/media")).method("HEAD",HttpRequest.BodyPublishers.noBody()).build(),HttpResponse.BodyHandlers.ofByteArray());assertEquals(200,head.statusCode());assertEquals(0,head.body().length);assertEquals(Integer.toString(bytes.length),head.headers().firstValue("content-length").orElse(""));
+            var part=http.send(HttpRequest.newBuilder(URI.create(owner.base+pub+"/"+id+"/media")).header("Range","bytes=2-7").GET().build(),HttpResponse.BodyHandlers.ofByteArray());assertEquals(206,part.statusCode());assertArrayEquals(java.util.Arrays.copyOfRange(bytes,2,8),part.body());assertEquals("bytes 2-7/"+bytes.length,part.headers().firstValue("content-range").orElse(""));
+            var suffix=http.send(HttpRequest.newBuilder(URI.create(owner.base+pub+"/"+id+"/media")).header("Range","bytes=-3").GET().build(),HttpResponse.BodyHandlers.ofByteArray());assertEquals(206,suffix.statusCode());assertArrayEquals(java.util.Arrays.copyOfRange(bytes,bytes.length-3,bytes.length),suffix.body());
+            var invalid=http.send(HttpRequest.newBuilder(URI.create(owner.base+pub+"/"+id+"/media")).header("Range","bytes="+bytes.length+"-").GET().build(),HttpResponse.BodyHandlers.ofByteArray());assertEquals(416,invalid.statusCode());assertEquals("bytes */"+bytes.length,invalid.headers().firstValue("content-range").orElse(""));
+        }
+        var body=Map.of("version",0,"title","vod-preserved","description","saved description","visibility","private");
+        assertEquals(403,owner.send("PATCH",own+"/"+id,body,false,ORIGIN).status());assertEquals(403,owner.send("PATCH",own+"/"+id,body,true,"https://outside.invalid").status());assertEquals(404,other.write("PATCH",own+"/"+id,body).status());
+        assertEquals(400,owner.write("PATCH",own+"/"+id,Map.of("version",0,"title","","description","","visibility","public")).status());
+        var hidden=owner.write("PATCH",own+"/"+id,body);assertEquals(200,hidden.status());assertEquals(1,hidden.json().path("item").path("version").longValue());assertFalse(hidden.json().path("item").path("published").asBoolean());
+        assertEquals(404,anonymous.get(pub+"/"+id).status());assertEquals(404,anonymous.get(pub+"/"+id+"/media").status());assertEquals(0,anonymous.get(pub).json().path("items").size());assertTrue(Files.exists(archive));assertEquals("VOD_CONFLICT",owner.write("PATCH",own+"/"+id,body).code());
+        assertEquals(200,owner.write("PATCH",own+"/"+id,Map.of("version",1,"title","vod-preserved","description","saved description","visibility","public")).status());
+        // Raw data is unavailable in this fixture; an archived copy must remain manageable independently.
+        assertFalse(owner.get("/api/v1/me/recordings/"+recording).json().path("item").path("readyPlayable").asBoolean());assertEquals(id.toString(),owner.get(own+"/by-recording/"+recording).json().path("item").path("id").asString());
+        assertEquals(2,owner.write("PATCH",own+"/"+id,Map.of("version",2,"title","vod-preserved","description","saved description","visibility","public")).json().path("item").path("version").longValue());
+        Path held=directory.resolve(id+".held");Files.move(archive,held);
+        try{
+            assertEquals(404,anonymous.get(pub+"/"+id).status());assertEquals(404,anonymous.get(pub+"/"+id+"/media").status());assertFalse(owner.get(own+"/"+id).json().path("item").path("available").asBoolean());
+            assertEquals("VOD_ARCHIVE_UNAVAILABLE",owner.write("PATCH",own+"/"+id,Map.of("version",2,"title","vod-preserved","description","saved description","visibility","public")).code());
+            assertEquals(200,owner.write("PATCH",own+"/"+id,Map.of("version",2,"title","vod-preserved","description","saved description","visibility","private")).status());
+        }finally{Files.move(held,archive);}
+        assertEquals(200,owner.write("PATCH",own+"/"+id,Map.of("version",3,"title","vod-preserved","description","saved description","visibility","public")).status());assertArrayEquals(bytes,Files.readAllBytes(archive));
+        var receipt=Map.of("recordingId",recording.toString(),"title","vod-preserved","description","saved description");assertEquals(200,owner.write("POST",own,receipt).status());assertEquals("VOD_ALREADY_EXISTS",owner.write("POST",own,Map.of("recordingId",recording.toString(),"title","different","description","saved description")).code());
+        assertEquals(1,sql.sql("SELECT count(*) FROM product_vods WHERE recording_id=:recording").param("recording",recording).query(Integer.class).single());assertEquals("VOD_NOT_FAILED",owner.write("POST",own+"/"+id+"/retry",Map.of("version",4)).code());
+        // A reverified source may have different metadata after a failed attempt. Retry persists that snapshot.
+        UUID ownerId=UUID.fromString(owner.get("/api/v1/session").json().path("user").path("id").asString());var refreshedSource=org.mockito.Mockito.mock(ChannelRecordings.class);
+        org.mockito.Mockito.when(refreshedSource.asset(ownerId,recording)).thenReturn(new ChannelRecordings.Asset(recording,"obs-verify","fixture.mp4",bytes.length+1,20,"refreshed-source",2000,1000,7000));
+        org.mockito.Mockito.when(refreshedSource.detail(ownerId,recording)).thenReturn(new ChannelRecordings.Detail(ownerId,new ChannelRecordings.Item(recording,"source","source.mp4",2000,4000L,(long)bytes.length+1,"ready",3,false,true,now,"a".repeat(32),null),now));
+        sql.sql("UPDATE product_vods SET status='failed',reason='preparation_failed' WHERE id=:id").param("id",id).update();
+        var refreshed=new ProductVods(sql,refreshedSource,files).retry(ownerId,id,JSON.valueToTree(Map.of("version",4))).item();assertEquals("preparing",refreshed.status());assertEquals(bytes.length+1,refreshed.sizeBytes());assertEquals(4000,refreshed.durationMs());assertEquals(5,refreshed.version());
+        sql.sql("UPDATE product_vods SET status='ready',reason=NULL,size_bytes=:size,duration_ms=3000 WHERE id=:id").param("size",bytes.length).param("id",id).update();
+        // Copier completion must preserve metadata/visibility/version edited while preparing.
+        UUID completed=UUID.randomUUID();sql.sql("INSERT INTO product_vods(id,channel_id,title,description,status,visibility,duration_ms,size_bytes,created_at_ms,updated_at_ms,version) VALUES(:id,:channel,'edited during copy','private decision','preparing','private',3000,:size,:now,:now,7)").param("id",completed).param("channel",channel).param("size",bytes.length).param("now",now).update();
+        service.finished(completed,new VodFiles.Info(info.size(),info.modified(),info.key(),hash));var completedItem=owner.get(own+"/"+completed).json().path("item");assertEquals("edited during copy",completedItem.path("title").asString());assertEquals("private",completedItem.path("visibility").asString());assertEquals(7,completedItem.path("version").longValue());assertTrue(completedItem.path("publishedAtMs").isNull());assertEquals(404,anonymous.get(pub+"/"+completed).status());
+        sql.sql("DELETE FROM product_vods WHERE id=:id").param("id",completed).update();
+        UUID interrupted=UUID.randomUUID();sql.sql("INSERT INTO product_vods(id,channel_id,title,status,visibility,duration_ms,size_bytes,created_at_ms,updated_at_ms) VALUES(:id,:channel,'interrupted preparation','preparing','private',3000,10,:now,:now)").param("id",interrupted).param("channel",channel).param("now",now).update();
+        assertEquals(404,anonymous.get(pub+"/"+interrupted).status());assertEquals(404,anonymous.get(pub+"/"+interrupted+"/media").status());
+        return new VodState(id,interrupted);
     }
     /** Controlled metadata/window time fixtures; actual MP4 transfer and decoding are verified separately. */
     private static String recordings(Browser owner,Browser other,Browser anonymous,JdbcClient sql,ConfigurableApplicationContext app,UUID channel)throws Exception{

@@ -1,0 +1,150 @@
+{
+  "verificationDatabaseOnly": true,
+  "productionUserDataUntouched": true,
+  "nativeObsReceiverUntouched": true,
+  "complete": true,
+  "testedJarSha256": "5e624ae39b181c6fd498976b424da2b180d443e65fa8ba4b98e50acc637827b6",
+  "databaseRuntime": "docker",
+  "results": [
+    {
+      "name": "Anonymous viewers have a real empty VOD catalog while publication management remains private",
+      "pass": true
+    },
+    {
+      "name": "The dedicated VOD fixture binds its real publisher proof to its owning channel",
+      "pass": true
+    },
+    {
+      "name": "An actual finalized private recording provides the byte reference for later public playback",
+      "pass": true
+    },
+    {
+      "name": "An unpublished recording has no fabricated receipt and its separate archive storage is enabled",
+      "pass": true
+    },
+    {
+      "name": "Only the source owner can publish using a valid CSRF token and trusted Origin",
+      "pass": true
+    },
+    {
+      "name": "A shared-cookie account change cannot read the previous publisher private receipt",
+      "pass": true
+    },
+    {
+      "name": "Explicit publication copies the verified source once into a separate ready public VOD asset",
+      "pass": true
+    },
+    {
+      "name": "An exact publication retry returns one durable receipt and never creates another public file",
+      "pass": true
+    },
+    {
+      "name": "A changed publication retry does not silently overwrite the original metadata",
+      "pass": true
+    },
+    {
+      "name": "Anonymous and signed-in viewers see explicitly public metadata in the global and channel catalogs",
+      "pass": true
+    },
+    {
+      "name": "Another account cannot inspect or change the publisher management metadata",
+      "pass": true
+    },
+    {
+      "name": "Public native MP4 playback returns exact archive bytes, HEAD and single or suffix byte ranges",
+      "pass": true
+    },
+    {
+      "name": "Invalid and out-of-bounds public ranges return 416 without full-file fallback",
+      "pass": true
+    },
+    {
+      "name": "Hiding a private recording does not implicitly unpublish its independently archived VOD",
+      "pass": true
+    },
+    {
+      "name": "The public VOD archive survives actual disappearance of its six-hour raw recording source",
+      "pass": true
+    },
+    {
+      "name": "Withdrawal and republishing use the retained archive even while the raw recording is absent",
+      "pass": true
+    },
+    {
+      "name": "A genuinely missing archive is unavailable in owner metadata and never yields public metadata or bytes",
+      "pass": true
+    },
+    {
+      "name": "The publisher can revoke with the archive unavailable and cannot promise republication before it returns",
+      "pass": true
+    },
+    {
+      "name": "Restoring an unavailable archive never overrides a publisher private choice",
+      "pass": true
+    },
+    {
+      "name": "The publisher saves a versioned private state without removing its archive",
+      "pass": true
+    },
+    {
+      "name": "Unpublication blocks anonymous details, media, HEAD and public catalog discovery",
+      "pass": true
+    },
+    {
+      "name": "A stale visibility revision cannot overwrite a newer publisher choice",
+      "pass": true
+    },
+    {
+      "name": "Republishing uses the same stable VOD identity and copied real asset",
+      "pass": true
+    },
+    {
+      "name": "Actual public keyset cursors separate two published recordings on the same channel",
+      "pass": true
+    },
+    {
+      "name": "A public cursor is bound to its actual filter context",
+      "pass": true
+    },
+    {
+      "name": "An actual archive I/O failure stays private and never claims completed publication",
+      "pass": true
+    },
+    {
+      "name": "A failed copy retries the same receipt and preserves a private choice through completion",
+      "pass": true
+    },
+    {
+      "name": "Redis login, published metadata and archive playback survive an API process restart",
+      "pass": true
+    },
+    {
+      "name": "Actual publication controls, anonymous playback, sharing, withdrawal and responsive UI pass",
+      "pass": true
+    },
+    {
+      "name": "Development StrictMode reads actual public VOD without publication mutations",
+      "pass": true
+    },
+    {
+      "name": "The tested private JAR stays immutable throughout publication and restart",
+      "pass": true
+    }
+  ],
+  "observations": [
+    {
+      "verifiedSourceBytes": 356411,
+      "publicArchiveSha256": "91995ab343521dd58d259c2ab759c9f09061c8772dece99d8a8619637fc1fed7",
+      "rawExpirySimulated": true,
+      "actualRawSixHoursWaited": false,
+      "explicitlyPublishedFilesBeforeUi": 2
+    }
+  ],
+  "recordingSegmentDurationSeconds": 5,
+  "productionSegmentDurationSeconds": 60,
+  "fixture": "Dedicated MediaMTX + one tiny H.264/AAC source + actual finished fMP4 recordings + independently archived public VOD + immutable Spring JAR + headless Edge",
+  "limits": [
+    "Single PC loopback and emulated mobile viewports only",
+    "No physical phones, Caddy HTTPS or load/capacity verification"
+  ]
+}

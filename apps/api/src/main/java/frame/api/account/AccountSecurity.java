@@ -100,6 +100,8 @@ public class AccountSecurity {
                                               HttpSessionSecurityContextRepository contexts, JsonMapper json, ClientAddress client) throws Exception {
         http.securityMatcher("/api/v1/**")
                 .authorizeHttpRequests(auth -> auth.requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/session", "/api/v1/policies", "/api/v1/channels", "/api/v1/channels/*", "/api/v1/channels/*/schedule", "/api/v1/channel-ids/*", "/api/v1/polls/current", "/api/v1/questions/current", "/api/v1/rewards/current", "/api/v1/missions/current").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/vods", "/api/v1/vods/*", "/api/v1/vods/*/media").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.HEAD, "/api/v1/vods", "/api/v1/vods/*", "/api/v1/vods/*/media").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/v1/auth/register", "/api/v1/auth/login").permitAll().anyRequest().authenticated())
                 .csrf(config -> config.csrfTokenRepository(csrf).csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler()))
                 .securityContext(config -> config.securityContextRepository(contexts))

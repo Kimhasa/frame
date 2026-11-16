@@ -8,6 +8,7 @@ import ui from '../../components/management/ManagementUI.module.css';
 import { AccountError } from '../account/account-client';
 import type { AccountSession } from '../account/account-client';
 import { recordingsApi } from './recordings-client';
+import { VodPublicationPanel } from '../vod/VodPublicationPanel';
 import type { ProductRecording, RecordingFilter, RecordingPage, RecordingStatus } from './recordings-client';
 import base from './RecordingsPage.module.css';
 import styles from './ConnectedRecordingsPage.module.css';
@@ -54,6 +55,7 @@ function RecordingDialog({ recordingId, session, online, onClose, onSaved, onAcc
   access.current = onAccessError; onlineNow.current = online;
   const [item, setItem] = useState<ProductRecording | null>(null), [phase, setPhase] = useState<'loading' | 'ready' | 'error'>('loading'), [loading, setLoading] = useState(false), [loadError, setLoadError] = useState('');
   const [pending, setPending] = useState(false), [error, setError] = useState(''), [conflict, setConflict] = useState(false), [uncertain, setUncertain] = useState(false), [confirming, setConfirming] = useState(false);
+  const vodBusy = useRef(false), [publicationBusy, setPublicationBusy] = useState(false);
   const [mediaSrc, setMediaSrc] = useState<string | null>(null), [mediaError, setMediaError] = useState(''), [mediaLoading, setMediaLoading] = useState(false);
   function releaseVideo() {
     const element = video.current; if (!element) return;
@@ -62,7 +64,7 @@ function RecordingDialog({ recordingId, session, online, onClose, onSaved, onAcc
   }
   function stopVideo() { releaseVideo(); setMediaSrc(null); setMediaLoading(false); }
   async function load(): Promise<ProductRecording | null> {
-    if (fetching.current || writing.current || !onlineNow.current) return null;
+    if (fetching.current || writing.current || vodBusy.current || !onlineNow.current) return null;
     const request = new AbortController(); abort.current = request; fetching.current = true; setLoading(true); setLoadError('');
     try {
       const result = await recordingsApi.detail(recordingId, owner, request.signal);
@@ -89,9 +91,9 @@ function RecordingDialog({ recordingId, session, online, onClose, onSaved, onAcc
   }, [recordingId, owner]);
   useEffect(() => { if (!online) { abort.current?.abort(); fetching.current = false; setLoading(false); setPhase(previous => previous === 'loading' ? 'error' : previous); } }, [online]);
   useEffect(() => { if (confirming) cancelAction.current?.focus(); else if (wasConfirming.current) actionTrigger.current?.focus(); wasConfirming.current = confirming; }, [confirming]);
-  function dismiss() { if (!writing.current && !fetching.current) onClose(item); }
+  function dismiss() { if (!writing.current && !fetching.current && !vodBusy.current) onClose(item); }
   async function play() {
-    if (!item?.readyPlayable || !onlineNow.current || fetching.current || writing.current || conflict || uncertain) return;
+    if (!item?.readyPlayable || !onlineNow.current || fetching.current || writing.current || vodBusy.current || conflict || uncertain) return;
     stopVideo(); setMediaError('');
     const latest = await load();
     if (!latest || !active.current) return;
@@ -99,7 +101,7 @@ function RecordingDialog({ recordingId, session, online, onClose, onSaved, onAcc
     setMediaSrc(recordingsApi.mediaUrl(latest.id, owner)); setMediaLoading(true);
   }
   async function download() {
-    if (!item?.readyPlayable || !onlineNow.current || fetching.current || writing.current || conflict || uncertain) return;
+    if (!item?.readyPlayable || !onlineNow.current || fetching.current || writing.current || vodBusy.current || conflict || uncertain) return;
     setMediaError(''); const latest = await load();
     if (!latest || !active.current) return;
     if (!latest.readyPlayable) { setMediaError(explanation(latest)); return; }
@@ -114,7 +116,7 @@ function RecordingDialog({ recordingId, session, online, onClose, onSaved, onAcc
     } finally { checkingMedia.current = false; }
   }
   async function save() {
-    if (!item || fetching.current || writing.current || !onlineNow.current || conflict || uncertain || !confirming) return;
+    if (!item || fetching.current || writing.current || vodBusy.current || !onlineNow.current || conflict || uncertain || !confirming) return;
     writing.current = true; setPending(true); setError(''); setLoadError(''); stopVideo();
     try {
       const result = await recordingsApi.setHidden(item.id, item.version, !item.hidden, session.csrfToken, owner);
@@ -126,19 +128,20 @@ function RecordingDialog({ recordingId, session, online, onClose, onSaved, onAcc
       else if (!(failure instanceof AccountError) || failure.status === 0 || failure.status >= 500) setUncertain(true);
     } finally { writing.current = false; if (active.current) setPending(false); }
   }
-  return <dialog ref={dialog} data-recording-id={recordingId} className={`${ui.dialog} ${styles.dialog}`} aria-labelledby={`${id}-title`} aria-busy={pending || loading} onCancel={event => { event.preventDefault(); dismiss(); }}>
-    <header className={ui.dialogHeader}><h2 ref={heading} id={`${id}-title`} tabIndex={-1}>녹화 상세</h2><div className={styles.dialogTools}><button type="button" className="icon-button" aria-label="녹화 상세 새로고침" disabled={!online || pending || loading || confirming} onClick={() => void load()}><RefreshCw size={18} aria-hidden="true" /></button><button type="button" className="icon-button" aria-label="녹화 상세 닫기" disabled={pending || loading} onClick={dismiss}><X size={20} aria-hidden="true" /></button></div></header>
+  return <dialog ref={dialog} data-recording-id={recordingId} className={`${ui.dialog} ${styles.dialog}`} aria-labelledby={`${id}-title`} aria-busy={pending || loading || publicationBusy} onCancel={event => { event.preventDefault(); dismiss(); }}>
+    <header className={ui.dialogHeader}><h2 ref={heading} id={`${id}-title`} tabIndex={-1}>녹화 상세</h2><div className={styles.dialogTools}><button type="button" className="icon-button" aria-label="녹화 상세 새로고침" disabled={!online || pending || loading || publicationBusy || confirming} onClick={() => void load()}><RefreshCw size={18} aria-hidden="true" /></button><button type="button" className="icon-button" aria-label="녹화 상세 닫기" disabled={pending || loading || publicationBusy} onClick={dismiss}><X size={20} aria-hidden="true" /></button></div></header>
     {!online && <p className={styles.connectionNotice} role="status">인터넷 연결이 끊겼어요. 연결 후 파일 상태를 다시 확인해 주세요.</p>}
     {phase === 'loading' ? <p className={styles.loading} role="status">녹화 정보를 불러오는 중이에요.</p> : phase === 'error' ? <><p className={styles.error} role="alert">{loadError || '녹화 정보를 확인할 수 없어요.'}</p><button type="button" className={ui.button} disabled={!online || loading} onClick={() => void load()}>녹화 상세 다시 시도</button></> : item && <>
       <h3 className={styles.recordingTitle}>{item.title || '제목 없는 방송'}</h3><p className={styles.fileName}>{item.displayName}</p>
       <dl className={base.details}><div><dt>상태</dt><dd><RecordingBadge item={item} />{item.hidden && <span className={styles.originalStatus}>원본 {statusLabel[item.status]}</span>}</dd></div><div><dt>녹화 시각</dt><dd><time dateTime={new Date(item.recordedAtMs).toISOString()}>{formatDate.format(item.recordedAtMs)}</time></dd></div><div><dt>영상 길이</dt><dd>{duration(item.durationMs)}</dd></div><div><dt>파일 크기</dt><dd>{size(item.sizeBytes)}{item.status === 'missing' && item.sizeBytes !== null && <small className={styles.hint}>마지막으로 확인한 크기예요.</small>}</dd></div></dl>
       <p className={styles.reason}>{explanation(item)}</p>
-      {loadError && <div className={styles.errorArea}><p className={styles.error} role="alert">{loadError} 마지막으로 확인한 정보를 표시해요.</p><button type="button" className={ui.button} disabled={!online || loading || pending} onClick={() => void load()}>녹화 상세 다시 시도</button></div>}
-      {item.readyPlayable && <div className={styles.mediaActions}><button type="button" className={`${ui.button} ${ui.primary}`} disabled={!online || loading || pending || conflict || uncertain} onClick={() => void play()}><Video size={16} aria-hidden="true" />{mediaSrc ? '영상 다시 불러오기' : '영상 보기'}</button><button type="button" className={ui.button} disabled={!online || loading || pending || conflict || uncertain} onClick={() => void download()}><Download size={16} aria-hidden="true" />다운로드</button></div>}
+      {loadError && <div className={styles.errorArea}><p className={styles.error} role="alert">{loadError} 마지막으로 확인한 정보를 표시해요.</p><button type="button" className={ui.button} disabled={!online || loading || pending || publicationBusy} onClick={() => void load()}>녹화 상세 다시 시도</button></div>}
+      {item.readyPlayable && <div className={styles.mediaActions}><button type="button" className={`${ui.button} ${ui.primary}`} disabled={!online || loading || pending || publicationBusy || conflict || uncertain} onClick={() => void play()}><Video size={16} aria-hidden="true" />{mediaSrc ? '영상 다시 불러오기' : '영상 보기'}</button><button type="button" className={ui.button} disabled={!online || loading || pending || publicationBusy || conflict || uncertain} onClick={() => void download()}><Download size={16} aria-hidden="true" />다운로드</button></div>}
       {mediaSrc && <div className={styles.player}><video ref={video} aria-label="녹화 영상" src={mediaSrc} controls playsInline preload="metadata" onLoadStart={() => setMediaLoading(true)} onLoadedMetadata={() => setMediaLoading(false)} onCanPlay={() => setMediaLoading(false)} onError={() => void mediaFailed()} />{mediaLoading && <p role="status">영상 정보를 불러오는 중이에요.</p>}</div>}
       {mediaError && <p className={styles.error} role="alert">{mediaError}</p>}
       {error && <p className={styles.error} role="alert">{error}</p>}
-      {(conflict || uncertain) ? <div className={styles.confirmation}><p>{conflict ? '다른 화면에서 변경된 상태일 수 있어요. 최신 정보를 확인한 뒤 다시 선택해 주세요.' : '요청이 처리됐는지 확인하지 못했어요. 자동으로 다시 요청하지 않고 최신 상태부터 확인해요.'}</p><button className={ui.button} type="button" disabled={!online || loading || pending} onClick={() => void load()}><RefreshCw size={16} aria-hidden="true" />최신 상태 불러오기</button></div> : confirming ? <div className={styles.confirmation} role="group" aria-label={item.hidden ? '녹화 복원 확인' : '녹화 숨김 확인'}><p>{item.hidden ? '이 항목을 녹화 목록에 다시 표시할까요?' : '이 항목을 녹화 목록에서 숨길까요? 파일은 서버에 남고 숨김 목록에서 복원할 수 있어요.'}</p><div className={ui.dialogActions}><button ref={cancelAction} type="button" className={ui.button} disabled={pending} onClick={() => setConfirming(false)}>취소</button><button type="button" className={`${ui.button} ${item.hidden ? ui.primary : ui.danger}`} disabled={!online || pending || loading} onClick={() => void save()}>{pending ? '변경 중…' : item.hidden ? '복원하기' : '숨기기'}</button></div></div> : <div className={ui.dialogActions}><button type="button" className={ui.button} disabled={pending || loading} onClick={dismiss}>닫기</button><button ref={actionTrigger} type="button" className={ui.button} disabled={!online || pending || loading} onClick={() => { stopVideo(); setConfirming(true); setError(''); }}>{item.hidden ? '목록에 복원' : '목록에서 숨기기'}</button></div>}
+      <VodPublicationPanel recording={item} session={session} online={online} disabled={pending || loading || confirming || conflict || uncertain} onAccessError={onAccessError} onBusyChange={value => { vodBusy.current = value; setPublicationBusy(value); if (value) stopVideo(); }} />
+      {(conflict || uncertain) ? <div className={styles.confirmation}><p>{conflict ? '다른 화면에서 변경된 상태일 수 있어요. 최신 정보를 확인한 뒤 다시 선택해 주세요.' : '요청이 처리됐는지 확인하지 못했어요. 자동으로 다시 요청하지 않고 최신 상태부터 확인해요.'}</p><button className={ui.button} type="button" disabled={!online || loading || pending || publicationBusy} onClick={() => void load()}><RefreshCw size={16} aria-hidden="true" />최신 상태 불러오기</button></div> : confirming ? <div className={styles.confirmation} role="group" aria-label={item.hidden ? '녹화 복원 확인' : '녹화 숨김 확인'}><p>{item.hidden ? '이 항목을 녹화 목록에 다시 표시할까요?' : '이 항목을 녹화 목록에서 숨길까요? 파일은 서버에 남고 숨김 목록에서 복원할 수 있어요. 공개한 다시보기는 아래 공개 설정에서 따로 관리해 주세요.'}</p><div className={ui.dialogActions}><button ref={cancelAction} type="button" className={ui.button} disabled={pending || publicationBusy} onClick={() => setConfirming(false)}>취소</button><button type="button" className={`${ui.button} ${item.hidden ? ui.primary : ui.danger}`} disabled={!online || pending || loading || publicationBusy} onClick={() => void save()}>{pending ? '변경 중…' : item.hidden ? '복원하기' : '숨기기'}</button></div></div> : <div className={ui.dialogActions}><button type="button" className={ui.button} disabled={pending || loading || publicationBusy} onClick={dismiss}>닫기</button><button ref={actionTrigger} type="button" className={ui.button} disabled={!online || pending || loading || publicationBusy} onClick={() => { stopVideo(); setConfirming(true); setError(''); }}>{item.hidden ? '목록에 복원' : '목록에서 숨기기'}</button></div>}
     </>}
   </dialog>;
 }

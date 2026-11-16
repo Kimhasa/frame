@@ -1,0 +1,169 @@
+{
+  "verificationDatabaseOnly": true,
+  "checks": 26,
+  "passed": 26,
+  "results": [
+    {
+      "name": "Publication requires a distinct confirmation with initial focus on the cancel action",
+      "pass": true
+    },
+    {
+      "name": "A pending publication locks duplicate actions and the enclosing recording dialog",
+      "pass": true
+    },
+    {
+      "name": "An uncertain publication response preserves the intended metadata instead of claiming success",
+      "pass": true
+    },
+    {
+      "name": "Checking an uncertain receipt never automatically repeats the publication request",
+      "pass": true
+    },
+    {
+      "name": "The recording publication form creates actual archived metadata and a public ready VOD",
+      "pass": true
+    },
+    {
+      "name": "Publication title and multiline description edits are saved to the actual VOD resource",
+      "pass": true
+    },
+    {
+      "name": "An actual version conflict preserves the editing context instead of overwriting the publisher change",
+      "pass": true
+    },
+    {
+      "name": "Opening the withdrawal confirmation does not change actual public visibility",
+      "pass": true
+    },
+    {
+      "name": "Canceling withdrawal preserves the existing public VOD",
+      "pass": true
+    },
+    {
+      "name": "Confirmed publisher UI withdrawal blocks the actual public VOD detail",
+      "pass": true
+    },
+    {
+      "name": "Confirmed republication restores the same actual archived VOD without another copy",
+      "pass": true
+    },
+    {
+      "name": "A failed anonymous catalog request offers retry without fabricated playback",
+      "pass": true
+    },
+    {
+      "name": "Anonymous viewers see the existing VOD layout without fake view counts or archived chat",
+      "pass": true
+    },
+    {
+      "name": "A public refresh failure retains the last actual cards for the current query",
+      "pass": true
+    },
+    {
+      "name": "Actual cursor-page retry appends distinct public recordings after a separate page error",
+      "pass": true
+    },
+    {
+      "name": "Offline public catalog retains verified cards and prevents refresh requests",
+      "pass": true
+    },
+    {
+      "name": "The real channel VOD tab lists public recordings and excludes a private archived VOD",
+      "pass": true
+    },
+    {
+      "name": "Public VOD playback is available without login and requires an explicit play action",
+      "pass": true
+    },
+    {
+      "name": "The anonymous archived VOD decodes actual video frames and advances after a native seek",
+      "pass": true,
+      "detail": {
+        "width": 320,
+        "height": 180,
+        "currentTime": 0.313749,
+        "duration": 5.0355,
+        "decodedFrames": 10,
+        "audioDecodedBytes": 4790,
+        "seek": {
+          "target": 2.51775,
+          "currentTime": 2.691543,
+          "decodedFrames": 25
+        }
+      }
+    },
+    {
+      "name": "The share dialog exposes the stable actual public VOD watch URL",
+      "pass": true
+    },
+    {
+      "name": "Closing the share dialog restores focus to the sharing action",
+      "pass": true
+    },
+    {
+      "name": "Public VOD metadata and native player fit the 390px viewport",
+      "pass": true
+    },
+    {
+      "name": "Public VOD metadata and native player fit the 320px viewport",
+      "pass": true
+    },
+    {
+      "name": "A real publisher withdrawal removes the previously loaded public player after the next visibility check",
+      "pass": true
+    },
+    {
+      "name": "A publisher cookie-account change clears the previous private publication form and recording rows",
+      "pass": true
+    },
+    {
+      "name": "VOD management carries the expected owner and has no runtime or unconfirmed interception errors",
+      "pass": true
+    }
+  ],
+  "runtimeErrors": [],
+  "writes": [
+    {
+      "method": "POST",
+      "kind": "publish"
+    },
+    {
+      "method": "POST",
+      "kind": "publish"
+    },
+    {
+      "method": "PATCH",
+      "kind": "edit"
+    },
+    {
+      "method": "PATCH",
+      "kind": "edit"
+    },
+    {
+      "method": "PATCH",
+      "kind": "edit"
+    },
+    {
+      "method": "PATCH",
+      "kind": "edit"
+    }
+  ],
+  "videoMetrics": {
+    "width": 320,
+    "height": 180,
+    "currentTime": 0.313749,
+    "duration": 5.0355,
+    "decodedFrames": 10,
+    "audioDecodedBytes": 4790,
+    "seek": {
+      "target": 2.51775,
+      "currentTime": 2.691543,
+      "decodedFrames": 25
+    }
+  },
+  "paginationInstrumentation": "Public catalog limit lowered to 1 and recording catalog limit to 2; every row and cursor remains an actual server response.",
+  "limits": [
+    "Headless Edge on one PC only",
+    "Mobile sizes are emulated viewports, not physical phones"
+  ]
+}

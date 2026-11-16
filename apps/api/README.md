@@ -85,7 +85,8 @@ java -jar build/libs/frame-api.jar
   - 응답 코드, 본문, 헤더, 요청 제한은 Node 중계와 같게 맞췄습니다.
   - Node와 다른 점: 채팅의 16 KB 초과 메시지는 Tomcat이 내용을 받은 뒤 1009로 닫습니다(Node는 프레임 머리만 보고 닫음). 그래서 중계 e2e는 실제 20 KB 메시지를 보내 확인합니다.
 - **검증**: React e2e 34/34, 중계 e2e 108/108, Caddy 경유 HTTPS/WSS 18/0(미실행 2: Tailscale 인증서 필요), 배포 파일 점검 17/17을 Spring 대상으로 통과했습니다(`verification/spring/RESULTS.md`). 480p로 바꾼 직후의 간헐적 멈춤(두 백엔드 공통, 원인 미확인)은 같은 문서에 적었습니다.
-- **배포**: `deploy/systemd/frame-relay.service`가 `java -jar /opt/frame-relay/frame-api.jar`로 실행합니다. 설치 절차와 JVM 옵션은 `deploy/README.md` 3·5장, 배포 파일과 jar가 맞는지는 `node server/verify/deploy-check.mjs`로 확인합니다.
+- **배포**: `deploy/systemd/frame-relay.service`가 `java -jar /opt/frame-relay/frame-api.jar`로 실행합니다. 설치 절차와 JVM 옵션은 `deploy/README.md` 3·5장, 배포 파일과 jar가 맞는지는 `node server/verify/vod-e2e.mjs                  # 검증 DB·실제 녹화·공개 복사·익명 재생·React/개발 모드(빌드 후, 단독 실행)
+node server/verify/deploy-check.mjs`로 확인합니다.
 - **남은 일**: Linux 서버에서의 실제 실행(systemd, 패키지 Java), Tailscale 인증서 Caddy 실행과 휴대폰 확인, 운영 Caddy 예시에 React 화면 추가, 480p 전환 직후 멈춤의 원인.
 
 ## 종료와 재시작
@@ -115,6 +116,12 @@ java -jar build/libs/frame-api.jar
 ## 비공개 녹화 관리
 
 제품 모드에서 서버 fMP4 파일을 소유자만 조회·재생·내려받고 목록에서 숨기거나 복원합니다. V14의 관찰 창과 파일 카탈로그가 실제 확인한 귀속만 보존하며, 공개 다시보기 발행·원본 삭제·보관 설정 변경은 포함하지 않습니다. 같은 방송에 전체가 속한다고 확인한 완료 파일만 전달하므로 짧은 방송의 첫·마지막 파일은 누락되거나 제한될 수 있습니다. 기존 MediaMTX 녹화·DVR 출력은 보존합니다. 상태·기대 계정·Range/HEAD·기본 6시간 보관과 경계는 [비공개 녹화 API 계약](PRODUCT_API.md#비공개-녹화-관리)을 따릅니다.
+
+## 공개 다시보기
+
+방송자가 녹화 상세에서 완료 파일을 명시적으로 공개하면 단일 제품 worker가 원본을 읽기 전용으로 검증하고 별도 보관 폴더에 복제합니다. V15는 원본당 한 개의 다시보기와 준비 상태·제목·설명·공개 여부를 저장합니다. 준비가 끝난 공개 파일은 로그인 없이 다시보기 목록·채널 다시보기·MP4 시청 화면에서 볼 수 있습니다. 준비 중 비공개 전환은 완료 뒤에도 유지하고, 비공개 전환은 보관 디스크 오류가 있어도 DB에서 처리합니다. 기존 비공개 녹화 media API는 계속 소유자 전용입니다.
+
+`FRAME_PRODUCT_VOD_DIR`은 원본 녹화 폴더와 서로 포함하지 않는 별도 쓰기 폴더입니다. 명시하지 않으면 녹화 폴더의 형제 `vod`를 사용하고 두 설정 모두 없으면 발행을 막습니다. 원본의 기본 6시간 삭제·숨김과 이미 보관된 다시보기의 공개 여부는 별개이며, 보관본을 자동 삭제하거나 재인코딩하지 않습니다. 현재는 단일 완료 파일·단일 원본 화질을 발행하며 여러 파일 합치기·썸네일 생성·다시보기 화질 변환은 포함하지 않습니다. 상세 계약과 장애·재시작 처리 범위는 [공개 다시보기 API 계약](PRODUCT_API.md#공개-다시보기)을 따릅니다.
 
 ## 검증
 

@@ -78,7 +78,7 @@ function productEnv(){
   throw Error('Product configuration must use this PC’s private database and Redis; no credentials were printed.');
  return{FRAME_PRODUCT_ENABLED:'true',FRAME_PRODUCT_DB_URL:product.dbUrl,FRAME_PRODUCT_DB_USERNAME:product.dbUsername,FRAME_PRODUCT_DB_PASSWORD:product.dbPassword,
   FRAME_PRODUCT_REDIS_HOST:product.redisHost,FRAME_PRODUCT_REDIS_PORT:String(product.redisPort),FRAME_PRODUCT_REDIS_PASSWORD:product.redisPassword,
-  FRAME_PRODUCT_REDIS_NAMESPACE:product.redisNamespace,FRAME_PRODUCT_PUBLIC_ORIGIN:product.publicOrigin,FRAME_PRODUCT_COOKIE_SECURE:'false'};
+  FRAME_PRODUCT_REDIS_NAMESPACE:product.redisNamespace,FRAME_PRODUCT_PUBLIC_ORIGIN:product.publicOrigin,FRAME_PRODUCT_COOKIE_SECURE:'false',FRAME_PRODUCT_VOD_DIR:join(DIR,'vod')};
 }
 function ensureProduct(){
  if(productEnv().FRAME_PRODUCT_ENABLED!=='true')return;

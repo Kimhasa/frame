@@ -103,7 +103,7 @@
 ```sh
 # 0) 계정과 폴더
 sudo useradd --system --home /var/lib/frame-relay --shell /usr/sbin/nologin frame-relay
-sudo install -d -o frame-relay -g frame-relay -m 750 /var/lib/frame-relay /var/lib/frame-relay/stats
+sudo install -d -o frame-relay -g frame-relay -m 750 /var/lib/frame-relay /var/lib/frame-relay/stats /var/lib/frame-relay/vod
 sudo install -d -m 750 -g frame-relay /etc/frame-relay /etc/frame-relay/tls
 sudo install -d /opt/frame-relay/ui/assets/fonts /opt/frame-relay/ui/assets/js
 
@@ -570,6 +570,6 @@ UI는 Edge에서 hls.js를 쓰므로 영향은 없지만 Safari 기본 HLS에서
   `keepalive 60s` 지시문은 시험 설정(`test/Caddyfile.https-test`)으로 Windows의 Caddy v2.11.9에서 Spring과 Node 뒤 모두 실행했다
   (`../verification/spring/RESULTS.md`, `../verification/caddy/RESULTS.md`). 운영 예시는 React 공개 웹(`/_frame/`)을 아직 제공하지 않는다
   (시험 설정에만 있다).
-- systemd `ReadWritePaths`(통계 폴더)와 설치 절차의 권한(`chmod`를 파일에만)은 Linux가 없어 실행하지 않았다.
+- systemd `ReadWritePaths`(통계·VOD 보관 폴더)와 설치 절차의 권한(`chmod`를 파일에만)은 Linux가 없어 실행하지 않았다.
 - 송출 PC가 직접 올리는 하위 화질(`<path>/<화질>`을 RTSPS로 받을 때만 그 PC의 설명을 광고) — e2e에 그 경우가 없다.
 - 송출 PC `writeQueueSize: 4096`이 실제 혼잡한 업로드에서 전송 끊김을 막는지(e2e는 같은 PC 루프백이라 혼잡 없음).
