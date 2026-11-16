@@ -1,0 +1,35 @@
+{
+  "complete": true,
+  "verificationDatabaseOnly": true,
+  "testedJarSha256": "f1ce4f86fa880625cd4f6ae4eb07b6fad4bf6e3d27b8d872a9691c09c15bcc55",
+  "results": [
+    {
+      "name": "StrictMode vod opens paused with an actual private GET",
+      "pass": true
+    },
+    {
+      "name": "StrictMode clip opens paused with an actual private GET",
+      "pass": true
+    },
+    {
+      "name": "StrictMode archive and history reads cause zero mutations",
+      "pass": true
+    },
+    {
+      "name": "No browser runtime or interception errors",
+      "pass": true
+    }
+  ],
+  "checks": 4,
+  "passed": 4,
+  "runtimeErrors": [],
+  "mutations": [],
+  "totalMutations": 0,
+  "playbackMetrics": [],
+  "acceptedResponseBeforeFault": null,
+  "completedHistoryGetResponses": 3,
+  "limits": [
+    "Native headless Edge playback on one PC; mobile widths are emulated",
+    "No physical-device, external-network, long-run or load verification"
+  ]
+}

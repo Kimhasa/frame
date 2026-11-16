@@ -23,6 +23,10 @@
 .playerNotice p { margin: 0; }
 .playerNotice svg { color: #c1d6c9; }
 .watchActions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.historyControls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-top: 12px; padding: 12px 14px; border: 1px solid #dce6df; border-radius: 9px; background: #f6faf7; color: #52665a; font-size: 14px; line-height: 1.6; }
+.historyControls p { flex: 1 1 210px; margin: 0; overflow-wrap: anywhere; }
+.historyControls span { flex-basis: 100%; }
+.historyStatus { margin: 10px 2px 0; color: #52665a; font-size: 13px; line-height: 1.6; }
 .shareDialog { padding: 20px; }
 .shareDialog header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .shareDialog h2 { margin: 0; font-size: 18px; }
@@ -49,6 +53,8 @@
   .filters > button { flex: 1; }
   .watchActions { width: 100%; }
   .watchActions > button { flex: 1; }
+  .historyControls { gap: 8px; padding: 10px; }
+  .historyControls p { flex-basis: 100%; }
   .formActions > button { flex: 1; }
   .shareControls { flex-wrap: wrap; }
   .shareControls input { flex-basis: 100%; font-size: 16px; }

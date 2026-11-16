@@ -1,4 +1,4 @@
-import { CalendarDays, FileX2, History, Radio, Search, Settings2, UserRound, X } from 'lucide-react';
+import { CalendarDays, Clapperboard, FileX2, History, Radio, Search, Settings2, UserRound, Video, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import { Link, useSearchParams } from 'react-router';
@@ -12,6 +12,7 @@ export const historyKinds = [
 export type HistoryEntry = {
   id: string; kind: 'live' | 'vod' | 'clip'; title: string; publisher: string; channelHref: string | null;
   thumbnailUrl: string | null; duration: string; progress: number; href: string | null; watchedAt: Date; unavailableLabel?: string;
+  progressLabel?: string; resumeHref?: string;
 };
 export type HistoryRemoval = { kind: 'one'; ids: string[] } | { kind: 'selection'; ids: string[] } | { kind: 'all' };
 
@@ -33,18 +34,21 @@ function HistoryRow({ entry, selecting, checked, pending, onSelect, onRemove }: 
   entry: HistoryEntry; selecting: boolean; checked: boolean; pending: boolean; onSelect: () => void; onRemove: () => void;
 }) {
   const unavailable = entry.unavailableLabel ?? '삭제된 영상';
+  const MediaIcon = entry.kind === 'live' ? Radio : entry.kind === 'vod' ? Video : Clapperboard;
   const image = <>{entry.thumbnailUrl && <img src={entry.thumbnailUrl} alt="" loading="lazy" decoding="async" onError={event => { event.currentTarget.hidden = true; }} />}
-    <span className={styles.duration}>{entry.duration}</span>
-    {entry.progress > 0 && <span className={styles.progress}><i style={{ width: `${entry.progress}%` }} /></span>}</>;
+    {entry.duration && <span className={styles.duration}>{entry.duration}</span>}
+    {entry.progress > 0 && <span className={styles.progress}><i style={{ width: `${Math.min(100, Math.max(0, entry.progress))}%` }} /></span>}</>;
   return <article className={styles.row} data-selecting={selecting} aria-label={entry.title}>
     {selecting && <AuthCheckbox className={styles.check} aria-label={`${entry.title} 선택`} checked={checked} disabled={pending} onChange={onSelect}>{null}</AuthCheckbox>}
-    {entry.href ? <Link to={entry.href} className={styles.thumbnail} tabIndex={-1} aria-hidden="true"><Radio size={25} />{image}</Link>
+    {entry.href ? <Link to={entry.href} className={styles.thumbnail} tabIndex={-1} aria-hidden="true"><MediaIcon size={25} />{image}</Link>
       : <div className={`${styles.thumbnail} ${styles.deleted}`} aria-hidden="true"><FileX2 size={25} /><span>{unavailable}</span></div>}
     <div className={styles.copy}>
       {entry.href ? <Link to={entry.href} className={styles.entryTitle}>{entry.title}</Link> : <strong className={styles.entryTitle}>{entry.title}</strong>}
       {entry.channelHref ? <Link to={entry.channelHref} className={styles.channel}>{entry.publisher}</Link> : <span className={styles.channel}>{entry.publisher}</span>}
       <div className={styles.meta}><span>{historyKinds.find(kind => kind.id === entry.kind)?.label}</span>
         <time dateTime={entry.watchedAt.toISOString()}>{timeFormatter.format(entry.watchedAt)}</time>{!entry.href && <span>{unavailable}</span>}</div>
+      {entry.progressLabel && <p className={styles.progressLabel}>{entry.progressLabel}</p>}
+      {entry.resumeHref && !selecting && <Link className={styles.resume} to={entry.resumeHref}>이어보기</Link>}
     </div>
     {!selecting && <button type="button" className={styles.remove} disabled={pending} aria-label={`${entry.title} 시청 기록에서 삭제`} onClick={onRemove}><X size={19} aria-hidden="true" /></button>}
   </article>;

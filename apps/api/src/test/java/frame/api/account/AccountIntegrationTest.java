@@ -206,6 +206,7 @@ class AccountIntegrationTest {
             String savedSchedule = schedules(a, b, anonymous, sql, UUID.fromString(channelId));
             String savedHistory = histories(a, b, anonymous, sql, app.getBean(frame.api.broadcast.BroadcastRegistry.class), UUID.fromString(ownerId));
             channelProfiles(a, b, anonymous, sql, app.getBean(Accounts.class), UUID.fromString(channelId), UUID.fromString(secondChannel));
+            ArchivedHistoryState savedArchivedHistory = archivedHistory(a, b, anonymous, sql, app, savedVod.id(), savedClip.id(), vodDirectory, clipDirectory);
             String managedReport = reportManagement(a, b, anonymous, sql, UUID.fromString(ownerId), UUID.fromString(channelId));
             String savedNotification = notifications(a, b, anonymous, sql, app, mediaState, UUID.fromString(channelId), UUID.fromString(ownerId));
             chatModeration(a,b,anonymous,sql,app,UUID.fromString(ownerId),UUID.fromString(channelId),UUID.fromString(secondChannel));
@@ -232,7 +233,11 @@ class AccountIntegrationTest {
             var interruptedClip=a.get("/api/v1/me/clips/"+savedClip.interrupted()).json().path("item");assertEquals("failed",interruptedClip.path("status").asString());assertTrue(interruptedClip.path("reason").asString().contains("다시 시작"));assertEquals(404,new Browser(base(app)).get("/api/v1/clips/"+savedClip.interrupted()).status());
             assertTrue(a.get("/api/v1/me/schedules").json().path("items").valueStream().anyMatch(item -> item.path("id").asString().equals(savedSchedule)));
             JsonNode restoredHistory = a.get("/api/v1/me/history").json().path("items");
-            assertEquals(1, restoredHistory.size()); assertEquals(savedHistory, restoredHistory.get(0).path("id").asString());
+            assertEquals(3, restoredHistory.size());
+            JsonNode restoredLiveHistory = restoredHistory.valueStream().filter(item -> item.path("id").asString().equals(savedHistory)).findFirst().orElseThrow();
+            assertEquals(savedArchivedHistory.vod(), a.get("/api/v1/me/history/media/vod/" + savedVod.id()).json().path("item").path("id").asString());
+            var restoredClipHistory = a.get("/api/v1/me/history/media/clip/" + savedClip.id()).json().path("item");
+            assertEquals(savedArchivedHistory.clip(), restoredClipHistory.path("id").asString()); assertEquals(1700, restoredClipHistory.path("positionMs").longValue()); assertFalse(restoredClipHistory.path("completed").asBoolean());
             JsonNode restoredProfile = a.get("/api/v1/channel-ids/" + channelId).json();
             assertEquals("KR", restoredProfile.path("countryCode").asString()); assertEquals(2, restoredProfile.path("links").size());
             assertEquals("spring-owner", a.get("/api/v1/channels/spring-updated").json().path("handle").asString());
@@ -252,7 +257,7 @@ class AccountIntegrationTest {
             var restoredMission=a.get("/api/v1/me/missions/"+savedMission.id()).json().path("item");assertEquals("expired",restoredMission.path("status").asString());assertEquals(3,restoredMission.path("history").size());assertEquals("system",restoredMission.path("history").get(2).path("actor").asString());assertFalse(restoredMission.path("broadcastActive").booleanValue());
             assertEquals("completed",a.get("/api/v1/me/missions/"+savedMission.completedId()).json().path("item").path("status").asString());
             var restoredMissions=savedMission.author().get("/api/v1/missions/current?path=obs-verify&broadcastId="+savedMission.broadcast()).json();assertEquals(1,restoredMissions.path("mine").size());assertEquals(savedMission.id(),restoredMissions.path("mine").get(0).path("id").asString());assertFalse(restoredMissions.path("canSubmit").booleanValue());assertEquals(200,savedMission.author().write("POST","/api/v1/missions",savedMission.body()).status());
-            assertEquals("재시작 보존", restoredHistory.get(0).path("title").asString()); assertFalse(restoredHistory.get(0).path("available").booleanValue());
+            assertEquals("재시작 보존", restoredLiveHistory.path("title").asString()); assertFalse(restoredLiveHistory.path("available").booleanValue());
             String oldCookie = a.cookie(); assertEquals(204, a.write("POST", "/api/v1/auth/logout", null).status());
             HttpResponse<String> replay = HttpClient.newHttpClient().send(HttpRequest.newBuilder(URI.create(a.base + "/api/v1/me/follows")).header("Cookie", oldCookie).GET().build(), HttpResponse.BodyHandlers.ofString()); assertEquals(401, replay.statusCode());
             assertTrue(a.get("/api/v1/session").json().path("user").isNull());
@@ -1087,7 +1092,8 @@ class AccountIntegrationTest {
         assertEquals("서버 제목", first.path("title").asString()); assertEquals("Public Publisher", first.path("publisher").asString());
         assertEquals("spring-owner", first.path("channelHandle").asString()); assertTrue(first.path("available").booleanValue());
         assertEquals("/thumbnails/" + broadcastId + ".jpg", first.path("thumbnailUrl").asString());
-        assertEquals(10, first.size()); assertFalse(first.toString().contains(TOKEN)); assertFalse(first.has("userId")); assertFalse(first.has("broadcastInstanceId"));
+        assertEquals(15, first.size()); assertTrue(first.path("mediaId").isNull()); assertTrue(first.path("durationMs").isNull()); assertTrue(first.path("positionMs").isNull()); assertFalse(first.path("completed").asBoolean()); assertEquals(0, first.path("version").longValue());
+        assertFalse(first.toString().contains(TOKEN)); assertFalse(first.has("userId")); assertFalse(first.has("broadcastInstanceId"));
         long recordedAt = first.path("watchedAtMs").longValue(); assertTrue(recordedAt <= System.currentTimeMillis() && recordedAt > System.currentTimeMillis() - 10000);
         Thread.sleep(2);
         assertEquals(204, owner.write("POST", path, watched).status());
@@ -1145,6 +1151,140 @@ class AccountIntegrationTest {
         announceHistory(registry, "e".repeat(32), stream, "재시작 보존", "Saved Publisher");
         assertEquals(204, owner.write("POST", path, Map.of("broadcastId", "e".repeat(32), "path", stream)).status());
         return owner.get(path).json().path("items").get(0).path("id").asString();
+    }
+    private record ArchivedHistoryState(String vod, String clip) {}
+    private static ArchivedHistoryState archivedHistory(Browser owner, Browser viewer, Browser anonymous, JdbcClient sql,
+            ConfigurableApplicationContext app, UUID vod, UUID clip, Path vodDirectory, Path clipDirectory) throws Exception {
+        String history = "/api/v1/me/history", vodState = history + "/media/vod/" + vod, clipState = history + "/media/clip/" + clip;
+        String viewerId = viewer.get("/api/v1/session").json().path("user").path("id").asString();
+        viewer.expectedUserId = viewerId;
+        assertEquals(401, anonymous.get(vodState).status());
+        assertEquals(401, anonymous.write("PUT", vodState, progressBody(0, null, 0, 1200, false)).status());
+        assertEquals(0, viewer.get(history + "?kind=vod").json().path("items").size());
+        var empty = viewer.get(vodState);
+        assertEquals(200, empty.status()); assertEquals(viewerId, empty.json().path("userId").asString()); assertTrue(empty.json().path("item").isNull());
+        assertTrue(empty.raw().headers().firstValue("cache-control").orElse("").contains("no-store"));
+        assertEquals(0, viewer.get(history + "?kind=vod").json().path("items").size(), "Reading detail and saved position must not create a watch");
+        var initialBody = progressBody(empty.json(), 1200, false);
+        assertEquals(403, viewer.send("PUT", vodState, initialBody, false, ORIGIN).status());
+        assertEquals(403, viewer.send("PUT", vodState, initialBody, true, "https://outside.invalid").status());
+        viewer.expectedUserId = UUID.randomUUID().toString();
+        for (String route : java.util.List.of(history, vodState)) assertEquals("SESSION_CHANGED", viewer.get(route).code());
+        assertEquals("SESSION_CHANGED", viewer.write("PUT", vodState, initialBody).code());
+        assertEquals("SESSION_CHANGED", viewer.write("DELETE", history, null).code());
+        assertEquals("SESSION_CHANGED", viewer.write("POST", history + "/delete", Map.of("ids", java.util.List.of(UUID.randomUUID().toString()))).code());
+        assertEquals("SESSION_CHANGED", viewer.write("DELETE", history + "/" + UUID.randomUUID(), null).code());
+        assertEquals("SESSION_CHANGED", viewer.write("POST", history, Map.of("broadcastId", "e".repeat(32), "path", "obs-verify")).code());
+        viewer.expectedUserId = viewerId;
+        for (String field : new String[] { "title", "durationMs", "channelId", "userId", "watchedAtMs" }) {
+            var extra = new HashMap<>(initialBody); extra.put(field, "client supplied");
+            assertEquals("INVALID_HISTORY_INPUT", viewer.write("PUT", vodState, extra).code());
+        }
+        assertEquals(400, viewer.get(history + "/media/live/" + vod).status());
+        assertEquals(400, viewer.get(history + "/media/vod/not-a-uuid").status());
+        assertEquals(404, viewer.get(history + "/media/vod/" + UUID.randomUUID()).status());
+        assertEquals(400, viewer.write("PUT", vodState, progressBody(empty.json(), 12001, false)).status());
+        assertEquals(400, viewer.write("PUT", vodState, progressBody(empty.json(), 0, true)).status());
+        try (var pool = java.util.concurrent.Executors.newVirtualThreadPerTaskExecutor()) {
+            var first = pool.submit(() -> viewer.write("PUT", vodState, initialBody));
+            var second = pool.submit(() -> viewer.write("PUT", vodState, initialBody));
+            assertEquals(java.util.Set.of(200, 409), java.util.Set.of(first.get().status(), second.get().status()));
+        }
+        var saved = viewer.get(vodState).json();
+        assertEquals(0, saved.path("item").path("version").longValue()); assertEquals(1200, saved.path("item").path("positionMs").longValue());
+        assertEquals("vod-preserved", saved.path("item").path("title").asString()); assertEquals(12000, saved.path("item").path("durationMs").longValue());
+        assertEquals(vod.toString(), saved.path("item").path("mediaId").asString()); assertTrue(saved.path("item").path("broadcastId").isNull()); assertTrue(saved.path("item").path("path").isNull());
+        assertFalse(saved.toString().contains("archive_key")); assertFalse(saved.toString().contains(vodDirectory.toString())); assertFalse(saved.toString().contains(TOKEN));
+        assertTrue(owner.get(vodState).json().path("item").isNull(), "Positions are private to the viewer, even for the channel owner");
+        var stale = progressBody(saved, 2200, false);
+        try (var pool = java.util.concurrent.Executors.newVirtualThreadPerTaskExecutor()) {
+            var first = pool.submit(() -> viewer.write("PUT", vodState, stale));
+            var second = pool.submit(() -> viewer.write("PUT", vodState, stale));
+            assertEquals(java.util.Set.of(200, 409), java.util.Set.of(first.get().status(), second.get().status()));
+        }
+        var advanced = viewer.get(vodState).json(); assertEquals(1, advanced.path("item").path("version").longValue());
+        var completed = viewer.write("PUT", vodState, progressBody(advanced, 11000, true)); assertEquals(200, completed.status());
+        assertTrue(completed.json().path("item").path("completed").asBoolean()); assertEquals(12000, completed.json().path("item").path("positionMs").longValue());
+        var replay = viewer.write("PUT", vodState, progressBody(completed.json(), 1300, false)); assertEquals(200, replay.status());
+        assertFalse(replay.json().path("item").path("completed").asBoolean()); assertEquals(1300, replay.json().path("item").path("positionMs").longValue());
+        var clipEmpty = viewer.get(clipState).json(); assertTrue(clipEmpty.path("item").isNull());
+        var savedClip = viewer.write("PUT", clipState, progressBody(clipEmpty, 1400, false)); assertEquals(200, savedClip.status());
+        assertEquals(6000, savedClip.json().path("item").path("durationMs").longValue());
+        assertEquals(1, viewer.get(history + "?kind=vod").json().path("items").size()); assertEquals(1, viewer.get(history + "?kind=clip").json().path("items").size());
+        assertEquals(2, viewer.get(history + "?q=preserved").json().path("items").size());
+        String today = java.time.LocalDate.now(java.time.ZoneId.of("Asia/Seoul")).toString();
+        assertEquals(2, viewer.get(history + "?q=preserved&from=" + today + "&to=" + today).json().path("items").size());
+        var seen = new java.util.HashSet<String>(); String cursor = "";
+        do {
+            var page = viewer.get(history + "?limit=1" + (cursor.isEmpty() ? "" : "&cursor=" + cursor)).json();
+            assertEquals(viewerId, page.path("userId").asString());
+            for (JsonNode item : page.path("items")) assertTrue(seen.add(item.path("id").asString()), "Mixed-kind pages must not repeat rows");
+            cursor = page.path("nextCursor").isNull() ? "" : page.path("nextCursor").asString();
+        } while (!cursor.isEmpty());
+        assertEquals(3, seen.size());
+        // Withdrawing a parent also gates its clip. Private edits never replace the saved public snapshot.
+        sql.sql("UPDATE product_vods SET visibility='private',title='private title must not leak' WHERE id=:id").param("id", vod).update();
+        try {
+            assertEquals(404, viewer.get(vodState).status()); assertEquals(404, viewer.get(clipState).status());
+            assertEquals(404, viewer.write("PUT", vodState, progressBody(replay.json(), 2300, false)).status());
+            assertEquals(404, viewer.write("PUT", clipState, progressBody(savedClip.json(), 2300, false)).status());
+            var privateResponse = viewer.get(history + "?q=preserved"); assertEquals(200, privateResponse.status(), privateResponse.raw().body());
+            var privateRows = privateResponse.json().path("items"); assertEquals(2, privateRows.size());
+            assertTrue(privateRows.valueStream().noneMatch(item -> item.path("available").asBoolean())); assertFalse(privateRows.toString().contains("private title"));
+        } finally { sql.sql("UPDATE product_vods SET visibility='public',title='vod-preserved' WHERE id=:id").param("id", vod).update(); }
+        for (var media : java.util.List.of(new Object[] { vodDirectory, vod, vodState, "vod" }, new Object[] { clipDirectory, clip, clipState, "clip" })) {
+            Path directory = (Path) media[0]; UUID id = (UUID) media[1]; String route = (String) media[2], kind = (String) media[3];
+            Path archive = directory.resolve(id + ".mp4"), held = directory.resolve(id + ".history-held"); Files.move(archive, held);
+            try {
+                assertEquals(404, viewer.get(route).status());
+                var unavailableResponse = viewer.get(history + "?kind=" + kind); assertEquals(200, unavailableResponse.status(), unavailableResponse.raw().body());
+                assertFalse(unavailableResponse.json().path("items").get(0).path("available").asBoolean());
+                if (kind.equals("vod")) assertEquals(200, viewer.get(clipState).status(), "An independently archived clip survives source file loss");
+            } finally { Files.move(held, archive); }
+        }
+        String foreign = owner.get(history).json().path("items").get(0).path("id").asString();
+        String vodHistory = replay.json().path("item").path("id").asString(), clipHistory = savedClip.json().path("item").path("id").asString();
+        long epoch = replay.json().path("epoch").longValue();
+        assertEquals(404, viewer.write("POST", history + "/delete", Map.of("ids", java.util.List.of(vodHistory, foreign))).status());
+        assertEquals(epoch, viewer.get(vodState).json().path("epoch").longValue()); assertFalse(viewer.get(vodState).json().path("item").isNull());
+        assertEquals(204, viewer.write("DELETE", history + "/" + vodHistory, null).status());
+        assertEquals("HISTORY_CONFLICT", viewer.write("PUT", vodState, progressBody(replay.json(), 2300, false)).code());
+        assertEquals("HISTORY_CONFLICT", viewer.write("PUT", vodState, initialBody).code(), "A delayed first save cannot recreate a deleted row");
+        var deleted = viewer.get(vodState).json(); assertTrue(deleted.path("item").isNull()); assertEquals(epoch + 1, deleted.path("epoch").longValue());
+        assertEquals(404, viewer.write("DELETE", history + "/" + vodHistory, null).status()); assertEquals(epoch + 1, viewer.get(vodState).json().path("epoch").longValue());
+        assertEquals("HISTORY_CONFLICT", viewer.write("PUT", clipState, progressBody(savedClip.json(), 2300, false)).code(), "Deleting any row invalidates all mounted archived recorders");
+        assertEquals(204, viewer.write("POST", history + "/delete", Map.of("ids", java.util.List.of(clipHistory))).status());
+        UUID removedMedia = UUID.randomUUID(); Path removedArchive = vodDirectory.resolve(removedMedia + ".mp4");
+        Files.copy(vodDirectory.resolve(vod + ".mp4"), removedArchive);
+        var removedInfo = app.getBean(VodFiles.class).inspect(removedMedia);
+        sql.sql("""
+                INSERT INTO product_vods(id,channel_id,title,description,status,visibility,duration_ms,size_bytes,archive_modified_ms,archive_key,archive_sha256,published_at_ms,created_at_ms,updated_at_ms)
+                SELECT :id,channel_id,title,description,status,visibility,duration_ms,size_bytes,:modified,:key,archive_sha256,published_at_ms,created_at_ms,updated_at_ms FROM product_vods WHERE id=:source
+                """).param("id", removedMedia).param("modified", removedInfo.modified()).param("key", removedInfo.key()).param("source", vod).update();
+        String removedRoute = history + "/media/vod/" + removedMedia;
+        var removedSaved = viewer.write("PUT", removedRoute, progressBody(viewer.get(removedRoute).json(), 1500, false)); assertEquals(200, removedSaved.status());
+        sql.sql("DELETE FROM product_vods WHERE id=:id").param("id", removedMedia).update(); Files.delete(removedArchive);
+        assertEquals(404, viewer.get(removedRoute).status());
+        var unavailable = viewer.get(history + "?kind=vod").json().path("items"); assertEquals(1, unavailable.size());
+        assertEquals(removedSaved.json().path("item").path("id").asString(), unavailable.get(0).path("id").asString());
+        assertFalse(unavailable.get(0).path("available").asBoolean()); assertEquals("vod-preserved", unavailable.get(0).path("title").asString()); assertEquals(1500, unavailable.get(0).path("positionMs").longValue());
+        var beforeClear = viewer.get(vodState).json(); assertEquals(204, viewer.write("DELETE", history, null).status());
+        var afterClear = viewer.get(vodState).json(); assertEquals(beforeClear.path("epoch").longValue() + 1, afterClear.path("epoch").longValue());
+        assertEquals(204, viewer.write("DELETE", history, null).status());
+        var afterEmptyClear = viewer.get(vodState).json(); assertEquals(afterClear.path("epoch").longValue() + 1, afterEmptyClear.path("epoch").longValue());
+        assertEquals("HISTORY_CONFLICT", viewer.write("PUT", vodState, progressBody(afterClear, 1200, false)).code());
+        assertEquals(0, viewer.get(history).json().path("items").size()); viewer.expectedUserId = null;
+        // Fresh intentional visits can save again. Keep both positions for the existing application-restart check.
+        var ownerVod = owner.write("PUT", vodState, progressBody(owner.get(vodState).json(), 1600, false)); assertEquals(200, ownerVod.status());
+        var ownerClip = owner.write("PUT", clipState, progressBody(owner.get(clipState).json(), 1700, false)); assertEquals(200, ownerClip.status());
+        return new ArchivedHistoryState(ownerVod.json().path("item").path("id").asString(), ownerClip.json().path("item").path("id").asString());
+    }
+    private static Map<String, Object> progressBody(JsonNode state, long position, boolean completed) {
+        JsonNode item = state.path("item");
+        return progressBody(state.path("epoch").longValue(), item.isNull() ? null : item.path("id").asString(), item.isNull() ? 0 : item.path("version").longValue(), position, completed);
+    }
+    private static Map<String, Object> progressBody(long epoch, String id, long version, long position, boolean completed) {
+        var body = new HashMap<String, Object>(); body.put("epoch", epoch); body.put("id", id); body.put("version", version); body.put("positionMs", position); body.put("completed", completed); return body;
     }
     private static void announceHistory(frame.api.broadcast.BroadcastRegistry registry, String id, String path, String title, String publisher) {
         assertEquals(204, registry.announce(JSON.valueToTree(Map.of("v", 1, "type", "announce", "item", Map.of("id", id, "path", path, "title", title, "publisher", publisher, "width", 0, "height", 0, "fps", 0, "startedAtMs", System.currentTimeMillis()))), 0).status());

@@ -52,7 +52,9 @@ Spring Session 필터 자체도 `/api/v1/*`에만 등록한다. 로그인 쿠키
 | `GET /api/v1/channels?query=&limit=50` | 200 `{items:Channel[],nextCursor:null}`. 검색어 최대 120자, 제어문자 금지, limit 1~50 |
 | `GET /api/v1/me/follows` | 200 `{items:Channel[],nextCursor:null}`. 최대 200개 |
 | `POST /api/v1/me/history` | `{broadcastId,path}` → 204. 현재 방송의 서버 메타데이터와 서버 시각을 본인 기록에 저장 |
-| `GET /api/v1/me/history` | 200 `{items:HistoryItem[],nextCursor:null|string}`. 아래 검색·기간·커서 조건 |
+| `GET /api/v1/me/history` | 200 `{userId,items:HistoryItem[],nextCursor:null|string}`. 아래 검색·기간·커서 조건 |
+| `GET /api/v1/me/history/media/{kind}/{mediaId}` | 로그인 200 `{userId,item:null|HistoryItem,epoch,serverNowMs}`. kind는 vod/clip. 공개 재생 가능한 영상의 본인 저장 위치 읽기, 기록 생성 없음 |
+| `PUT /api/v1/me/history/media/{kind}/{mediaId}` | `{epoch,id:null|uuid,version,positionMs,completed}` → 200 `{userId,item:HistoryItem,epoch,serverNowMs}`. 아래 위치·동시 탭·삭제 조건 |
 | `DELETE /api/v1/me/history/{id}` | 204. 본인의 해당 기록 삭제, 없거나 타인 기록은 404 |
 | `POST /api/v1/me/history/delete` | `{ids:uuid[1..200]}` → 204. 모든 ID가 본인 기록이어야 하며 하나라도 없으면 전체 404·삭제 안 함 |
 | `DELETE /api/v1/me/history` | 204. 필터·페이지와 관계없이 본인 시청 기록 전체 삭제 |
@@ -268,13 +270,23 @@ Spring Session 필터 자체도 `/api/v1/*`에만 등록한다. 로그인 쿠키
 
 ## 시청 기록
 
-`HistoryItem`은 `{id,kind:'live',broadcastId,path,title,publisher,channelHandle:null|string,thumbnailUrl:null|string,watchedAtMs,available}`이다. 모든 API는 본인 로그인 세션을 사용하고 쓰기에 CSRF·정확한 Origin 검사를 적용한다. 사용자 ID·제목·방송자·시청 시각·URL을 클라이언트 본문으로 받지 않는다. 현재 등록된 방송의 경로와 ID가 맞을 때만 서버 메타데이터와 서버 epoch milliseconds를 저장한다. 기존 송출 규칙이 허용하는 NUL은 PostgreSQL text 호환을 위해 Unicode 대체 문자로 바꿔 저장한다. 방송자 이름은 빈 문자열일 수 있다.
+`HistoryItem`은 `{id,kind:'live'|'vod'|'clip',broadcastId:null|string,path:null|string,title,publisher,channelHandle:null|string,thumbnailUrl:null|string,watchedAtMs,available,mediaId:null|uuid,durationMs:null|integer,positionMs:null|integer,completed:boolean,version:integer}`다. 라이브는 기존 broadcastId/path를 유지하고 mediaId·durationMs·positionMs는 null, completed는 false, version은 0이다. VOD·클립은 mediaId·서버 영상 길이·저장 위치를 포함하며 broadcastId/path/thumbnailUrl은 null이다. 모든 필드는 명시적으로 포함한다. 목록 wrapper의 userId와 미디어 상태 wrapper의 userId는 실제 인증된 계정 UUID다.
 
-기록의 유일성은 `(user_id,path,broadcast_id,broadcast_instance_id)`다. 방송 내부 instance UUID는 클라이언트에 노출하지 않는다. 같은 방송 재시청은 같은 행의 마지막 시청 시각을 갱신하고, 송출자가 종료한 ID·경로를 재사용한 다른 방송은 별도 행으로 남긴다. `available`은 현재 Registry의 같은 instance까지 일치할 때만 참이다. 종료되거나 서버 재시작으로 instance가 사라진 기록은 제목·방송자·시각을 보존하고 재생 링크를 활성화하지 않는다. 같은 경로의 다음 방송으로 이전 기록을 바꾸지 않는다. 채널이 삭제되면 기록의 채널 참조만 NULL로 남으며 계정이 삭제되면 본인 기록은 함께 삭제된다.
+모든 시청 기록 API는 본인 로그인 세션을 사용하고 쓰기에 기존 CSRF·정확한 Origin·8KB JSON 검사를 적용한다. 브라우저는 `X-FRAME-USER-ID`를 보내고 현재 쿠키 계정과 다르면 조회·변경 전에 409 `SESSION_CHANGED`로 거절한다. 생략한 직접 호출은 기존 쿠키 인증을 사용한다. 클라이언트는 응답 userId도 확인하고 계정·영상 변경 시 이전 요청과 이벤트를 정리한다. 사용자 ID·제목·방송자·영상 길이·시청 시각·URL을 본문으로 받지 않는다. 시청 시각은 서버 epoch milliseconds이며, 제목·방송자는 저장 시점에 공개 접근 가능한 서버 메타데이터로만 채운다.
 
-조회 조건은 `kind=all|live|vod|clip`, `q`(제어 문자 없는 Unicode 최대 120자), `from`·`to`(`YYYY-MM-DD`, 양 끝 날짜 포함·서울 시간), `limit`(1~100, 기본 50), `cursor`다. 현재 실제 기록 대상은 라이브이고 `vod`·`clip` 필터는 빈 목록이다. 제목·방송자 이름을 대소문자 구분 없이 검색한다. 마지막 시청 시각·행 UUID 내림차순 keyset pagination을 사용하며 `nextCursor`가 NULL이면 마지막 페이지다. 커서는 서버가 준 값을 그대로 다음 요청에 사용한다.
+라이브 POST의 기존 두 필드 `{broadcastId,path}`와 204 응답은 유지한다. 현재 등록된 방송의 경로와 ID가 맞을 때만 저장하며 유일성은 `(user_id,path,broadcast_id,broadcast_instance_id)`다. 방송 내부 instance UUID는 클라이언트에 노출하지 않는다. 같은 방송 재시청은 같은 행의 마지막 시청 시각을 갱신하고, 송출자가 종료한 ID·경로를 재사용한 다른 방송은 별도 행으로 남긴다. `available`은 현재 Registry의 같은 instance까지 일치할 때만 참이다. 종료되거나 서버 재시작으로 instance가 사라진 기록은 제목·방송자·시각을 보존하고 재생 링크를 활성화하지 않는다. 같은 경로의 다음 방송으로 이전 기록을 바꾸지 않는다. 기존 송출이 허용하는 NUL은 PostgreSQL text 호환을 위해 Unicode 대체 문자로 저장하며 방송자 이름은 빈 문자열일 수 있다.
 
-삭제는 실제 서버 기록 삭제다. 단일 삭제와 배치 삭제의 누락·타인 ID는 404 `HISTORY_NOT_FOUND`, 잘못된 본문은 400 `INVALID_HISTORY_INPUT`, 검색 조건은 `INVALID_HISTORY_FILTER`, 커서는 `INVALID_HISTORY_CURSOR`다. 배치 삭제는 먼저 모든 본인 행을 잠근 뒤 전체 소유를 확인하므로 일부만 삭제하지 않는다. 전체 삭제는 현재 검색 결과나 불러온 페이지에 한정되지 않는다. 삭제한 내용을 클라이언트만 복원하는 가짜 실행 취소 API는 제공하지 않는다.
+V17 `V17__archived_watch_history.sql`은 기존 V4 행·라이브 유일성을 보존한 채 한 테이블을 확장한다. 보관 영상의 유일성은 `(user_id,kind,media_id)`다. GET은 공개 재생 조건만 확인하고 저장 위치가 없으면 item:null을 반환한다. VOD는 ready+public+현재 보관 파일 지문, 클립은 클립과 부모 VOD의 ready+public 및 클립 보관 파일 지문을 매 GET·PUT·목록 availability 계산에 확인한다. 이미 별도 보관한 클립은 부모 VOD 물리 파일의 소실만으로 철회하지 않는 기존 정책을 따른다. 비공개·미준비·없는 영상이나 보관 파일은 해당 공개 미디어와 같은 404다. 목록은 공개 중단·파일 소실·미디어 메타데이터 삭제 후에도 저장 당시 제목·방송자·길이·위치·시각을 유지하고 available:false로 돌려준다. 비공개로 바뀐 영상의 새 제목 등은 기록에 반영하지 않는다. 미디어 FK를 두지 않아 원본 삭제로 개인 기록을 연쇄 삭제하지 않으며, 채널 삭제는 채널 참조만 null로 남긴다. 본인 계정 삭제는 기록을 함께 삭제한다.
+
+보관 영상 PUT은 정확히 다섯 필드만 받는다. epoch/version/positionMs는 음수가 아닌 정수이며 문자열·소수·범위를 벗어난 정수를 허용하지 않는다. positionMs는 0부터 서버 durationMs까지다. completed는 boolean이며 true는 서버 끝에서 1,000ms 이내 위치만 허용하고 저장 위치를 durationMs로 맞춘다. 다시 재생한 유효한 진행은 completed:false와 이전보다 작은 위치를 저장할 수 있다. 처음 생성할 때는 GET이 준 epoch, id:null, version:0을 보내며 이미 같은 기록이 있으면 충돌한다. 이후에는 응답의 id/version을 사용한다. 성공한 갱신마다 version을 하나 올리므로 오래된 탭·역순 요청은 409 `HISTORY_CONFLICT`이며 덮어쓰지 않는다. 이 API는 실제 사람의 시청 증명·조회수·포인트 적립에 사용하지 않는다.
+
+조회 조건은 `kind=all|live|vod|clip`, `q`(제어 문자 없는 Unicode 최대 120자), `from`·`to`(`YYYY-MM-DD`, 양 끝 날짜 포함·서울 시간), `limit`(1~100, 기본 50), `cursor`다. all은 세 종류를 함께 조회하고 제목·방송자 snapshot을 대소문자 구분 없이 검색한다. 마지막 시청 시각·행 UUID 내림차순 keyset pagination을 사용하며 `nextCursor`가 null이면 마지막 페이지다. 커서는 서버가 준 값을 같은 검색 조건으로 다음 요청에 사용한다.
+
+삭제는 실제 서버 기록 삭제다. 단일 삭제와 배치 삭제의 누락·타인 ID는 404 `HISTORY_NOT_FOUND`, 잘못된 본문·미디어 종류·UUID·위치는 400 `INVALID_HISTORY_INPUT`, 검색 조건은 `INVALID_HISTORY_FILTER`, 커서는 `INVALID_HISTORY_CURSOR`다. 모든 변경은 본인 계정 행을 먼저 잠그고 직렬화하며, 배치 삭제는 모든 본인 행의 소유를 확인하므로 일부만 삭제하지 않는다. 성공한 단일·배치·전체 삭제마다 계정 watch_history_epoch를 한 번 올린다. 전체 삭제는 필터·페이지와 무관하고 빈 목록에서도 epoch를 올린다. 실패한 삭제는 epoch를 바꾸지 않는다. 기존 mounted 보관 영상 recorder의 늦은 최초 저장·진행 요청은 이전 epoch로 409 `HISTORY_CONFLICT`를 받아 삭제한 기록을 되살릴 수 없다. 다른 영상의 삭제도 열린 recorder를 중지하며 사용자가 명시적으로 기록을 다시 연결하거나 새 방문할 때 현재 GET 결과로 다시 시작한다. 라이브의 기존 두 필드 POST에는 epoch가 없어 이 서버 방어가 적용되지 않으며 기존 브라우저의 방문당 한 번 저장 정책을 유지한다.
+
+보관 영상 화면은 저장 위치를 자동 적용하거나 자동 재생하지 않는다. 이어보기는 GET으로 상태를 다시 확인하고 일시정지 상태에서 탐색한다. 보이는 화면에서 playable 영상의 currentTime이 실제로 1초 이상 진행한 뒤 최초 PUT을 보내며, 이후 10초 간격으로 저장한다. 일시정지·hidden·pagehide는 마지막으로 관찰한 유효한 위치를 보내고 진행 기준을 초기화한다. 탐색은 탐색 전 위치만 저장하며 목표 위치는 새 재생 진행을 확인한 뒤 저장한다. ended 이벤트도 끝 부근의 최근 연속 진행을 확인해야 완료를 저장하고, 다시 재생한 위치는 새 1초 진행 뒤 completed:false로 바꾼다. 페이지 진입·일시정지·탐색 자체로 최초 기록을 만들지 않는다. 오프라인 전환은 미전송 진행을 버리고 이전 위치를 나중에 일괄 전송하지 않는다.
+
+저장 응답을 받지 못하면 현재 GET의 epoch/id/version/positionMs/completed를 대조해 성공한 요청만 확인한다. 결과가 다르거나 불명확하면 자동 재전송하지 않고 `기록 다시 연결`을 통해 사용자가 명시적으로 현재 상태를 받아 재개한다. 공개 중단·영상 변경·계정 변경은 이전 이벤트와 요청을 정리한다. 완료 기록은 다음 방문에서 이어보기를 제안하지 않으며 기록 오류가 공개 영상 재생을 막는 조건은 아니다.
 
 ## 필수 가입 동의
 
@@ -448,7 +460,7 @@ clientRequestId는 계정/채널 범위 UUID다. 최초 source·범위·정규�
 
 UUID.part는 정상 ftyp/moov/mdat와 bounded mvhd 메타데이터·양수 길이·요청 길이와 500ms 이내·크기·SHA를 검증한다. 원본 권한과 지문/내용을 다시 확인한 뒤 원자 이동하며, DB 완료는 작업 중 편집한 제목·설명·공개 범위/버전을 덮어쓰지 않는다. 메타데이터 읽기를 제외한 인코딩·해시·영상 전송 동안 DB 연결을 유지하지 않는다. realpath·NOFOLLOW·정규 UUID 파일 이름을 검사하고 원본을 쓰거나 경로를 클라이언트에서 받지 않는다. 재시작의 preparing은 failed로 바꿔 명시적 재시도하게 하며 자신 소유 UUID.part만 정리한다. 미완료 UUID 출력은 같은 원본에서 안전하게 다시 생성하지만 ready 보관본은 인코더 대상이 아니다.
 
-현재 단일 API 인스턴스 전제이며 전용 보관본 자동 만료·삭제/용량 할당·썸네일·조회수·시청 기록/포인트 적립은 추가하지 않는다. DB와 클립 파일은 함께 보존한다. raw의 기존 6시간 보관·MediaMTX·라이브/DVR·V1~V15 원문은 유지한다.
+현재 단일 API 인스턴스 전제이며 전용 보관본 자동 만료·삭제/용량 할당·썸네일·조회수·포인트 적립은 추가하지 않는다. VOD·클립의 개인 시청 기록·저장 위치는 위 V17 시청 기록 계약을 따른다. DB와 클립 파일은 함께 보존한다. raw의 기존 6시간 보관·MediaMTX·라이브/DVR·V1~V16 원문은 유지한다.
 
 ## 검증
 
@@ -461,9 +473,9 @@ cd apps/api
 
 실제 PostgreSQL·Redis 통합 검사는 저장소 밖 검증 설정 파일의 경로를 지정한다. 테스트는 루프백 `127.0.0.1`의 FRAME 전용 포트 `15432`(네이티브) 또는 `25432`(Docker), DB 이름 `frame_product_verify` 또는 고유 접미사가 붙은 검증 DB인지 먼저 검사한다. 쿼리 매개변수·URL 안의 자격증명·외부 호스트·사용자 DB `frame_product`는 허용하지 않는다. 해당 DB의 임의 생성 스키마와 임의 Redis namespace만 사용하며, 종료 시 생성한 스키마·namespace 키만 정리한다. 실제 DB의 사용자·스키마·운영자 키를 읽거나 변경하지 않는다. 설정에는 `verifyDbUrl`, `dbUsername`, `dbPassword`, `redisHost`, `redisPort`, `redisPassword`가 필요하다.
 
-Flyway는 제품 기능을 활성화한 Spring Boot의 시작 과정에서 `db/migration`을 적용한다. 현재 V1(회원·채널·팔로우), V2(가입 동의), V3(방송 예약), V4(시청 기록), V5(채널 프로필·주소 예약·신고 접수), V6(운영자 플래그·신고 관리), V7(개인 알림·전송 표식·시작 기준 시각), V8(채팅 정책·계정 차단), V9(방송 투표·선택지·계정별 표), V10(비공개 질문·답변·명시적 공개 고정), V11(채널 포인트·원장·보상·교환 요청), V12(비공개 무료 미션·상태 이력), V13(방송별·일별 실제 관찰 집계), V14(비공개 녹화 관찰 창·파일 카탈로그), V15(명시적 공개 다시보기·별도 보관본 메타데이터), V16(원본 공개에 연동한 클립·생성 요청 snapshot·구간·인코딩 상태)을 사용한다. `validate-on-migrate: true`, `clean-disabled: true`, `baseline-on-migrate: false`를 명시한다. 적용한 SQL은 수정하지 않고 새 `V17__설명.sql` 같은 다음 버전을 추가한다. Redis는 Flyway 관리 대상이 아니다. 기존 Flyway 기록이 없는 비어 있지 않은 스키마를 자동으로 기존 운영 DB라고 간주하거나, checksum 오류를 자동으로 `repair`해서 넘기지 않는다.
+Flyway는 제품 기능을 활성화한 Spring Boot의 시작 과정에서 `db/migration`을 적용한다. 현재 V1(회원·채널·팔로우), V2(가입 동의), V3(방송 예약), V4(시청 기록), V5(채널 프로필·주소 예약·신고 접수), V6(운영자 플래그·신고 관리), V7(개인 알림·전송 표식·시작 기준 시각), V8(채팅 정책·계정 차단), V9(방송 투표·선택지·계정별 표), V10(비공개 질문·답변·명시적 공개 고정), V11(채널 포인트·원장·보상·교환 요청), V12(비공개 무료 미션·상태 이력), V13(방송별·일별 실제 관찰 집계), V14(비공개 녹화 관찰 창·파일 카탈로그), V15(명시적 공개 다시보기·별도 보관본 메타데이터), V16(원본 공개에 연동한 클립·생성 요청 snapshot·구간·인코딩 상태), V17(다시보기·클립의 시청 위치·완료·행 버전·삭제 epoch)을 사용한다. `validate-on-migrate: true`, `clean-disabled: true`, `baseline-on-migrate: false`를 명시한다. 적용한 SQL은 수정하지 않고 새 `V18__설명.sql` 같은 다음 버전을 추가한다. Redis는 Flyway 관리 대상이 아니다. 기존 Flyway 기록이 없는 비어 있지 않은 스키마를 자동으로 기존 운영 DB라고 간주하거나, checksum 오류를 자동으로 `repair`해서 넘기지 않는다.
 
-`ProductMigrationIntegrationTest`는 별도 PostgreSQL DB의 임의 생성 스키마에서 빈 DB의 V16까지 적용·재시작 시 미적용, V1 데이터의 최신 업그레이드 보존·기존 동의 NULL 유지, V3·V4에서 최신으로 업그레이드한 뒤 기존 방송 예약·시청 기록·채널 생성일 보존과 주소 백필·삭제 후 예약 동작, V5 신고의 원문·시각 보존과 운영자 자동 승격 없음, V6 알림 설정 보존·시작 기준 생성·과거 알림 미생성, V7 프로필·팔로우·알림 확인 상태 보존과 기본 채팅 정책 추가, V8 기존 정책 보존과 투표 단일 슬롯·계정별 한 표·선택지 복합 FK, V9 투표·선택지·표 보존과 질문 요청 멱등 키·단일 고정·답변 시각 제약, V10 기존 비공개 답변 보존과 빈 포인트 저장소·음수 잔액·1회 신청·중복 환불 제약, V11 잔액·부분 시청·원장·보상 신청 보존과 미션 요청/기한/이력 고유 제약, V12 미션·이력 보존과 빈 방송 분석 저장소·관찰 제약·FK 및 채널 삭제 연쇄, V14 녹화 관찰 창·파일 보존과 V15 빈 다시보기 저장소·원본당 고유 제약·ready의 검증 해시 필수 조건, V15 VOD 보존과 빈 클립 저장소·요청 UUID 고유 제약·채널/원본 복합 FK·구간/완료 해시 제약·원본 삭제 연쇄, 임시 복사 SQL 변조 시 checksum 검증으로 후속 V17 DDL 차단을 검사한다. 이 검사는 비밀 설정의 `verifyDbUrl` 중 루프백 주소와 `frame_product_verify` 또는 고유 접미사를 붙인 이름만 허용하며, 실행 시 생성한 `migration_verify_*` 스키마만 정리한다. 실제 DB와 저장소의 V1~V15 SQL은 변경하지 않는다. `ProductStorageDisabledTest`는 DB·Redis가 연결되지 않아도 제품 기능 비활성 상태의 미디어 서버가 해당 구성 요소 없이 시작되는지 검사한다.
+`ProductMigrationIntegrationTest`는 별도 PostgreSQL DB의 임의 생성 스키마에서 빈 DB의 V17까지 적용·재시작 시 미적용, V1 데이터의 최신 업그레이드 보존·기존 동의 NULL 유지, V3·V4에서 최신으로 업그레이드한 뒤 기존 방송 예약·시청 기록·채널 생성일 보존과 주소 백필·삭제 후 예약 동작, V5 신고의 원문·시각 보존과 운영자 자동 승격 없음, V6 알림 설정 보존·시작 기준 생성·과거 알림 미생성, V7 프로필·팔로우·알림 확인 상태 보존과 기본 채팅 정책 추가, V8 기존 정책 보존과 투표 단일 슬롯·계정별 한 표·선택지 복합 FK, V9 투표·선택지·표 보존과 질문 요청 멱등 키·단일 고정·답변 시각 제약, V10 기존 비공개 답변 보존과 빈 포인트 저장소·음수 잔액·1회 신청·중복 환불 제약, V11 잔액·부분 시청·원장·보상 신청 보존과 미션 요청/기한/이력 고유 제약, V12 미션·이력 보존과 빈 방송 분석 저장소·관찰 제약·FK 및 채널 삭제 연쇄, V14 녹화 관찰 창·파일 보존과 V15 빈 다시보기 저장소·원본당 고유 제약·ready의 검증 해시 필수 조건, V15 VOD 보존과 빈 클립 저장소·요청 UUID 고유 제약·채널/원본 복합 FK·구간/완료 해시 제약·원본 삭제 연쇄, V16 라이브 시청 기록 보존·기본 epoch와 종류별 형태·위치/완료/버전 제약·채널 삭제 후 snapshot 보존·계정 삭제 연쇄, 임시 복사 SQL 변조 시 checksum 검증으로 후속 V18 DDL 차단을 검사한다. 이 검사는 비밀 설정의 `verifyDbUrl` 중 루프백 주소와 `frame_product_verify` 또는 고유 접미사를 붙인 이름만 허용하며, 실행 시 생성한 `migration_verify_*` 스키마만 정리한다. 실제 DB와 저장소의 V1~V16 SQL은 변경하지 않는다. `ProductStorageDisabledTest`는 DB·Redis가 연결되지 않아도 제품 기능 비활성 상태의 미디어 서버가 해당 구성 요소 없이 시작되는지 검사한다.
 
 ```powershell
 $env:FRAME_PRODUCT_TEST_CONFIG = '<저장소 밖 검증 설정 JSON 경로>'

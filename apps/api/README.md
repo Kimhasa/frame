@@ -128,6 +128,12 @@ java -jar build/libs/frame-api.jar
 
 보관 폴더는 `FRAME_PRODUCT_CLIP_DIR`이며 기본은 VOD 폴더의 형제 `clips`입니다. raw·VOD·클립 폴더는 서로 포함하지 않습니다. 단일 worker·각 1 thread·120초·512 MiB 상한을 두고 원본/부분 파일 검증·원자 이동·실패 재시도·재시작 복구를 처리합니다. 단일 API 전제와 상태/권한/receipt/부모 공개 정책은 [공개 클립 계약](PRODUCT_API.md#공개-클립)을 따릅니다.
 
+## 보관 영상 시청 기록과 이어보기
+
+로그인한 시청자의 공개 VOD·클립 재생 진행과 마지막 위치를 V17의 개인 시청 기록에 저장합니다. 목록에서 라이브·VOD·클립을 함께 검색·기간 조회·삭제하며, 저장 위치는 시청 화면의 명시적 이어보기로 적용합니다. 페이지 조회·일시정지·탐색만으로 최초 기록을 만들지 않고 완료·다시 재생한 상태를 구분합니다. 제목·방송자·길이·시각은 서버가 제공하고, 공개 중단·파일 소실 후에는 과거 snapshot을 보존하며 재생 링크를 비활성화합니다.
+
+계정 기대 헤더와 행 version으로 계정 전환·동시 탭의 오래된 요청을 거절하고, 삭제마다 올리는 계정 epoch로 이미 열린 보관 영상 화면이 삭제한 기록을 다시 생성하지 못하게 합니다. 기존 라이브 POST의 두 필드·204 계약은 유지하며 이 epoch 조건은 보관 영상 GET/PUT에 적용합니다. 정확한 DTO·공개 gate·완료 위치·충돌과 재연결은 [시청 기록 계약](PRODUCT_API.md#시청-기록)을 따릅니다.
+
 ## 검증
 
 ```bash
@@ -137,6 +143,7 @@ node server/verify/spring-app-check.mjs           # 실제 송출 앱 -> Spring 
 node server/verify/chat-load.mjs --clients 1000 --senders 2 --messages 5 --backend spring   # 채팅 1,000 연결
 node server/verify/vod-e2e.mjs                  # 검증 DB·실제 녹화·공개 복사·익명 재생·React/개발 모드(빌드 후, 단독 실행)
 node server/verify/clips-e2e.mjs                # 검증 DB·실제 FFmpeg 구간·부모 공개 연동·익명 재생·React/개발 모드(빌드 후, 단독 실행)
+node server/verify/archive-history-e2e.mjs       # 실제 VOD·클립 시청 위치·이어보기·삭제 경합·계정 전환(빌드 후, 단독 실행)
 node server/verify/deploy-check.mjs               # deploy/의 단위 파일·환경 예시·설치 절차와 jar의 정합(Linux 없이), 포트 28080
 node server/verify/https-session.mjs --host <test-host> --tls internal --bind <주소> --backend spring   # Caddy 경유 시험 세션
 node server/verify/https-check.mjs                # 그 세션에서 HTTPS/WSS, 재생, 채팅, 서비스 재시작(H10)

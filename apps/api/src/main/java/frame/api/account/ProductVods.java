@@ -118,6 +118,8 @@ public class ProductVods {
         Row last=more?selected.getLast():null;return new PublicPage(items,last==null?null:encode(last.published(),last.id(),context),System.currentTimeMillis());
     }
     @Transactional(readOnly=true) public PublicDetail publicDetail(UUID id){Row row=published(id);if(!available(row))throw missing();return new PublicDetail(publicItem(row),System.currentTimeMillis());}
+    // Private history retains withdrawn items; an expected absence must not mark its surrounding read transaction rollback-only.
+    @Transactional(readOnly=true) public boolean publiclyAvailable(UUID id){Row row=publicRow(id);return row!=null&&available(row);}
     @Transactional(readOnly=true) public Asset publicAsset(UUID id){Row row=published(id);if(!available(row))throw missing();return new Asset(row.id(),row.size(),row.modified(),row.key());}
     @Transactional(readOnly=true) public ClipSource clipSource(UUID owner,UUID id){
         account(owner);Row row=owned(owner,id,false);
@@ -148,7 +150,8 @@ public class ProductVods {
     private OwnDetail detail(UUID owner,Row row){return new OwnDetail(owner,ownItem(row),System.currentTimeMillis(),files.enabled());}
     private Row byRecording(UUID owner,UUID recording){return sql.sql(SELECT+"WHERE c.owner_id=:owner AND v.recording_id=:recording").param("owner",owner).param("recording",recording).query(this::row).optional().orElse(null);}
     private Row owned(UUID owner,UUID id,boolean lock){return sql.sql(SELECT+"WHERE c.owner_id=:owner AND v.id=:id"+(lock?" FOR UPDATE OF v":"")).param("owner",owner).param("id",id).query(this::row).optional().orElseThrow(ProductVods::missing);}
-    private Row published(UUID id){return sql.sql(SELECT+"WHERE v.id=:id AND "+PUBLIC).param("id",id).query(this::row).optional().orElseThrow(ProductVods::missing);}
+    private Row published(UUID id){Row row=publicRow(id);if(row==null)throw missing();return row;}
+    private Row publicRow(UUID id){return sql.sql(SELECT+"WHERE v.id=:id AND "+PUBLIC).param("id",id).query(this::row).optional().orElse(null);}
     private Row row(ResultSet r,int index)throws SQLException{return new Row(r.getObject("id",UUID.class),r.getObject("owner_id",UUID.class),r.getObject("recording_id",UUID.class),new Channel(r.getObject("channel_id",UUID.class),r.getString("handle"),r.getString("display_name"),null),r.getString("title"),r.getString("description"),r.getString("status"),r.getString("visibility"),r.getLong("duration_ms"),r.getLong("size_bytes"),r.getObject("archive_modified_ms",Long.class),r.getString("archive_key"),r.getString("archive_sha256"),r.getObject("published_at_ms",Long.class),r.getLong("created_at_ms"),r.getLong("updated_at_ms"),r.getLong("version"),r.getString("reason"));}
     private void account(UUID owner){if(owner==null||!sql.sql("SELECT EXISTS(SELECT 1 FROM product_accounts WHERE id=:owner)").param("owner",owner).query(Boolean.class).single())throw new ProductProblem(401,"UNAUTHENTICATED","다시 로그인해 주세요.");}
     static Draft draft(JsonNode input){if(input.size()!=3||!input.path("recordingId").isString())throw invalid();return new Draft(id(input.path("recordingId").asString()),text(input.path("title"),1,100,false),text(input.path("description"),0,2000,true));}

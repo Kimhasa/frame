@@ -73,6 +73,9 @@ strong.entryTitle { color: #606d65; }
 .channel { margin: 8px 0 0; max-width: 100%; overflow: hidden; color: #53665a; font-size: 14px; text-overflow: ellipsis; white-space: nowrap; }
 a.entryTitle:hover, .channel:hover { color: var(--frame-green-ink); text-decoration: underline; }
 .meta { display: flex; flex-wrap: wrap; gap: 3px 10px; margin-top: 7px; color: #627168; font-size: 13px; line-height: 1.5; }
+.progressLabel { margin: 5px 0 0; color: #52665a; font-size: 13px; line-height: 1.5; font-variant-numeric: tabular-nums; }
+.resume { display: inline-flex; align-items: center; min-height: 36px; margin-top: 3px; color: var(--frame-green-ink); font-size: 13px; font-weight: 650; }
+.resume:hover { text-decoration: underline; text-underline-offset: 3px; }
 .remove {
   display: grid; flex: none; place-items: center; width: 44px; height: 44px; padding: 0;
   border: 0; border-radius: 8px; background: transparent; color: #677b6e;
@@ -147,6 +150,7 @@ a.entryTitle:hover, .channel:hover { color: var(--frame-green-ink); text-decorat
   .entryTitle { font-size: 14px; }
   .channel { margin-top: 5px; font-size: 13px; }
   .meta { margin-top: 4px; font-size: 12px; }
+  .progressLabel { padding-right: 28px; font-size: 12px; }
   .row[data-selecting='false'] .meta { padding-right: 40px; }
   .remove { position: absolute; right: -4px; bottom: -10px; }
   .check { position: absolute; z-index: 1; top: 0; left: 0; width: 44px; }

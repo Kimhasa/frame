@@ -7,6 +7,8 @@ import ui from '../../components/management/ManagementUI.module.css';
 import { channelPath, mediaWatchPath } from '../../preview/community-types';
 import { AccountError } from '../account/account-client';
 import type { AccountSession } from '../account/account-client';
+import { ArchiveHistoryControls } from '../history/ArchiveHistoryControls';
+import { useArchiveWatchHistory } from '../history/useArchiveWatchHistory';
 import { ClipCreator } from '../clips/ClipCreator';
 import { vodApi } from './vod-client';
 import type { PublicVod, VodChannel, VodPage } from './vod-client';
@@ -72,8 +74,10 @@ export function ConnectedVodWatch({ session, onRequireLogin, onSessionChanged }:
   const video = useRef<HTMLVideoElement>(null), active = useRef(true), generation = useRef(0), scopeRef = useRef(key), refreshing = useRef(false), request = useRef<AbortController | null>(null), mediaRequest = useRef<AbortController | null>(null), refreshNow = useRef<() => void>(() => {}), share = useRef<HTMLDialogElement>(null), shareInput = useRef<HTMLInputElement>(null), shareButton = useRef<HTMLButtonElement>(null), dialogId = useId();
   scopeRef.current = key;
   const current = state.key === key ? state : { key, item: null, phase: 'loading' as const, error: '' }, item = current.item;
+  const history = useArchiveWatchHistory({ kind: 'vod', mediaId: item?.id ?? '', durationMs: item?.durationMs ?? 0,
+    visitKey: `${key}/${attempt}/${mediaAttempt}`, enabled: Boolean(item && mediaAllowed && current.phase === 'ready' && handle === item.channel.handle), session, video, onSessionChanged });
   const href = useHref(item ? mediaWatchPath('vod', item.channel.handle, item.id) : '/vod'), shareUrl = new URL(href, window.location.origin).href;
-  function release() { const element = video.current; if (!element) return; if (document.pictureInPictureElement === element) void document.exitPictureInPicture().catch(() => {}); element.pause(); element.removeAttribute('src'); element.load(); }
+  function release() { history.suspend(); const element = video.current; if (!element) return; if (document.pictureInPictureElement === element) void document.exitPictureInPicture().catch(() => {}); element.pause(); element.removeAttribute('src'); element.load(); }
   useEffect(() => {
     active.current = true; ++generation.current; setMediaAllowed(true); setMediaError(''); setMediaPending(false); setSharing(false); let disposed = false; refreshing.current = false;
     async function refresh(initial = false) {
@@ -114,7 +118,12 @@ export function ConnectedVodWatch({ session, onRequireLogin, onSessionChanged }:
     <header className={base.watchToolbar}><Link className={base.back} to="/vod"><ArrowLeft size={18} aria-hidden="true" />다시보기 목록</Link>{item && <div className={styles.watchActions}>{session?.user && session.channel?.id === item.channel.id && <ClipCreator key={session.user.id + '/' + item.id} source={item} session={session} online={online} sourceVideo={video} onAccessError={clipAccessError} />}<button ref={shareButton} className={ui.button} type="button" onClick={() => { setCopied('idle'); setSharing(true); }}><Share2 size={16} aria-hidden="true" />다시보기 공유</button></div>}</header>
     {current.phase === 'loading' ? <p className={styles.loading} role="status">다시보기를 불러오는 중이에요.</p> : current.phase === 'missing' ? <EmptyState icon={<VideoOff size={26} />} title="공개된 다시보기를 찾을 수 없어요" description="방송자가 공개를 중단했거나 영상 주소가 달라졌을 수 있어요." action={<Link className={ui.button} to="/vod">다른 다시보기 보기</Link>} /> : current.phase === 'error' ? <div className={styles.feedback + ' ' + styles.error}><p role="alert">{current.error}</p><button type="button" className={ui.button} disabled={!online} onClick={() => setAttempt(v => v + 1)}>다시보기 다시 시도</button></div> : item && <>
       {!online && <p className={styles.feedback} role="status">인터넷 연결을 확인해 주세요.</p>}{current.error && <div className={styles.feedback + ' ' + styles.error}><p role="alert">{current.error}</p><button className={ui.button} type="button" disabled={!online} onClick={() => refreshNow.current()}>공개 상태 다시 확인</button></div>}
-      <div className={base.player + ' ' + styles.player}>{mediaAllowed ? <video key={key + '/' + mediaAttempt} ref={video} aria-label="다시보기 영상" src={vodApi.mediaUrl(item.id)} controls playsInline preload="metadata" onError={() => void checkMedia()} /> : <div className={styles.playerNotice}><VideoOff size={26} aria-hidden="true" /><p role={mediaPending ? 'status' : 'alert'}>{mediaError}</p><button type="button" className={ui.button} disabled={!online || mediaPending} onClick={() => void checkMedia(true)}>{mediaPending ? '확인 중…' : '영상 다시 시도'}</button></div>}</div>
+      <div className={base.player + ' ' + styles.player}>{mediaAllowed ? <video key={key + '/' + mediaAttempt} ref={video} aria-label="다시보기 영상" src={vodApi.mediaUrl(item.id)} controls playsInline preload="metadata"
+        onPlaying={history.begin} onTimeUpdate={event => history.progress(event.currentTarget)}
+        onPause={event => history.boundary(event.currentTarget, 'pause')} onSeeking={event => history.boundary(event.currentTarget, 'seeking')}
+        onEnded={event => history.boundary(event.currentTarget, 'ended')} onWaiting={event => history.boundary(event.currentTarget, 'reset')}
+        onError={() => void checkMedia()} /> : <div className={styles.playerNotice}><VideoOff size={26} aria-hidden="true" /><p role={mediaPending ? 'status' : 'alert'}>{mediaError}</p><button type="button" className={ui.button} disabled={!online || mediaPending} onClick={() => void checkMedia(true)}>{mediaPending ? '확인 중…' : '영상 다시 시도'}</button></div>}</div>
+      <ArchiveHistoryControls history={history} online={online} />
       <div className={base.watchDetails}><span className={base.kind}>다시보기</span><h1 id="vod-watch-title">{item.title}</h1><Link className={base.watchChannel} to={channelPath(item.channel.handle)}><Avatar channel={item.channel} />{item.channel.displayName}</Link><p className={styles.watchMeta}><span>영상 길이 {vodDuration(item.durationMs)}</span><time dateTime={new Date(item.publishedAtMs).toISOString()}>{dateTime.format(item.publishedAtMs)} 공개</time></p>{item.description && <p className={styles.description}>{item.description}</p>}</div>
       <ConnectedVodList key={item.channel.id} channelHandle={item.channel.handle} recent excludeId={item.id} />
     </>}

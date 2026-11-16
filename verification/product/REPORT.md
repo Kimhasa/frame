@@ -401,3 +401,26 @@ Flyway V16은 클립 구간, 소유 채널, 원본 VOD, 최초 요청 제목/설
 현재 생성자는 원본 방송자 본인이고 공개 VOD 하나의 구간을 사용한다. 시청자 생성 권한·라이브 직접 클립·썸네일·조회수·클립 시청 기록/포인트·파일 삭제/용량 할당·자동 만료·다중 API worker는 추가하지 않았다. 보관본과 DB는 함께 보존해야 한다. 한 PC loopback/headless Edge 기능 검사이며 휴대폰 실기기·다른 브라우저·Caddy HTTPS·외부 회선·장시간·부하/수용량 및 실제 Linux systemd 권한 실행은 검증하지 않았다. 재부팅·외부 배포는 하지 않았다.
 
 실행: Java 21의 JAVA_HOME과 별도 Docker 검증 설정의 FRAME_PRODUCT_TEST_CONFIG를 지정하고 API·웹 빌드 후 node server/verify/clips-e2e.mjs를 단독 실행한다. 결과: [백엔드](clips-backend-result.json), [실제 미디어·통합](clips-e2e-result.json), [배포 UI](clips-ui-result.json), [개발 UI](clips-dev-result.json), [현재 PC 적용](clips-local-result.json), [배포 설정](../spring/deploy/deploy-check-result.json). 화면: [공개 관리](clips-publisher-ui.png), [목록](clips-catalog-ui.png), [재생](clips-watch-ui.png), [390px](clips-watch-390-ui.png), [320px](clips-watch-320-ui.png).
+
+
+## 다시보기·클립 시청 기록과 이어보기
+
+2026-11-16. 기존 녹색·글꼴·여백과 시청 기록 목록을 유지하며 공개 다시보기·클립의 개인 시청 위치를 연결했다. 로그인한 시청자가 실제 영상을 재생하면 진행을 저장하고, 같은 영상에서 ‘이어보기’ 또는 ‘처음부터 보기’를 직접 선택한다. 저장 위치를 적용해도 자동 재생하지 않는다. 목록은 기존 라이브 기록과 함께 종류·검색·기간·더 보기·단건/선택/전체 삭제를 제공하며 진행률·시청 완료·공개 중단 상태를 표시한다. 익명 시청은 기록을 만들지 않는다.
+
+Flyway V17은 기존 시청 기록 테이블에 종류·영상 UUID·길이·위치·완료·버전을 더하고 계정에 삭제 세대를 둔다. 새 테이블이나 서비스는 추가하지 않았다. V1~V16 SQL을 변경하지 않고 기존 라이브 행과 POST 요청을 유지한다. 공개 영상의 제목·채널·길이는 서버가 결정하며 개인 저장 위치는 로그인·예상 계정·CSRF·Origin을 확인한다. 버전 충돌 또는 기록 삭제 후 이전 세대의 저장은 409로 거절한다. 삭제된 VOD·클립의 개인 snapshot은 남기되 새 재생·진행 기록은 공개 재생 조건을 다시 확인한다. 삭제 세대의 늦은 저장 방지는 새 VOD·클립 계약에 적용하며 기존 라이브 POST까지 같은 보장을 추가한 것은 아니다.
+
+영상 로드·멈춤 상태의 탐색만으로 최초 기록을 만들지 않는다. 보이는 온라인 영상의 실제 시간 진행을 관찰해 처음 저장하고 약 10초 주기와 일시정지·탐색 전·종료·숨김 경계에서 유효한 위치를 저장한다. 완료는 실제 종료 근처의 재생 증거와 ended를 함께 확인하며 다시 재생하면 낮은 위치와 미완료를 저장할 수 있다. 응답을 잃은 PUT은 GET으로 한 번 확인하고 불확실한 쓰기를 자동 반복하지 않는다. 충돌은 명시적인 ‘기록 다시 연결’ 전까지 중지하고 기록 오류가 영상 재생을 막지 않는다. 계정·영상 전환이나 공개 철회 시 요청과 대기 중 저장을 취소한다. 종료·이탈의 마지막 저장은 최선형이며 저장된 checkpoint 이후의 모든 프레임을 보장하지 않는다. 개인 이어보기 위치는 시청 증명이나 보상 포인트로 사용하지 않는다.
+
+Docker PostgreSQL·Redis를 사용하는 전체 test bootJar --rerun-tasks는 **160/160**(39개 클래스, 실패·오류·스킵 0)을 통과했다. Yarn Berry 4.18.1의 typecheck·build·build:design도 통과했다. V16→V17 승급은 기존 라이브 snapshot 보존·종류별 제약·개인 영상 중복·삭제 관계와 V17 이후 변경 감지를 검사했다. 전체 테스트 중 공개 중단 행 조회가 내부 예외 때문에 읽기 트랜잭션을 rollback-only로 만드는 문제를 발견해, 동일한 공개·실파일 조건의 비예외 availability 조회로 고치고 재검증했다. 단위/DB의 제어 위치·시각은 실제 브라우저 재생 증거와 구분한다.
+
+별도 verify DB·Redis namespace·임의 송출 경로와 세 시험 계정을 사용한 최종 통합 실행은 **34/34**, 배포 React 화면 **20/20**, 개발 StrictMode **4/4**를 통과했다. 통합 34개 중 마지막 4개는 브라우저 집계·실제 저장 위치와 Redis 세션의 API 재시작 보존·개발 집계·JAR 불변 확인이며 각 도구의 검사 수를 중복 합산하지 않는다. 전용 MediaMTX와 단일 320×180/15fps H.264/AAC FFmpeg 소스의 녹화에서 공개 VOD와 6초 클립을 만들었다. 시험 분할만 12초로 설정했고 기존 60초 운영 설정은 변경하지 않았다. API는 실제 보관 파일과 공개 바이트의 SHA 일치·권한/CSRF/Origin·위치 검증·버전/삭제 세대·종류/기간/cursor·공개 중단·실제 파일 누락을 확인했다.
+
+headless Edge에서 VOD 시간 0→2.024740초·디코딩 11→33프레임을 관찰하고 실제 저장 1,811ms를 새 페이지에서 명시적으로 선택해 1,811ms·일시정지로 복원했다. 클립은 0→2.024840초·4→33프레임, native ended 6.021354초·89프레임을 확인했으며 이후 실제 재생으로 낮은 위치와 미완료 상태를 저장했다. 서버 계약의 길이 VOD 12,822ms/클립 6,022ms와 브라우저 컨테이너 길이 VOD 13.528444초/클립 6.021354초는 서로 다른 관측값으로 JSON에 남겼다. 무음 headless 검사이며 사람의 청취나 실기기 재생 품질 검사가 아니다.
+
+실제 재생 PUT을 보류한 동안 같은 기록을 삭제하고 요청을 풀어 409와 행 미복원을 확인했다. 최초 GET을 지연한 상태에서 재생·일시정지한 진행도 GET 해제 뒤 저장됐다. 실제 성공한 PUT 200 응답만 503으로 바꾼 경우 GET 한 번으로 확인했고 같은 버전/위치의 불확실한 PUT 재전송은 0회였다. 이때 쓰기 두 번은 최초 저장과 일시정지의 최신 위치 갱신이다. 익명 실제 클립 재생은 기록을 만들지 않고 다른 계정의 개인 목록은 분리됐다. UI 런타임/요청 가로채기 오류는 0, 개발 화면의 전체 변경 요청은 0이다. 초기 실행 도구의 JDK 환경·API fixture 행 개수·브라우저 evaluate 인용 오류를 고친 뒤 최종 격리 실행 전체를 다시 통과했다. 네 장의 데스크톱·390px·320px 캡처도 직접 확인했다.
+
+검증한 JAR f1ce4f86fa880625cd4f6ae4eb07b6fad4bf6e3d27b8d872a9691c09c15bcc55를 현재 PC API에 적용했다. Flyway V1~V17 성공·V1~V16 SQL 불변·실행 JAR 일치, /healthz와 시청 기록 화면 200·비로그인 개인 기록/이어보기 API 401·익명 VOD/클립 조회 200을 확인했다. 실제 제품 DB의 회원·채널·운영자·녹화·VOD·클립·시청 기록과 시험 계정은 모두 작업 전과 같은 0개다. API만 교체해 기존 MediaMTX PID 34664를 보존했고 전용 시험 포트 10개를 정리했다. 자격 증명·쿠키·브라우저 프로필·checkpoint·원본 영상·로그는 저장소 밖에만 둔다.
+
+실제 확인 범위는 한 PC loopback·headless Edge와 모바일 너비 에뮬레이션이다. 휴대폰 실기기·다른 브라우저·Caddy HTTPS·외부 회선·장시간·부하/수용량 검사는 하지 않았다. 보상/조회수 집계나 마지막 프레임까지의 종료 저장을 증명하지 않는다. 재부팅·외부 배포는 하지 않았다.
+
+실행: Java 21의 JAVA_HOME과 별도 Docker 검증 설정의 FRAME_PRODUCT_TEST_CONFIG를 지정하고 API·웹 빌드 후 node server/verify/archive-history-e2e.mjs를 단독 실행한다. 결과: [백엔드](archive-history-backend-result.json), [실제 미디어·통합](archive-history-e2e-result.json), [배포 UI](archive-history-ui-result.json), [개발 UI](archive-history-dev-result.json), [현재 PC 적용](archive-history-local-result.json). 화면: [시청 기록](archive-history-ui.png), [이어보기](archive-history-resume-ui.png), [390px](archive-history-390-ui.png), [320px](archive-history-320-ui.png). 현재 [시청 기록](http://127.0.0.1:5360/_frame/history)에서 본인 계정으로 재생한 공개 영상을 확인할 수 있다.

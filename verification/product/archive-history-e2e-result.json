@@ -1,0 +1,179 @@
+{
+  "complete": true,
+  "verificationDatabaseOnly": true,
+  "productionUserDataUntouched": true,
+  "nativeObsReceiverUntouched": true,
+  "testedJarSha256": "f1ce4f86fa880625cd4f6ae4eb07b6fad4bf6e3d27b8d872a9691c09c15bcc55",
+  "ports": {
+    "api": 18083,
+    "web": 5365,
+    "dev": 5366,
+    "rtmp": 2935,
+    "rtsp": 29554,
+    "mtx": 29997,
+    "hls": 29888,
+    "playback": 29996,
+    "browser": 9550,
+    "devBrowser": 9551
+  },
+  "recordingSegmentDurationSeconds": 12,
+  "productionSegmentDurationSeconds": 60,
+  "fixture": "One dedicated 320x180 15fps H.264/AAC source, a finalized VOD and an independently encoded six-second clip",
+  "results": [
+    {
+      "name": "The private actual-media fixture belongs to the dedicated publisher",
+      "pass": true
+    },
+    {
+      "name": "Legacy live history still accepts its original two-field request",
+      "pass": true
+    },
+    {
+      "name": "The actual vod fixture serves its independently archived MP4 bytes",
+      "pass": true
+    },
+    {
+      "name": "The actual clip fixture serves its independently archived MP4 bytes",
+      "pass": true
+    },
+    {
+      "name": "vod metadata GET does not fabricate history",
+      "pass": true
+    },
+    {
+      "name": "vod progress requires a private session, CSRF and trusted Origin",
+      "pass": true
+    },
+    {
+      "name": "vod progress rejects a previous account cookie scope",
+      "pass": true
+    },
+    {
+      "name": "vod progress rejects invalid positions, premature completion and client metadata",
+      "pass": true
+    },
+    {
+      "name": "vod progress stores trusted public metadata and an authoritative version",
+      "pass": true
+    },
+    {
+      "name": "vod stale create cannot overwrite an accepted visit",
+      "pass": true
+    },
+    {
+      "name": "vod completion and replay preserve one row and accept a lower replay position",
+      "pass": true
+    },
+    {
+      "name": "clip metadata GET does not fabricate history",
+      "pass": true
+    },
+    {
+      "name": "clip progress requires a private session, CSRF and trusted Origin",
+      "pass": true
+    },
+    {
+      "name": "clip progress rejects a previous account cookie scope",
+      "pass": true
+    },
+    {
+      "name": "clip progress rejects invalid positions, premature completion and client metadata",
+      "pass": true
+    },
+    {
+      "name": "clip progress stores trusted public metadata and an authoritative version",
+      "pass": true
+    },
+    {
+      "name": "clip stale create cannot overwrite an accepted visit",
+      "pass": true
+    },
+    {
+      "name": "clip completion and replay preserve one row and accept a lower replay position",
+      "pass": true
+    },
+    {
+      "name": "History cursor pages contain distinct real live and archived rows",
+      "pass": true
+    },
+    {
+      "name": "The live history filter returns only that stored kind",
+      "pass": true
+    },
+    {
+      "name": "The vod history filter returns only that stored kind",
+      "pass": true
+    },
+    {
+      "name": "The clip history filter returns only that stored kind",
+      "pass": true
+    },
+    {
+      "name": "History query and inclusive Seoul calendar dates apply to all stored kinds with controlled cursor validation",
+      "pass": true
+    },
+    {
+      "name": "An archived history row can be individually deleted",
+      "pass": true
+    },
+    {
+      "name": "A late save cannot resurrect an individually deleted archive row",
+      "pass": true
+    },
+    {
+      "name": "Clearing an empty history remains a successful explicit deletion",
+      "pass": true
+    },
+    {
+      "name": "Clear-all advances the epoch even when empty and rejects an older unsaved visit",
+      "pass": true
+    },
+    {
+      "name": "Private parent VOD retains a clip history snapshot and blocks new progress reads and writes",
+      "pass": true
+    },
+    {
+      "name": "A clip own withdrawal also makes its stored history unavailable",
+      "pass": true
+    },
+    {
+      "name": "An actually missing clip file cannot be resumed through its retained snapshot",
+      "pass": true
+    },
+    {
+      "name": "Actual browser progression, resume, recovery, races, account isolation and mobile history pass",
+      "pass": true
+    },
+    {
+      "name": "Actual browser-saved positions and Redis login survive the isolated API restart",
+      "pass": true
+    },
+    {
+      "name": "Development StrictMode reads actual archive history without any mutation",
+      "pass": true
+    },
+    {
+      "name": "The exact tested JAR stays immutable throughout media preparation and verification",
+      "pass": true
+    }
+  ],
+  "observations": [
+    {
+      "kind": "vod",
+      "durationMs": 12822,
+      "bytes": 812504,
+      "sha256": "b82c4e7786b8103951402f9daf324e84d4805bc27bf9f0e82ba43ef1a507ae4d"
+    },
+    {
+      "kind": "clip",
+      "durationMs": 6022,
+      "bytes": 266890,
+      "sha256": "0fcd2fca12e6cc704aaa6fbde95ac9465d2c0b454fbffedf481f64602ce2ed34"
+    }
+  ],
+  "limits": [
+    "One PC loopback and headless Edge only; 320/390px are emulated viewports",
+    "No physical-device, Caddy HTTPS, external-network, long-run or load/capacity claim",
+    "Direct API CAS fixtures are separate from measured browser playback evidence"
+  ]
+}

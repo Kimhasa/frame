@@ -28,12 +28,16 @@ export type OperatorReportFilters = { status?: 'all' | OperatorReportStatus; rea
 export type OperatorReportPageResult = { items: OperatorReportItem[]; nextCursor: string | null };
 export type ScheduledBroadcast = { id: string; title: string; at: number };
 export type ScheduleChanges = Pick<ScheduledBroadcast, 'title' | 'at'>;
-export type WatchHistoryItem = {
-  id: string; kind: 'live'; broadcastId: string; path: string; title: string; publisher: string;
-  channelHandle: string | null; thumbnailUrl: string | null; watchedAtMs: number; available: boolean;
+type HistoryItemBase = {
+  id: string; title: string; publisher: string; channelHandle: string | null; thumbnailUrl: string | null;
+  watchedAtMs: number; available: boolean; completed: boolean; version: number;
 };
+export type WatchHistoryItem = HistoryItemBase & (
+  { kind: 'live'; broadcastId: string; path: string; mediaId: null; durationMs: null; positionMs: null }
+  | { kind: 'vod' | 'clip'; broadcastId: null; path: null; mediaId: string; durationMs: number; positionMs: number }
+);
 export type HistoryFilters = { kind?: 'all' | 'live' | 'vod' | 'clip'; q?: string; from?: string; to?: string; cursor?: string; limit?: number };
-export type HistoryPageResult = { items: WatchHistoryItem[]; nextCursor: string | null };
+export type HistoryPageResult = { userId: string; items: WatchHistoryItem[]; nextCursor: string | null };
 export type ProductNotification = {
   id: string; title: string; body: string; createdAtMs: number; readAtMs: number | null;
 } & ({ kind: 'live'; target: { channelId: string; channelHandle: string; broadcastId: string; path: string; available: boolean }; report: null }
@@ -184,28 +188,42 @@ async function schedules(path: string, signal?: AbortSignal) {
   return body.items.map(scheduledBroadcast);
 }
 
-function historyItem(value: unknown): WatchHistoryItem {
+export function historyItem(value: unknown): WatchHistoryItem {
   const data = value as WatchHistoryItem | null;
+  const uuid = /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/;
   if (!data || typeof data.id !== 'string' || !/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/.test(data.id)
-    || data.kind !== 'live' || typeof data.broadcastId !== 'string' || !/^[0-9a-f]{32}$/.test(data.broadcastId)
-    || typeof data.path !== 'string' || !/^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$/.test(data.path)
+    || !['live', 'vod', 'clip'].includes(data.kind)
     || typeof data.title !== 'string' || typeof data.publisher !== 'string' || typeof data.available !== 'boolean'
+    || typeof data.completed !== 'boolean' || !Number.isSafeInteger(data.version) || data.version < 0
     || !Number.isSafeInteger(data.watchedAtMs) || data.watchedAtMs < 0 || !Number.isFinite(new Date(data.watchedAtMs).getTime())
     || (data.channelHandle !== null && (typeof data.channelHandle !== 'string' || !/^[a-z][a-z0-9_-]{2,23}$/.test(data.channelHandle)))
     || (data.thumbnailUrl !== null && (typeof data.thumbnailUrl !== 'string' || !/^\/thumbnails\/[0-9a-f]{32}\.jpg$/.test(data.thumbnailUrl)))) {
     throw new AccountError('시청 기록을 확인하지 못했어요.', 'INVALID_RESPONSE', 0);
   }
+  if (data.kind === 'live' ? typeof data.broadcastId !== 'string' || !/^[0-9a-f]{32}$/.test(data.broadcastId)
+    || typeof data.path !== 'string' || !/^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$/.test(data.path)
+    || data.mediaId !== null || data.durationMs !== null || data.positionMs !== null || data.completed || data.version !== 0
+    : data.broadcastId !== null || data.path !== null || typeof data.mediaId !== 'string' || !uuid.test(data.mediaId)
+      || data.thumbnailUrl !== null || !Number.isSafeInteger(data.durationMs) || data.durationMs <= 0
+      || !Number.isSafeInteger(data.positionMs) || data.positionMs < 0 || data.positionMs > data.durationMs
+      || data.completed && data.positionMs !== data.durationMs) {
+    throw new AccountError('시청 기록을 확인하지 못했어요.', 'INVALID_RESPONSE', 0);
+  }
   return data;
 }
-async function historyList(filters: HistoryFilters = {}, signal?: AbortSignal): Promise<HistoryPageResult> {
+async function historyList(filters: HistoryFilters, ownerId: string, signal?: AbortSignal): Promise<HistoryPageResult> {
   const query = new URLSearchParams();
   for (const [key, value] of Object.entries(filters)) if (value !== undefined && value !== '') query.set(key, String(value));
-  const body = await request(`/me/history?${query}`, { signal }) as { items?: unknown[]; nextCursor?: unknown } | null;
-  if (!body || !Array.isArray(body.items) || (body.nextCursor !== null && (typeof body.nextCursor !== 'string'
+  const body = await request(`/me/history?${query}`, { signal, headers: { 'X-FRAME-USER-ID': ownerId } }) as { userId?: unknown; items?: unknown[]; nextCursor?: unknown } | null;
+  if (!body || typeof body.userId !== 'string' || !/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/.test(body.userId)
+    || !Array.isArray(body.items) || body.items.length > (filters.limit ?? 50) || (body.nextCursor !== null && (typeof body.nextCursor !== 'string'
     || !body.nextCursor || body.nextCursor.length > 2048 || /[\u0000-\u001f\u007f]/.test(body.nextCursor)))) {
     throw new AccountError('시청 기록을 불러오지 못했어요.', 'INVALID_RESPONSE', 0);
   }
-  return { items: body.items.map(historyItem), nextCursor: body.nextCursor };
+  if (body.userId !== ownerId) throw new AccountError('로그인한 계정이 바뀌었어요. 계정 정보를 다시 확인해 주세요.', 'SESSION_CHANGED', 409);
+  const items = body.items.map(historyItem);
+  if (new Set(items.map(item => item.id)).size !== items.length) throw new AccountError('시청 기록을 확인하지 못했어요.', 'INVALID_RESPONSE', 0);
+  return { userId: body.userId, items, nextCursor: body.nextCursor };
 }
 
 function operatorReportItem(value: unknown): OperatorReportItem {
@@ -479,10 +497,10 @@ export const accountApi = {
   cancelSchedule: async (id: string, token: string) => { await request(`/me/schedules/${encodeURIComponent(id)}`, { method: 'DELETE' }, token); },
   channelSchedule: (handle: string, signal?: AbortSignal) => schedules(`/channels/${encodeURIComponent(handle)}/schedule`, signal),
   historyList,
-  recordHistory: async (body: { broadcastId: string; path: string }, token: string, signal?: AbortSignal) => { await request('/me/history', { method: 'POST', body: JSON.stringify(body), signal }, token); },
-  removeHistory: async (id: string, token: string) => { await request(`/me/history/${encodeURIComponent(id)}`, { method: 'DELETE' }, token); },
-  removeHistorySelection: async (ids: string[], token: string) => { await request('/me/history/delete', { method: 'POST', body: JSON.stringify({ ids }) }, token); },
-  clearHistory: async (token: string) => { await request('/me/history', { method: 'DELETE' }, token); },
+  recordHistory: async (body: { broadcastId: string; path: string }, token: string, signal?: AbortSignal, ownerId?: string) => { await request('/me/history', { method: 'POST', body: JSON.stringify(body), signal, ...(ownerId ? { headers: { 'X-FRAME-USER-ID': ownerId } } : {}) }, token); },
+  removeHistory: async (id: string, token: string, ownerId: string, signal?: AbortSignal) => { await request(`/me/history/${encodeURIComponent(id)}`, { method: 'DELETE', headers: { 'X-FRAME-USER-ID': ownerId }, signal }, token); },
+  removeHistorySelection: async (ids: string[], token: string, ownerId: string, signal?: AbortSignal) => { await request('/me/history/delete', { method: 'POST', headers: { 'X-FRAME-USER-ID': ownerId }, body: JSON.stringify({ ids }), signal }, token); },
+  clearHistory: async (token: string, ownerId: string, signal?: AbortSignal) => { await request('/me/history', { method: 'DELETE', headers: { 'X-FRAME-USER-ID': ownerId }, signal }, token); },
   notificationList,
   notificationUnreadCount: async (signal?: AbortSignal, ownerId?: string) => notificationCount(await request('/me/notifications/unread-count', { signal, headers: accountOwnerHeaders(ownerId) })),
   readNotification: async (id: string, token: string, ownerId?: string) => notificationCount(await request(`/me/notifications/${encodeURIComponent(id)}/read`, { method: 'PATCH', headers: accountOwnerHeaders(ownerId) }, token)),

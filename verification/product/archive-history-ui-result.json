@@ -1,0 +1,426 @@
+{
+  "complete": true,
+  "verificationDatabaseOnly": true,
+  "testedJarSha256": "f1ce4f86fa880625cd4f6ae4eb07b6fad4bf6e3d27b8d872a9691c09c15bcc55",
+  "results": [
+    {
+      "name": "Anonymous actual decoded clip playback creates no private history",
+      "pass": true
+    },
+    {
+      "name": "Opening metadata and seeking while paused do not fabricate a watched visit",
+      "pass": true
+    },
+    {
+      "name": "Actual advancing VOD frames and pause persist trusted metadata and a native saved position",
+      "pass": true,
+      "detail": {
+        "positionMs": 1811
+      }
+    },
+    {
+      "name": "Reload offers saved progress without seeking or autoplay",
+      "pass": true
+    },
+    {
+      "name": "Explicit continue restores the saved position and remains paused",
+      "pass": true,
+      "detail": {
+        "restoredPositionMs": 1811,
+        "savedPositionMs": 1811
+      }
+    },
+    {
+      "name": "Actual advancing clip frames persist a separate private clip position",
+      "pass": true
+    },
+    {
+      "name": "History shows real VOD and clip entries with explicit continue links",
+      "pass": true
+    },
+    {
+      "name": "Saved archive history fits the 390px viewport",
+      "pass": true
+    },
+    {
+      "name": "Saved archive history fits the 320px viewport",
+      "pass": true
+    },
+    {
+      "name": "The durable VOD row is deleted while an actual player save is in flight",
+      "pass": true
+    },
+    {
+      "name": "A late actual player PUT cannot resurrect the deleted row",
+      "pass": true
+    },
+    {
+      "name": "A second logged-in account cannot see the actual viewer private history",
+      "pass": true
+    },
+    {
+      "name": "Actual play and pause wait for the delayed initial history receipt without speculative writes",
+      "pass": true
+    },
+    {
+      "name": "Resolving the delayed GET persists queued actual progress while video stays paused",
+      "pass": true
+    },
+    {
+      "name": "A lost actual PUT 200 response reconciles through GET without repeating the accepted update",
+      "pass": true,
+      "detail": {
+        "acceptedStatus": 200,
+        "writes": 2,
+        "reconciliationGets": 1
+      }
+    },
+    {
+      "name": "Actual native clip ending stores trusted complete duration",
+      "pass": true
+    },
+    {
+      "name": "Completed clip starts over only by explicit paused selection",
+      "pass": true
+    },
+    {
+      "name": "Actual replay advances a lower position and clears completion on the same history row",
+      "pass": true
+    },
+    {
+      "name": "Every actual archive save carries the expected logged-in account header",
+      "pass": true
+    },
+    {
+      "name": "No browser runtime or interception errors",
+      "pass": true
+    }
+  ],
+  "checks": 20,
+  "passed": 20,
+  "runtimeErrors": [],
+  "mutations": [
+    {
+      "method": "PUT",
+      "kind": "vod",
+      "version": 0,
+      "positionMs": 1278,
+      "completed": false,
+      "expectedOwner": true
+    },
+    {
+      "method": "PUT",
+      "kind": "vod",
+      "version": 0,
+      "positionMs": 1811,
+      "completed": false,
+      "expectedOwner": true
+    },
+    {
+      "method": "PUT",
+      "kind": "clip",
+      "version": 0,
+      "positionMs": 1286,
+      "completed": false,
+      "expectedOwner": true
+    },
+    {
+      "method": "PUT",
+      "kind": "clip",
+      "version": 0,
+      "positionMs": 1815,
+      "completed": false,
+      "expectedOwner": true
+    },
+    {
+      "method": "PUT",
+      "kind": "vod",
+      "version": 1,
+      "positionMs": 1275,
+      "completed": false,
+      "expectedOwner": true
+    },
+    {
+      "method": "PUT",
+      "kind": "vod",
+      "version": 0,
+      "positionMs": 1288,
+      "completed": false,
+      "expectedOwner": true
+    },
+    {
+      "method": "PUT",
+      "kind": "vod",
+      "version": 0,
+      "positionMs": 1819,
+      "completed": false,
+      "expectedOwner": true
+    },
+    {
+      "method": "PUT",
+      "kind": "clip",
+      "version": 1,
+      "positionMs": 1811,
+      "completed": false,
+      "expectedOwner": true
+    },
+    {
+      "method": "PUT",
+      "kind": "vod",
+      "version": 1,
+      "positionMs": 1285,
+      "completed": false,
+      "expectedOwner": true
+    },
+    {
+      "method": "PUT",
+      "kind": "vod",
+      "version": 2,
+      "positionMs": 1815,
+      "completed": false,
+      "expectedOwner": true
+    },
+    {
+      "method": "PUT",
+      "kind": "clip",
+      "version": 2,
+      "positionMs": 1283,
+      "completed": false,
+      "expectedOwner": true
+    },
+    {
+      "method": "PUT",
+      "kind": "clip",
+      "version": 3,
+      "positionMs": 6022,
+      "completed": true,
+      "expectedOwner": true
+    },
+    {
+      "method": "PUT",
+      "kind": "clip",
+      "version": 4,
+      "positionMs": 1286,
+      "completed": false,
+      "expectedOwner": true
+    },
+    {
+      "method": "PUT",
+      "kind": "clip",
+      "version": 5,
+      "positionMs": 1817,
+      "completed": false,
+      "expectedOwner": true
+    }
+  ],
+  "totalMutations": 14,
+  "playbackMetrics": [
+    {
+      "kind": "clip",
+      "before": {
+        "time": 0,
+        "paused": true,
+        "ended": false,
+        "width": 320,
+        "height": 180,
+        "frames": 0,
+        "duration": 6.021354
+      },
+      "after": {
+        "time": 1.554127,
+        "paused": false,
+        "ended": false,
+        "width": 320,
+        "height": 180,
+        "frames": 27,
+        "duration": 6.021354
+      }
+    },
+    {
+      "kind": "vod",
+      "before": {
+        "time": 0,
+        "paused": true,
+        "ended": false,
+        "width": 320,
+        "height": 180,
+        "frames": 11,
+        "duration": 13.528444
+      },
+      "after": {
+        "time": 2.02474,
+        "paused": false,
+        "ended": false,
+        "width": 320,
+        "height": 180,
+        "frames": 33,
+        "duration": 13.528444
+      }
+    },
+    {
+      "kind": "clip",
+      "before": {
+        "time": 0,
+        "paused": true,
+        "ended": false,
+        "width": 320,
+        "height": 180,
+        "frames": 4,
+        "duration": 6.021354
+      },
+      "after": {
+        "time": 2.02484,
+        "paused": false,
+        "ended": false,
+        "width": 320,
+        "height": 180,
+        "frames": 33,
+        "duration": 6.021354
+      }
+    },
+    {
+      "kind": "vod",
+      "before": {
+        "time": 0,
+        "paused": true,
+        "ended": false,
+        "width": 320,
+        "height": 180,
+        "frames": 4,
+        "duration": 13.528444
+      },
+      "after": {
+        "time": 2.020525,
+        "paused": false,
+        "ended": false,
+        "width": 320,
+        "height": 180,
+        "frames": 22,
+        "duration": 13.528444
+      }
+    },
+    {
+      "kind": "vod",
+      "before": {
+        "time": 0,
+        "paused": true,
+        "ended": false,
+        "width": 320,
+        "height": 180,
+        "frames": 22,
+        "duration": 13.528444
+      },
+      "after": {
+        "time": 2.042242,
+        "paused": false,
+        "ended": false,
+        "width": 320,
+        "height": 180,
+        "frames": 45,
+        "duration": 13.528444
+      }
+    },
+    {
+      "kind": "clip",
+      "before": {
+        "time": 0,
+        "paused": true,
+        "ended": false,
+        "width": 320,
+        "height": 180,
+        "frames": 4,
+        "duration": 6.021354
+      },
+      "after": {
+        "time": 2.020396,
+        "paused": false,
+        "ended": false,
+        "width": 320,
+        "height": 180,
+        "frames": 34,
+        "duration": 6.021354
+      }
+    },
+    {
+      "kind": "vod",
+      "before": {
+        "time": 0,
+        "paused": true,
+        "ended": false,
+        "width": 320,
+        "height": 180,
+        "frames": 4,
+        "duration": 13.528444
+      },
+      "after": {
+        "time": 2.02459,
+        "paused": false,
+        "ended": false,
+        "width": 320,
+        "height": 180,
+        "frames": 22,
+        "duration": 13.528444
+      }
+    },
+    {
+      "kind": "clip",
+      "before": {
+        "time": 0,
+        "paused": true,
+        "ended": false,
+        "width": 320,
+        "height": 180,
+        "frames": 4,
+        "duration": 6.021354
+      },
+      "after": {
+        "time": 2.024789,
+        "paused": false,
+        "ended": false,
+        "width": 320,
+        "height": 180,
+        "frames": 33,
+        "duration": 6.021354
+      }
+    },
+    {
+      "kind": "clip",
+      "nativeEnded": {
+        "time": 6.021354,
+        "paused": true,
+        "ended": true,
+        "width": 320,
+        "height": 180,
+        "frames": 89,
+        "duration": 6.021354
+      }
+    },
+    {
+      "kind": "clip",
+      "before": {
+        "time": 0,
+        "paused": true,
+        "ended": false,
+        "width": 320,
+        "height": 180,
+        "frames": 4,
+        "duration": 6.021354
+      },
+      "after": {
+        "time": 2.027519,
+        "paused": false,
+        "ended": false,
+        "width": 320,
+        "height": 180,
+        "frames": 33,
+        "duration": 6.021354
+      }
+    }
+  ],
+  "acceptedResponseBeforeFault": 200,
+  "completedHistoryGetResponses": 13,
+  "limits": [
+    "Native headless Edge playback on one PC; mobile widths are emulated",
+    "No physical-device, external-network, long-run or load verification"
+  ]
+}

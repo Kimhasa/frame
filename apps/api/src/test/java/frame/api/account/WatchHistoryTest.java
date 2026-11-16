@@ -5,10 +5,47 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.json.JsonMapper;
 
 class WatchHistoryTest {
+    private static final JsonMapper JSON = JsonMapper.builder().build();
+    @Test void archivedProgressRequiresExactFieldsAndNonnegativeIntegralNumbers() {
+        Map<String, Object> body = new HashMap<>(Map.of("epoch", 2, "version", 3, "positionMs", 1000, "completed", false));
+        body.put("id", UUID.randomUUID().toString());
+        var progress = WatchHistory.progress(JSON.valueToTree(body));
+        assertEquals(2, progress.epoch()); assertEquals(3, progress.version()); assertEquals(1000, progress.position()); assertFalse(progress.completed());
+        body.put("id", null); assertNull(WatchHistory.progress(JSON.valueToTree(body)).id());
+        for (String key : new String[] { "epoch", "version", "positionMs" }) {
+            for (Object value : new Object[] { -1, 0.5, "1", true, "9223372036854775808" }) {
+                var invalid = new HashMap<>(body); invalid.put(key, value);
+                assertEquals("INVALID_HISTORY_INPUT", assertThrows(ProductProblem.class, () -> WatchHistory.progress(JSON.valueToTree(invalid))).code);
+            }
+        }
+        for (String key : body.keySet()) {
+            var invalid = new HashMap<>(body); invalid.remove(key);
+            assertThrows(ProductProblem.class, () -> WatchHistory.progress(JSON.valueToTree(invalid)));
+        }
+        for (String key : new String[] { "title", "durationMs", "channelId", "userId", "watchedAtMs" }) {
+            var invalid = new HashMap<>(body); invalid.put(key, "untrusted");
+            assertThrows(ProductProblem.class, () -> WatchHistory.progress(JSON.valueToTree(invalid)));
+        }
+        var invalid = new HashMap<>(body); invalid.put("id", "../media"); assertThrows(ProductProblem.class, () -> WatchHistory.progress(JSON.valueToTree(invalid)));
+        invalid.put("id", null); invalid.put("completed", "true"); assertThrows(ProductProblem.class, () -> WatchHistory.progress(JSON.valueToTree(invalid)));
+        assertThrows(ProductProblem.class, () -> WatchHistory.progress(JSON.readTree("{\"epoch\":9223372036854775808,\"id\":null,\"version\":0,\"positionMs\":0,\"completed\":false}")));
+    }
+    @Test void completionRequiresTheTrustedEndAndReplayCanSaveAnEarlierPosition() {
+        assertEquals(0, WatchHistory.position(0, false, 6000));
+        assertEquals(1500, WatchHistory.position(1500, false, 6000));
+        assertEquals(6000, WatchHistory.position(5000, true, 6000));
+        assertEquals(6000, WatchHistory.position(6000, true, 6000));
+        for (long position : new long[] { -1, 6001, Long.MAX_VALUE }) assertThrows(ProductProblem.class, () -> WatchHistory.position(position, false, 6000));
+        assertThrows(ProductProblem.class, () -> WatchHistory.position(4999, true, 6000));
+        assertThrows(ProductProblem.class, () -> WatchHistory.position(0, true, 6000));
+    }
     @Test void filterDatesAreInclusiveSeoulCalendarDays() {
         var filter = WatchHistory.filters("all", "  코딩  ", "2026-11-12", "2026-11-12", "", 50);
         assertEquals("코딩", filter.query());
