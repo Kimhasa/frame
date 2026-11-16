@@ -27,12 +27,12 @@ class ProductMigrationIntegrationTest {
     @Test void emptySchemaMigratesAndRepeatedStartupDoesNotReapplySql() throws Exception {
         try (Database database = Database.create()) {
             Flyway flyway = database.configuration().load();
-            assertEquals(15, flyway.migrate().migrationsExecuted);
+            assertEquals(16, flyway.migrate().migrationsExecuted);
             assertTrue(flyway.validateWithResult().validationSuccessful);
-            assertEquals(15, flyway.info().applied().length);
+            assertEquals(16, flyway.info().applied().length);
             assertEquals(0, flyway.migrate().migrationsExecuted);
-            assertEquals(15, database.number("SELECT count(*) FROM " + database.table("flyway_schema_history") + " WHERE success"));
-            assertEquals(26, database.number("SELECT count(*) FROM information_schema.tables WHERE table_schema='" + database.schema + "' AND table_name IN ('product_accounts','product_channels','product_follows','product_broadcast_schedules','product_watch_history','product_channel_handles','product_channel_reports','product_notification_events','product_notifications','product_chat_settings','product_chat_blocks','product_polls','product_poll_options','product_poll_votes','product_questions','product_rewards','product_point_wallets','product_redemptions','product_point_ledger','product_missions','product_mission_history','product_broadcast_analytics','product_broadcast_analytics_daily','product_recording_windows','product_recording_files','product_vods')"));
+            assertEquals(16, database.number("SELECT count(*) FROM " + database.table("flyway_schema_history") + " WHERE success"));
+            assertEquals(27, database.number("SELECT count(*) FROM information_schema.tables WHERE table_schema='" + database.schema + "' AND table_name IN ('product_accounts','product_channels','product_follows','product_broadcast_schedules','product_watch_history','product_channel_handles','product_channel_reports','product_notification_events','product_notifications','product_chat_settings','product_chat_blocks','product_polls','product_poll_options','product_poll_votes','product_questions','product_rewards','product_point_wallets','product_redemptions','product_point_ledger','product_missions','product_mission_history','product_broadcast_analytics','product_broadcast_analytics_daily','product_recording_windows','product_recording_files','product_vods','product_clips')"));
         }
     }
 
@@ -51,7 +51,7 @@ class ProductMigrationIntegrationTest {
                 insert.setObject(1, viewer); insert.setObject(2, channel); insert.executeUpdate();
             }
             Flyway latest = database.configuration().load();
-            assertEquals(14, latest.migrate().migrationsExecuted);
+            assertEquals(15, latest.migrate().migrationsExecuted);
             assertTrue(latest.validateWithResult().validationSuccessful);
             assertEquals(2, database.number("SELECT count(*) FROM " + database.table("product_accounts") + " WHERE terms_version IS NULL AND privacy_version IS NULL AND consented_at IS NULL"));
             assertEquals(1, database.number("SELECT count(*) FROM " + database.table("product_channels") + " WHERE handle='previous-channel' AND description='업그레이드 전에 저장한 소개' AND banner_preset='forest'"));
@@ -75,7 +75,7 @@ class ProductMigrationIntegrationTest {
                 statement.executeUpdate("INSERT INTO " + database.table("product_broadcast_schedules") + "(id,channel_id,title,starts_at) VALUES('" + schedule + "','" + channel + "','기존 예약 보존',current_timestamp + interval '1 day')");
             }
             Flyway latest = database.configuration().load();
-            assertEquals(12, latest.migrate().migrationsExecuted); assertTrue(latest.validateWithResult().validationSuccessful);
+            assertEquals(13, latest.migrate().migrationsExecuted); assertTrue(latest.validateWithResult().validationSuccessful);
             assertEquals(1, database.number("SELECT count(*) FROM " + database.table("product_broadcast_schedules") + " WHERE id='" + schedule + "' AND title='기존 예약 보존'"));
             try (var statement = database.connection.createStatement()) {
                 statement.executeUpdate("INSERT INTO " + database.table("product_watch_history") + "(id,user_id,broadcast_id,path,broadcast_instance_id,title,publisher,channel_id,watched_at_ms) VALUES('" + history + "','" + owner + "','" + "a".repeat(32) + "','source','" + UUID.randomUUID() + "','보존 기록','채널','" + channel + "',1794442212345)");
@@ -97,7 +97,7 @@ class ProductMigrationIntegrationTest {
                 statement.executeUpdate("INSERT INTO " + database.table("product_broadcast_schedules") + "(id,channel_id,title,starts_at) VALUES('" + UUID.randomUUID() + "','" + channel + "','V4 예약',current_timestamp + interval '1 day')");
                 statement.executeUpdate("INSERT INTO " + database.table("product_watch_history") + "(id,user_id,broadcast_id,path,broadcast_instance_id,title,publisher,channel_id,watched_at_ms) VALUES('" + history + "','" + viewer + "','" + "a".repeat(32) + "','source','" + UUID.randomUUID() + "','V4 기록','채널','" + channel + "',1794442212345)");
             }
-            assertEquals(11, database.configuration().load().migrate().migrationsExecuted);
+            assertEquals(12, database.configuration().load().migrate().migrationsExecuted);
             assertEquals(1, database.number("SELECT count(*) FROM " + database.table("product_channels") + " WHERE id='" + channel + "' AND created_at='2025-01-01T12:34:56.789Z' AND description='기존 소개' AND country_code IS NULL AND links='[]'::jsonb"));
             assertEquals(1, database.number("SELECT count(*) FROM " + database.table("product_channel_handles") + " WHERE handle='profile-before-v5' AND channel_id='" + channel + "'"));
             assertEquals(1, database.number("SELECT count(*) FROM " + database.table("product_follows") + " WHERE channel_id='" + channel + "' AND notifications_on"));
@@ -117,7 +117,7 @@ class ProductMigrationIntegrationTest {
                 statement.executeUpdate("INSERT INTO " + database.table("product_channels") + "(id,owner_id,handle,display_name) VALUES('" + channel + "','" + owner + "','before-reports-v6','기존 채널')");
                 statement.executeUpdate("INSERT INTO " + database.table("product_channel_reports") + "(id,channel_id,reporter_id,reason,details,created_at) VALUES('" + report + "','" + channel + "','" + reporter + "','spam','원문 유지','2026-11-01T01:02:03.123456Z')");
             }
-            assertEquals(10, database.configuration().load().migrate().migrationsExecuted);
+            assertEquals(11, database.configuration().load().migrate().migrationsExecuted);
             assertEquals(0, database.number("SELECT count(*) FROM " + database.table("product_accounts") + " WHERE is_operator"));
             assertEquals(1, database.number("SELECT count(*) FROM " + database.table("product_channel_reports") + " WHERE id='" + report + "' AND details='원문 유지' AND reason='spam' AND status='received' AND version=0 AND review_note='' AND reviewed_by IS NULL AND updated_at=created_at AND created_at='2026-11-01T01:02:03.123456Z'"));
             try (var statement = database.connection.createStatement()) {
@@ -139,7 +139,7 @@ class ProductMigrationIntegrationTest {
                 statement.executeUpdate("INSERT INTO " + database.table("product_channels") + "(id,owner_id,handle,display_name,stream_path) VALUES('" + channel + "','" + owner + "','notifications-before-v7','기존 채널','source')");
                 statement.executeUpdate("INSERT INTO " + database.table("product_follows") + "(user_id,channel_id,notifications_on,created_at) VALUES('" + on + "','" + channel + "',true,'2025-01-01T00:00:00Z'),('" + off + "','" + channel + "',false,'2025-01-01T00:00:00Z')");
             }
-            assertEquals(9, database.configuration().load().migrate().migrationsExecuted);
+            assertEquals(10, database.configuration().load().migrate().migrationsExecuted);
             assertEquals(1, database.number("SELECT count(*) FROM " + database.table("product_follows") + " WHERE notifications_on AND notifications_enabled_at > current_timestamp - interval '1 minute' AND created_at='2025-01-01T00:00:00Z'"));
             assertEquals(1, database.number("SELECT count(*) FROM " + database.table("product_follows") + " WHERE NOT notifications_on AND notifications_enabled_at IS NULL"));
             assertEquals(1, database.number("SELECT count(*) FROM " + database.table("product_channels") + " WHERE notification_live_after_ms>0 AND stream_path='source'"));
@@ -159,7 +159,7 @@ class ProductMigrationIntegrationTest {
                 statement.executeUpdate("INSERT INTO "+database.table("product_notification_events")+"(event_key,created_at_ms) VALUES('migration-receipt',1794442212345)");
                 statement.executeUpdate("INSERT INTO "+database.table("product_notifications")+"(id,recipient_id,event_key,kind,title,body,created_at_ms,read_at_ms,report_id,report_status) VALUES('"+notification+"','"+viewer+"','migration-receipt','report','기존 알림','일반 결과',1794442212345,1794442212346,'"+UUID.randomUUID()+"','resolved')");
             }
-            assertEquals(8,database.configuration().load().migrate().migrationsExecuted);
+            assertEquals(9,database.configuration().load().migrate().migrationsExecuted);
             assertEquals(1,database.number("SELECT count(*) FROM "+database.table("product_channels")+" WHERE id='"+channel+"' AND description='소개 보존'"));
             assertEquals(1,database.number("SELECT count(*) FROM "+database.table("product_follows")+" WHERE user_id='"+viewer+"' AND notifications_on AND notifications_enabled_at IS NOT NULL"));
             assertEquals(1,database.number("SELECT count(*) FROM "+database.table("product_notifications")+" WHERE id='"+notification+"' AND body='일반 결과' AND read_at_ms=1794442212346"));
@@ -176,7 +176,7 @@ class ProductMigrationIntegrationTest {
                 statement.executeUpdate("INSERT INTO "+database.table("product_channels")+"(id,owner_id,handle,display_name,description) VALUES('"+channel+"','"+owner+"','polls-before-v9','기존 채널','기존 소개')");
                 statement.executeUpdate("INSERT INTO "+database.table("product_chat_settings")+"(channel_id,slow_mode,slow_seconds,followers_only,block_links,banned_words,version,updated_at_ms) VALUES('"+channel+"',true,30,true,true,'[\"선행 정책\"]'::jsonb,7,1794442212345)");
             }
-            assertEquals(7,database.configuration().load().migrate().migrationsExecuted);
+            assertEquals(8,database.configuration().load().migrate().migrationsExecuted);
             assertEquals(1,database.number("SELECT count(*) FROM "+database.table("product_channels")+" WHERE id='"+channel+"' AND description='기존 소개'"));
             assertEquals(1,database.number("SELECT count(*) FROM "+database.table("product_chat_settings")+" WHERE channel_id='"+channel+"' AND version=7 AND slow_seconds=30 AND followers_only AND block_links AND banned_words='[\"선행 정책\"]'::jsonb"));
             assertEquals(0,database.number("SELECT count(*) FROM "+database.table("product_polls")));
@@ -204,7 +204,7 @@ class ProductMigrationIntegrationTest {
                 statement.executeUpdate("INSERT INTO "+database.table("product_poll_options")+"(id,poll_id,position,text) VALUES('"+option+"','"+poll+"',0,'선택 보존')");
                 statement.executeUpdate("INSERT INTO "+database.table("product_poll_votes")+"(poll_id,user_id,option_id,created_at_ms) VALUES('"+poll+"','"+viewer+"','"+option+"',1794442212346)");
             }
-            assertEquals(6,database.configuration().load().migrate().migrationsExecuted);
+            assertEquals(7,database.configuration().load().migrate().migrationsExecuted);
             assertEquals(1,database.number("SELECT count(*) FROM "+database.table("product_polls")+" WHERE id='"+poll+"' AND question='보존할 투표' AND close_reason='manual' AND version=1"));
             assertEquals(1,database.number("SELECT count(*) FROM "+database.table("product_poll_votes")+" WHERE poll_id='"+poll+"' AND user_id='"+viewer+"' AND option_id='"+option+"'"));
             assertEquals(0,database.number("SELECT count(*) FROM "+database.table("product_questions")));
@@ -232,7 +232,7 @@ class ProductMigrationIntegrationTest {
                 statement.executeUpdate("INSERT INTO "+database.table("product_channels")+"(id,owner_id,handle,display_name) VALUES('"+channel+"','"+owner+"','points-before-v11','기존 채널')");
                 statement.executeUpdate("INSERT INTO "+database.table("product_questions")+"(id,channel_id,author_id,client_request_id,broadcast_id,path,broadcast_instance_id,text,answer,answered_at_ms,pinned,created_at_ms,updated_at_ms,version) VALUES('"+question+"','"+channel+"','"+viewer+"','"+UUID.randomUUID()+"','"+"a".repeat(32)+"','source','"+instance+"','기존 비공개 질문','기존 답변',1794442212346,true,1794442212345,1794442212346,3)");
             }
-            assertEquals(5,database.configuration().load().migrate().migrationsExecuted);
+            assertEquals(6,database.configuration().load().migrate().migrationsExecuted);
             assertEquals(1,database.number("SELECT count(*) FROM "+database.table("product_questions")+" WHERE id='"+question+"' AND answer='기존 답변' AND pinned AND version=3"));
             for(String table:java.util.List.of("product_rewards","product_point_wallets","product_redemptions","product_point_ledger"))assertEquals(0,database.number("SELECT count(*) FROM "+database.table(table)));
             try(var statement=database.connection.createStatement()){
@@ -267,7 +267,7 @@ class ProductMigrationIntegrationTest {
                 String ledger="(id,channel_id,user_id,kind,delta,balance_after,label,redemption_id,created_at_ms)";
                 statement.executeUpdate("INSERT INTO "+database.table("product_point_ledger")+ledger+" VALUES('"+UUID.randomUUID()+"','"+channel+"','"+viewer+"','watch',52,52,'기존 시청 적립',null,1794442212345),('"+UUID.randomUUID()+"','"+channel+"','"+viewer+"','redemption',-10,42,'기존 보상','"+redemption+"',1794442212346)");
             }
-            assertEquals(4,database.configuration().load().migrate().migrationsExecuted);
+            assertEquals(5,database.configuration().load().migrate().migrationsExecuted);
             assertEquals(42,database.number("SELECT balance FROM "+database.table("product_point_wallets")));
             assertEquals(1234,database.number("SELECT pending_watch_ms FROM "+database.table("product_point_wallets")));
             assertEquals(42,database.number("SELECT sum(delta) FROM "+database.table("product_point_ledger")));
@@ -301,7 +301,7 @@ class ProductMigrationIntegrationTest {
                 statement.executeUpdate("INSERT INTO "+database.table("product_missions")+"(id,channel_id,author_id,client_request_id,broadcast_id,path,broadcast_instance_id,title,duration_minutes,deadline_at_ms,created_at_ms,updated_at_ms) VALUES('"+mission+"','"+channel+"','"+owner+"','"+UUID.randomUUID()+"','"+"a".repeat(32)+"','source','"+UUID.randomUUID()+"','보존할 미션',15,1794443112345,1794442212345,1794442212345)");
                 statement.executeUpdate("INSERT INTO "+database.table("product_mission_history")+"(id,mission_id,version,status,reason,actor,created_at_ms) VALUES('"+history+"','"+mission+"',0,'received','','viewer',1794442212345)");
             }
-            assertEquals(3,database.configuration().load().migrate().migrationsExecuted);
+            assertEquals(4,database.configuration().load().migrate().migrationsExecuted);
             assertEquals(1,database.number("SELECT count(*) FROM "+database.table("product_missions")+" WHERE id='"+mission+"' AND title='보존할 미션' AND status='received' AND version=0"));
             assertEquals(1,database.number("SELECT count(*) FROM "+database.table("product_mission_history")+" WHERE id='"+history+"' AND mission_id='"+mission+"' AND actor='viewer'"));
             assertEquals(0,database.number("SELECT count(*) FROM "+database.table("product_broadcast_analytics")));
@@ -327,7 +327,7 @@ class ProductMigrationIntegrationTest {
                 statement.executeUpdate("INSERT INTO "+database.table("product_channels")+"(id,owner_id,handle,display_name,stream_path) VALUES('"+channel+"','"+owner+"','recordings-before-v14','기존 채널','source')");
                 statement.executeUpdate("INSERT INTO "+database.table("product_broadcast_analytics")+"(id,channel_id,broadcast_id,path,title,source_session,started_at_ms,last_observed_at_ms,peak_concurrent,last_concurrent) VALUES('"+instance+"','"+channel+"','"+"a".repeat(32)+"','source','보존할 분석','"+"a".repeat(64)+"',1794442212345,1794442212345,0,0)");
             }
-            assertEquals(2,database.configuration().load().migrate().migrationsExecuted);
+            assertEquals(3,database.configuration().load().migrate().migrationsExecuted);
             assertEquals(1,database.number("SELECT count(*) FROM "+database.table("product_broadcast_analytics")+" WHERE id='"+instance+"' AND title='보존할 분석'"));
             assertEquals(0,database.number("SELECT count(*) FROM "+database.table("product_recording_files")));
             try(var statement=database.connection.createStatement()){
@@ -354,7 +354,7 @@ class ProductMigrationIntegrationTest {
                 statement.executeUpdate("INSERT INTO "+database.table("product_recording_windows")+"(id,channel_id,broadcast_instance_id,broadcast_id,path,source_session,title,connection_at_ms,started_at_ms,last_observed_at_ms) VALUES('"+window+"','"+channel+"','"+UUID.randomUUID()+"','"+"a".repeat(32)+"','source','"+"a".repeat(64)+"','보존할 녹화 구간',"+(at-1000)+","+at+","+(at+20000)+")");
                 statement.executeUpdate("INSERT INTO "+database.table("product_recording_files")+"(id,window_id,path,file_name,recorded_at_ms,size_bytes,duration_ms,file_modified_ms,file_key,status,reason,hidden,version,checked_at_ms,updated_at_ms) VALUES('"+recording+"','"+window+"','source','2026-11-16_13-00-00-000000Z.mp4',"+(at+5000)+",128,3000,"+(at+10000)+",'original-file','ready','verified',true,7,"+(at+20000)+","+(at+20000)+")");
             }
-            assertEquals(1,database.configuration().load().migrate().migrationsExecuted);
+            assertEquals(2,database.configuration().load().migrate().migrationsExecuted);
             assertEquals(1,database.number("SELECT count(*) FROM "+database.table("product_recording_files")+" WHERE id='"+recording+"' AND hidden AND version=7 AND status='ready' AND size_bytes=128 AND duration_ms=3000 AND file_key='original-file'"));
             assertEquals(0,database.number("SELECT count(*) FROM "+database.table("product_vods")));
             try(var statement=database.connection.createStatement()){
@@ -374,25 +374,60 @@ class ProductMigrationIntegrationTest {
             assertEquals(0,database.number("SELECT count(*) FROM "+database.table("product_vods")));
         }
     }
+    @Test void clipMigrationPreservesExistingVodAndEnforcesSourceOwnershipRangeAndReadiness()throws Exception{
+        try(Database database=Database.create()){
+            assertEquals(15,database.configuration().target("15").load().migrate().migrationsExecuted);
+            UUID owner=UUID.randomUUID(),other=UUID.randomUUID(),channel=UUID.randomUUID(),otherChannel=UUID.randomUUID(),vod=UUID.randomUUID(),clip=UUID.randomUUID(),request=UUID.randomUUID();
+            long at=1794442210000L;
+            try(var statement=database.connection.createStatement()){
+                statement.executeUpdate("INSERT INTO "+database.table("product_accounts")+"(id,email,password_hash,display_name) VALUES('"+owner+"','clip-upgrade@example.invalid','hash','기존 공개자'),('"+other+"','clip-other@example.invalid','hash','다른 채널')");
+                statement.executeUpdate("INSERT INTO "+database.table("product_channels")+"(id,owner_id,handle,display_name) VALUES('"+channel+"','"+owner+"','clips-before-v16','기존 채널'),('"+otherChannel+"','"+other+"','clips-other-v16','다른 채널')");
+                statement.executeUpdate("INSERT INTO "+database.table("product_vods")+"(id,channel_id,title,description,status,visibility,duration_ms,size_bytes,archive_modified_ms,archive_key,archive_sha256,created_at_ms,updated_at_ms,version) VALUES('"+vod+"','"+channel+"','보존할 다시보기','기존 설명','ready','private',15000,1024,"+at+",'original-vod','"+"a".repeat(64)+"',"+at+","+at+",4)");
+            }
+            assertEquals(1,database.configuration().load().migrate().migrationsExecuted);
+            assertEquals(1,database.number("SELECT count(*) FROM "+database.table("product_vods")+" WHERE id='"+vod+"' AND title='보존할 다시보기' AND description='기존 설명' AND visibility='private' AND version=4 AND archive_key='original-vod' AND published_at_ms IS NULL"));
+            assertEquals(0,database.number("SELECT count(*) FROM "+database.table("product_clips")));
+            try(var statement=database.connection.createStatement()){
+                String columns="(id,channel_id,source_vod_id,client_request_id,request_title,request_description,title,start_ms,end_ms,source_size_bytes,source_modified_ms,source_key,source_sha256,status,visibility,duration_ms,created_at_ms,updated_at_ms)";
+                String tail="','저장한 요청','요청 설명','공개할 클립',2000,8000,1024,"+at+",'original-vod','"+"a".repeat(64)+"','preparing','public',6000,"+at+","+at+")";
+                statement.executeUpdate("INSERT INTO "+database.table("product_clips")+columns+" VALUES('"+clip+"','"+channel+"','"+vod+"','"+request+tail);
+                assertThrows(SQLException.class,()->statement.executeUpdate("INSERT INTO "+database.table("product_clips")+columns+" VALUES('"+UUID.randomUUID()+"','"+channel+"','"+vod+"','"+request+tail));
+                assertThrows(SQLException.class,()->statement.executeUpdate("INSERT INTO "+database.table("product_clips")+columns+" VALUES('"+UUID.randomUUID()+"','"+otherChannel+"','"+vod+"','"+UUID.randomUUID()+tail));
+                assertThrows(SQLException.class,()->statement.executeUpdate("UPDATE "+database.table("product_clips")+" SET end_ms=6999 WHERE id='"+clip+"'"));
+                assertThrows(SQLException.class,()->statement.executeUpdate("UPDATE "+database.table("product_clips")+" SET end_ms=62001 WHERE id='"+clip+"'"));
+                assertThrows(SQLException.class,()->statement.executeUpdate("UPDATE "+database.table("product_clips")+" SET start_ms=-1 WHERE id='"+clip+"'"));
+                assertThrows(SQLException.class,()->statement.executeUpdate("UPDATE "+database.table("product_clips")+" SET status='ready' WHERE id='"+clip+"'"));
+                statement.executeUpdate("UPDATE "+database.table("product_clips")+" SET status='ready',visibility='private',size_bytes=512,archive_modified_ms="+at+",archive_key='owned-clip',archive_sha256='"+"b".repeat(64)+"' WHERE id='"+clip+"'");
+                assertThrows(SQLException.class,()->statement.executeUpdate("UPDATE "+database.table("product_clips")+" SET visibility='public' WHERE id='"+clip+"'"));
+                statement.executeUpdate("UPDATE "+database.table("product_clips")+" SET visibility='public',published_at_ms="+at+",version=2 WHERE id='"+clip+"'");
+                assertThrows(SQLException.class,()->statement.executeUpdate("UPDATE "+database.table("product_clips")+" SET archive_sha256=NULL WHERE id='"+clip+"'"));
+                assertThrows(SQLException.class,()->statement.executeUpdate("UPDATE "+database.table("product_clips")+" SET version=-1 WHERE id='"+clip+"'"));
+                assertThrows(SQLException.class,()->statement.executeUpdate("UPDATE "+database.table("product_clips")+" SET source_vod_id='"+UUID.randomUUID()+"' WHERE id='"+clip+"'"));
+                statement.executeUpdate("DELETE FROM "+database.table("product_vods")+" WHERE id='"+vod+"'");
+            }
+            assertEquals(0,database.number("SELECT count(*) FROM "+database.table("product_clips")));
+            assertEquals(2,database.number("SELECT count(*) FROM "+database.table("product_channels")));
+        }
+    }
     @Test void changedAppliedSqlFailsValidationBeforeAnyNewMigrationRuns() throws Exception {
         try (Database database = Database.create()) {
-            for (String name : new String[] { "V1__accounts_channels_follows.sql", "V2__signup_consents.sql", "V3__broadcast_schedules.sql", "V4__watch_history.sql", "V5__channel_profiles_reports.sql", "V6__report_management.sql", "V7__product_notifications.sql", "V8__channel_chat_moderation.sql", "V9__channel_polls.sql", "V10__channel_questions.sql", "V11__channel_points_rewards.sql", "V12__channel_missions.sql", "V13__broadcast_analytics.sql", "V14__private_recording_catalog.sql", "V15__published_vods.sql" }) {
+            for (String name : new String[] { "V1__accounts_channels_follows.sql", "V2__signup_consents.sql", "V3__broadcast_schedules.sql", "V4__watch_history.sql", "V5__channel_profiles_reports.sql", "V6__report_management.sql", "V7__product_notifications.sql", "V8__channel_chat_moderation.sql", "V9__channel_polls.sql", "V10__channel_questions.sql", "V11__channel_points_rewards.sql", "V12__channel_missions.sql", "V13__broadcast_analytics.sql", "V14__private_recording_catalog.sql", "V15__published_vods.sql", "V16__published_clips.sql" }) {
                 try (var input = getClass().getResourceAsStream("/db/migration/" + name)) {
                     assertNotNull(input); Files.copy(input, temporary.resolve(name));
                 }
             }
             String location = "filesystem:" + temporary.toAbsolutePath().toString().replace('\\', '/');
             Flyway original = database.configuration().locations(location).load();
-            assertEquals(15, original.migrate().migrationsExecuted);
+            assertEquals(16, original.migrate().migrationsExecuted);
             Path changed = temporary.resolve("V1__accounts_channels_follows.sql");
             Files.writeString(changed, Files.readString(changed) + "\nCREATE TABLE checksum_changed_probe (id integer);\n", StandardCharsets.UTF_8);
-            Files.writeString(temporary.resolve("V16__must_not_run.sql"), "CREATE TABLE pending_migration_probe (id integer);\n", StandardCharsets.UTF_8);
+            Files.writeString(temporary.resolve("V17__must_not_run.sql"), "CREATE TABLE pending_migration_probe (id integer);\n", StandardCharsets.UTF_8);
             Flyway changedSql = database.configuration().locations(location).load();
             var validation = changedSql.validateWithResult();
             assertFalse(validation.validationSuccessful);
             assertTrue(validation.invalidMigrations.stream().anyMatch(migration -> migration.version.equals("1")));
             assertThrows(FlywayException.class, changedSql::migrate);
-            assertEquals(15, database.number("SELECT count(*) FROM " + database.table("flyway_schema_history") + " WHERE success"));
+            assertEquals(16, database.number("SELECT count(*) FROM " + database.table("flyway_schema_history") + " WHERE success"));
             assertEquals(0, database.number("SELECT count(*) FROM information_schema.tables WHERE table_schema='" + database.schema + "' AND table_name IN ('checksum_changed_probe','pending_migration_probe')"));
         }
     }

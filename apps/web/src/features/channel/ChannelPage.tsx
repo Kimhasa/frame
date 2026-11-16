@@ -34,6 +34,7 @@ interface ChannelPageProps {
   scheduleFeedback?: ReactNode;
   videosContent?: ReactNode;
   recentVideosContent?: ReactNode;
+  clipsContent?: ReactNode;
   signedIn?: boolean;
   onRequireLogin?: () => void;
   onReport?: (input: ChannelReportInput) => Promise<void>;
@@ -100,7 +101,8 @@ function VideoList({ videos, handle }: { videos: readonly PreviewVideo[]; handle
   );
 }
 
-function ChannelContent({ channel, activeTab, selectTab, scheduleFeedback, onShowDetails, videosContent, recentVideosContent }: { channel: PreviewChannel; activeTab: ChannelTab; selectTab: (tab: ChannelTab) => void; scheduleFeedback?: ReactNode; videosContent?: ReactNode; recentVideosContent?: ReactNode; onShowDetails: () => void }) {
+function ChannelContent({ channel, activeTab, selectTab, scheduleFeedback, onShowDetails, videosContent, recentVideosContent, clipsContent }: { channel: PreviewChannel; activeTab: ChannelTab; selectTab: (tab: ChannelTab) => void; scheduleFeedback?: ReactNode; videosContent?: ReactNode; recentVideosContent?: ReactNode; clipsContent?: ReactNode; onShowDetails: () => void }) {
+  if (activeTab === 'clips' && clipsContent !== undefined) return <>{clipsContent}</>;
   if (activeTab === 'videos' && videosContent !== undefined) return <>{videosContent}</>;
   if (activeTab === 'videos' || activeTab === 'clips') {
     const isClip = activeTab === 'clips';
@@ -192,7 +194,7 @@ function ChannelContent({ channel, activeTab, selectTab, scheduleFeedback, onSho
   );
 }
 
-export function ChannelPage({ channel, state, followed, notificationsOn, onToggleFollow, onToggleNotifications, actions, pending = false, actionError, ownChannel = false, notice, scheduleFeedback, videosContent, recentVideosContent, signedIn = false, onRequireLogin, onReport }: ChannelPageProps) {
+export function ChannelPage({ channel, state, followed, notificationsOn, onToggleFollow, onToggleNotifications, actions, pending = false, actionError, ownChannel = false, notice, scheduleFeedback, videosContent, recentVideosContent, clipsContent, signedIn = false, onRequireLogin, onReport }: ChannelPageProps) {
   const [params, setParams] = useSearchParams();
   const tabId = useId();
   const requestedTab = params.get('tab');
@@ -289,7 +291,7 @@ export function ChannelPage({ channel, state, followed, notificationsOn, onToggl
             ))}
           </div>
           <div className={styles.panel} role="tabpanel" id={`${tabId}-panel`} aria-labelledby={`${tabId}-${activeTab}`} tabIndex={0}>
-            <ChannelContent channel={channel} activeTab={activeTab} scheduleFeedback={scheduleFeedback} videosContent={videosContent} recentVideosContent={recentVideosContent} selectTab={(tab) => { selectTab(tab); focusTab(tab); }} onShowDetails={() => setDetailMode('about')} />
+            <ChannelContent channel={channel} activeTab={activeTab} scheduleFeedback={scheduleFeedback} videosContent={videosContent} recentVideosContent={recentVideosContent} clipsContent={clipsContent} selectTab={(tab) => { selectTab(tab); focusTab(tab); }} onShowDetails={() => setDetailMode('about')} />
           </div>
         </>
       )}

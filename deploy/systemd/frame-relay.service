@@ -30,9 +30,9 @@ ProtectSystem=strict
 ProtectHome=true
 # JVM과 내장 Tomcat은 임시 폴더(/tmp)에만 쓴다. 서비스 전용 /tmp를 받는다.
 PrivateTmp=true
-# 원본 녹화 폴더는 읽기만 한다. 재생 통계와 명시적으로 공개한 VOD 보관본만 지정 폴더에 쓴다.
+# 원본 녹화 폴더는 읽기만 한다. 재생 통계와 명시적으로 공개한 VOD·클립 보관본만 지정 폴더에 쓴다.
 ReadOnlyPaths=/var/lib/frame-relay
-ReadWritePaths=-/var/lib/frame-relay/stats -/var/lib/frame-relay/vod
+ReadWritePaths=-/var/lib/frame-relay/stats -/var/lib/frame-relay/vod -/var/lib/frame-relay/clips
 # MemoryDenyWriteExecute는 넣지 않는다(JVM의 JIT 컴파일과 함께 쓸 수 없다).
 
 [Install]

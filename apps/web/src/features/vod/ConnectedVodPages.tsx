@@ -6,6 +6,8 @@ import { EmptyState } from '../../components/management/ManagementUI';
 import ui from '../../components/management/ManagementUI.module.css';
 import { channelPath, mediaWatchPath } from '../../preview/community-types';
 import { AccountError } from '../account/account-client';
+import type { AccountSession } from '../account/account-client';
+import { ClipCreator } from '../clips/ClipCreator';
 import { vodApi } from './vod-client';
 import type { PublicVod, VodChannel, VodPage } from './vod-client';
 import base from '../media/MediaPages.module.css';
@@ -63,7 +65,7 @@ export function ConnectedVodList({ channelHandle, recent = false, excludeId }: {
   </section>;
 }
 
-export function ConnectedVodWatch() {
+export function ConnectedVodWatch({ session, onRequireLogin, onSessionChanged }: { session?: AccountSession | null; onRequireLogin?: () => void; onSessionChanged?: () => void } = {}) {
   const { handle = '', id = '' } = useParams(), key = handle + '/' + id;
   const [state, setState] = useState<{ key: string; item: PublicVod | null; phase: 'loading' | 'ready' | 'missing' | 'error'; error: string }>({ key, item: null, phase: 'loading', error: '' });
   const [attempt, setAttempt] = useState(0), [mediaAttempt, setMediaAttempt] = useState(0), [mediaError, setMediaError] = useState(''), [mediaAllowed, setMediaAllowed] = useState(true), [mediaPending, setMediaPending] = useState(false), [online, setOnline] = useState(navigator.onLine), [sharing, setSharing] = useState(false), [copied, setCopied] = useState<'idle' | 'done' | 'error'>('idle');
@@ -104,11 +106,12 @@ export function ConnectedVodWatch() {
     finally { if (mediaRequest.current === controller) { mediaRequest.current = null; if (valid()) setMediaPending(false); } }
   }
   async function copy() { const expected = key, revision = generation.current; const valid = () => active.current && scopeRef.current === expected && generation.current === revision; try { if (!navigator.clipboard?.writeText) throw Error(); await navigator.clipboard.writeText(shareUrl); if (valid()) setCopied('done'); } catch { if (valid()) { setCopied('error'); shareInput.current?.focus(); shareInput.current?.select(); } } }
+  function clipAccessError(failure: unknown) { if (!(failure instanceof AccountError)) return false; if (failure.status === 401) { onRequireLogin?.(); return true; } if (failure.code === 'SESSION_CHANGED' || failure.code === 'CSRF_INVALID') { onSessionChanged?.(); return true; } return false; }
   function closeShare() { share.current?.close(); setSharing(false); shareButton.current?.focus(); }
   if (item && handle !== item.channel.handle) return <Navigate to={mediaWatchPath('vod', item.channel.handle, item.id)} replace />;
   return <section className={ui.page + ' ' + base.page + ' ' + base.watchPage + ' ' + styles.surface} aria-labelledby="vod-watch-title">
     {!item && <h1 className={styles.srOnly} id="vod-watch-title">다시보기</h1>}
-    <header className={base.watchToolbar}><Link className={base.back} to="/vod"><ArrowLeft size={18} aria-hidden="true" />다시보기 목록</Link>{item && <div className={styles.watchActions}><button ref={shareButton} className={ui.button} type="button" onClick={() => { setCopied('idle'); setSharing(true); }}><Share2 size={16} aria-hidden="true" />다시보기 공유</button></div>}</header>
+    <header className={base.watchToolbar}><Link className={base.back} to="/vod"><ArrowLeft size={18} aria-hidden="true" />다시보기 목록</Link>{item && <div className={styles.watchActions}>{session?.user && session.channel?.id === item.channel.id && <ClipCreator key={session.user.id + '/' + item.id} source={item} session={session} online={online} sourceVideo={video} onAccessError={clipAccessError} />}<button ref={shareButton} className={ui.button} type="button" onClick={() => { setCopied('idle'); setSharing(true); }}><Share2 size={16} aria-hidden="true" />다시보기 공유</button></div>}</header>
     {current.phase === 'loading' ? <p className={styles.loading} role="status">다시보기를 불러오는 중이에요.</p> : current.phase === 'missing' ? <EmptyState icon={<VideoOff size={26} />} title="공개된 다시보기를 찾을 수 없어요" description="방송자가 공개를 중단했거나 영상 주소가 달라졌을 수 있어요." action={<Link className={ui.button} to="/vod">다른 다시보기 보기</Link>} /> : current.phase === 'error' ? <div className={styles.feedback + ' ' + styles.error}><p role="alert">{current.error}</p><button type="button" className={ui.button} disabled={!online} onClick={() => setAttempt(v => v + 1)}>다시보기 다시 시도</button></div> : item && <>
       {!online && <p className={styles.feedback} role="status">인터넷 연결을 확인해 주세요.</p>}{current.error && <div className={styles.feedback + ' ' + styles.error}><p role="alert">{current.error}</p><button className={ui.button} type="button" disabled={!online} onClick={() => refreshNow.current()}>공개 상태 다시 확인</button></div>}
       <div className={base.player + ' ' + styles.player}>{mediaAllowed ? <video key={key + '/' + mediaAttempt} ref={video} aria-label="다시보기 영상" src={vodApi.mediaUrl(item.id)} controls playsInline preload="metadata" onError={() => void checkMedia()} /> : <div className={styles.playerNotice}><VideoOff size={26} aria-hidden="true" /><p role={mediaPending ? 'status' : 'alert'}>{mediaError}</p><button type="button" className={ui.button} disabled={!online || mediaPending} onClick={() => void checkMedia(true)}>{mediaPending ? '확인 중…' : '영상 다시 시도'}</button></div>}</div>

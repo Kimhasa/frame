@@ -1,0 +1,237 @@
+{
+  "verificationDatabaseOnly": true,
+  "productionUserDataUntouched": true,
+  "nativeObsReceiverUntouched": true,
+  "complete": true,
+  "resumedUiOnly": true,
+  "resumedFixtureParentRepublished": true,
+  "testedJarSha256": "1daa826c869af28197c2bc2bfe0978f81f9e2f75f63eeccd9de5d99f139e8607",
+  "databaseRuntime": "docker",
+  "results": [
+    {
+      "name": "Anonymous public clip catalog is real and owner management requires login",
+      "pass": true
+    },
+    {
+      "name": "The private media fixture binds its publisher to the actual owning channel",
+      "pass": true
+    },
+    {
+      "name": "Clip creation requires the source owner with valid CSRF and Origin",
+      "pass": true
+    },
+    {
+      "name": "Private clip management rejects a previous cookie-account scope",
+      "pass": true
+    },
+    {
+      "name": "Clip intervals reject negative, too short, too long, out-of-source and fractional millisecond values",
+      "pass": true
+    },
+    {
+      "name": "A selected nonzero interval becomes a distinct verified public MP4 without modifying its VOD source",
+      "pass": true
+    },
+    {
+      "name": "An exact request UUID returns the same durable clip receipt without another file",
+      "pass": true
+    },
+    {
+      "name": "A reused request UUID cannot silently change its immutable creation snapshot",
+      "pass": true
+    },
+    {
+      "name": "Another account cannot read or alter a publisher private clip",
+      "pass": true
+    },
+    {
+      "name": "Anonymous global and channel discovery expose public clip metadata without management request identities",
+      "pass": true
+    },
+    {
+      "name": "Public clip media supports exact HEAD and single or suffix byte ranges",
+      "pass": true
+    },
+    {
+      "name": "Invalid clip ranges return 416 without unrestricted fallback",
+      "pass": true
+    },
+    {
+      "name": "The trimmed MP4 has its own approximately six-second timeline starting near zero",
+      "pass": true,
+      "detail": {
+        "sourceFormat": {
+          "durationSeconds": 12.19,
+          "startSeconds": 0
+        },
+        "clipFormat": {
+          "durationSeconds": 6.02,
+          "startSeconds": 0
+        }
+      }
+    },
+    {
+      "name": "Decoded clip frames correspond to the requested source interval instead of replaying the untrimmed source",
+      "pass": true,
+      "detail": [
+        {
+          "clipSeconds": 0.4,
+          "sourceSeconds": 2.4,
+          "meanAbsoluteRgbError": 0.8365277777777778,
+          "wrongOffsetRgbError": 34.17256944444444
+        },
+        {
+          "clipSeconds": 2.4,
+          "sourceSeconds": 4.4,
+          "meanAbsoluteRgbError": 0.9169212962962963,
+          "wrongOffsetRgbError": 34.44456018518518
+        },
+        {
+          "clipSeconds": 4.4,
+          "sourceSeconds": 6.4,
+          "meanAbsoluteRgbError": 0.835300925925926,
+          "wrongOffsetRgbError": 30.988032407407406
+        }
+      ]
+    },
+    {
+      "name": "Editing visible metadata does not invalidate the original UUID receipt snapshot",
+      "pass": true
+    },
+    {
+      "name": "A publisher private choice blocks new anonymous detail, media and HEAD requests",
+      "pass": true
+    },
+    {
+      "name": "Stale clip revisions cannot overwrite a newer publisher visibility choice",
+      "pass": true
+    },
+    {
+      "name": "Real clip cursors separate published rows and remain bound to their filter context",
+      "pass": true
+    },
+    {
+      "name": "A private parent VOD immediately gates all new public clip discovery and media requests",
+      "pass": true
+    },
+    {
+      "name": "A private source VOD cannot start a new clip preparation",
+      "pass": true
+    },
+    {
+      "name": "Republishing a parent restores only clips whose own visibility is still public",
+      "pass": true
+    },
+    {
+      "name": "An already prepared clip remains playable when its parent physical archive is absent but the parent DB remains public",
+      "pass": true
+    },
+    {
+      "name": "Publisher clip withdrawal remains possible without the source physical archive",
+      "pass": true
+    },
+    {
+      "name": "A missing prepared clip is unavailable and never exposes public metadata or bytes",
+      "pass": true
+    },
+    {
+      "name": "Clip visibility can be revoked using only the DB while its own file is unavailable",
+      "pass": true
+    },
+    {
+      "name": "Returning a missing clip file never overrides a publisher private choice",
+      "pass": true
+    },
+    {
+      "name": "An actual clip storage failure stays non-public with a recoverable receipt",
+      "pass": true
+    },
+    {
+      "name": "Retry prepares the same failed clip and preserves its private choice",
+      "pass": true
+    },
+    {
+      "name": "Redis login, public clip metadata and actual prepared bytes survive API restart",
+      "pass": true
+    },
+    {
+      "name": "Actual clip creation, management, anonymous playback and responsive UI pass",
+      "pass": true
+    },
+    {
+      "name": "Development StrictMode reads actual public clips without mutations",
+      "pass": true
+    },
+    {
+      "name": "The exact tested JAR remains immutable during media preparation and restart",
+      "pass": true
+    }
+  ],
+  "observations": [
+    {
+      "sourceDurationMs": 12155,
+      "requestedStartMs": 2000,
+      "requestedEndMs": 8000,
+      "actualClipDurationMs": 6022,
+      "sourceFormat": {
+        "durationSeconds": 12.19,
+        "startSeconds": 0
+      },
+      "clipFormat": {
+        "durationSeconds": 6.02,
+        "startSeconds": 0
+      },
+      "sourceSha256": "b70f341221a95678ba492660ed81c10620eaa97c7346945645cbb5b2a84e2ef6",
+      "clipSha256": "f3b8499ac77fe27c55a7dda930bd0b83d2b4b52fdf813f9f3e7c79831ccb1795",
+      "decodedFrameComparisons": [
+        {
+          "clipSeconds": 0.4,
+          "sourceSeconds": 2.4,
+          "meanAbsoluteRgbError": 0.8365277777777778,
+          "wrongOffsetRgbError": 34.17256944444444
+        },
+        {
+          "clipSeconds": 2.4,
+          "sourceSeconds": 4.4,
+          "meanAbsoluteRgbError": 0.9169212962962963,
+          "wrongOffsetRgbError": 34.44456018518518
+        },
+        {
+          "clipSeconds": 4.4,
+          "sourceSeconds": 6.4,
+          "meanAbsoluteRgbError": 0.835300925925926,
+          "wrongOffsetRgbError": 30.988032407407406
+        }
+      ]
+    }
+  ],
+  "explicitRateLimitWaits": [
+    {
+      "attempt": 1,
+      "waitMs": 3000
+    },
+    {
+      "attempt": 1,
+      "waitMs": 4000
+    },
+    {
+      "attempt": 1,
+      "waitMs": 2000
+    },
+    {
+      "attempt": 1,
+      "waitMs": 4000
+    },
+    {
+      "attempt": 1,
+      "waitMs": 3000
+    }
+  ],
+  "recordingSegmentDurationSeconds": 12,
+  "productionSegmentDurationSeconds": 60,
+  "fixture": "Dedicated MediaMTX + one tiny H.264/AAC source + actual finalized VOD + independently encoded clip + immutable Spring JAR + headless Edge",
+  "limits": [
+    "One PC loopback/headless Edge only; mobile widths are emulated, not phones",
+    "No Caddy HTTPS, external network, long-run or load/capacity verification"
+  ]
+}

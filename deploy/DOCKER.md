@@ -46,9 +46,9 @@ corepack yarn dev --port 5360 --strictPort
 Pop-Location
 ```
 
-`http://127.0.0.1:5360/_frame/`을 연다. 빈 제품 DB에는 API 시작 시 Flyway V1~V15가 적용되며 회원가입 후 본인 채널이 생성된다. 방송이 없을 때도 계정·채널·설정 화면을 개발할 수 있다. OBS 실제 송출은 [OBS.md](OBS.md)를 따른다. 기본 설정은 새 PC마다 로컬 송출 키를 별도 생성한다. 다른 PC의 설정·토큰·회원 DB·세션을 Git으로 옮기지 않는다.
+`http://127.0.0.1:5360/_frame/`을 연다. 빈 제품 DB에는 API 시작 시 Flyway V1~V16이 적용되며 회원가입 후 본인 채널이 생성된다. 방송이 없을 때도 계정·채널·설정 화면을 개발할 수 있다. OBS 실제 송출은 [OBS.md](OBS.md)를 따른다. 기본 설정은 새 PC마다 로컬 송출 키를 별도 생성한다. 다른 PC의 설정·토큰·회원 DB·세션을 Git으로 옮기지 않는다.
 
-이미 API가 실행 중이면 설정을 선택한 같은 셸에서 `node server/obs-local.mjs restart-api`로 API만 교체한다. Vite도 같은 환경 변수로 다시 실행한다. 설정 선택은 현재 셸에만 적용한다. 공개 다시보기 보관본은 실행기가 `%LOCALAPPDATA%/Frame/obs-local/vod`에 따로 저장한다. 원본 녹화의 6시간 보관과 별개이며, DB 볼륨과 영상 파일은 함께 백업해야 한다. API가 선택한 Docker 설정과 Vite의 설정이 같아야 한다.
+이미 API가 실행 중이면 설정을 선택한 같은 셸에서 `node server/obs-local.mjs restart-api`로 API만 교체한다. Vite도 같은 환경 변수로 다시 실행한다. 설정 선택은 현재 셸에만 적용한다. 공개 다시보기 보관본은 실행기가 `%LOCALAPPDATA%/Frame/obs-local/vod`에 따로 저장한다. 클립 보관본은 같은 폴더의 형제 clips에 저장한다. 두 보관본은 원본 녹화의 6시간 보관과 별개이며, DB 볼륨과 영상 파일은 함께 백업해야 한다. API가 선택한 Docker 설정과 Vite의 설정이 같아야 한다.
 
 `prepare`는 비밀 파일을 저장소 밖 `%LOCALAPPDATA%/Frame/product-docker`에 만든다. 다른 경로는 `FRAME_DOCKER_DIR`로 지정할 수 있다. Linux/macOS 기본 경로는 `~/.frame/product-docker`이며, 호스트 API 실행에는 해당 `config.json`의 접속 값을 환경 변수로 전달한다. 기존 Windows 실행기의 기본 설정은 그대로 보존한다.
 
@@ -75,7 +75,7 @@ node server/product-docker.mjs stop
 | `docker/01-product.sql` | 빈 PostgreSQL 볼륨에 관리 역할·제한된 앱 역할·제품/검증 DB 준비 |
 | `apps/api/src/main/resources/db/migration/` | Spring Boot 시작 시 Flyway가 제품 테이블의 버전과 변경 이력을 관리 |
 
-앱 테이블을 Docker 초기화 SQL에 복사하지 않는다. 최초 실행에는 `db/migration`의 버전들이 순서대로 적용되고 재시작에는 이미 적용한 SQL을 재실행하지 않는다. 현재 V1(회원·채널·팔로우), V2(가입 동의), V3(방송 예약), V4(시청 기록), V5(채널 프로필·주소 예약·신고 접수), V6(운영자 플래그·신고 관리), V7(개인 알림·전송 표식·시작 기준 시각), V8(채팅 정책·계정 차단), V9(방송 투표·선택지·계정별 표), V10(비공개 질문·답변·명시적 공개 고정), V11(채널 포인트·원장·보상·교환 요청), V12(무료 미션·상태 변경 이력), V13(방송 분석의 관찰 집계), V14(비공개 녹화의 관찰 구간·파일 목록), V15(공개 다시보기의 보관본·공개 범위·준비 상태)을 사용한다. 적용한 SQL은 수정하지 않고 다음 `V16__설명.sql`을 추가한다. checksum 불일치 시 시작을 실패시키며 자동 `repair`·`clean`·baseline 처리를 하지 않는다. Redis는 세션 저장소라 Flyway 대상이 아니다.
+앱 테이블을 Docker 초기화 SQL에 복사하지 않는다. 최초 실행에는 `db/migration`의 버전들이 순서대로 적용되고 재시작에는 이미 적용한 SQL을 재실행하지 않는다. 현재 V1(회원·채널·팔로우), V2(가입 동의), V3(방송 예약), V4(시청 기록), V5(채널 프로필·주소 예약·신고 접수), V6(운영자 플래그·신고 관리), V7(개인 알림·전송 표식·시작 기준 시각), V8(채팅 정책·계정 차단), V9(방송 투표·선택지·계정별 표), V10(비공개 질문·답변·명시적 공개 고정), V11(채널 포인트·원장·보상·교환 요청), V12(무료 미션·상태 변경 이력), V13(방송 분석의 관찰 집계), V14(비공개 녹화의 관찰 구간·파일 목록), V15(공개 다시보기의 보관본·공개 범위·준비 상태), V16(클립 구간·요청 중복 방지·공개 범위·보관 파일)을 사용한다. 적용한 SQL은 수정하지 않고 다음 `V17__설명.sql`을 추가한다. checksum 불일치 시 시작을 실패시키며 자동 `repair`·`clean`·baseline 처리를 하지 않는다. Redis는 세션 저장소라 Flyway 대상이 아니다.
 
 PostgreSQL의 `frame_admin`은 최초 준비용이고 API는 `frame_app`으로 접속한다. 비밀번호는 Compose secrets 파일로 전달한다. Redis 인증은 ACL 파일로 설정하며 환경 변수 `REDIS_PASSWORD`만 선언하는 방식을 사용하지 않는다. healthcheck는 실제 앱 DB 인증과 Redis 인증을 확인한다. [PostgreSQL 이미지](https://hub.docker.com/_/postgres), [Redis 이미지](https://hub.docker.com/_/redis), [Compose secrets](https://docs.docker.com/compose/how-tos/use-secrets/), [Flyway 설정](https://docs.spring.io/spring-boot/appendix/application-properties/)
 

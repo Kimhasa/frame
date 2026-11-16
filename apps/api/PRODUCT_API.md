@@ -407,6 +407,49 @@ PATCH와 retry는 행 잠금·version 검사로 직렬화하며 버전이 다르
 
 현재는 녹화 파일 하나를 같은 원본 화질로 발행한다. 여러 파일 병합·별도 FFmpeg 재인코딩·VOD 화질 래더·썸네일 생성·조회수 집계·결제·CDN·분산 worker는 추가하지 않는다. 보관본 자동 만료·사용자 삭제·용량 할당 API도 없으며 보관 용량은 운영자가 관리한다. 단일 제품 API 인스턴스 전제이며 여러 API의 worker를 같은 DB/폴더에 동시에 연결하지 않는다.
 
+## 공개 클립
+
+V16 `product_clips`는 방송자 본인의 **공개된 ready 다시보기에서 선택한 5~60초 구간**을 실제 별도 MP4로 만든다. 시청자 클립 생성·실시간 DVR 잘라내기·외부 파일 업로드는 포함하지 않는다. 원본 VOD와 같은 채널만 허용하고 `(source_vod_id,channel_id)` 복합 FK가 이를 DB에서도 보장한다. 원본 VOD 메타데이터를 삭제하면 연결된 클립 메타데이터도 연쇄 삭제하며, API는 원본/보관 파일을 임의 삭제하지 않는다.
+
+### 공개 조회와 원본 공개 정책
+
+| 요청 | 응답 |
+| --- | --- |
+| `GET /api/v1/clips?q=&channel=&cursor=&limit=20` | `{items,nextCursor,serverNowMs}` |
+| `GET /api/v1/clips/{id}` | `{item,serverNowMs}` |
+| `GET /api/v1/clips/{id}/media` | `video/mp4`, 단일/접미 Range·HEAD 지원 |
+
+공개 항목은 `{id,title,description,durationMs,sizeBytes,publishedAtMs,channel:{id,handle,displayName,avatarUrl},source:{id,title,handle},startMs,endMs}`다. 공개에는 `clientRequestId`·계정 ID·원본 경로·보관 지문을 전달하지 않는다. 검색 q는 제어 문자 없는 최대 120자이며 제목과 채널 이름을 검색한다. channel은 현재/예약된 채널 @아이디이고 limit은 1~100이다. 최신 공개 시각/UUID keyset cursor는 검색·채널·limit 문맥에 묶는다. 모든 응답은 `no-store`다.
+
+클립의 `ready/public`, 클립 보관 파일의 현재 지문 일치, **원본 VOD 행의 ready/public**이 모두 맞아야 익명 목록·상세·미디어·HEAD를 제공한다. 원본을 비공개로 바꾸면 파생 클립의 새 공개 요청도 404다. 원본 재공개는 자체 공개 범위가 public인 클립을 다시 노출하며, 클립을 직접 private으로 바꾼 선택은 유지한다. 원본 VOD의 물리 파일만 없어지는 것은 이미 생성한 독립 클립의 공개를 철회하지 않는다. 이미 전달한 바이트와 진행 중인 허용 전송은 회수하지 않는다. 플레이어는 공개 상태 재조회로 철회를 확인해 재생을 정리한다.
+
+### 방송자 생성·관리·접수 확인
+
+| 요청 | 응답 |
+| --- | --- |
+| `GET /api/v1/me/clips?sourceVodId=&status=all&q=&cursor=&limit=20` | `{userId,items,nextCursor,serverNowMs,storageEnabled}` |
+| `GET /api/v1/me/clips/{id}` | `{userId,item,serverNowMs,storageEnabled}` |
+| `GET /api/v1/me/clips/by-request/{clientRequestId}` | 같은 계정의 접수 결과 또는 `item:null` |
+| `POST /api/v1/me/clips` | `{sourceVodId,startMs,endMs,title,description,clientRequestId}` → 새 접수 202, 같은 접수 200 |
+| `PATCH /api/v1/me/clips/{id}` | `{version,title,description,visibility}` → 200 |
+| `POST /api/v1/me/clips/{id}/retry` | `{version}` → 202 |
+
+소유자 항목은 공개 항목의 `publishedAtMs`를 nullable로 바꾸고 `sourceVodId,clientRequestId,status,visibility,published,available,sourcePublished,version,reason,createdAtMs,updatedAtMs`를 더한다. source는 원본이 비공개여도 본인 관리에서 유지한다. `status=preparing|ready|failed`, `visibility=public|private`이며 `available`은 클립 보관 파일 존재/지문, `sourcePublished`는 원본 DB ready/public, `published`는 이들을 합친 실제 공개 가능 상태다. preparing의 sizeBytes는 0, durationMs는 선택 길이이며 ready 뒤에는 실제 출력 크기/길이다. 202는 준비 접수이고 공개 성공을 뜻하지 않는다. 공개 예정이어도 원본이 비공개면 published는 false다.
+
+시간 값은 반올림 없는 정수 ms이며 `0 ≤ startMs < endMs ≤ 원본 길이`, `5,000 ≤ endMs-startMs ≤ 60,000`이다. 제목은 1~100자 한 줄, 설명은 0~2,000자 여러 줄이며 NFC·CRLF와 앞뒤 공백을 정규화한다. 미정의 필드/잘못된 타입은 400이다. 새 생성/failed 재시도에는 본인 원본 VOD의 ready/public과 실제 보관 지문을 재검사한다. 원본이 남의 채널이면 404, 비공개·파일 불가 상태면 409 `CLIP_SOURCE_UNAVAILABLE`다. 한 계정의 preparing은 최대 2개이고 초과는 503 `CLIP_PREPARATION_BUSY`/Retry-After다. 생성과 재시도는 채널 행 잠금으로 이 상한을 직렬화한다.
+
+clientRequestId는 계정/채널 범위 UUID다. 최초 source·범위·정규화 제목/설명을 별도 snapshot으로 보존해, 메타데이터 수정이나 원본 비공개 이후에도 동일 요청은 같은 receipt를 반환한다. 다른 본문으로 UUID를 재사용하면 409 `CLIP_REQUEST_CONFLICT`다. 불확실한 POST는 자동 재전송하지 않고 by-request GET부터 확인한다. 수정/재시도는 현재 version만 받고 충돌은 409 `CLIP_CONFLICT`다. 비공개 전환은 클립 파일·원본 파일·원본 공개 상태와 무관하게 DB에서 처리한다. 기존 쿠키 로그인·CSRF·Origin을 적용하고 `X-FRAME-USER-ID`가 현재 쿠키 계정과 다르면 409 `SESSION_CHANGED`다. 다른 계정의 관리 상세/수정은 404이고 receipt는 item:null이다.
+
+### 인코딩과 보관
+
+`FRAME_PRODUCT_CLIP_DIR`은 raw/VOD 폴더와 서로 포함하지 않는 별도 쓰기 폴더다. 기본은 VOD 폴더의 형제 `clips`다. 경로나 FFmpeg 설정이 없으면 storageEnabled:false이며 디스크 여유/실행 파일 존재의 보장은 아니다. 기존 `RELAY_FFMPEG`를 재사용하고 새 미디어 라이브러리·ffprobe 실행 파일을 요구하지 않는다.
+
+단일 worker는 source 권한/범위/원본 지문과 SHA-256을 확인한 뒤 FFmpeg를 셸 없이 인자 배열로 실행한다. H.264/AAC 재인코딩과 accurate input seek로 선택 구간을 만들고 해상도를 확대하지 않는다. 디코더/인코더는 각 1 thread, 전체 준비 120초·출력 512 MiB 상한을 두며 종료/시간 초과 시 자신이 시작한 프로세스만 정리한다. `-c copy`는 정확한 시작 구간을 보장하지 않으므로 쓰지 않는다. [FFmpeg 공식 seek 문서](https://ffmpeg.org/ffmpeg.html#Main-options)
+
+UUID.part는 정상 ftyp/moov/mdat와 bounded mvhd 메타데이터·양수 길이·요청 길이와 500ms 이내·크기·SHA를 검증한다. 원본 권한과 지문/내용을 다시 확인한 뒤 원자 이동하며, DB 완료는 작업 중 편집한 제목·설명·공개 범위/버전을 덮어쓰지 않는다. 메타데이터 읽기를 제외한 인코딩·해시·영상 전송 동안 DB 연결을 유지하지 않는다. realpath·NOFOLLOW·정규 UUID 파일 이름을 검사하고 원본을 쓰거나 경로를 클라이언트에서 받지 않는다. 재시작의 preparing은 failed로 바꿔 명시적 재시도하게 하며 자신 소유 UUID.part만 정리한다. 미완료 UUID 출력은 같은 원본에서 안전하게 다시 생성하지만 ready 보관본은 인코더 대상이 아니다.
+
+현재 단일 API 인스턴스 전제이며 전용 보관본 자동 만료·삭제/용량 할당·썸네일·조회수·시청 기록/포인트 적립은 추가하지 않는다. DB와 클립 파일은 함께 보존한다. raw의 기존 6시간 보관·MediaMTX·라이브/DVR·V1~V15 원문은 유지한다.
+
 ## 검증
 
 기존 기본 회귀 검사에는 외부 DB·Redis가 필요하지 않다.
@@ -418,9 +461,9 @@ cd apps/api
 
 실제 PostgreSQL·Redis 통합 검사는 저장소 밖 검증 설정 파일의 경로를 지정한다. 테스트는 루프백 `127.0.0.1`의 FRAME 전용 포트 `15432`(네이티브) 또는 `25432`(Docker), DB 이름 `frame_product_verify` 또는 고유 접미사가 붙은 검증 DB인지 먼저 검사한다. 쿼리 매개변수·URL 안의 자격증명·외부 호스트·사용자 DB `frame_product`는 허용하지 않는다. 해당 DB의 임의 생성 스키마와 임의 Redis namespace만 사용하며, 종료 시 생성한 스키마·namespace 키만 정리한다. 실제 DB의 사용자·스키마·운영자 키를 읽거나 변경하지 않는다. 설정에는 `verifyDbUrl`, `dbUsername`, `dbPassword`, `redisHost`, `redisPort`, `redisPassword`가 필요하다.
 
-Flyway는 제품 기능을 활성화한 Spring Boot의 시작 과정에서 `db/migration`을 적용한다. 현재 V1(회원·채널·팔로우), V2(가입 동의), V3(방송 예약), V4(시청 기록), V5(채널 프로필·주소 예약·신고 접수), V6(운영자 플래그·신고 관리), V7(개인 알림·전송 표식·시작 기준 시각), V8(채팅 정책·계정 차단), V9(방송 투표·선택지·계정별 표), V10(비공개 질문·답변·명시적 공개 고정), V11(채널 포인트·원장·보상·교환 요청), V12(비공개 무료 미션·상태 이력), V13(방송별·일별 실제 관찰 집계), V14(비공개 녹화 관찰 창·파일 카탈로그), V15(명시적 공개 다시보기·별도 보관본 메타데이터)를 사용한다. `validate-on-migrate: true`, `clean-disabled: true`, `baseline-on-migrate: false`를 명시한다. 적용한 SQL은 수정하지 않고 새 `V16__설명.sql` 같은 다음 버전을 추가한다. Redis는 Flyway 관리 대상이 아니다. 기존 Flyway 기록이 없는 비어 있지 않은 스키마를 자동으로 기존 운영 DB라고 간주하거나, checksum 오류를 자동으로 `repair`해서 넘기지 않는다.
+Flyway는 제품 기능을 활성화한 Spring Boot의 시작 과정에서 `db/migration`을 적용한다. 현재 V1(회원·채널·팔로우), V2(가입 동의), V3(방송 예약), V4(시청 기록), V5(채널 프로필·주소 예약·신고 접수), V6(운영자 플래그·신고 관리), V7(개인 알림·전송 표식·시작 기준 시각), V8(채팅 정책·계정 차단), V9(방송 투표·선택지·계정별 표), V10(비공개 질문·답변·명시적 공개 고정), V11(채널 포인트·원장·보상·교환 요청), V12(비공개 무료 미션·상태 이력), V13(방송별·일별 실제 관찰 집계), V14(비공개 녹화 관찰 창·파일 카탈로그), V15(명시적 공개 다시보기·별도 보관본 메타데이터), V16(원본 공개에 연동한 클립·생성 요청 snapshot·구간·인코딩 상태)을 사용한다. `validate-on-migrate: true`, `clean-disabled: true`, `baseline-on-migrate: false`를 명시한다. 적용한 SQL은 수정하지 않고 새 `V17__설명.sql` 같은 다음 버전을 추가한다. Redis는 Flyway 관리 대상이 아니다. 기존 Flyway 기록이 없는 비어 있지 않은 스키마를 자동으로 기존 운영 DB라고 간주하거나, checksum 오류를 자동으로 `repair`해서 넘기지 않는다.
 
-`ProductMigrationIntegrationTest`는 별도 PostgreSQL DB의 임의 생성 스키마에서 빈 DB의 V15까지 적용·재시작 시 미적용, V1 데이터의 최신 업그레이드 보존·기존 동의 NULL 유지, V3·V4에서 최신으로 업그레이드한 뒤 기존 방송 예약·시청 기록·채널 생성일 보존과 주소 백필·삭제 후 예약 동작, V5 신고의 원문·시각 보존과 운영자 자동 승격 없음, V6 알림 설정 보존·시작 기준 생성·과거 알림 미생성, V7 프로필·팔로우·알림 확인 상태 보존과 기본 채팅 정책 추가, V8 기존 정책 보존과 투표 단일 슬롯·계정별 한 표·선택지 복합 FK, V9 투표·선택지·표 보존과 질문 요청 멱등 키·단일 고정·답변 시각 제약, V10 기존 비공개 답변 보존과 빈 포인트 저장소·음수 잔액·1회 신청·중복 환불 제약, V11 잔액·부분 시청·원장·보상 신청 보존과 미션 요청/기한/이력 고유 제약, V12 미션·이력 보존과 빈 방송 분석 저장소·관찰 제약·FK 및 채널 삭제 연쇄, V14 녹화 관찰 창·파일 보존과 V15 빈 다시보기 저장소·원본당 고유 제약·ready의 검증 해시 필수 조건, 임시 복사 SQL 변조 시 checksum 검증으로 후속 V16 DDL 차단을 검사한다. 이 검사는 비밀 설정의 `verifyDbUrl` 중 루프백 주소와 `frame_product_verify` 또는 고유 접미사를 붙인 이름만 허용하며, 실행 시 생성한 `migration_verify_*` 스키마만 정리한다. 실제 DB와 저장소의 V1~V14 SQL은 변경하지 않는다. `ProductStorageDisabledTest`는 DB·Redis가 연결되지 않아도 제품 기능 비활성 상태의 미디어 서버가 해당 구성 요소 없이 시작되는지 검사한다.
+`ProductMigrationIntegrationTest`는 별도 PostgreSQL DB의 임의 생성 스키마에서 빈 DB의 V16까지 적용·재시작 시 미적용, V1 데이터의 최신 업그레이드 보존·기존 동의 NULL 유지, V3·V4에서 최신으로 업그레이드한 뒤 기존 방송 예약·시청 기록·채널 생성일 보존과 주소 백필·삭제 후 예약 동작, V5 신고의 원문·시각 보존과 운영자 자동 승격 없음, V6 알림 설정 보존·시작 기준 생성·과거 알림 미생성, V7 프로필·팔로우·알림 확인 상태 보존과 기본 채팅 정책 추가, V8 기존 정책 보존과 투표 단일 슬롯·계정별 한 표·선택지 복합 FK, V9 투표·선택지·표 보존과 질문 요청 멱등 키·단일 고정·답변 시각 제약, V10 기존 비공개 답변 보존과 빈 포인트 저장소·음수 잔액·1회 신청·중복 환불 제약, V11 잔액·부분 시청·원장·보상 신청 보존과 미션 요청/기한/이력 고유 제약, V12 미션·이력 보존과 빈 방송 분석 저장소·관찰 제약·FK 및 채널 삭제 연쇄, V14 녹화 관찰 창·파일 보존과 V15 빈 다시보기 저장소·원본당 고유 제약·ready의 검증 해시 필수 조건, V15 VOD 보존과 빈 클립 저장소·요청 UUID 고유 제약·채널/원본 복합 FK·구간/완료 해시 제약·원본 삭제 연쇄, 임시 복사 SQL 변조 시 checksum 검증으로 후속 V17 DDL 차단을 검사한다. 이 검사는 비밀 설정의 `verifyDbUrl` 중 루프백 주소와 `frame_product_verify` 또는 고유 접미사를 붙인 이름만 허용하며, 실행 시 생성한 `migration_verify_*` 스키마만 정리한다. 실제 DB와 저장소의 V1~V15 SQL은 변경하지 않는다. `ProductStorageDisabledTest`는 DB·Redis가 연결되지 않아도 제품 기능 비활성 상태의 미디어 서버가 해당 구성 요소 없이 시작되는지 검사한다.
 
 ```powershell
 $env:FRAME_PRODUCT_TEST_CONFIG = '<저장소 밖 검증 설정 JSON 경로>'

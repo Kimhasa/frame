@@ -65,15 +65,15 @@ for (const raw of envText.split('\n')) {
   env[m[1]] = m[2];
 }
 check('1d relay.env.example: plain NAME=value lines only (no quotes, backslashes, $, %, inline comments)', odd.length === 0 && Object.keys(env).length > 40, { variables: Object.keys(env).length, odd });
-const paths = { stats: env.RELAY_STATS_DIR, records: env.RELAY_RECORD_DIR, vod: env.FRAME_PRODUCT_VOD_DIR, ui: env.RELAY_UI_FILE, tokens: env.RELAY_PUBLISHER_TOKENS_FILE };
-check('1e the unit permits only stats and VOD archive writes while source recordings stay read-only',
-  unitValue('ReadWritePaths') === ['-' + paths.stats, '-' + paths.vod].join(' ') && paths.records.startsWith(unitValue('ReadOnlyPaths') + '/') && paths.vod.startsWith(unitValue('ReadOnlyPaths') + '/') && !paths.vod.startsWith(paths.records + '/') && guide.includes(paths.vod) && guide.includes(paths.stats) && guide.includes(dirname(paths.ui)) && guide.includes(paths.tokens),
+const paths = { stats: env.RELAY_STATS_DIR, records: env.RELAY_RECORD_DIR, vod: env.FRAME_PRODUCT_VOD_DIR, clips: env.FRAME_PRODUCT_CLIP_DIR, ui: env.RELAY_UI_FILE, tokens: env.RELAY_PUBLISHER_TOKENS_FILE };
+check('1e the unit permits only stats, VOD and clip archive writes while source recordings stay read-only',
+  unitValue('ReadWritePaths') === ['-' + paths.stats, '-' + paths.vod, '-' + paths.clips].join(' ') && paths.records.startsWith(unitValue('ReadOnlyPaths') + '/') && paths.vod.startsWith(unitValue('ReadOnlyPaths') + '/') && !paths.vod.startsWith(paths.records + '/') && paths.clips.startsWith(unitValue('ReadOnlyPaths') + '/') && !paths.clips.startsWith(paths.records + '/') && paths.clips !== paths.vod && guide.includes(paths.clips) && guide.includes(paths.vod) && guide.includes(paths.stats) && guide.includes(dirname(paths.ui)) && guide.includes(paths.tokens),
   { readWrite: unitValue('ReadWritePaths'), readOnly: unitValue('ReadOnlyPaths'), ...paths });
 
 // ---- 2 start --------------------------------------------------------------------------------------------------------------
 // The server layout of the install guide, under a temporary folder.
 const map = p => TMP + p;
-for (const d of ['/etc/frame-relay', '/opt/frame-relay/ui/assets/fonts', '/opt/frame-relay/ui/assets/js', '/var/lib/frame-relay/stats', '/var/lib/frame-relay/recordings', '/var/lib/frame-relay/vod']) mkdirSync(map(d), { recursive: true });
+for (const d of ['/etc/frame-relay', '/opt/frame-relay/ui/assets/fonts', '/opt/frame-relay/ui/assets/js', '/var/lib/frame-relay/stats', '/var/lib/frame-relay/recordings', '/var/lib/frame-relay/vod', '/var/lib/frame-relay/clips']) mkdirSync(map(d), { recursive: true });
 copyFileSync(API_JAR, map('/opt/frame-relay/frame-api.jar'));
 copyFileSync(join(ROOT, 'outputs/index.html'), map('/opt/frame-relay/ui/index.html'));
 for (const f of ['PretendardVariable.woff2', 'OFL.txt']) copyFileSync(join(ROOT, 'outputs/assets/fonts', f), map('/opt/frame-relay/ui/assets/fonts/' + f));

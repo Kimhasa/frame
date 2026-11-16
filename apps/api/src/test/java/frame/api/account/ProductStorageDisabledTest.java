@@ -39,6 +39,7 @@ class ProductStorageDisabledTest {
             assertEquals(0, app.getBeansOfType(SessionRepository.class).size());
             assertEquals(0, app.getBeansOfType(ChannelRecordings.class).size());assertEquals(0, app.getBeansOfType(RecordingCollector.class).size());assertEquals(0, app.getBeansOfType(frame.api.dvr.RecordedAssetProbe.class).size());
             assertEquals(0, app.getBeansOfType(ProductVods.class).size());assertEquals(0, app.getBeansOfType(VodFiles.class).size());assertEquals(0, app.getBeansOfType(VodPublisher.class).size());
+            assertEquals(0, app.getBeansOfType(ProductClips.class).size());assertEquals(0, app.getBeansOfType(ClipFiles.class).size());assertEquals(0, app.getBeansOfType(ClipPublisher.class).size());
             var request = HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + app.getEnvironment().getProperty("local.server.port") + "/healthz")).GET().build();
             try (var http = HttpClient.newHttpClient()) { assertEquals(200, http.send(request, HttpResponse.BodyHandlers.discarding()).statusCode()); }
         } finally { media.stop(0); }

@@ -67,6 +67,9 @@ public final class VodFiles {
         FileChannel channel=FileChannel.open(file(id,".mp4"),StandardOpenOption.READ,LinkOption.NOFOLLOW_LINKS);
         if(channel.size()!=size){channel.close();throw new IOException("VOD copy changed");}return channel;
     }
+    public Path clipInput(UUID id,long size,long modified,String key)throws IOException{
+        if(!matches(id,size,modified,key))throw new NoSuchFileException("VOD copy unavailable");return file(id,".mp4");
+    }
     public void discardPart(UUID id)throws IOException{
         if(root==null||!Files.exists(root,LinkOption.NOFOLLOW_LINKS))return;
         Path part=file(id,".part");if(Files.exists(part,LinkOption.NOFOLLOW_LINKS)){attributes(part);Files.delete(part);}

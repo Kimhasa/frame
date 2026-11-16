@@ -30,6 +30,7 @@ class AccountIntegrationTest {
     private static final JsonMapper JSON = JsonMapper.builder().build();
     private static final String ORIGIN = "http://127.0.0.1:5360", TOKEN = "product-verification-only-publisher-token-1234567890";
     @org.junit.jupiter.api.io.TempDir Path vodDirectory;
+    @org.junit.jupiter.api.io.TempDir Path clipDirectory;
     @Test void realCookiesCsrfAccountsFollowsAndOwnedStudioSurviveServerRestart() throws Exception {
         JsonNode privateConfig = JSON.readTree(Files.readAllBytes(Path.of(System.getenv("FRAME_PRODUCT_TEST_CONFIG"))));
         String database = privateConfig.path("verifyDbUrl").asString();
@@ -65,6 +66,7 @@ class AccountIntegrationTest {
         properties.put("frame.quality.renditions", "");
         properties.put("frame.dvr.record-dir", "");
         properties.put("frame.product.vod-dir", vodDirectory.toString());
+        properties.put("frame.product.clip-dir", clipDirectory.toString());
         ConfigurableApplicationContext app = null;
         try {
             app = start(properties);
@@ -200,6 +202,7 @@ class AccountIntegrationTest {
             String savedAnalytics=analytics(a,b,anonymous,sql,app,UUID.fromString(ownerId),UUID.fromString(channelId));
             String savedRecording=recordings(a,b,anonymous,sql,app,UUID.fromString(channelId));
             VodState savedVod=vods(a,b,anonymous,sql,app,UUID.fromString(channelId),UUID.fromString(savedRecording),vodDirectory);
+            ClipState savedClip=clips(a,b,anonymous,sql,app,UUID.fromString(channelId),savedVod.id(),vodDirectory,clipDirectory);
             String savedSchedule = schedules(a, b, anonymous, sql, UUID.fromString(channelId));
             String savedHistory = histories(a, b, anonymous, sql, app.getBean(frame.api.broadcast.BroadcastRegistry.class), UUID.fromString(ownerId));
             channelProfiles(a, b, anonymous, sql, app.getBean(Accounts.class), UUID.fromString(channelId), UUID.fromString(secondChannel));
@@ -224,6 +227,9 @@ class AccountIntegrationTest {
             assertEquals(200,new Browser(base(app)).get("/api/v1/vods/"+savedVod.id()).status());
             long vodUntil=System.nanoTime()+java.time.Duration.ofSeconds(5).toNanos();while(System.nanoTime()<vodUntil&&a.get("/api/v1/me/vods/"+savedVod.interrupted()).json().path("item").path("status").asString().equals("preparing"))Thread.sleep(25);
             var interruptedVod=a.get("/api/v1/me/vods/"+savedVod.interrupted()).json().path("item");assertEquals("failed",interruptedVod.path("status").asString());assertFalse(interruptedVod.path("published").asBoolean());assertTrue(interruptedVod.path("reason").asString().contains("다시 시작"));assertEquals(404,new Browser(base(app)).get("/api/v1/vods/"+savedVod.interrupted()).status());
+            assertEquals(200,new Browser(base(app)).get("/api/v1/clips/"+savedClip.id()).status());assertTrue(a.get("/api/v1/me/clips/"+savedClip.id()).json().path("item").path("published").asBoolean());
+            long clipUntil=System.nanoTime()+java.time.Duration.ofSeconds(5).toNanos();while(System.nanoTime()<clipUntil&&a.get("/api/v1/me/clips/"+savedClip.interrupted()).json().path("item").path("status").asString().equals("preparing"))Thread.sleep(25);
+            var interruptedClip=a.get("/api/v1/me/clips/"+savedClip.interrupted()).json().path("item");assertEquals("failed",interruptedClip.path("status").asString());assertTrue(interruptedClip.path("reason").asString().contains("다시 시작"));assertEquals(404,new Browser(base(app)).get("/api/v1/clips/"+savedClip.interrupted()).status());
             assertTrue(a.get("/api/v1/me/schedules").json().path("items").valueStream().anyMatch(item -> item.path("id").asString().equals(savedSchedule)));
             JsonNode restoredHistory = a.get("/api/v1/me/history").json().path("items");
             assertEquals(1, restoredHistory.size()); assertEquals(savedHistory, restoredHistory.get(0).path("id").asString());
@@ -300,6 +306,46 @@ class AccountIntegrationTest {
             // Only this generated schema in the hard-checked verification database is removed.
             try (var connection = DriverManager.getConnection(database, username, password); var statement = connection.createStatement()) { statement.execute("DROP SCHEMA " + schema + " CASCADE"); }
         }
+    }
+    private record ClipState(UUID id,UUID interrupted){}
+    /** Synthetic media distinguishes DB/auth/lifecycle checks from the real FFmpeg+decoded-video e2e. */
+    private static ClipState clips(Browser owner,Browser other,Browser anonymous,JdbcClient sql,ConfigurableApplicationContext app,UUID channel,UUID source,Path vodDirectory,Path clipDirectory)throws Exception{
+        app.getBean(ClipPublisher.class).stop();ProductClips service=app.getBean(ProductClips.class);String own="/api/v1/me/clips",pub="/api/v1/clips";
+        sql.sql("UPDATE product_vods SET duration_ms=12000 WHERE id=:id").param("id",source).update();
+        UUID request=UUID.randomUUID();var body=Map.of("sourceVodId",source.toString(),"clientRequestId",request.toString(),"startMs",2000,"endMs",8000,"title","clip-preserved","description","original clip request");
+        assertEquals(401,anonymous.get(own).status());assertEquals(403,owner.send("POST",own,body,false,ORIGIN).status());assertEquals(403,owner.send("POST",own,body,true,"https://outside.invalid").status());assertEquals(404,other.write("POST",own,body).status());
+        assertEquals(400,owner.write("POST",own,Map.of("sourceVodId",source.toString(),"clientRequestId",UUID.randomUUID().toString(),"startMs",0,"endMs",4999,"title","bad range","description","")).status());
+        var created=owner.write("POST",own,body);assertEquals(202,created.status());var initial=created.json().path("item");UUID id=UUID.fromString(initial.path("id").asString());assertEquals("preparing",initial.path("status").asString());assertFalse(initial.path("published").asBoolean());assertEquals(0,initial.path("sizeBytes").longValue());
+        assertEquals(id.toString(),owner.get(own+"/by-request/"+request).json().path("item").path("id").asString());assertTrue(other.get(own+"/by-request/"+request).json().path("item").isNull());assertEquals(200,owner.write("POST",own,body).status());
+        assertEquals(409,owner.write("POST",own,Map.of("sourceVodId",source.toString(),"clientRequestId",request.toString(),"startMs",2000,"endMs",9000,"title","clip-preserved","description","original clip request")).status());
+        assertEquals(404,other.get(own+"/"+id).status());owner.expectedUserId=UUID.randomUUID().toString();assertEquals("SESSION_CHANGED",owner.get(own).code());owner.expectedUserId=null;
+        var edited=owner.write("PATCH",own+"/"+id,Map.of("version",0,"title","edited while preparing","description","retained input","visibility","private"));assertEquals(200,edited.status());
+        byte[] bytes="synthetic archived clip bytes for HTTP contract".getBytes(java.nio.charset.StandardCharsets.UTF_8);Path archive=clipDirectory.resolve(id+".mp4");Files.write(archive,bytes);var attributes=Files.readAttributes(archive,java.nio.file.attribute.BasicFileAttributes.class);String hash=java.util.HexFormat.of().formatHex(java.security.MessageDigest.getInstance("SHA-256").digest(bytes));
+        var info=new ClipFiles.Info(bytes.length,6000,attributes.lastModifiedTime().toMillis(),String.valueOf(attributes.fileKey()),hash);service.finished(id,info);
+        var current=owner.get(own+"/"+id).json().path("item");assertEquals("ready",current.path("status").asString());assertEquals("private",current.path("visibility").asString());assertEquals("edited while preparing",current.path("title").asString());assertEquals(1,current.path("version").longValue());assertFalse(current.path("published").asBoolean());assertEquals(404,anonymous.get(pub+"/"+id).status());
+        // An immutable request receipt still resolves after editable metadata changes.
+        assertEquals(id.toString(),owner.write("POST",own,body).json().path("item").path("id").asString());
+        assertEquals(200,owner.write("PATCH",own+"/"+id,Map.of("version",1,"title","clip-preserved","description","public description","visibility","public")).status());
+        var publicItem=anonymous.get(pub+"/"+id);assertEquals(200,publicItem.status());assertFalse(publicItem.json().path("item").has("clientRequestId"));assertFalse(publicItem.json().path("item").has("source_key"));assertEquals(1,anonymous.get(pub+"?channel=spring-owner").json().path("items").size());assertEquals(400,anonymous.get(pub+"?cursor=broken").status());
+        try(var http=HttpClient.newHttpClient()){
+            var part=http.send(HttpRequest.newBuilder(URI.create(owner.base+pub+"/"+id+"/media")).header("Range","bytes=2-7").GET().build(),HttpResponse.BodyHandlers.ofByteArray());assertEquals(206,part.statusCode());assertArrayEquals(java.util.Arrays.copyOfRange(bytes,2,8),part.body());assertTrue(part.headers().firstValue("cache-control").orElse("").contains("no-store"));
+            var head=http.send(HttpRequest.newBuilder(URI.create(owner.base+pub+"/"+id+"/media")).method("HEAD",HttpRequest.BodyPublishers.noBody()).build(),HttpResponse.BodyHandlers.ofByteArray());assertEquals(200,head.statusCode());assertEquals(0,head.body().length);assertEquals(Integer.toString(bytes.length),head.headers().firstValue("content-length").orElse(""));
+        }
+        Path original=vodDirectory.resolve(source+".mp4"),held=vodDirectory.resolve(source+".clip-held");Files.move(original,held);
+        try{assertEquals(200,anonymous.get(pub+"/"+id).status());assertEquals(200,anonymous.get(pub+"/"+id+"/media").status());assertTrue(owner.get(own+"/"+id).json().path("item").path("sourcePublished").asBoolean());}
+        finally{Files.move(held,original);}
+        sql.sql("UPDATE product_vods SET visibility='private' WHERE id=:id").param("id",source).update();
+        assertEquals(404,anonymous.get(pub+"/"+id).status());assertEquals(404,anonymous.get(pub+"/"+id+"/media").status());assertEquals(0,anonymous.get(pub).json().path("items").size());var sourcePrivate=owner.get(own+"/"+id).json().path("item");assertFalse(sourcePrivate.path("published").asBoolean());assertTrue(sourcePrivate.path("available").asBoolean());assertFalse(sourcePrivate.path("sourcePublished").asBoolean());
+        Path clipHeld=clipDirectory.resolve(id+".held");Files.move(archive,clipHeld);
+        try{assertEquals(200,owner.write("PATCH",own+"/"+id,Map.of("version",2,"title","clip-preserved","description","public description","visibility","private")).status());}
+        finally{Files.move(clipHeld,archive);}
+        assertEquals(409,owner.write("PATCH",own+"/"+id,Map.of("version",2,"title","stale","description","","visibility","public")).status());
+        sql.sql("UPDATE product_vods SET visibility='public' WHERE id=:id").param("id",source).update();assertEquals(404,anonymous.get(pub+"/"+id).status());
+        assertEquals(200,owner.write("PATCH",own+"/"+id,Map.of("version",3,"title","clip-preserved","description","public description","visibility","public")).status());
+        sql.sql("UPDATE product_clips SET status='failed',reason='preparation_failed' WHERE id=:id").param("id",id).update();
+        var retried=owner.write("POST",own+"/"+id+"/retry",Map.of("version",4));assertEquals(202,retried.status());assertEquals("preparing",retried.json().path("item").path("status").asString());assertEquals(0,retried.json().path("item").path("sizeBytes").longValue());service.finished(id,info);
+        UUID interruptedRequest=UUID.randomUUID();var pending=owner.write("POST",own,Map.of("sourceVodId",source.toString(),"clientRequestId",interruptedRequest.toString(),"startMs",0,"endMs",6000,"title","interrupted clip","description",""));assertEquals(202,pending.status());UUID interrupted=UUID.fromString(pending.json().path("item").path("id").asString());
+        return new ClipState(id,interrupted);
     }
     private record VodState(UUID id,UUID interrupted){}
     /** Synthetic archive bytes verify auth, range, metadata and DB recovery; media e2e validates real MP4 publishing/decoding. */

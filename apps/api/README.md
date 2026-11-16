@@ -85,8 +85,7 @@ java -jar build/libs/frame-api.jar
   - 응답 코드, 본문, 헤더, 요청 제한은 Node 중계와 같게 맞췄습니다.
   - Node와 다른 점: 채팅의 16 KB 초과 메시지는 Tomcat이 내용을 받은 뒤 1009로 닫습니다(Node는 프레임 머리만 보고 닫음). 그래서 중계 e2e는 실제 20 KB 메시지를 보내 확인합니다.
 - **검증**: React e2e 34/34, 중계 e2e 108/108, Caddy 경유 HTTPS/WSS 18/0(미실행 2: Tailscale 인증서 필요), 배포 파일 점검 17/17을 Spring 대상으로 통과했습니다(`verification/spring/RESULTS.md`). 480p로 바꾼 직후의 간헐적 멈춤(두 백엔드 공통, 원인 미확인)은 같은 문서에 적었습니다.
-- **배포**: `deploy/systemd/frame-relay.service`가 `java -jar /opt/frame-relay/frame-api.jar`로 실행합니다. 설치 절차와 JVM 옵션은 `deploy/README.md` 3·5장, 배포 파일과 jar가 맞는지는 `node server/verify/vod-e2e.mjs                  # 검증 DB·실제 녹화·공개 복사·익명 재생·React/개발 모드(빌드 후, 단독 실행)
-node server/verify/deploy-check.mjs`로 확인합니다.
+- **배포**: `deploy/systemd/frame-relay.service`가 `java -jar /opt/frame-relay/frame-api.jar`로 실행합니다. 설치 절차와 JVM 옵션은 `deploy/README.md` 3·5장, 배포 파일과 jar가 맞는지는 `node server/verify/deploy-check.mjs`로 확인합니다.
 - **남은 일**: Linux 서버에서의 실제 실행(systemd, 패키지 Java), Tailscale 인증서 Caddy 실행과 휴대폰 확인, 운영 Caddy 예시에 React 화면 추가, 480p 전환 직후 멈춤의 원인.
 
 ## 종료와 재시작
@@ -123,6 +122,12 @@ node server/verify/deploy-check.mjs`로 확인합니다.
 
 `FRAME_PRODUCT_VOD_DIR`은 원본 녹화 폴더와 서로 포함하지 않는 별도 쓰기 폴더입니다. 명시하지 않으면 녹화 폴더의 형제 `vod`를 사용하고 두 설정 모두 없으면 발행을 막습니다. 원본의 기본 6시간 삭제·숨김과 이미 보관된 다시보기의 공개 여부는 별개이며, 보관본을 자동 삭제하거나 재인코딩하지 않습니다. 현재는 단일 완료 파일·단일 원본 화질을 발행하며 여러 파일 합치기·썸네일 생성·다시보기 화질 변환은 포함하지 않습니다. 상세 계약과 장애·재시작 처리 범위는 [공개 다시보기 API 계약](PRODUCT_API.md#공개-다시보기)을 따릅니다.
 
+## 공개 클립
+
+방송자가 본인의 공개 다시보기에서 5~60초 구간을 선택하면 기존 FFmpeg로 실제 H.264/AAC MP4를 만들고 별도로 보관합니다. V16은 요청 UUID·범위·준비 상태·제목·설명·공개 범위를 저장합니다. 시청자는 로그인 없이 클립 목록·채널·공유 링크로 재생하고 탐색할 수 있습니다. 원본 비공개는 파생 클립의 새 공개 요청도 막으며, 원본 재공개 시 자체 public인 클립만 복구합니다. 원본 물리 파일의 소실만으로 이미 생성한 클립을 철회하지 않습니다.
+
+보관 폴더는 `FRAME_PRODUCT_CLIP_DIR`이며 기본은 VOD 폴더의 형제 `clips`입니다. raw·VOD·클립 폴더는 서로 포함하지 않습니다. 단일 worker·각 1 thread·120초·512 MiB 상한을 두고 원본/부분 파일 검증·원자 이동·실패 재시도·재시작 복구를 처리합니다. 단일 API 전제와 상태/권한/receipt/부모 공개 정책은 [공개 클립 계약](PRODUCT_API.md#공개-클립)을 따릅니다.
+
 ## 검증
 
 ```bash
@@ -130,9 +135,11 @@ node server/verify/web-e2e.mjs --backend spring   # React 시청 화면 전체(�
 node server/verify/e2e.mjs --backend spring       # 중계 계약 전체(기존 화면, DVR, 채팅 규칙, 상한, 장애), 포트 24xxx
 node server/verify/spring-app-check.mjs           # 실제 송출 앱 -> Spring -> React 재생 -> 종료, 포트 27xxx
 node server/verify/chat-load.mjs --clients 1000 --senders 2 --messages 5 --backend spring   # 채팅 1,000 연결
+node server/verify/vod-e2e.mjs                  # 검증 DB·실제 녹화·공개 복사·익명 재생·React/개발 모드(빌드 후, 단독 실행)
+node server/verify/clips-e2e.mjs                # 검증 DB·실제 FFmpeg 구간·부모 공개 연동·익명 재생·React/개발 모드(빌드 후, 단독 실행)
 node server/verify/deploy-check.mjs               # deploy/의 단위 파일·환경 예시·설치 절차와 jar의 정합(Linux 없이), 포트 28080
 node server/verify/https-session.mjs --host <test-host> --tls internal --bind <주소> --backend spring   # Caddy 경유 시험 세션
 node server/verify/https-check.mjs                # 그 세션에서 HTTPS/WSS, 재생, 채팅, 서비스 재시작(H10)
 ```
 
-결과는 `verification/spring/RESULTS.md`에 있습니다.
+중계 검증 결과는 `verification/spring/RESULTS.md`, 제품 다시보기·클립 결과는 [제품 검증 기록](../../verification/product/REPORT.md)에 있습니다.

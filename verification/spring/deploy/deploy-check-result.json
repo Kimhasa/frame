@@ -1,5 +1,5 @@
 {
-  "startedAt": "2026-11-16T05:38:28.765Z",
+  "startedAt": "2026-11-16T06:03:27.496Z",
   "kind": "deploy files against frame-api.jar on this PC (no Linux, no systemd)",
   "checks": [
     {
@@ -23,17 +23,18 @@
     {
       "name": "1d relay.env.example: plain NAME=value lines only (no quotes, backslashes, $, %, inline comments)",
       "ok": true,
-      "variables": 54,
+      "variables": 55,
       "odd": []
     },
     {
-      "name": "1e the unit permits only stats and VOD archive writes while source recordings stay read-only",
+      "name": "1e the unit permits only stats, VOD and clip archive writes while source recordings stay read-only",
       "ok": true,
-      "readWrite": "-/var/lib/frame-relay/stats -/var/lib/frame-relay/vod",
+      "readWrite": "-/var/lib/frame-relay/stats -/var/lib/frame-relay/vod -/var/lib/frame-relay/clips",
       "readOnly": "/var/lib/frame-relay",
       "stats": "/var/lib/frame-relay/stats",
       "records": "/var/lib/frame-relay/recordings",
       "vod": "/var/lib/frame-relay/vod",
+      "clips": "/var/lib/frame-relay/clips",
       "ui": "/opt/frame-relay/ui/index.html",
       "tokens": "/etc/frame-relay/publisher-tokens"
     },
@@ -41,7 +42,7 @@
       "name": "2a the jar starts with the variables of relay.env.example (paths, port and MediaMTX API address replaced; no MediaMTX runs), without a settings warning",
       "ok": true,
       "healthzStatus": 503,
-      "startedInS": 2.389,
+      "startedInS": 2.528,
       "summary": "FRAME API 0.3.0-spring: 1 publisher token(s); renditions []; DVR on; HLS on; media grace 15000 ms; playback stats /var/lib/frame-relay/stats; legacy page /opt/frame-relay/ui/index.html",
       "warnings": []
     },
@@ -140,7 +141,7 @@
     }
   ],
   "notes": [],
-  "finishedAt": "2026-11-16T05:38:45.667Z",
+  "finishedAt": "2026-11-16T06:03:44.931Z",
   "passed": 17,
   "failed": 0,
   "notCovered": [

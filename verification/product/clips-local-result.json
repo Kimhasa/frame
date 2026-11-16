@@ -1,0 +1,32 @@
+{
+  "checkedAt": "2026-11-16T06:24:41.795Z",
+  "databaseRuntime": "docker",
+  "counts": {
+    "accounts": 0,
+    "channels": 0,
+    "operators": 0,
+    "recordingFiles": 0,
+    "vods": 0,
+    "clips": 0,
+    "publicClips": 0,
+    "clipTestAccounts": 0,
+    "migrations": 16,
+    "v16Success": true
+  },
+  "statuses": {
+    "health": 200,
+    "clipsPage": 200,
+    "anonymousPublicClips": 200,
+    "emptyPublicClips": true,
+    "anonymousClipManagement": 401,
+    "anonymousVods": 200,
+    "anonymousRawRecordings": 401
+  },
+  "mediaReceiverPid": 34664,
+  "mediaReceiverPreserved": true,
+  "runtimeJarSha256": "1daa826c869af28197c2bc2bfe0978f81f9e2f75f63eeccd9de5d99f139e8607",
+  "testedJarApplied": true,
+  "previousMigrationsUnchanged": true,
+  "productionTestRowsAbsent": true,
+  "complete": true
+}

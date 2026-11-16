@@ -36,6 +36,7 @@ public class ProductVods {
                long duration,long size,Long modified,String key,String hash,Long published,long created,long updated,long version,String reason){}
     record Work(UUID id,UUID owner,UUID recording){}
     public record Asset(UUID id,long size,Long modified,String key){}
+    public record ClipSource(UUID id,UUID channel,long duration,long size,long modified,String key,String hash){}
     record Cursor(long at,UUID id){}
     record Draft(UUID recording,String title,String description){}
     record Edit(long version,String title,String description,String visibility){}
@@ -118,6 +119,11 @@ public class ProductVods {
     }
     @Transactional(readOnly=true) public PublicDetail publicDetail(UUID id){Row row=published(id);if(!available(row))throw missing();return new PublicDetail(publicItem(row),System.currentTimeMillis());}
     @Transactional(readOnly=true) public Asset publicAsset(UUID id){Row row=published(id);if(!available(row))throw missing();return new Asset(row.id(),row.size(),row.modified(),row.key());}
+    @Transactional(readOnly=true) public ClipSource clipSource(UUID owner,UUID id){
+        account(owner);Row row=owned(owner,id,false);
+        if(!row.status().equals("ready")||!row.visibility().equals("public")||!available(row))throw new ProductProblem(409,"CLIP_SOURCE_UNAVAILABLE","공개된 원본 다시보기의 보관 파일을 확인해 주세요.");
+        return new ClipSource(row.id(),row.channel().id(),row.duration(),row.size(),row.modified(),row.key(),row.hash());
+    }
     @Transactional public List<UUID> recover(){
         var ids=sql.sql("SELECT id FROM product_vods WHERE status='preparing'").query(UUID.class).list();
         sql.sql("UPDATE product_vods SET status='failed',reason='preparation_interrupted',updated_at_ms=:now WHERE status='preparing'").param("now",System.currentTimeMillis()).update();return ids;

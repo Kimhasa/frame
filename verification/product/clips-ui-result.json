@@ -1,0 +1,230 @@
+{
+  "verificationDatabaseOnly": true,
+  "checks": 32,
+  "passed": 32,
+  "results": [
+    {
+      "name": "The composer rejects a shorter-than-five-second interval before any creation request",
+      "pass": true
+    },
+    {
+      "name": "The source interval preview seeks to its chosen start and pauses at its actual end",
+      "pass": true
+    },
+    {
+      "name": "Clip publication requires confirmation with initial focus on cancel",
+      "pass": true
+    },
+    {
+      "name": "A pending clip request locks duplicate actions and composer Escape or close",
+      "pass": true
+    },
+    {
+      "name": "An uncertain request freezes and preserves its intended interval and metadata",
+      "pass": true
+    },
+    {
+      "name": "Receipt lookup confirms an absent request without automatically posting a new clip",
+      "pass": true
+    },
+    {
+      "name": "A manual resend keeps the exact UUID and snapshot even when the actual accepted response is lost",
+      "pass": true
+    },
+    {
+      "name": "Explicit receipt recovery finds one prepared public clip without repeating an accepted creation",
+      "pass": true
+    },
+    {
+      "name": "A failed clip metadata save preserves the publisher draft",
+      "pass": true
+    },
+    {
+      "name": "An explicitly retried metadata edit saves the real clip title",
+      "pass": true
+    },
+    {
+      "name": "A real competing revision produces a conflict without overwriting the local draft",
+      "pass": true
+    },
+    {
+      "name": "Canceling the private confirmation preserves the actual published clip",
+      "pass": true
+    },
+    {
+      "name": "Confirmed publisher UI withdrawal blocks anonymous clip detail",
+      "pass": true
+    },
+    {
+      "name": "Confirmed republication reuses the same prepared clip",
+      "pass": true
+    },
+    {
+      "name": "Closing the composer restores focus to its source VOD action",
+      "pass": true
+    },
+    {
+      "name": "The anonymous catalog uses real clip cards without invented views or old chat",
+      "pass": true
+    },
+    {
+      "name": "A failed clip refresh keeps the last real catalog visible",
+      "pass": true
+    },
+    {
+      "name": "A failed next-page request preserves existing real cards",
+      "pass": true
+    },
+    {
+      "name": "Offline catalog state preserves its search filter",
+      "pass": true
+    },
+    {
+      "name": "The actual channel clip tab includes public clips and excludes a private clip",
+      "pass": true
+    },
+    {
+      "name": "Anonymous clip playback is available without login and starts only on user intent",
+      "pass": true
+    },
+    {
+      "name": "The anonymous player decodes a real six-second video and audio clip",
+      "pass": true,
+      "detail": {
+        "width": 320,
+        "height": 180,
+        "currentTime": 0.393887,
+        "duration": 6.021354,
+        "decodedFrames": 11,
+        "audioDecodedBytes": 10506,
+        "seek": {
+          "target": 3.010677,
+          "currentTime": 3.185168,
+          "decodedFrames": 63
+        }
+      }
+    },
+    {
+      "name": "The actual clipped file advances decoded frames after a native middle seek",
+      "pass": true,
+      "detail": {
+        "target": 3.010677,
+        "currentTime": 3.185168,
+        "decodedFrames": 63
+      }
+    },
+    {
+      "name": "The clip share dialog exposes its stable public URL",
+      "pass": true
+    },
+    {
+      "name": "Closing clip sharing restores focus",
+      "pass": true
+    },
+    {
+      "name": "Clip metadata and player fit the 390px viewport",
+      "pass": true
+    },
+    {
+      "name": "Clip metadata and player fit the 320px viewport",
+      "pass": true
+    },
+    {
+      "name": "A real parent withdrawal clears clip playback while preserving the clip own public preference",
+      "pass": true
+    },
+    {
+      "name": "Same-modal parent withdrawal hides clip public links while preserving the dirty clip draft",
+      "pass": true
+    },
+    {
+      "name": "Same-modal parent republication restores the clip state without overwriting its draft",
+      "pass": true
+    },
+    {
+      "name": "Changing the shared cookie account clears previous private clip and recording content",
+      "pass": true
+    },
+    {
+      "name": "Clip management carries its expected owner with no runtime or unconfirmed interception errors",
+      "pass": true
+    }
+  ],
+  "runtimeErrors": [],
+  "writes": [
+    {
+      "method": "POST",
+      "kind": "publish"
+    },
+    {
+      "method": "POST",
+      "kind": "publish"
+    },
+    {
+      "method": "PATCH",
+      "kind": "edit"
+    },
+    {
+      "method": "PATCH",
+      "kind": "edit"
+    },
+    {
+      "method": "PATCH",
+      "kind": "edit"
+    },
+    {
+      "method": "PATCH",
+      "kind": "edit"
+    },
+    {
+      "method": "PATCH",
+      "kind": "edit"
+    }
+  ],
+  "videoMetrics": {
+    "width": 320,
+    "height": 180,
+    "currentTime": 0.393887,
+    "duration": 6.021354,
+    "decodedFrames": 11,
+    "audioDecodedBytes": 10506,
+    "seek": {
+      "target": 3.010677,
+      "currentTime": 3.185168,
+      "decodedFrames": 63
+    }
+  },
+  "completedCatalogResponses": [
+    {
+      "status": 503
+    },
+    {
+      "status": 200
+    },
+    {
+      "status": 503
+    },
+    {
+      "status": 200
+    },
+    {
+      "status": 200
+    },
+    {
+      "status": 200
+    },
+    {
+      "status": 200
+    }
+  ],
+  "acceptedResponseBeforeFault": {
+    "status": 202
+  },
+  "creationRequests": 2,
+  "creationSnapshotPreserved": true,
+  "paginationInstrumentation": "Public clip list limit lowered to 1 and recording list to 2; rows and cursors remain actual server responses.",
+  "limits": [
+    "Headless Edge on one PC only",
+    "Mobile sizes are emulated viewports, not physical phones"
+  ]
+}
