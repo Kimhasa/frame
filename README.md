@@ -12,13 +12,13 @@ Windows 애플리케이션 창 또는 모니터 화면과 오디오를 송출하
 
 ## 웹·API 개발 시작
 
-새 PC에서는 Node.js 24.x·JDK 21·Corepack·Docker Desktop의 Linux 엔진을 준비한 뒤 [Docker 개발 환경](deploy/DOCKER.md#다른-pc에서-처음-받았을-때)의 최초 준비와 실행 명령을 따른다. React는 `apps/web`의 Yarn Berry 고정 버전을 사용하며 Spring Boot가 PostgreSQL의 Flyway V1~V12를 적용한다. 미디어 실행 파일은 고정 의존성 목록으로 다시 준비하므로 웹·API 작업에 C++ 빌드는 필요하지 않다. 회원·비밀 설정·송출 키는 각 PC에서 따로 생성한다.
+새 PC에서는 Node.js 24.x·JDK 21·Corepack·Docker Desktop의 Linux 엔진을 준비한 뒤 [Docker 개발 환경](deploy/DOCKER.md#다른-pc에서-처음-받았을-때)의 최초 준비와 실행 명령을 따른다. React는 `apps/web`의 Yarn Berry 고정 버전을 사용하며 Spring Boot가 PostgreSQL의 Flyway V1~V13를 적용한다. 미디어 실행 파일은 고정 의존성 목록으로 다시 준비하므로 웹·API 작업에 C++ 빌드는 필요하지 않다. 회원·비밀 설정·송출 키는 각 PC에서 따로 생성한다.
 
-실제 제품 API에는 계정·채널·팔로우·방송 예약·시청 기록·신고·알림·채팅 관리·투표·질문·시청 포인트와 보상·무료 미션이 연결돼 있다. 무료 미션은 시청자가 제안하고 방송자가 진행·결과를 처리하며, 기한과 방송 종료에 따른 만료 및 변경 이력을 저장한다. 유료 미션·멤버십·수익과 정산·계정별 결제, 녹화와 다시보기·클립, 방송 분석, 외부 도구와 개발자 설정의 실제 제품 연동은 후속 작업이다. 미연동 메뉴에서 저장이나 거래가 성공한 것처럼 표시하지 않는다. 최신 검증 범위는 [제품 검증 기록](verification/product/REPORT.md)에서 확인한다.
+실제 제품 API에는 계정·채널·팔로우·방송 예약·시청 기록·신고·알림·채팅 관리·투표·질문·시청 포인트와 보상·무료 미션·방송 분석이 연결돼 있다. 무료 미션은 시청자가 제안하고 방송자가 진행·결과를 처리하며, 기한과 방송 종료에 따른 만료 및 변경 이력을 저장한다. 방송 분석은 실제 송출을 관찰한 시간과 연결 수 표본을 저장해 기간 요약·일별 그래프·방송 목록으로 제공하며, 실제 사람 수나 재생 시간을 뜻하지 않는다. 유료 미션·멤버십·수익과 정산·계정별 결제, 녹화와 다시보기·클립, 외부 도구와 개발자 설정의 실제 제품 연동은 후속 작업이다. 미연동 메뉴에서 저장이나 거래가 성공한 것처럼 표시하지 않는다. 최신 검증 범위는 [제품 검증 기록](verification/product/REPORT.md)에서 확인한다.
 
 ## 빌드
 
-React·Spring Boot 제품 개발의 PostgreSQL·Redis는 [Docker Compose 실행](deploy/DOCKER.md)으로 준비할 수 있습니다. 계정·채널 프로필·주소 예약·신고·팔로우·방송 예약·시청 기록·알림·채팅 정책과 계정 차단·방송 투표·질문과 답변·비현금 포인트와 보상·무료 미션의 DB 변경은 Spring Boot의 Flyway 마이그레이션이 관리합니다. 기존 PC 데이터 실행 경로는 [PRODUCT_LOCAL.md](deploy/PRODUCT_LOCAL.md)에 있습니다. 아래 빌드는 보존 중인 C++ 송출 앱에 해당합니다.
+React·Spring Boot 제품 개발의 PostgreSQL·Redis는 [Docker Compose 실행](deploy/DOCKER.md)으로 준비할 수 있습니다. 계정·채널 프로필·주소 예약·신고·팔로우·방송 예약·시청 기록·알림·채팅 정책과 계정 차단·방송 투표·질문과 답변·비현금 포인트와 보상·무료 미션·방송 분석의 DB 변경은 Spring Boot의 Flyway 마이그레이션이 관리합니다. 기존 PC 데이터 실행 경로는 [PRODUCT_LOCAL.md](deploy/PRODUCT_LOCAL.md)에 있습니다. 아래 빌드는 보존 중인 C++ 송출 앱에 해당합니다.
 
 Windows x64, Visual Studio 2022 Build Tools(C++ 도구·Windows SDK·CMake·Ninja), Node.js 22 이상이 필요합니다. 도구 버전과 상세 절차는 [native/README.md](native/README.md)를 확인하세요.
 
@@ -41,7 +41,7 @@ node tools\package-dist.mjs
 | 경로 | 내용 |
 | --- | --- |
 | `apps/web/` | React 공개 시청 웹(Yarn Berry) |
-| `apps/api/` | Spring Boot 백엔드: 중계와 PostgreSQL·Redis 기반 회원·채널 프로필·팔로우·방송 예약·시청 기록·알림·신고 관리·채팅 정책과 계정 차단·방송 투표·질문과 답변·비현금 포인트와 보상·무료 미션 API. 실행 방법은 [apps/api/README.md](apps/api/README.md) |
+| `apps/api/` | Spring Boot 백엔드: 중계와 PostgreSQL·Redis 기반 회원·채널 프로필·팔로우·방송 예약·시청 기록·알림·신고 관리·채팅 정책과 계정 차단·방송 투표·질문과 답변·비현금 포인트와 보상·무료 미션·방송 분석 API. 실행 방법은 [apps/api/README.md](apps/api/README.md) |
 | `deploy/` | 중계 서버 배포 설정: `frame-api.jar`를 실행하는 systemd 단위, 환경 예시, Caddy와 서버용 MediaMTX 설정([deploy/README.md](deploy/README.md)) |
 | `server/` | 검증 스크립트(`server/verify/`)와 이전 Node 중계(배포하지 않음, 검증의 비교 기준) |
 | `native/` | C++ 호스트, 캡처·오디오·송출·HTTP·채팅·DVR 구현 |

@@ -194,6 +194,7 @@ class AccountIntegrationTest {
             var recovered = orphan.get("/api/v1/session"); assertEquals(200, recovered.status()); assertTrue(recovered.json().path("user").isNull()); assertTrue(recovered.json().path("channel").isNull()); assertFalse(orphan.csrf.isBlank());
             assertEquals(200, orphan.get("/api/v1/policies").status());
             assertEquals(200, anonymous.get("/api/broadcasts").status()); assertTrue(anonymous.get("/api/broadcasts").raw().headers().allValues("set-cookie").isEmpty());
+            String savedAnalytics=analytics(a,b,anonymous,sql,app,UUID.fromString(ownerId),UUID.fromString(channelId));
             String savedSchedule = schedules(a, b, anonymous, sql, UUID.fromString(channelId));
             String savedHistory = histories(a, b, anonymous, sql, app.getBean(frame.api.broadcast.BroadcastRegistry.class), UUID.fromString(ownerId));
             channelProfiles(a, b, anonymous, sql, app.getBean(Accounts.class), UUID.fromString(channelId), UUID.fromString(secondChannel));
@@ -208,6 +209,11 @@ class AccountIntegrationTest {
             app.close(); app = null; app = start(properties); a.base = base(app); b.base = base(app); savedMission.author().base=base(app);
             assertEquals("바뀐 이름", b.get("/api/v1/session").json().path("user").path("displayName").asString()); assertEquals(1, b.get("/api/v1/me/follows").json().path("items").size());
             assertEquals(200, a.get("/api/v1/studio").status());
+            long analyticsUntil=System.nanoTime()+java.time.Duration.ofSeconds(8).toNanos();
+            while(System.nanoTime()<analyticsUntil&&a.get("/api/v1/me/analytics?q=analytics-preserved").json().path("items").get(0).path("status").asString().equals("live"))Thread.sleep(50);
+            var restoredAnalytics=a.get("/api/v1/me/analytics?q=analytics-preserved").json().path("items").get(0);
+            assertEquals(savedAnalytics,restoredAnalytics.path("id").asString());assertEquals("interrupted",restoredAnalytics.path("status").asString());assertEquals("server_restart",restoredAnalytics.path("endReason").asString());
+            assertEquals(10000,restoredAnalytics.path("broadcastDurationMs").longValue());assertEquals(restoredAnalytics.path("lastObservedAtMs").longValue(),restoredAnalytics.path("endedAtMs").longValue());
             assertTrue(a.get("/api/v1/me/schedules").json().path("items").valueStream().anyMatch(item -> item.path("id").asString().equals(savedSchedule)));
             JsonNode restoredHistory = a.get("/api/v1/me/history").json().path("items");
             assertEquals(1, restoredHistory.size()); assertEquals(savedHistory, restoredHistory.get(0).path("id").asString());
@@ -284,6 +290,58 @@ class AccountIntegrationTest {
             // Only this generated schema in the hard-checked verification database is removed.
             try (var connection = DriverManager.getConnection(database, username, password); var statement = connection.createStatement()) { statement.execute("DROP SCHEMA " + schema + " CASCADE"); }
         }
+    }
+    private static String analytics(Browser owner,Browser other,Browser anonymous,JdbcClient sql,ConfigurableApplicationContext app,UUID ownerId,UUID channel)throws Exception{
+        // Controlled observation clock fixture; the separate media e2e verifies the actual worker and RTMP source.
+        app.getBean(AnalyticsCollector.class).stop();
+        assertEquals(401,anonymous.get("/api/v1/me/analytics").status());
+        assertEquals(400,owner.get("/api/v1/me/analytics?period=31").status());assertEquals(400,owner.get("/api/v1/me/analytics?limit=0").status());
+        owner.expectedUserId=UUID.randomUUID().toString();assertEquals("SESSION_CHANGED",owner.get("/api/v1/me/analytics").code());owner.expectedUserId=null;
+        ChannelAnalytics service=app.getBean(ChannelAnalytics.class);UUID first=UUID.randomUUID();String source="a".repeat(64);
+        long midnight=java.time.LocalDate.now(java.time.ZoneId.of("Asia/Seoul")).atStartOfDay(java.time.ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli();
+        long start=midnight-2000;String title="analytics-preserved\0 제목";
+        var observation=new ChannelAnalytics.Observation(first,"1".repeat(32),"obs-verify",title,source,2);
+        service.sample(java.util.List.of(observation),Map.of(first,source),start,false);
+        var point=owner.get("/api/v1/me/analytics?q=analytics-preserved");assertEquals(200,point.status());assertTrue(point.raw().headers().firstValue("cache-control").orElse("").contains("no-store"));
+        assertEquals(ownerId.toString(),point.json().path("userId").asString());assertEquals(ownerId.toString(),point.raw().headers().firstValue("x-frame-user-id").orElse(""));
+        assertTrue(point.json().path("summary").path("averageConcurrent").isNull());assertEquals(2,point.json().path("summary").path("peakConcurrent").intValue());
+        service.sample(java.util.List.of(new ChannelAnalytics.Observation(first,"1".repeat(32),"obs-verify",title,source,4)),Map.of(first,source),midnight+3000,true);
+        var page=owner.get("/api/v1/me/analytics?q=analytics-preserved").json();assertEquals(5000,page.path("summary").path("broadcastDurationMs").longValue());assertEquals(2.0,page.path("summary").path("averageConcurrent").doubleValue());
+        assertEquals(5000,page.path("daily").valueStream().mapToLong(day->day.path("broadcastDurationMs").longValue()).sum());
+        String today=java.time.LocalDate.now(java.time.ZoneId.of("Asia/Seoul")).toString();
+        var todayOnly=owner.get("/api/v1/me/analytics?q=analytics-preserved&from="+today+"&to="+today).json();
+        assertEquals(3000,todayOnly.path("summary").path("broadcastDurationMs").longValue());assertEquals(3000,todayOnly.path("items").get(0).path("broadcastDurationMs").longValue());
+        assertEquals(1,todayOnly.path("daily").size());assertEquals(1,todayOnly.path("summary").path("broadcastCount").longValue());
+        service.sample(java.util.List.of(observation),Map.of(first,source),midnight+23000,true); // long gap: zero inferred time
+        service.sample(java.util.List.of(observation),Map.of(first,source),midnight+28000,false); // failed collector tick: zero inferred time
+        service.sample(java.util.List.of(),Map.of(first,""),midnight+33000,true); // brief OBS disconnection, same broadcast
+        String nextSource="b".repeat(64);
+        service.sample(java.util.List.of(new ChannelAnalytics.Observation(first,"1".repeat(32),"obs-verify",title,nextSource,1)),Map.of(first,nextSource),midnight+38000,true);
+        assertEquals(5000,owner.get("/api/v1/me/analytics?q=analytics-preserved").json().path("summary").path("observedDurationMs").longValue());
+        service.sample(java.util.List.of(new ChannelAnalytics.Observation(first,"1".repeat(32),"obs-verify",title,nextSource,0)),Map.of(first,nextSource),midnight+43000,true);
+        var resumed=owner.get("/api/v1/me/analytics?q=analytics-preserved").json();assertEquals(10000,resumed.path("summary").path("observedDurationMs").longValue());assertEquals(1.5,resumed.path("summary").path("averageConcurrent").doubleValue());assertEquals(4,resumed.path("summary").path("peakConcurrent").intValue());
+        assertEquals("analytics-preserved� 제목",resumed.path("items").get(0).path("title").asString());assertEquals("live",resumed.path("items").get(0).path("status").asString());
+        assertFalse(resumed.toString().contains("source_session"));assertFalse(resumed.toString().contains("sourceSession"));assertFalse(resumed.toString().contains("email"));
+        var privateOther=other.get("/api/v1/me/analytics").json();assertEquals(0,privateOther.path("items").size());assertTrue(privateOther.path("collectionStartedAtMs").isNull());assertTrue(privateOther.path("summary").path("peakConcurrent").isNull());
+        assertTrue(owner.get("/api/v1/me/analytics?q=does-not-exist").json().path("summary").path("averageConcurrent").isNull());
+        assertEquals(0,owner.get("/api/v1/me/analytics?q=does-not-exist").json().path("summary").path("broadcastCount").longValue());
+        UUID zero=UUID.randomUUID();var zeroObservation=new ChannelAnalytics.Observation(zero,"2".repeat(32),"obs-verify","analytics-zero",source,0);
+        service.sample(java.util.List.of(zeroObservation),Map.of(first,nextSource,zero,source),midnight+50000,true);
+        service.sample(java.util.List.of(zeroObservation),Map.of(first,nextSource,zero,source),midnight+55000,true);
+        var zeroPage=owner.get("/api/v1/me/analytics?q=analytics-zero").json();assertEquals(0.0,zeroPage.path("summary").path("averageConcurrent").doubleValue());assertFalse(zeroPage.path("summary").path("averageConcurrent").isNull());assertEquals(0,zeroPage.path("summary").path("peakConcurrent").intValue());
+        String replacement="c".repeat(64);var changedSource=new ChannelAnalytics.Observation(zero,"2".repeat(32),"obs-verify","analytics-zero",replacement,0);
+        service.sample(java.util.List.of(changedSource),Map.of(first,nextSource,zero,replacement),midnight+60000,true);
+        assertEquals(5000,owner.get("/api/v1/me/analytics?q=analytics-zero").json().path("summary").path("observedDurationMs").longValue());
+        service.sample(java.util.List.of(changedSource),Map.of(first,nextSource,zero,replacement),midnight+65000,true);
+        service.sample(java.util.List.of(),Map.of(first,nextSource),midnight+70000,true);
+        service.sample(java.util.List.of(changedSource),Map.of(first,nextSource,zero,replacement),midnight+75000,true);
+        assertEquals("ended",owner.get("/api/v1/me/analytics?q=analytics-zero").json().path("items").get(0).path("status").asString());
+        assertEquals(10000,owner.get("/api/v1/me/analytics?q=analytics-zero").json().path("summary").path("observedDurationMs").longValue());
+        var firstPage=owner.get("/api/v1/me/analytics?q=analytics-&limit=1").json();String next=firstPage.path("nextCursor").asString();assertFalse(next.isEmpty());
+        var secondPage=owner.get("/api/v1/me/analytics?q=analytics-&limit=1&cursor="+next).json();assertEquals(1,secondPage.path("items").size());assertNotEquals(firstPage.path("items").get(0).path("id").asString(),secondPage.path("items").get(0).path("id").asString());
+        assertEquals("INVALID_ANALYTICS_CURSOR",other.get("/api/v1/me/analytics?q=analytics-&limit=1&cursor="+next).code());
+        assertEquals("INVALID_ANALYTICS_CURSOR",owner.get("/api/v1/me/analytics?q=changed&limit=1&cursor="+next).code());
+        return first.toString();
     }
     private record MissionState(String id,String completedId,String broadcast,Map<String,Object> body,Browser author) {}
     private static MissionState missions(Browser owner,Browser guest,JdbcClient sql,ConfigurableApplicationContext app,UUID ownerId,UUID channel)throws Exception{

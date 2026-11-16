@@ -1,0 +1,90 @@
+{
+  "verificationDatabaseOnly": true,
+  "productionUserDataUntouched": true,
+  "nativeObsReceiverUntouched": true,
+  "complete": true,
+  "testedJarSha256": "b34130870f00bf2ec428467f04ca826c177c18f2ecaca7837da2e87ab25a2ef9",
+  "databaseRuntime": "docker",
+  "results": [
+    {
+      "name": "Anonymous analytics are denied and a fresh owning account has no fabricated broadcasts",
+      "pass": true
+    },
+    {
+      "name": "Only the dedicated verification source is connected to its real product channel",
+      "pass": true
+    },
+    {
+      "name": "Expected owner identity rejects a shared-cookie account change without private metrics",
+      "pass": true
+    },
+    {
+      "name": "Unsupported periods, invalid/out-of-period dates, cursors and limits return 400",
+      "pass": true
+    },
+    {
+      "name": "A real scoped HLS viewing session is admitted on the tiny live source",
+      "pass": true
+    },
+    {
+      "name": "The scoped live source serves an actual HLS manifest independently of analytics",
+      "pass": true
+    },
+    {
+      "name": "Private measured aggregates are no-store and another real account sees no owning-channel rows",
+      "pass": true
+    },
+    {
+      "name": "Daily and summary metrics aggregate measured intervals rather than synthetic viewing history",
+      "pass": true
+    },
+    {
+      "name": "Real opaque cursor pagination separates two broadcasts from the same source path",
+      "pass": true
+    },
+    {
+      "name": "A cursor cannot be reused with changed search filters",
+      "pass": true
+    },
+    {
+      "name": "The real Redis login session survives an API process restart",
+      "pass": true
+    },
+    {
+      "name": "Ended metrics remain immutable and API restart closes the old active observation at its last actual sample",
+      "pass": true
+    },
+    {
+      "name": "Real production analytics UI, failure recovery, filters, pagination and mobile checks pass",
+      "pass": true
+    },
+    {
+      "name": "The same actual owning-channel aggregates render in development StrictMode without mutation",
+      "pass": true
+    },
+    {
+      "name": "The tested private JAR remains immutable throughout source replacement and restart",
+      "pass": true
+    }
+  ],
+  "observations": [
+    {
+      "stage": "first-live",
+      "observedDurationMs": 10000,
+      "averageConcurrent": 1,
+      "peakConcurrent": 1
+    },
+    {
+      "stage": "restart-interrupted",
+      "observedDurationMs": 5000,
+      "averageConcurrent": 0,
+      "peakConcurrent": 0
+    }
+  ],
+  "fixture": "Dedicated MediaMTX + one sequential 320x180 15fps H.264/AAC FFmpeg source + scoped HLS session + immutable Spring JAR + production React + headless Edge",
+  "limits": [
+    "Connection estimates are not unique persons or proof of actual playback time",
+    "Single PC loopback and emulated mobile viewports only",
+    "No Caddy HTTPS/WSS, physical phones or load/capacity verification"
+  ]
+}

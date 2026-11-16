@@ -314,6 +314,24 @@ V2 마이그레이션은 기존 계정의 세 필드를 모두 `NULL`로 둔다.
 
 주요 거절은 404 `MISSION_NOT_FOUND`, 409 `MISSION_BROADCAST_UNAVAILABLE`, 403 `MISSION_PARTICIPATION_BLOCKED`/`MISSION_FOLLOW_REQUIRED`, 400 `MISSION_WORD_BLOCKED`/`MISSION_LINK_BLOCKED`다. 형식/필터/커서는 400 `INVALID_MISSION_INPUT`/`INVALID_MISSION_FILTER`/`INVALID_MISSION_CURSOR`다. 응답과 오류는 모두 no-store이며 차단 사유·다른 제안자의 개인 내용을 포함하지 않는다.
 
+## 방송 분석
+
+`GET /api/v1/me/analytics?period=7&q=&from=&to=&cursor=&limit=20`은 로그인한 채널 소유자만 조회한다. `X-FRAME-USER-ID`가 현재 쿠키 계정과 다르면 409 `SESSION_CHANGED`다. 정상 응답은 no-store이고 같은 이름의 응답 헤더와 `userId`로 본인 범위를 확인한다. 다른 회원의 채널 ID나 경로를 지정해 조회할 수 없으며 익명은 401이다. 제품 기능을 끈 중계에는 collector·DB 집계·이 API를 추가하지 않는다.
+
+기간은 한국 시간 오늘을 포함한 7일 또는 30일이다. `from`/`to`는 `YYYY-MM-DD`의 포함 범위이며 기본 기간 안에서만 좁힐 수 있다. 역순·존재하지 않는 날짜·기본 기간 밖의 날짜는 400 `INVALID_ANALYTICS_FILTER`다. `q`는 제목의 대소문자 무시 부분 검색(최대 120자), `limit`는 1~100이다. 검색과 날짜 조건을 요약·그래프·목록 모두에 똑같이 적용한다. 기간에 걸친 방송은 해당 날짜에 관측/집계한 구간만 합산해 모든 응답 지표가 같은 기간을 나타낸다. 목록은 첫 관찰 시각·UUID의 내림차순 keyset이고 커서는 계정·기간의 실제 날짜·검색·limit에 묶인다. 범위가 다른 커서는 400 `INVALID_ANALYTICS_CURSOR`이며 페이지를 바꾸어도 요약/일별 지표는 전체 선택 조건의 집계다.
+
+응답은 `{userId,periodDays,fromDate,toDate,serverNowMs,collectionStartedAtMs,summary,daily,items,nextCursor}`다. 날짜는 포함 범위다. `summary`는 `{broadcastCount,broadcastDurationMs,observedDurationMs,averageConcurrent,peakConcurrent}`이며 `daily[]`에 같은 필드와 `date`를 넣는다. 선택 기간의 빈 날도 반환하고 관측 방송이 없으면 평균·최고는 null이다. 처음 한 점만 관찰한 방송은 방송 수 1·시간 0·평균 null·최고는 관측한 수치다. 동시 접속 0개인 표본 사이의 유효 구간은 평균과 최고가 0이며 미수집 null과 구분한다. `collectionStartedAtMs`는 해당 채널의 전체 최초 관찰 시각으로 검색/기간과 무관하며 아직 관찰한 방송이 없으면 null이다.
+
+`items[]`는 `{id,broadcastId,path,title,startedAtMs,lastObservedAtMs,endedAtMs,status,endReason,broadcastDurationMs,observedDurationMs,averageConcurrent,peakConcurrent}`다. `id`는 서버 방송 instance UUID, `broadcastId`는 기존 32자리 송출 방송 ID다. `startedAtMs`는 **제품 통계가 실제 원본을 처음 관찰한 시각**이며 송출자가 알린 방송 시작 시각이 아니다. API 응답에 MediaMTX source ID/지문·시청자 계정·IP·장치·쿠키·이메일·송출 키를 넣지 않는다. 행에는 제목의 NUL을 U+FFFD로 바꾼 snapshot을 저장한다.
+
+수집은 제품 전용 단일 worker가 5초 간격으로 한다. registry 이벤트와 미디어 요청 처리에서는 DB를 호출하지 않는다. 현재 채널의 연결 경로, registry instance, fresh MediaMTX 원본과 실제 관찰한 source 지문이 일치할 때만 수집한다. API만 재시작해 기존 RTMP 송출 원본이 새 registry 방송보다 오래된 경우에도 새 방송의 첫 실제 관찰부터 집계하며, 알림 전용 ‘원본 준비 시각이 방송 시작보다 10초 이상 오래되면 제외’ 규칙을 분석에 적용하지 않는다. 동시접속 수는 경로의 활성 HLS 세션·세션 없는 최근 미디어 요청과 실제 WebRTC reader의 합이다. WHEP 예약이나 녹화·화질 변환용 RTSP reader를 시청자로 더하지 않는다. **고유한 사람 수나 실제 영상 재생 시간의 증명이 아닌 추정 동시접속 수**다. 기존 경로 단위 집계 특성상 직전 방송의 세션이 `RELAY_SESSION_ACTIVE_MS`(기본 30초)까지 남을 수 있고, 같은 사람의 여러 탭도 별개 세션일 수 있다.
+
+‘방송 시간’은 서버가 연속해서 fresh 원본을 관찰한 유효 표본 간격의 합이다. 한 간격은 최대 5초이고 이전 관찰과 15초를 넘게 떨어졌거나 DB 실패·원본 미확인·stale 상태를 사이에 두면 그 구간은 더하지 않는다. 수집 전, API 중단, 확인하지 못한 연결 공백을 방송 시간으로 복원하지 않는다. 현재 단계에서는 동시접속 집계가 가능한 그 구간과 같아 `broadcastDurationMs=observedDurationMs`다. 평균은 이전 표본의 동시접속 수×유효 구간을 누적한 `viewer_ms / observed_duration_ms`를 소수 둘째 자리까지 반올림한다. 날이나 방송의 평균을 다시 단순 평균하지 않는다. 유효 구간은 한국 시간 자정에서 나누어 일별 합과 요약·목록의 기간 합을 일치시킨다. 요약 방송 수는 선택 기간에 관찰된 서로 다른 방송 수이고, 일별 방송 수는 그 날 관찰된 방송 수다.
+
+같은 instance의 짧은 원본 단절은 live 행을 보존한 채 관측 연속성만 중단한다. 재접속의 첫 일치 관찰에서는 source 지문과 기준 시각을 갱신하고 시간을 누적하지 않으며 그 다음 표본부터 재개한다. 동일 instance에서 source가 직접 교체되어도 교체 구간은 보간하지 않는다. registry에서 원래 instance가 사라지면 `ended/broadcast_ended`, 기존 채널의 연결 소유가 더 이상 맞지 않으면 `ended/channel_disconnected`로 최종 종료한다. 이전 API 프로세스의 live 행은 새 worker의 첫 DB 작업에서 `interrupted/server_restart`로 바꾸며, 종료 시각은 모두 마지막 실제 관찰 시각이다. 종료 행을 새 송출로 다시 열거나 다른 소유자에게 넘기지 않는다.
+
+V13은 방송별 누적과 방송별 한국 날짜 집계의 두 테이블만 추가한다. 채널 UUID 이외의 회원·시청자 식별자를 집계 저장소에 보관하지 않는다. 채널의 현재 `id+stream_path`를 기존 행 갱신 전에도 확인한다. DB/MediaMTX 장애 때는 해당 worker의 집계를 건너뛰고 반복 상세 로그나 개인 원문을 출력하지 않는다. 읽기 DB 실패는 기존 503 `PRODUCT_UNAVAILABLE`이며 미디어 요청은 제품 집계 오류로 중단하지 않는다. 단일 API 프로세스가 한 제품 DB를 수집하는 현재 배치가 전제다. 여러 collector의 leader 선출·분산 집계는 구현하지 않는다. 도입 전 과거 방송과 5초보다 짧아 한 번도 관찰되지 않은 방송을 소급 생성하지 않는다.
+
 ## 검증
 
 기존 기본 회귀 검사에는 외부 DB·Redis가 필요하지 않다.
@@ -325,9 +343,9 @@ cd apps/api
 
 실제 PostgreSQL·Redis 통합 검사는 저장소 밖 검증 설정 파일의 경로를 지정한다. 테스트는 루프백 `127.0.0.1`의 FRAME 전용 포트 `15432`(네이티브) 또는 `25432`(Docker), DB 이름 `frame_product_verify` 또는 고유 접미사가 붙은 검증 DB인지 먼저 검사한다. 쿼리 매개변수·URL 안의 자격증명·외부 호스트·사용자 DB `frame_product`는 허용하지 않는다. 해당 DB의 임의 생성 스키마와 임의 Redis namespace만 사용하며, 종료 시 생성한 스키마·namespace 키만 정리한다. 실제 DB의 사용자·스키마·운영자 키를 읽거나 변경하지 않는다. 설정에는 `verifyDbUrl`, `dbUsername`, `dbPassword`, `redisHost`, `redisPort`, `redisPassword`가 필요하다.
 
-Flyway는 제품 기능을 활성화한 Spring Boot의 시작 과정에서 `db/migration`을 적용한다. 현재 V1(회원·채널·팔로우), V2(가입 동의), V3(방송 예약), V4(시청 기록), V5(채널 프로필·주소 예약·신고 접수), V6(운영자 플래그·신고 관리), V7(개인 알림·전송 표식·시작 기준 시각), V8(채팅 정책·계정 차단), V9(방송 투표·선택지·계정별 표), V10(비공개 질문·답변·명시적 공개 고정), V11(채널 포인트·원장·보상·교환 요청), V12(비공개 무료 미션·상태 이력)을 사용한다. `validate-on-migrate: true`, `clean-disabled: true`, `baseline-on-migrate: false`를 명시한다. 적용한 SQL은 수정하지 않고 새 `V13__설명.sql` 같은 다음 버전을 추가한다. Redis는 Flyway 관리 대상이 아니다. 기존 Flyway 기록이 없는 비어 있지 않은 스키마를 자동으로 기존 운영 DB라고 간주하거나, checksum 오류를 자동으로 `repair`해서 넘기지 않는다.
+Flyway는 제품 기능을 활성화한 Spring Boot의 시작 과정에서 `db/migration`을 적용한다. 현재 V1(회원·채널·팔로우), V2(가입 동의), V3(방송 예약), V4(시청 기록), V5(채널 프로필·주소 예약·신고 접수), V6(운영자 플래그·신고 관리), V7(개인 알림·전송 표식·시작 기준 시각), V8(채팅 정책·계정 차단), V9(방송 투표·선택지·계정별 표), V10(비공개 질문·답변·명시적 공개 고정), V11(채널 포인트·원장·보상·교환 요청), V12(비공개 무료 미션·상태 이력), V13(방송별·일별 실제 관찰 집계)을 사용한다. `validate-on-migrate: true`, `clean-disabled: true`, `baseline-on-migrate: false`를 명시한다. 적용한 SQL은 수정하지 않고 새 `V14__설명.sql` 같은 다음 버전을 추가한다. Redis는 Flyway 관리 대상이 아니다. 기존 Flyway 기록이 없는 비어 있지 않은 스키마를 자동으로 기존 운영 DB라고 간주하거나, checksum 오류를 자동으로 `repair`해서 넘기지 않는다.
 
-`ProductMigrationIntegrationTest`는 별도 PostgreSQL DB의 임의 생성 스키마에서 빈 DB의 V12까지 적용·재시작 시 미적용, V1 데이터의 최신 업그레이드 보존·기존 동의 NULL 유지, V3·V4에서 최신으로 업그레이드한 뒤 기존 방송 예약·시청 기록·채널 생성일 보존과 주소 백필·삭제 후 예약 동작, V5 신고의 원문·시각 보존과 운영자 자동 승격 없음, V6 알림 설정 보존·시작 기준 생성·과거 알림 미생성, V7 프로필·팔로우·알림 확인 상태 보존과 기본 채팅 정책 추가, V8 기존 정책 보존과 투표 단일 슬롯·계정별 한 표·선택지 복합 FK, V9 투표·선택지·표 보존과 질문 요청 멱등 키·단일 고정·답변 시각 제약, V10 기존 비공개 답변 보존과 빈 포인트 저장소·음수 잔액·1회 신청·중복 환불 제약, V11 잔액·부분 시청·원장·보상 신청 보존과 미션 요청/기한/이력 고유 제약, 임시 복사 SQL 변조 시 checksum 검증으로 후속 V13 DDL 차단을 검사한다. 이 검사는 비밀 설정의 `verifyDbUrl` 중 루프백 주소와 `frame_product_verify` 또는 고유 접미사를 붙인 이름만 허용하며, 실행 시 생성한 `migration_verify_*` 스키마만 정리한다. 실제 DB와 저장소의 V1~V11 SQL은 변경하지 않는다. `ProductStorageDisabledTest`는 DB·Redis가 연결되지 않아도 제품 기능 비활성 상태의 미디어 서버가 해당 구성 요소 없이 시작되는지 검사한다.
+`ProductMigrationIntegrationTest`는 별도 PostgreSQL DB의 임의 생성 스키마에서 빈 DB의 V13까지 적용·재시작 시 미적용, V1 데이터의 최신 업그레이드 보존·기존 동의 NULL 유지, V3·V4에서 최신으로 업그레이드한 뒤 기존 방송 예약·시청 기록·채널 생성일 보존과 주소 백필·삭제 후 예약 동작, V5 신고의 원문·시각 보존과 운영자 자동 승격 없음, V6 알림 설정 보존·시작 기준 생성·과거 알림 미생성, V7 프로필·팔로우·알림 확인 상태 보존과 기본 채팅 정책 추가, V8 기존 정책 보존과 투표 단일 슬롯·계정별 한 표·선택지 복합 FK, V9 투표·선택지·표 보존과 질문 요청 멱등 키·단일 고정·답변 시각 제약, V10 기존 비공개 답변 보존과 빈 포인트 저장소·음수 잔액·1회 신청·중복 환불 제약, V11 잔액·부분 시청·원장·보상 신청 보존과 미션 요청/기한/이력 고유 제약, V12 미션·이력 보존과 빈 방송 분석 저장소·관찰 제약·FK 및 채널 삭제 연쇄, 임시 복사 SQL 변조 시 checksum 검증으로 후속 V14 DDL 차단을 검사한다. 이 검사는 비밀 설정의 `verifyDbUrl` 중 루프백 주소와 `frame_product_verify` 또는 고유 접미사를 붙인 이름만 허용하며, 실행 시 생성한 `migration_verify_*` 스키마만 정리한다. 실제 DB와 저장소의 V1~V12 SQL은 변경하지 않는다. `ProductStorageDisabledTest`는 DB·Redis가 연결되지 않아도 제품 기능 비활성 상태의 미디어 서버가 해당 구성 요소 없이 시작되는지 검사한다.
 
 ```powershell
 $env:FRAME_PRODUCT_TEST_CONFIG = '<저장소 밖 검증 설정 JSON 경로>'

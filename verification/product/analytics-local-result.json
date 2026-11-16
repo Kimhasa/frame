@@ -1,0 +1,28 @@
+{
+  "checkedAt": "2026-11-16",
+  "databaseRuntime": "docker",
+  "counts": {
+    "accounts": 0,
+    "channels": 0,
+    "missions": 0,
+    "operators": 0,
+    "analytics": 0,
+    "analyticsDaily": 0,
+    "migrations": 13,
+    "v13Success": true
+  },
+  "statuses": {
+    "health": 200,
+    "apiOk": true,
+    "mediaReady": true,
+    "analyticsPage": 200,
+    "anonymousAnalytics": 401,
+    "anonymousPrivateMetricsHidden": true
+  },
+  "mediaReceiverPid": 34664,
+  "mediaReceiverPreserved": true,
+  "runtimeJarSha256": "b34130870f00bf2ec428467f04ca826c177c18f2ecaca7837da2e87ab25a2ef9",
+  "testedJarApplied": true,
+  "previousMigrationsUnchanged": true,
+  "complete": true
+}

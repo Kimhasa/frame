@@ -1,0 +1,30 @@
+{
+  "verificationDatabaseOnly": true,
+  "checks": 4,
+  "passed": 4,
+  "writes": 0,
+  "results": [
+    {
+      "name": "Actual owning-channel aggregates use the existing four metrics, daily chart and management layout",
+      "pass": true
+    },
+    {
+      "name": "Measured connection estimates are labelled separately from actual playback time",
+      "pass": true
+    },
+    {
+      "name": "Days without collected intervals remain unobserved instead of fabricated zero-connection samples",
+      "pass": true
+    },
+    {
+      "name": "Analytics performs no writes, includes every expected-owner header and has no browser runtime or unconfirmed interception errors",
+      "pass": true
+    }
+  ],
+  "runtimeErrors": [],
+  "paginationInstrumentation": null,
+  "limits": [
+    "Headless Edge on one PC only",
+    "Mobile viewports are emulated, not physical devices"
+  ]
+}

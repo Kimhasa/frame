@@ -313,3 +313,22 @@ Docker PostgreSQL 17.11·Redis 8.10.3을 사용하는 백엔드 전체 `test boo
 검증한 JAR `ac8567c60a814edd9ed091c2f6f189c7ad918169678a80a4aa37887e4bafb991`를 실제 로컬 API에 적용했다. 이번 Docker 제품 DB는 처음에 제품 테이블 0개인 새 DB였고, 시작 뒤 V1~V12 적용 성공·V1~V11 원본 SQL 불변·실행 JAR 해시 일치를 확인했다. 실제 제품 DB의 계정·채널·운영자·미션·이력·포인트 저장 행은 0개로 유지했다. `/healthz`·약관·미션 화면·익명 현재 조회 200과 익명 개인 이력 비노출, 비로그인 소유자 목록/상세·정상 익명 CSRF의 제안/취소 401을 확인했다. 새 PC에서 PATH에 Java가 없을 때 실행기가 JAVA_HOME을 무시하던 부분도 수정해 FRAME_JAVA→JAVA_HOME→PATH 순서로 찾게 하고, 실제 시작·API만 재시작하며 MediaMTX 유지까지 검증했다. 로컬 웹은 `http://127.0.0.1:5360/_frame/`에서 확인할 수 있다. 시험 프로세스·포트는 정리했다. 이 검사는 같은 PC loopback·headless Edge·모바일 viewport 기준이며 휴대폰 실기기·Caddy HTTPS/WSS·외부 회선·부하/수용량 검증을 포함하지 않는다.
 
 결과: [백엔드](missions-backend-result.json), [실제 API·화면](missions-ui-result.json), [개발 모드](missions-dev-result.json), [재시작](missions-restart-result.json), [통합 실행](missions-e2e-result.json), [현재 PC 적용](missions-local-result.json). 화면: [관리](missions-owner-ui.png), [모바일 상세](missions-owner-mobile-ui.png), [시청자 이력](missions-viewer-ui.png), [모바일 이력](missions-viewer-mobile-ui.png).
+
+
+## 방송 분석 실제 관찰 집계
+
+2026-11-16. 방송 분석을 로그인한 채널 소유자의 실제 제품 API에 연결했다. 기존 관리 화면·글꼴·초록색·여백을 유지하고 방송 수·방송 시간·평균/최고 동시 접속, 일별 그래프, 제목·한국 날짜 범위 검색과 실제 cursor 목록을 제공한다. 7일/30일과 검색 조건은 요약·그래프·목록에 함께 적용한다. 미관측 null과 관측한 0을 구분하며 초기 실패·재시도, 동일 조건 새로고침 503 때 마지막 값 보존, 다음 페이지 오류, 오프라인 입력 보존과 요청 잠금, 쿠키 계정 전환 때 개인 값 제거를 처리한다. 기존 AnalyticsPage와 디자인 데이터·플레이어 계약은 수정하지 않았다.
+
+제품 전용 단일 worker가 fresh한 실제 원본·방송 instance·현재 채널 연결을 확인해 5초 간격으로 관찰한다. Flyway V13의 방송별·일별 두 테이블에 집계를 보존한다. 방송 시간은 관찰 가능한 연속 간격의 합이며 한 간격은 최대 5초다. 15초 초과 지연, DB 실패, stale 미디어와 원본 단절 구간을 복원하지 않는다. 평균은 연결 수×관찰 시간의 합을 전체 관찰 시간으로 나눈 가중 평균이다. 한국 시간 자정에서 구간을 나누어 요약·일별·목록의 선택 기간 수치를 맞춘다. 같은 방송의 짧은 원본 단절이나 교체 후 첫 관측은 기준점만 갱신하고 다음 표본부터 다시 누적한다. 방송이 종료되거나 채널 연결 소유가 바뀌면 마지막 관찰 시각으로 닫고, API 재시작은 이전 진행 기록을 중단 상태로 보존한다. 집계 저장소에 시청자 계정·IP·장치·쿠키를 추가로 저장하지 않는다.
+
+Docker PostgreSQL·Redis 기반 전체 test bootJar --rerun-tasks는 **132/132**(32개 클래스, 실패·오류·스킵 0), 실제 API·송출·재시작 통합 검사는 **15/15**, 배포 React 화면 **16/16**, 개발 StrictMode **4/4**를 통과했다. UI의 쓰기·런타임·미확인 요청 가로채기 오류는 0건이다. Yarn Berry의 typecheck·build·build:design도 통과했다. 실제 DB 검사에는 기간 합·가중 평균·null/0·제어 시각의 자정 분할·수집 공백·같은 instance 재접속·source 교체·종료 불변·재시작 영속·소유자/필터 cursor 경계·V12 미션 보존과 V13 제약을 포함한다. 제어 시각을 사용하는 DB 검사를 실제 자정이나 실제 장시간 송출 관찰로 표현하지 않는다.
+
+실제 통합 검사는 별도 verify DB·Redis namespace·임의 obs-analytics 경로의 두 시험 계정, 전용 MediaMTX와 320×180/15fps H.264/AAC FFmpeg 소스 하나를 순차 사용했다. 실제 방송 단위 HLS 세션과 manifest를 확인하고 첫 송출에서 관찰 10,000 ms·평균 연결 1·최고 연결 1을 저장했다. 이것은 접속 집계 증거이며 디코딩한 영상 시청 시간의 증거가 아니다. 원본 종료 때 인증된 OBS 상태의 broadcastId:null을 확인한 뒤 두 번째 송출을 시작했다. 송출을 계속 유지한 채 API만 재시작해 기존 진행 행의 중단 보존과 새 live 행 생성까지 확인했다. 목록의 더 보기 검사만 GET limit을 1로 줄였고 행·커서는 실제 서버 응답이다. 자격 증명·쿠키·로그·체크포인트와 브라우저 소유 정보는 저장소 밖에 보관했다. 시험 포트 9개와 소유 프로세스는 정리했다.
+
+최초 실제 재시작 검사에서 이미 10초 이상 송출된 원본을 새 API가 영구 미집계하는 결함을 발견했다. 알림용 ProductNotifications.consistent의 시작 시각 제한을 분석에도 재사용한 것이 원인이었다. 분석의 first observation부터 집계하는 전용 원본 일치 판정으로 분리하고, API보다 60초 오래된 동일 원본의 허용 및 다른/미관측 원본 거절 회귀 검사를 추가했다. 기존 알림·미디어 규칙은 유지했다. 수정 후 전체 백엔드와 동일한 실제 송출 유지·API 재시작 조건을 다시 검사해 통과했다.
+
+검사한 JAR b34130870f00bf2ec428467f04ca826c177c18f2ecaca7837da2e87ab25a2ef9를 실제 로컬 API에 적용했다. Flyway V1~V13 성공·V1~V12 원본 SQL 불변·실행 JAR 일치와 기존 MediaMTX PID 34664 보존을 확인했다. 실제 제품 DB는 작업 전후 계정·채널·운영자·미션 0개를 유지했고 분석·일별 집계에도 시험 데이터를 넣지 않았다. healthz·분석 페이지 200, 미디어 ready, 비로그인 분석 API 401과 개인 지표 비노출을 확인했다. 화면은 http://127.0.0.1:5360/_frame/studio/analytics 이며 본인 채널에 연결한 실제 송출부터 통계가 쌓인다.
+
+현재 수치는 경로의 활성 세션과 최근 미디어 요청·WebRTC reader 기반 동시 접속 추정치다. 고유 사람 수나 실제 영상 재생 시간을 뜻하지 않는다. 직전 방송의 경로 세션이 기본 30초까지 남거나 여러 탭이 따로 집계될 수 있다. 도입 전 과거 방송과 한 번도 관찰하지 못한 짧은 방송은 생성하지 않는다. 하나의 API 프로세스가 수집하는 배치이며 여러 API의 분산 집계를 검증하지 않았다. API 재시작 뒤 새 관찰의 방송 제목이 기본 경로 제목으로 돌아가는 기존 OBS 메타데이터의 메모리 보관 특성도 남아 있다. 종료된 과거 분석 행의 제목은 보존한다. 이번 검사는 같은 PC loopback·headless Edge와 390px/320px viewport 기준이며 실제 휴대폰·Caddy HTTPS/WSS·외부 회선·부하/수용량 검증은 포함하지 않는다.
+
+재현: Java 21의 JAVA_HOME과 저장소 밖 Docker 비밀 설정의 FRAME_PRODUCT_TEST_CONFIG를 지정하고 웹·API 빌드 후 node server/verify/analytics-e2e.mjs를 실행한다. 결과: [백엔드](analytics-backend-result.json), [실제 API·송출·재시작](analytics-e2e-result.json), [배포 화면](analytics-ui-result.json), [개발 모드](analytics-dev-result.json), [현재 PC 적용](analytics-local-result.json). 화면: [데스크톱](analytics-owner-ui.png), [390px](analytics-owner-390-ui.png), [320px](analytics-owner-320-ui.png).

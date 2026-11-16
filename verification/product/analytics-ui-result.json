@@ -1,0 +1,78 @@
+{
+  "verificationDatabaseOnly": true,
+  "checks": 16,
+  "passed": 16,
+  "writes": 0,
+  "results": [
+    {
+      "name": "An initial analytics failure has a retry state without fabricated zero statistics",
+      "pass": true
+    },
+    {
+      "name": "Actual owning-channel aggregates use the existing four metrics, daily chart and management layout",
+      "pass": true
+    },
+    {
+      "name": "Measured connection estimates are labelled separately from actual playback time",
+      "pass": true
+    },
+    {
+      "name": "Days without collected intervals remain unobserved instead of fabricated zero-connection samples",
+      "pass": true
+    },
+    {
+      "name": "A refresh 503 preserves the last rows and summary for the same active filters",
+      "pass": true
+    },
+    {
+      "name": "A cursor-page failure preserves already loaded real rows",
+      "pass": true
+    },
+    {
+      "name": "Real server cursor pages append three distinct broadcast instances without duplicates",
+      "pass": true
+    },
+    {
+      "name": "Title filtering applies to summary, daily data and the broadcast list together",
+      "pass": true
+    },
+    {
+      "name": "A changed filter never reuses rows from the previous private result",
+      "pass": true
+    },
+    {
+      "name": "The thirty-day selector requests actual server period statistics",
+      "pass": true
+    },
+    {
+      "name": "An inverted Korean date range focuses its labelled field and reports the inline error",
+      "pass": true
+    },
+    {
+      "name": "Offline mode retains the last measured rows and disables outgoing refreshes",
+      "pass": true
+    },
+    {
+      "name": "Actual analytics cards, filters, chart and table fit the 390px viewport",
+      "pass": true
+    },
+    {
+      "name": "Actual analytics cards, filters, chart and table fit the 320px viewport",
+      "pass": true
+    },
+    {
+      "name": "Shared-cookie account switching immediately clears the previous private summary and broadcast rows",
+      "pass": true
+    },
+    {
+      "name": "Analytics performs no writes, includes every expected-owner header and has no browser runtime or unconfirmed interception errors",
+      "pass": true
+    }
+  ],
+  "runtimeErrors": [],
+  "paginationInstrumentation": "Owning analytics GET limit lowered to 1; all rows and opaque cursors remain actual server responses.",
+  "limits": [
+    "Headless Edge on one PC only",
+    "Mobile viewports are emulated, not physical devices"
+  ]
+}
