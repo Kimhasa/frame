@@ -97,22 +97,39 @@ public class AccountSecurity {
         };
     }
     @Bean SecurityFilterChain productSecurity(HttpSecurity http, ProductProperties props, HttpSessionCsrfTokenRepository csrf,
-                                              HttpSessionSecurityContextRepository contexts, JsonMapper json, ClientAddress client) throws Exception {
+                                              HttpSessionSecurityContextRepository contexts, JsonMapper json, ClientAddress client, DeveloperSettings developer) throws Exception {
         http.securityMatcher("/api/v1/**")
-                .authorizeHttpRequests(auth -> auth.requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/session", "/api/v1/policies", "/api/v1/channels", "/api/v1/channels/*", "/api/v1/channels/*/schedule", "/api/v1/channel-ids/*", "/api/v1/polls/current", "/api/v1/questions/current", "/api/v1/rewards/current", "/api/v1/missions/current").permitAll()
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/api/v1/integrations", "/api/v1/integrations/**").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/session", "/api/v1/policies", "/api/v1/channels", "/api/v1/channels/*", "/api/v1/channels/*/schedule", "/api/v1/channel-ids/*", "/api/v1/polls/current", "/api/v1/questions/current", "/api/v1/rewards/current", "/api/v1/missions/current").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/vods", "/api/v1/vods/*", "/api/v1/vods/*/media").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.HEAD, "/api/v1/vods", "/api/v1/vods/*", "/api/v1/vods/*/media").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/clips", "/api/v1/clips/*", "/api/v1/clips/*/media").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.HEAD, "/api/v1/clips", "/api/v1/clips/*", "/api/v1/clips/*/media").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/v1/auth/register", "/api/v1/auth/login").permitAll().anyRequest().authenticated())
-                .csrf(config -> config.csrfTokenRepository(csrf).csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler()))
+                .csrf(config -> config.csrfTokenRepository(csrf).csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
+                        .ignoringRequestMatchers(AccountSecurity::integrationRequest))
                 .securityContext(config -> config.securityContextRepository(contexts))
                 .sessionManagement(config -> config.sessionFixation(fixation -> fixation.changeSessionId()))
                 .requestCache(AbstractHttpConfigurer::disable).httpBasic(AbstractHttpConfigurer::disable).formLogin(AbstractHttpConfigurer::disable).logout(AbstractHttpConfigurer::disable)
                 .exceptionHandling(errors -> errors.authenticationEntryPoint((request, response, failure) -> new ProductProblem(401, "UNAUTHENTICATED", "로그인이 필요해요.").write(response, json))
                         .accessDeniedHandler((request, response, failure) -> new ProductProblem(403, failure instanceof CsrfException ? "CSRF_INVALID" : "FORBIDDEN", failure instanceof CsrfException ? "화면을 새로고침한 뒤 다시 시도해 주세요." : "이 요청에 대한 권한이 없어요.").write(response, json)))
-                .addFilterBefore(new ProductGuard(props, client, json), CsrfFilter.class);
+                .addFilterBefore(new ProductGuard(props, client, json), CsrfFilter.class)
+                .addFilterBefore(new IntegrationGuard(developer, json), CsrfFilter.class);
         return http.build();
+    }
+    private static boolean integrationRequest(HttpServletRequest request) {
+        String path=request.getRequestURI();return path.equals("/api/v1/integrations")||path.startsWith("/api/v1/integrations/");
+    }
+    /** A browser session is never an alternate credential for integration routes. No bearer identity enters it. */
+    private static final class IntegrationGuard extends OncePerRequestFilter {
+        private final DeveloperSettings developer;private final JsonMapper json;
+        IntegrationGuard(DeveloperSettings developer,JsonMapper json){this.developer=developer;this.json=json;}
+        @Override protected boolean shouldNotFilter(HttpServletRequest request){return !integrationRequest(request);}
+        @Override protected void doFilterInternal(HttpServletRequest request,HttpServletResponse response,FilterChain chain)throws IOException,ServletException{
+            try{request.setAttribute(IntegrationController.ACCESS,developer.authenticate(request.getHeader("Authorization")));}
+            catch(ProductProblem failure){failure.write(response,json);return;}
+            chain.doFilter(request,response);
+        }
     }
     private static final class ProductGuard extends OncePerRequestFilter {
         private final ProductProperties props;

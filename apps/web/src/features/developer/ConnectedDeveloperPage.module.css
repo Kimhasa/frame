@@ -1,0 +1,44 @@
+.stack { display: grid; gap: 24px; min-width: 0; max-width: 1160px; }
+.panel { min-width: 0; padding: 22px; border: 1px solid #e2e8e4; border-radius: 11px; background: #fff; }
+.panelHeader { display: flex; align-items: start; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
+.panel h2 { margin: 0 0 8px; font-size: 17px; font-weight: 700; }
+.panel p, .dialog p { font-size: 13px; line-height: 1.7; overflow-wrap: anywhere; }
+.hint { margin: 7px 0 0; color: #697c70; font-size: 13px; line-height: 1.7; }
+.hint:empty { display: none; }
+.fields { display: grid; gap: 16px; max-width: 680px; min-width: 0; }
+.fields > label, .secret > label { display: grid; gap: 7px; min-width: 0; color: #53675d; font-size: 13px; font-weight: 650; }
+.fields > .hint { margin-top: -10px; }
+.checks { display: grid; gap: 13px; min-width: 0; margin: 0; padding: 0; border: 0; }
+.checks legend { margin: 0 0 10px; padding: 0; color: #53675d; font-size: 13px; font-weight: 650; }
+.checks label { align-items: flex-start; line-height: 1.6; overflow-wrap: anywhere; }
+.checks:disabled { opacity: .65; }
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 18px; }
+.rowActions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 7px; }
+.error { margin: 12px 0; color: #a22d3f; font-size: 13px; line-height: 1.7; overflow-wrap: anywhere; }
+.notice { margin: 0 0 16px; color: var(--frame-green-ink); font-size: 13px; line-height: 1.7; }
+.warning { margin: 12px 0; padding: 12px 14px; border: 1px solid #e8d8af; border-radius: 8px; background: #fffbef; color: #776026; }
+.summary { display: grid; gap: 8px; margin: 0; padding: 14px; border-radius: 8px; background: #f4f7f5; font-size: 13px; line-height: 1.6; }
+.summary > div { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 10px; }
+.summary dt { color: #697c70; }
+.summary dd { min-width: 0; margin: 0; overflow-wrap: anywhere; }
+.list { margin-top: 24px; }
+.subtext { display: block; margin-top: 5px; color: #697c70; font-size: 12px; line-height: 1.6; overflow-wrap: anywhere; }
+.masked { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 12px; overflow-wrap: anywhere; }
+.url { max-width: 310px; overflow-wrap: anywhere; word-break: break-word; }
+.secretValue { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; overflow-wrap: anywhere; resize: none !important; }
+.dialog { overflow-x: hidden; }
+.empty { padding: 20px 0 0; color: #697c70; font-size: 13px; }
+.signature { margin-top: 20px; color: #53675d; font-size: 13px; line-height: 1.7; }
+.signature summary { width: fit-content; cursor: pointer; }
+.signature summary:focus-visible { outline: 2px solid #7ac6a0; outline-offset: 3px; }
+.deliveryList { display: grid; gap: 12px; padding: 0; margin: 18px 0 0; list-style: none; }
+.delivery { display: grid; gap: 8px; min-width: 0; padding: 13px; border: 1px solid #e2e8e4; border-radius: 8px; }
+.delivery > div { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.delivery small { color: #697c70; overflow-wrap: anywhere; line-height: 1.6; }
+@container (max-width: 690px) {
+  .panel { padding: 18px 16px; }
+  .list { margin-inline: -1px; }
+  .rowActions { width: 100%; justify-content: flex-start; }
+  .url { max-width: 100%; text-align: right; }
+}
+@media (max-width: 390px) { .rowActions { gap: 6px; } .rowActions button { flex: 1 1 auto; } .checks label { font-size: 12px; } }

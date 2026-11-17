@@ -1,0 +1,267 @@
+{
+  "complete": true,
+  "phase": "all",
+  "verificationDatabaseOnly": true,
+  "productionUserDataUntouched": true,
+  "currentReceiverUntouched": true,
+  "singleImmutableJar": true,
+  "trustedReceiver": "http://127.0.0.1:19090/frame-test-hook",
+  "results": [
+    {
+      "name": "New developer settings are private no-store empty server results",
+      "pass": true
+    },
+    {
+      "name": "Anonymous and changed-account private developer reads are rejected",
+      "pass": true
+    },
+    {
+      "name": "Key issuance requires the actual CSRF token and exact owning browser Origin",
+      "pass": true
+    },
+    {
+      "name": "Invalid API-key fields are rejected before issuance (scopes)",
+      "pass": true
+    },
+    {
+      "name": "Invalid API-key fields are rejected before issuance (scopes)",
+      "pass": true
+    },
+    {
+      "name": "Invalid API-key fields are rejected before issuance (name)",
+      "pass": true
+    },
+    {
+      "name": "Invalid API-key fields are rejected before issuance (clientRequestId)",
+      "pass": true
+    },
+    {
+      "name": "API issuance returns a usable secret once and separate public metadata",
+      "pass": true
+    },
+    {
+      "name": "Repeated issuance reconciles one metadata-only receipt without replaying the secret",
+      "pass": true
+    },
+    {
+      "name": "Another real owner cannot read or revoke the issued key",
+      "pass": true
+    },
+    {
+      "name": "The issued key authenticates three real scoped endpoints without a session cookie",
+      "pass": true
+    },
+    {
+      "name": "A scoped Bearer-only chat write changes the owning channel settings",
+      "pass": true
+    },
+    {
+      "name": "A separately issued other-owner key remains bound to its own channel and unchanged moderation settings",
+      "pass": true
+    },
+    {
+      "name": "Scoped chat writes preserve the existing settings CAS contract",
+      "pass": true
+    },
+    {
+      "name": "An invalid API key never falls back to a valid session cookie",
+      "pass": true
+    },
+    {
+      "name": "Integration authentication requires a Bearer key while credential management requires its own browser session",
+      "pass": true
+    },
+    {
+      "name": "A broadcast-only issued key cannot cross into analytics or chat scopes",
+      "pass": true
+    },
+    {
+      "name": "Forbidden webhook target is rejected before queueing (http:)",
+      "pass": true
+    },
+    {
+      "name": "Forbidden webhook target is rejected before queueing (http:)",
+      "pass": true
+    },
+    {
+      "name": "Forbidden webhook target is rejected before queueing (http:)",
+      "pass": true
+    },
+    {
+      "name": "Forbidden webhook target is rejected before queueing (https:)",
+      "pass": true
+    },
+    {
+      "name": "Forbidden webhook target is rejected before queueing (file:)",
+      "pass": true
+    },
+    {
+      "name": "An explicitly trusted local webhook registers with a one-time 256-bit signing secret",
+      "pass": true
+    },
+    {
+      "name": "Webhook registration retries and ordinary reads never disclose the signing secret again",
+      "pass": true
+    },
+    {
+      "name": "Another real owner cannot test the webhook or inspect its private delivery history",
+      "pass": true
+    },
+    {
+      "name": "A real webhook test is accepted into its persisted delivery queue",
+      "pass": true
+    },
+    {
+      "name": "The actual receiver observes the raw body, event ID, timestamp and valid HMAC signature before persisted HTTP 200 success",
+      "pass": true
+    },
+    {
+      "name": "Repeating one test request returns its original delivery without sending another callback",
+      "pass": true
+    },
+    {
+      "name": "A real webhook test is accepted into its persisted delivery queue",
+      "pass": true
+    },
+    {
+      "name": "An actual receiver HTTP 422 is persisted as delivery failure",
+      "pass": true
+    },
+    {
+      "name": "A real webhook test is accepted into its persisted delivery queue",
+      "pass": true
+    },
+    {
+      "name": "An actual invalid HTTP 600 response is persisted as a bounded invalid-response failure",
+      "pass": true
+    },
+    {
+      "name": "A real webhook test is accepted into its persisted delivery queue",
+      "pass": true
+    },
+    {
+      "name": "The same delivery worker accepts the next real HTTP 200 after an invalid response",
+      "pass": true
+    },
+    {
+      "name": "A real webhook test is accepted into its persisted delivery queue",
+      "pass": true
+    },
+    {
+      "name": "An actual receiver HTTP 302 is recorded without following its redirect",
+      "pass": true
+    },
+    {
+      "name": "A real webhook test is accepted into its persisted delivery queue",
+      "pass": true
+    },
+    {
+      "name": "A real receiver that withholds its response reaches the bounded delivery timeout",
+      "pass": true
+    },
+    {
+      "name": "Webhook disable persists through the real versioned update API",
+      "pass": true
+    },
+    {
+      "name": "A stale webhook version cannot overwrite a newer configuration",
+      "pass": true
+    },
+    {
+      "name": "Disabled webhook tests are refused before outbound delivery",
+      "pass": true
+    },
+    {
+      "name": "A webhook can be re-enabled with its current version",
+      "pass": true
+    },
+    {
+      "name": "An owned receiver can hold one real in-flight request for queue cancellation checks",
+      "pass": true
+    },
+    {
+      "name": "A second real webhook test remains durably queued behind the held delivery",
+      "pass": true
+    },
+    {
+      "name": "Disabling the webhook cancels its queued delivery before any receiver request",
+      "pass": true
+    },
+    {
+      "name": "Queue-cancelled webhook can be enabled again with its current version",
+      "pass": true
+    },
+    {
+      "name": "A second owned webhook is registered solely for the queued-delete scenario",
+      "pass": true
+    },
+    {
+      "name": "One owned request holds the worker while deletion is tested",
+      "pass": true
+    },
+    {
+      "name": "Deleting a webhook cancels its queued delivery before any outbound callback",
+      "pass": true
+    },
+    {
+      "name": "Deleted webhook mutation receipts remain available while new tests stay blocked",
+      "pass": true
+    },
+    {
+      "name": "A stale API-key revocation version cannot revoke the active key",
+      "pass": true
+    },
+    {
+      "name": "Revocation immediately rejects the previously working key even alongside a valid cookie",
+      "pass": true
+    },
+    {
+      "name": "An uncertain key revocation has a metadata-only mutation receipt",
+      "pass": true
+    },
+    {
+      "name": "Only the dedicated owner connects to the isolated media source",
+      "pass": true
+    },
+    {
+      "name": "One actual low-resolution source produces an HMAC-signed owning-channel broadcast.started callback",
+      "pass": true
+    },
+    {
+      "name": "Stopping that actual source produces a separately identified signed broadcast.ended callback",
+      "pass": true
+    },
+    {
+      "name": "production developer browser verification passes",
+      "pass": true
+    },
+    {
+      "name": "dev developer browser verification passes",
+      "pass": true
+    },
+    {
+      "name": "Redis login, webhook settings and revoked-key state survive restart of the identical JAR",
+      "pass": true
+    },
+    {
+      "name": "Stored active-key authentication and immediate revocation remain correct after restart",
+      "pass": true
+    },
+    {
+      "name": "Actual success and timeout delivery logs survive restart without secrets or raw callback bodies",
+      "pass": true
+    },
+    {
+      "name": "Every API lifecycle uses the same immutable copied JAR",
+      "pass": true
+    }
+  ],
+  "actualReceiverRequestCount": 12,
+  "limits": [
+    "Single Windows PC and loopback only",
+    "Receiver requests use only the exact explicitly configured local test endpoint",
+    "DNS classification, DNS pinning and rebinding defenses require the separate sender unit checks",
+    "API key hashing at rest requires the separate guarded database inspection",
+    "Mobile viewports are emulated; no physical device or public HTTPS provider tested"
+  ]
+}

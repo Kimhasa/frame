@@ -190,7 +190,7 @@ Spring Session 필터 자체도 `/api/v1/*`에만 등록한다. 로그인 쿠키
 
 ## OBS 공개 채팅 오버레이
 
-외부 도구 연결 화면은 본인 채널 UUID의 `/_frame/overlay/chat/{channelId}` 주소를 생성한다. [OBS 브라우저 소스](https://obsproject.com/kb/Browser-Source)의 URL에 이 주소를 넣어 공개 채팅을 표시한다. 채널 UUID를 사용하므로 핸들을 바꿔도 주소를 유지한다. 공개 읽기 주소이며 송출 키·API 키·비밀 토큰·로그인 권한을 넣지 않는다. 외부 API 키·웹훅은 아직 제공하지 않는다.
+외부 도구 연결 화면은 본인 채널 UUID의 `/_frame/overlay/chat/{channelId}` 주소를 생성한다. [OBS 브라우저 소스](https://obsproject.com/kb/Browser-Source)의 URL에 이 주소를 넣어 공개 채팅을 표시한다. 채널 UUID를 사용하므로 핸들을 바꿔도 주소를 유지한다. 공개 읽기 주소이며 송출 키·API 키·비밀 토큰·로그인 권한을 넣지 않는다.
 
 | Query | 기본값 | 범위 |
 |---|---|---|
@@ -228,6 +228,48 @@ Spring Session 필터 자체도 `/api/v1/*`에만 등록한다. 로그인 쿠키
 제품 회원 채팅의 성공한 비어 있지 않은 clientId는 연결별 최근 200개까지 기억한다. 같은 id와 정규화한 텍스트 재전송은 최초 ack id만 반환하고 사람/봇 메시지를 다시 생성하지 않는다. 같은 id에 다른 텍스트를 넣으면 `CHAT_CLIENT_ID_REUSED`로 거절하며 동시 전송도 fan-out 잠금 안에서 다시 검사한다. 다른 연결·재시작에 걸친 영구 멱등성을 제공하지 않는다. 기존 제품 비활성 닉네임 채팅 경로는 이 동작을 추가하지 않는다.
 
 화면은 현재 저장 상태와 편집 중 값을 구분하고 저장 실패·409·오프라인·계정 오류에서 초안을 유지한다. 결과가 불확실한 저장은 GET으로 서버 상태부터 확인하며 PATCH를 자동 재전송하지 않는다. 최신 값을 확인한 뒤에만 사용자가 초안을 다시 저장한다. 계정·채널 변경 시 이전 요청과 늦은 응답을 정리한다.
+
+## 개발자 API 키와 웹훅
+
+개발자 설정은 기존 로그인 계정의 `GET /api/v1/me/developer/{keys,webhooks}`로 각각 목록을 읽고 쿠키·CSRF·정확한 Origin·기대 계정 헤더를 사용하는 본인 전용 관리 기능이다. 응답은 `{userId,items}` 또는 `{userId,item}`이고 `Cache-Control: private, no-store`다. 키/웹훅은 각각 폐기되지 않은 항목 최대5개이며, 목록은 활성 항목을 우선하고 최근 이력과 함께 최대100개, 전송 기록은 웹훅별 최근50개다. 중지한 웹훅도 등록 한도에 포함한다. V19의 API 키·웹훅·변경 receipt·전송 기록 네 테이블을 사용한다.
+
+| 관리 요청 | 본문·결과 |
+|---|---|
+| `POST /me/developer/keys` | `{name,scopes,clientRequestId}` →201, item과 원문 secret 한 번 |
+| `GET /me/developer/keys/receipts/{requestId}` | 발급 metadata만 확인, 원문 키 없음 |
+| `DELETE /me/developer/keys/{id}?version=N&requestId=UUID` | 폐기된 item, 동일 요청은 기존 결과 |
+| `POST /me/developer/webhooks` | `{name,url,events,enabled,clientRequestId}` →201, item과 signingSecret 한 번 |
+| `GET /me/developer/webhooks/receipts/{requestId}` | 등록 metadata만 확인, 서명 키 없음 |
+| `PATCH /me/developer/webhooks/{id}` | `{name,url,events,enabled,version,clientRequestId}`로 편집·중지 |
+| `DELETE /me/developer/webhooks/{id}?version=N&requestId=UUID` | 폐기, 이후 새 전송 불가 |
+| `GET /me/developer/{keys,webhooks}/{id}/mutations/{requestId}` | 편집·폐기 결과 receipt |
+| `POST /me/developer/webhooks/{id}/tests` | `{clientRequestId}` →202, 실제 전송 대기 item |
+| `GET /me/developer/webhooks/{id}/tests/{requestId}` | 같은 테스트 요청의 결과 확인 |
+| `GET /me/developer/webhooks/{id}/deliveries` | 최근 전송 상태·HTTP 코드·실패 사유 |
+
+표의 경로 앞에는 모두 `/api/v1`을 붙인다. 이름은 NFC·앞뒤 공백 제거 후 1~40 codepoint, 권한·이벤트는 허용된 중복 없는 목록이다. 편집·폐기는 version 비교와 소유자 행 잠금으로 직렬화한다. 발급 UUID 중복은 409 `ISSUE_ALREADY_PROCESSED`, 버전 충돌은 `DEVELOPER_CONFLICT`, 등록 한도는 `DEVELOPER_LIMIT`, 없는 본인 자원은404 `DEVELOPER_NOT_FOUND`다. 응답을 잃으면 먼저 receipt를 조회한다. 404도 진행 중 요청의 미완료를 증명하지 않으므로 재시도는 사용자의 명시적인 선택으로 같은 UUID·같은 본문만 보낸다. 이미 발급됐지만 원문을 못 받은 키는 복구하지 않으며 폐기 후 새로 발급한다. 화면은 계정 전환 때 원문·대화창·요청을 정리하고 오프라인·오류·충돌에서 편집 값을 유지한다.
+
+API 키는 `frame_` 뒤 무작위256bit의 base64url 토큰이다. DB에는 SHA-256 digest와 표시용 prefix/last4만 저장하고 원문은 최초201 응답 이후 반환하지 않는다. 매 요청 DB 인증으로 폐기를 반영하며 이미 인증해 처리 중인 작업까지 되돌리지는 않는다. 외부 API는 `Authorization: Bearer <key>`를 받는 별도 `/api/v1/integrations/*` 경로이고 브라우저 세션으로 대체 인증하지 않는다. 해당 경로만 CSRF를 제외하고 키 신원을 세션/SecurityContext에 저장하지 않는다. 기존 쿠키 기반 관리 API를 Bearer만으로 사용할 수도 없다.
+
+| 키 권한 | 실제 허용 API |
+|---|---|
+| `broadcast:read` | `GET /api/v1/integrations/broadcast`: 본인 채널 공개 정보·현재 방송, 송출 키 없음 |
+| `analytics:read` | `GET /api/v1/integrations/analytics`: 본인 최근30일 분석 요약 |
+| `chat:manage` | `GET/PATCH /api/v1/integrations/chat/settings`: 기존 채팅 정책 조회·버전 기반 변경 |
+
+키는 서버 간 연동용이다. 브라우저 Origin/CORS 정책을 넓히지 않으며 임의 사용자·다른 채널·추가 관리 기능을 위임하지 않는다. 키의 최근 사용 시각은 인증 처리 시각이다.
+
+웹훅은 `broadcast.started`, `broadcast.ended`를 선택하고 테스트는 별도 `webhook.test`를 보낸다. payload는 `{id,event,createdAtMs,data}`이고 방송 이벤트의 data에는 공개 채널 `{id,handle,displayName}`과 방송 `{id,title,startedAtMs}`만 넣는다. 이메일·세션·송출 키·API 키는 넣지 않는다. 최초 등록 때 HEX64 서명 키를 한 번 보여 준다. 서버는 HMAC을 위해 그32byte를 DB의 비공개 bytea로 보관하며 목록·receipt·전송 기록에는 내보내지 않는다. API 키처럼 단방향 hash로 저장하는 값이 아니므로 DB/백업도 비밀 저장소로 취급한다.
+
+전송 헤더는 `X-Frame-Event-Id`, `X-Frame-Event`, `X-Frame-Timestamp`(초), `X-Frame-Signature`다. 서명은 HEXdecode한32byte 키로 `timestamp + '.' + 원본 UTF-8 body bytes`에 HMAC-SHA256을 계산한 `sha256=<소문자 hex>`다. 수신자는 JSON을 다시 직렬화하지 않은 원문으로 확인한다. 같은 event id의 중복 처리 방지는 수신 측에서도 필요하다.
+
+기본 수신 URL은 사용자 정보·fragment 없는 공개 HTTPS443이다. 매 전송에 A/AAAA의 모든 주소를 검사하고 사설·루프백·링크로컬·메타데이터·문서/전환 주소 등을 거절한다. 검증한 주소를 해당 요청에 고정하면서 원래 호스트의 기본 TLS 인증서/이름 검증을 유지한다. 리디렉션·자동 재전송·쿠키·시스템 프록시 사용·압축 해제와 응답 본문 읽기를 하지 않는다. DNS 작업은 제한된 한 스레드/큐와1.5초 대기, 전체 발송은5초 예산, 응답 헤더는64개·한 줄8192자로 제한한다. [OWASP의 SSRF 방어 지침](https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html)과 [Apache HttpClient DNS resolver](https://hc.apache.org/httpcomponents-client-5.6.x/current/httpclient5/apidocs/org/apache/hc/client5/http/DnsResolver.html)를 참고했다. HTTP client는 Spring Boot BOM이 관리하는 HttpClient5를 사용한다.
+
+검증용으로만 `FRAME_PRODUCT_WEBHOOK_LOCAL_TEST_URL` 또는 `frame.product.webhook-local-test-url`에 정확한 `http://127.0.0.1:<port>/<path>` 하나를 서버 시작 시 지정할 수 있다. 값이 없으면 HTTP/내부 주소 예외가 없다. 다른 path·query·리디렉션에는 예외를 확장하지 않는다. Java 직접 실행과 검증 runner에서 사용하는 옵션이며 `obs-local.mjs`는 FRAME_PRODUCT 환경을 정리하므로 이 변수를 단순 상속하는 실행 방법은 지원하지 않는다.
+
+한 API 프로세스의 단일 worker가 DB pending을 하나씩 처리하며 네트워크 중 DB 트랜잭션을 유지하지 않는다. 상태는 pending/inflight/succeeded/failed/cancelled, HTTP2xx만 succeeded다. 그 밖은 HTTP_ERROR, TIMEOUT, TARGET_BLOCKED, DNS_FAILED, NETWORK_ERROR 등으로 기록하고100~599 밖 코드는 httpStatus:null·INVALID_RESPONSE로 기록한다. 결과 DB 저장 실패 때는 한 결과만 보관해 저장을 다시 시도하며 HTTP는 재전송하지 않는다. 재시작한 inflight는 실패로 남기고 pending은 이어 처리한다. 중지·폐기한 대기 작업은 취소하되 이미 전송 중인 HTTP를 소급 회수하지 않는다. 사용자당 대기/진행100개 상한을 두며 자동 재전송은 하지 않는다.
+
+실제 방송 이벤트는 기존 fresh 미디어·채널 귀속 검사와 제한된256개 hand-off·폴링 관찰로 생성한다. Registry 이벤트 리스너에서 DB/네트워크를 호출하지 않는다. 관찰 전 짧은 방송·수집 공백·재시작에서 누락/중복될 수 있는 best-effort 기능이며 영구 exactly-once outbox나 여러 API worker를 지원한다고 주장하지 않는다. 등록 전 이력을 재생하지 않는다. HTTP 성공은 수신 서버의 업무 처리가 끝났다는 보증이 아니다.
 
 ## 실제 투표
 
@@ -514,9 +556,9 @@ cd apps/api
 
 실제 PostgreSQL·Redis 통합 검사는 저장소 밖 검증 설정 파일의 경로를 지정한다. 테스트는 루프백 `127.0.0.1`의 FRAME 전용 포트 `15432`(네이티브) 또는 `25432`(Docker), DB 이름 `frame_product_verify` 또는 고유 접미사가 붙은 검증 DB인지 먼저 검사한다. 쿼리 매개변수·URL 안의 자격증명·외부 호스트·사용자 DB `frame_product`는 허용하지 않는다. 해당 DB의 임의 생성 스키마와 임의 Redis namespace만 사용하며, 종료 시 생성한 스키마·namespace 키만 정리한다. 실제 DB의 사용자·스키마·운영자 키를 읽거나 변경하지 않는다. 설정에는 `verifyDbUrl`, `dbUsername`, `dbPassword`, `redisHost`, `redisPort`, `redisPassword`가 필요하다.
 
-Flyway는 제품 기능을 활성화한 Spring Boot의 시작 과정에서 `db/migration`을 적용한다. 현재 V1(회원·채널·팔로우), V2(가입 동의), V3(방송 예약), V4(시청 기록), V5(채널 프로필·주소 예약·신고 접수), V6(운영자 플래그·신고 관리), V7(개인 알림·전송 표식·시작 기준 시각), V8(채팅 정책·계정 차단), V9(방송 투표·선택지·계정별 표), V10(비공개 질문·답변·명시적 공개 고정), V11(채널 포인트·원장·보상·교환 요청), V12(비공개 무료 미션·상태 이력), V13(방송별·일별 실제 관찰 집계), V14(비공개 녹화 관찰 창·파일 카탈로그), V15(명시적 공개 다시보기·별도 보관본 메타데이터), V16(원본 공개에 연동한 클립·생성 요청 snapshot·구간·인코딩 상태), V17(다시보기·클립의 시청 위치·완료·행 버전·삭제 epoch), V18(명령어 채팅봇 설정·응답·버전)을 사용한다. `validate-on-migrate: true`, `clean-disabled: true`, `baseline-on-migrate: false`를 명시한다. 적용한 SQL은 수정하지 않고 새 `V19__설명.sql` 같은 다음 버전을 추가한다. Redis는 Flyway 관리 대상이 아니다. 기존 Flyway 기록이 없는 비어 있지 않은 스키마를 자동으로 기존 운영 DB라고 간주하거나, checksum 오류를 자동으로 `repair`해서 넘기지 않는다.
+Flyway는 제품 기능을 활성화한 Spring Boot의 시작 과정에서 `db/migration`을 적용한다. 현재 V1(회원·채널·팔로우), V2(가입 동의), V3(방송 예약), V4(시청 기록), V5(채널 프로필·주소 예약·신고 접수), V6(운영자 플래그·신고 관리), V7(개인 알림·전송 표식·시작 기준 시각), V8(채팅 정책·계정 차단), V9(방송 투표·선택지·계정별 표), V10(비공개 질문·답변·명시적 공개 고정), V11(채널 포인트·원장·보상·교환 요청), V12(비공개 무료 미션·상태 이력), V13(방송별·일별 실제 관찰 집계), V14(비공개 녹화 관찰 창·파일 카탈로그), V15(명시적 공개 다시보기·별도 보관본 메타데이터), V16(원본 공개에 연동한 클립·생성 요청 snapshot·구간·인코딩 상태), V17(다시보기·클립의 시청 위치·완료·행 버전·삭제 epoch), V18(명령어 채팅봇 설정·응답·버전), V19(API 키·웹훅・변경 receipt·전송 기록)을 사용한다. `validate-on-migrate: true`, `clean-disabled: true`, `baseline-on-migrate: false`를 명시한다. 적용한 SQL은 수정하지 않고 새 `V20__설명.sql` 같은 다음 버전을 추가한다. Redis는 Flyway 관리 대상이 아니다. 기존 Flyway 기록이 없는 비어 있지 않은 스키마를 자동으로 기존 운영 DB라고 간주하거나, checksum 오류를 자동으로 `repair`해서 넘기지 않는다.
 
-`ProductMigrationIntegrationTest`는 별도 PostgreSQL DB의 임의 생성 스키마에서 빈 DB의 V18까지 적용·재시작 시 미적용, V1 데이터의 최신 업그레이드 보존·기존 동의 NULL 유지, V3·V4에서 최신으로 업그레이드한 뒤 기존 방송 예약·시청 기록·채널 생성일 보존과 주소 백필·삭제 후 예약 동작, V5 신고의 원문·시각 보존과 운영자 자동 승격 없음, V6 알림 설정 보존·시작 기준 생성·과거 알림 미생성, V7 프로필·팔로우·알림 확인 상태 보존과 기본 채팅 정책 추가, V8 기존 정책 보존과 투표 단일 슬롯·계정별 한 표·선택지 복합 FK, V9 투표·선택지·표 보존과 질문 요청 멱등 키·단일 고정·답변 시각 제약, V10 기존 비공개 답변 보존과 빈 포인트 저장소·음수 잔액·1회 신청·중복 환불 제약, V11 잔액·부분 시청·원장·보상 신청 보존과 미션 요청/기한/이력 고유 제약, V12 미션·이력 보존과 빈 방송 분석 저장소·관찰 제약·FK 및 채널 삭제 연쇄, V14 녹화 관찰 창·파일 보존과 V15 빈 다시보기 저장소·원본당 고유 제약·ready의 검증 해시 필수 조건, V15 VOD 보존과 빈 클립 저장소·요청 UUID 고유 제약·채널/원본 복합 FK·구간/완료 해시 제약·원본 삭제 연쇄, V16 라이브 시청 기록 보존·기본 epoch와 종류별 형태·위치/완료/버전 제약·채널 삭제 후 snapshot 보존·계정 삭제 연쇄, V17 기존 채팅 정책·이어보기 보존과 V18 봇 자동 생성 없음·JSON 배열/개수·버전/시각·PK/FK·채널 삭제 연쇄, 임시 복사 SQL 변조 시 checksum 검증으로 후속 V19 DDL 차단을 검사한다. 이 검사는 비밀 설정의 `verifyDbUrl` 중 루프백 주소와 `frame_product_verify` 또는 고유 접미사를 붙인 이름만 허용하며, 실행 시 생성한 `migration_verify_*` 스키마만 정리한다. 실제 DB와 저장소의 V1~V17 SQL은 변경하지 않는다. `ProductStorageDisabledTest`는 DB·Redis가 연결되지 않아도 제품 기능 비활성 상태의 미디어 서버가 해당 구성 요소 없이 시작되는지 검사한다.
+`ProductMigrationIntegrationTest`는 별도 PostgreSQL DB의 임의 생성 스키마에서 빈 DB의 V19까지 적용·재시작 시 미적용, V1 데이터의 최신 업그레이드 보존·기존 동의 NULL 유지, V3·V4에서 최신으로 업그레이드한 뒤 기존 방송 예약·시청 기록·채널 생성일 보존과 주소 백필·삭제 후 예약 동작, V5 신고의 원문·시각 보존과 운영자 자동 승격 없음, V6 알림 설정 보존·시작 기준 생성·과거 알림 미생성, V7 프로필·팔로우·알림 확인 상태 보존과 기본 채팅 정책 추가, V8 기존 정책 보존과 투표 단일 슬롯·계정별 한 표·선택지 복합 FK, V9 투표·선택지·표 보존과 질문 요청 멱등 키·단일 고정·답변 시각 제약, V10 기존 비공개 답변 보존과 빈 포인트 저장소·음수 잔액·1회 신청·중복 환불 제약, V11 잔액·부분 시청·원장·보상 신청 보존과 미션 요청/기한/이력 고유 제약, V12 미션·이력 보존과 빈 방송 분석 저장소·관찰 제약·FK 및 채널 삭제 연쇄, V14 녹화 관찰 창·파일 보존과 V15 빈 다시보기 저장소·원본당 고유 제약·ready의 검증 해시 필수 조건, V15 VOD 보존과 빈 클립 저장소·요청 UUID 고유 제약·채널/원본 복합 FK·구간/완료 해시 제약·원본 삭제 연쇄, V16 라이브 시청 기록 보존·기본 epoch와 종류별 형태·위치/완료/버전 제약·채널 삭제 후 snapshot 보존·계정 삭제 연쇄, V17 기존 채팅 정책·이어보기 보존과 V18 봇 자동 생성 없음·JSON 배열/개수·버전/시각·PK/FK·채널 삭제 연쇄, V18 봇 설정 보존과 V19 빈 자격 증명 저장소·digest/secret 제약·이벤트/요청 고유성·전송 상태/시각·교차 소유자 거절·계정 삭제 연쇄, 임시 복사 SQL 변조 시 checksum 검증으로 후속 V20 DDL 차단을 검사한다. 이 검사는 비밀 설정의 `verifyDbUrl` 중 루프백 주소와 `frame_product_verify` 또는 고유 접미사를 붙인 이름만 허용하며, 실행 시 생성한 `migration_verify_*` 스키마만 정리한다. 실제 DB와 저장소의 V1~V18 SQL은 변경하지 않는다. `ProductStorageDisabledTest`는 DB·Redis가 연결되지 않아도 제품 기능 비활성 상태의 미디어 서버가 해당 구성 요소 없이 시작되는지 검사한다.
 
 ```powershell
 $env:FRAME_PRODUCT_TEST_CONFIG = '<저장소 밖 검증 설정 JSON 경로>'

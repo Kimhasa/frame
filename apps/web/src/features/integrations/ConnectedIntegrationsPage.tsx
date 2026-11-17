@@ -3,7 +3,7 @@ import { useEffect, useId, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import { EmptyState, ManagementPage, StatusBadge } from '../../components/management/ManagementUI';
 import ui from '../../components/management/ManagementUI.module.css';
-import { broadcastPath } from '../../preview/community-types';
+import { broadcastPath, developerPath } from '../../preview/community-types';
 import type { AccountSession } from '../account/account-client';
 import { ChatBotSettings } from './ChatBotSettings';
 import { fetchOverlayChannel } from './overlay-client';
@@ -188,7 +188,8 @@ function ChannelIntegrations({ session, onRequireLogin, onSessionChanged }: Page
       <ChatBotSettings session={session} onRequireLogin={onRequireLogin} onSessionChanged={onSessionChanged} />
       <li className={styles.row}>
         <span className={styles.icon} aria-hidden="true"><CodeXml size={21} /></span>
-        <div className={styles.summary}><div className={styles.heading}><h2>API 및 웹훅</h2><StatusBadge>준비 중</StatusBadge></div><p>외부 앱용 API 키와 웹훅 연결은 아직 지원하지 않아요.</p></div>
+        <div className={styles.summary}><h2>API 및 웹훅</h2><p>외부 앱의 접근 권한과 방송 이벤트 전송을 관리해요.</p></div>
+        <Link className={`${ui.button} ${styles.rowAction}`} to={developerPath}>개발자 설정</Link>
       </li>
     </ul>
   </ManagementPage>;

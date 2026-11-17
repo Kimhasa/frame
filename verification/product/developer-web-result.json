@@ -1,0 +1,29 @@
+{
+  "checkedAt": "2026-11-17T02:46:52.164Z",
+  "commands": {
+    "typecheck": true,
+    "build": true,
+    "buildDesign": true
+  },
+  "packageManager": "yarn@4.18.1",
+  "node": "v24.22.1",
+  "productionHtmlSha256": "d55d0b249bd1079bd291d84ed7e8ce8a1e3e527e3d393e5da79d0f27532bea2a",
+  "designHtmlSha256": "21b6d857320eb76d5c15bc31878f5364bda6072a9ba0087d991fdf94358466b0",
+  "productionHasDeveloperApi": true,
+  "designHasDeveloperApi": false,
+  "designHasHlsChunk": false,
+  "sourceSha256": {
+    "apps/web/src/features/developer/ConnectedDeveloperPage.module.css": "31c7e35de8902e7fe482d283cf7dad7d76f941f336cea8562d6558807ef9e9ea",
+    "apps/web/src/features/developer/ConnectedDeveloperPage.tsx": "d42a95b898bc5b72c6f476b07bd98a96b5d3be3f76d0134d5e5eedb77faa8b39",
+    "apps/web/src/features/developer/DeveloperControls.tsx": "8ce91a39e1d44e2c02981d2805dce403738b2b30072bcda52ec7e616ec6c6985",
+    "apps/web/src/features/developer/DeveloperDeliveryDialog.tsx": "d86993a9327d9fd5e14add4fd3e5a9fc4e413972757c6811052c6bc94568962f",
+    "apps/web/src/features/developer/DeveloperKeys.tsx": "89d2dbb89581057fccd500f1ee6eaa63aa3becd88487a83f19158afdb415ffea",
+    "apps/web/src/features/developer/DeveloperWebhookDialog.tsx": "bbaa5f76b04b64d4fa02ebd587c3b31efe2a820ccebc8e6c6415f844f5c4544a",
+    "apps/web/src/features/developer/DeveloperWebhooks.tsx": "6d860813559cb1a6a899628a0c2ca40746da003d3f98866995d62d8e9cabcfd5",
+    "apps/web/src/features/developer/developer-client.ts": "c55c31910473a8f07180bcf7517da064dcc678d051596ba6ba5ff4a4c042186e",
+    "apps/web/src/features/developer/useDeveloperMutation.ts": "361b6e47b135c9fe88fbe921270a5726b4d77e37915b43742d1e838f8d3544fe",
+    "apps/web/src/features/account/ConnectedCommunity.tsx": "8cd4baf93b54af231e01fa7169b315320ed06113560469d86b2e3cea3fc873be",
+    "apps/web/src/features/integrations/ConnectedIntegrationsPage.tsx": "4c3a2b81ac9297731c524e08c13663c6bb5d9ca6e9b35c4a8c392b1850c7d607"
+  },
+  "complete": true
+}

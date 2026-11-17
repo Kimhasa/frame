@@ -26,6 +26,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-session-data-redis")
     implementation("org.springframework.boot:spring-boot-starter-flyway")
+    implementation("org.apache.httpcomponents.client5:httpclient5")
     runtimeOnly("org.postgresql:postgresql")
     runtimeOnly("org.flywaydb:flyway-database-postgresql")
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")

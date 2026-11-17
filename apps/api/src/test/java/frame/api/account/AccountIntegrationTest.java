@@ -46,10 +46,15 @@ class AccountIntegrationTest {
         String username = privateConfig.path("dbUsername").asString(), password = privateConfig.path("dbPassword").asString();
         try (var connection = DriverManager.getConnection(database, username, password); var statement = connection.createStatement()) { statement.execute("CREATE SCHEMA " + schema); }
         var mediaState = new java.util.concurrent.atomic.AtomicReference<>("{\"items\":[]}");
+        var webhookRequests = new java.util.concurrent.LinkedBlockingQueue<Map<String,Object>>();
         var mediaStub = com.sun.net.httpserver.HttpServer.create(new java.net.InetSocketAddress("127.0.0.1", 0), 0);
         mediaStub.createContext("/v3/paths/list", exchange -> {
             byte[] body = mediaState.get().getBytes(java.nio.charset.StandardCharsets.UTF_8);
             exchange.getResponseHeaders().set("Content-Type", "application/json"); exchange.sendResponseHeaders(200, body.length); exchange.getResponseBody().write(body); exchange.close();
+        });
+        mediaStub.createContext("/frame-test-hook", exchange -> {
+            webhookRequests.offer(Map.of("body",exchange.getRequestBody().readAllBytes(),"id",exchange.getRequestHeaders().getFirst("X-Frame-Event-Id"),"event",exchange.getRequestHeaders().getFirst("X-Frame-Event"),"timestamp",exchange.getRequestHeaders().getFirst("X-Frame-Timestamp"),"signature",exchange.getRequestHeaders().getFirst("X-Frame-Signature")));
+            exchange.sendResponseHeaders(204,-1);exchange.close();
         });
         mediaStub.start();
         Map<String, Object> properties = new HashMap<>();
@@ -61,6 +66,7 @@ class AccountIntegrationTest {
         properties.put("spring.data.redis.host", privateConfig.path("redisHost").asString()); properties.put("spring.data.redis.port", privateConfig.path("redisPort").intValue());
         properties.put("spring.data.redis.password", privateConfig.path("redisPassword").asString()); properties.put("spring.session.redis.namespace", namespace);
         properties.put("frame.mediamtx.api", "http://127.0.0.1:" + mediaStub.getAddress().getPort()); properties.put("frame.obs.enabled", "true");
+        properties.put("frame.product.webhook-local-test-url", "http://127.0.0.1:"+mediaStub.getAddress().getPort()+"/frame-test-hook");
         properties.put("frame.publisher-tokens", TOKEN + " obs-verify history-unlinked"); properties.put("frame.publisher-tokens-file", "");
         properties.put("frame.payments.enabled", "false");
         properties.put("frame.quality.renditions", "");
@@ -215,10 +221,14 @@ class AccountIntegrationTest {
             String savedQuestion=questions(a,b,anonymous,sql,app,UUID.fromString(ownerId),UUID.fromString(channelId));
             RewardState savedReward=rewards(a,b,anonymous,sql,app,UUID.fromString(ownerId),UUID.fromString(channelId));
             MissionState savedMission=missions(a,anonymous,sql,app,UUID.fromString(ownerId),UUID.fromString(channelId));
+            DeveloperState savedDeveloper=developer(a,b,anonymous,sql,UUID.fromString(ownerId),properties.get("frame.product.webhook-local-test-url").toString(),webhookRequests);
             // The same browser cookie authenticates after a fresh application instance; no fake in-memory account cache.
             app.close(); app = null; app = start(properties); a.base = base(app); b.base = base(app); savedMission.author().base=base(app);
             assertEquals("바뀐 이름", b.get("/api/v1/session").json().path("user").path("displayName").asString()); assertEquals(1, b.get("/api/v1/me/follows").json().path("items").size());
             assertEquals(200, a.get("/api/v1/studio").status());
+            assertEquals(200,integration(a.base,savedDeveloper.token(),"GET","/api/v1/integrations/broadcast",null).status());
+            assertTrue(a.get("/api/v1/me/developer/keys").json().path("items").valueStream().anyMatch(item->item.path("id").asString().equals(savedDeveloper.key())));
+            assertTrue(a.get("/api/v1/me/developer/webhooks").json().path("items").valueStream().anyMatch(item->item.path("id").asString().equals(savedDeveloper.webhook())));
             long analyticsUntil=System.nanoTime()+java.time.Duration.ofSeconds(8).toNanos();
             while(System.nanoTime()<analyticsUntil&&a.get("/api/v1/me/analytics?q=analytics-preserved").json().path("items").get(0).path("status").asString().equals("live"))Thread.sleep(50);
             var restoredAnalytics=a.get("/api/v1/me/analytics?q=analytics-preserved").json().path("items").get(0);
@@ -1410,6 +1420,74 @@ class AccountIntegrationTest {
         var ordered = anonymous.get("/api/v1/channels/spring-owner/schedule").json().path("items");
         assertEquals(2, ordered.size()); assertTrue(ordered.get(0).path("at").longValue() < ordered.get(1).path("at").longValue());
         return id;
+    }
+    private record DeveloperState(String key,String token,String webhook){}
+    private static DeveloperState developer(Browser owner,Browser other,Browser anonymous,JdbcClient sql,UUID ownerId,String hookUrl,java.util.concurrent.BlockingQueue<Map<String,Object>> requests)throws Exception{
+        String keys="/api/v1/me/developer/keys",hooks="/api/v1/me/developer/webhooks";
+        assertEquals(401,anonymous.get(keys).status());assertEquals(401,anonymous.get(hooks).status());
+        assertEquals(401,owner.get("/api/v1/integrations/broadcast").status(),"A cookie cannot replace bearer authentication");
+        owner.expectedUserId=UUID.randomUUID().toString();assertEquals("SESSION_CHANGED",owner.get(keys).code());owner.expectedUserId=ownerId.toString();
+        var draft=Map.of("name","자동화","scopes",java.util.List.of("broadcast:read","analytics:read","chat:manage"),"clientRequestId",UUID.randomUUID().toString());
+        assertEquals(403,owner.send("POST",keys,draft,false,ORIGIN).status());assertEquals(403,owner.send("POST",keys,draft,true,"https://outside.invalid").status());
+        var issued=owner.write("POST",keys,draft);assertEquals(201,issued.status(),issued.raw().body());String token=issued.json().path("secret").asString(),key=issued.json().path("item").path("id").asString();assertTrue(token.matches("frame_[A-Za-z0-9_-]{43}"));
+        assertEquals(256,java.util.Base64.getUrlDecoder().decode(token.substring(6)).length*8);
+        assertEquals(DeveloperSettings.hash(token),sql.sql("SELECT token_hash FROM product_api_keys WHERE id=:id").param("id",UUID.fromString(key)).query(String.class).single());
+        var receipt=owner.get(keys+"/receipts/"+draft.get("clientRequestId"));assertEquals(200,receipt.status());assertFalse(receipt.json().has("secret"));assertFalse(receipt.raw().body().contains(token));
+        assertEquals("ISSUE_ALREADY_PROCESSED",owner.write("POST",keys,draft).code());assertEquals(1,owner.get(keys).json().path("items").size());assertEquals(0,other.get(keys).json().path("items").size());
+        assertEquals(404,other.get(keys+"/receipts/"+draft.get("clientRequestId")).status());assertFalse(owner.get(keys).raw().body().contains(token));assertTrue(issued.raw().headers().firstValue("cache-control").orElse("").contains("no-store"));
+        assertEquals(200,integration(owner.base,token,"GET","/api/v1/integrations/broadcast",null).status());assertEquals(200,integration(owner.base,token,"GET","/api/v1/integrations/analytics",null).status());
+        assertEquals(401,integration(owner.base,token,"GET",keys,null).status(),"A key cannot manage keys without a browser session");
+        JsonNode settings=integration(owner.base,token,"GET","/api/v1/integrations/chat/settings",null).json();
+        var chat=new HashMap<String,Object>();for(String field:java.util.List.of("version","slowMode","slowSeconds","followersOnly","blockLinks","bannedWords"))chat.put(field,settings.path(field));
+        assertEquals(200,integration(owner.base,token,"PATCH","/api/v1/integrations/chat/settings",chat).status(),"Bearer chat writes do not need cookie CSRF");
+        var read=owner.write("POST",keys,Map.of("name","읽기 전용","scopes",java.util.List.of("broadcast:read"),"clientRequestId",UUID.randomUUID()));assertEquals(201,read.status());String readToken=read.json().path("secret").asString(),readId=read.json().path("item").path("id").asString();
+        assertEquals(403,integration(owner.base,readToken,"GET","/api/v1/integrations/analytics",null).status());assertEquals(403,integration(owner.base,readToken,"GET","/api/v1/integrations/chat/settings",null).status());
+        for(int i=0;i<3;i++)assertEquals(201,owner.write("POST",keys,Map.of("name","상한 확인 "+i,"scopes",java.util.List.of("broadcast:read"),"clientRequestId",UUID.randomUUID())).status());
+        assertEquals("DEVELOPER_LIMIT",owner.write("POST",keys,Map.of("name","초과","scopes",java.util.List.of("broadcast:read"),"clientRequestId",UUID.randomUUID())).code());
+        String revokeRequest=UUID.randomUUID().toString(),revoke=keys+"/"+readId+"?version=1&requestId="+revokeRequest;
+        assertEquals(404,other.write("DELETE",revoke,null).status());assertEquals(200,owner.write("DELETE",revoke,null).status());assertEquals(200,owner.write("DELETE",revoke,null).status());
+        assertEquals(200,owner.get(keys+"/"+readId+"/mutations/"+revokeRequest).status());assertEquals(401,integration(owner.base,readToken,"GET","/api/v1/integrations/broadcast",null).status());
+        assertEquals("DEVELOPER_CONFLICT",owner.write("DELETE",keys+"/"+readId+"?version=1&requestId="+UUID.randomUUID(),null).code());
+        UUID hookRequest=UUID.randomUUID();var hookDraft=Map.of("name","방송 이벤트","url",hookUrl,"events",java.util.List.of("broadcast.started","broadcast.ended"),"enabled",true,"clientRequestId",hookRequest);
+        var hook=owner.write("POST",hooks,hookDraft);assertEquals(201,hook.status(),hook.raw().body());String hookId=hook.json().path("item").path("id").asString(),secret=hook.json().path("signingSecret").asString();assertTrue(secret.matches("[0-9a-f]{64}"));
+        assertArrayEquals(java.util.HexFormat.of().parseHex(secret),sql.sql("SELECT signing_secret FROM product_webhooks WHERE id=:id").param("id",UUID.fromString(hookId)).query(byte[].class).single());
+        assertEquals("ISSUE_ALREADY_PROCESSED",owner.write("POST",hooks,hookDraft).code());assertFalse(owner.get(hooks).raw().body().contains(secret));assertFalse(owner.get(hooks+"/receipts/"+hookRequest).json().has("signingSecret"));
+        assertEquals(404,other.get(hooks+"/"+hookId+"/deliveries").status());assertEquals(404,other.write("POST",hooks+"/"+hookId+"/tests",Map.of("clientRequestId",UUID.randomUUID())).status());
+        requests.clear();UUID testRequest=UUID.randomUUID();var test=owner.write("POST",hooks+"/"+hookId+"/tests",Map.of("clientRequestId",testRequest));assertEquals(202,test.status(),test.raw().body());
+        var duplicate=owner.write("POST",hooks+"/"+hookId+"/tests",Map.of("clientRequestId",testRequest));assertEquals(202,duplicate.status());assertEquals(test.json().path("item").path("id"),duplicate.json().path("item").path("id"));
+        var received=requests.poll(10,java.util.concurrent.TimeUnit.SECONDS);assertNotNull(received,"The bounded webhook worker sends the queued test");byte[] raw=(byte[])received.get("body");
+        assertEquals("webhook.test",received.get("event"));assertEquals(test.json().path("item").path("eventId").asString(),received.get("id"));
+        var mac=javax.crypto.Mac.getInstance("HmacSHA256");mac.init(new javax.crypto.spec.SecretKeySpec(java.util.HexFormat.of().parseHex(secret),"HmacSHA256"));mac.update((received.get("timestamp")+".").getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        assertEquals("sha256="+java.util.HexFormat.of().formatHex(mac.doFinal(raw)),received.get("signature"));assertFalse(new String(raw,java.nio.charset.StandardCharsets.UTF_8).contains(ownerId.toString()));assertFalse(new String(raw,java.nio.charset.StandardCharsets.UTF_8).contains(secret));
+        long until=System.nanoTime()+java.time.Duration.ofSeconds(5).toNanos();JsonNode delivery;
+        do{delivery=owner.get(hooks+"/"+hookId+"/tests/"+testRequest).json().path("item");if(delivery.path("status").asString().equals("succeeded"))break;Thread.sleep(25);}while(System.nanoTime()<until);
+        assertEquals("succeeded",delivery.path("status").asString());assertEquals(204,delivery.path("httpStatus").intValue());assertTrue(delivery.path("errorCode").isNull());
+        UUID editRequest=UUID.randomUUID();var edit=Map.of("name","저장된 웹훅","url",hookUrl,"events",java.util.List.of("broadcast.ended"),"enabled",false,"version",1,"clientRequestId",editRequest);
+        assertEquals(200,owner.write("PATCH",hooks+"/"+hookId,edit).status());assertEquals(200,owner.write("PATCH",hooks+"/"+hookId,edit).status());assertEquals(2,owner.get(hooks+"/"+hookId+"/mutations/"+editRequest).json().path("item").path("version").intValue());
+        var stale=new HashMap<String,Object>(edit);stale.put("clientRequestId",UUID.randomUUID());assertEquals("DEVELOPER_CONFLICT",owner.write("PATCH",hooks+"/"+hookId,stale).code());
+        assertEquals("WEBHOOK_DISABLED",owner.write("POST",hooks+"/"+hookId+"/tests",Map.of("clientRequestId",UUID.randomUUID())).code());
+        // A long revoked history must never hide the active credentials that consume the five-item allowance.
+        var olderHook=owner.write("POST",hooks,Map.of("name","이력 이전 웹훅","url",hookUrl,"events",java.util.List.of("broadcast.ended"),"enabled",false,"clientRequestId",UUID.randomUUID()));assertEquals(201,olderHook.status());
+        String olderHookId=olderHook.json().path("item").path("id").asString();long historyAt=System.currentTimeMillis()+1000;
+        sql.sql("""
+                INSERT INTO product_api_keys(id,owner_id,name,scopes,token_hash,prefix,last4,client_request_id,created_at_ms,revoked_at_ms)
+                SELECT gen_random_uuid(),:owner,'history-seed','["broadcast:read"]'::jsonb,repeat(md5(gen_random_uuid()::text),2),'frame_seed','seed',gen_random_uuid(),:at+n,:at+n FROM generate_series(1,101) n
+                """).param("owner",ownerId).param("at",historyAt).update();
+        sql.sql("""
+                INSERT INTO product_webhooks(id,owner_id,name,url,events,enabled,signing_secret,client_request_id,created_at_ms,updated_at_ms,revoked_at_ms)
+                SELECT gen_random_uuid(),:owner,'history-seed',:url,'["broadcast.ended"]'::jsonb,false,decode(repeat('ab',32),'hex'),gen_random_uuid(),:at+n,:at+n,:at+n FROM generate_series(1,101) n
+                """).param("owner",ownerId).param("url",hookUrl).param("at",historyAt).update();
+        var longKeys=owner.get(keys).json().path("items");assertEquals(100,longKeys.size());assertTrue(longKeys.valueStream().anyMatch(item->item.path("id").asString().equals(key)));
+        var manageable=longKeys.valueStream().filter(item->item.path("revokedAtMs").isNull()&&!item.path("id").asString().equals(key)).findFirst().orElseThrow();
+        assertEquals(200,owner.write("DELETE",keys+"/"+manageable.path("id").asString()+"?version="+manageable.path("version").intValue()+"&requestId="+UUID.randomUUID(),null).status());
+        var longHooks=owner.get(hooks).json().path("items");assertEquals(100,longHooks.size());assertTrue(longHooks.valueStream().anyMatch(item->item.path("id").asString().equals(hookId)));assertTrue(longHooks.valueStream().anyMatch(item->item.path("id").asString().equals(olderHookId)));
+        assertEquals(200,owner.write("DELETE",hooks+"/"+olderHookId+"?version=1&requestId="+UUID.randomUUID(),null).status());
+        owner.expectedUserId=null;return new DeveloperState(key,token,hookId);
+    }
+    private static Result integration(String base,String token,String method,String path,Object body)throws Exception{
+        var request=HttpRequest.newBuilder(URI.create(base+path)).header("Authorization","Bearer "+token);if(body!=null)request.header("Content-Type","application/json");
+        request.method(method,body==null?HttpRequest.BodyPublishers.noBody():HttpRequest.BodyPublishers.ofString(JSON.writeValueAsString(body)));
+        var response=HttpClient.newHttpClient().send(request.build(),HttpResponse.BodyHandlers.ofString());return new Result(response,JSON.readTree(response.body()));
     }
     private static boolean verificationDatabase(String database) {
         if (database == null || !database.startsWith("jdbc:postgresql://")) return false;

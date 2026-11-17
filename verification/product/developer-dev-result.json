@@ -1,0 +1,104 @@
+{
+  "complete": true,
+  "mode": "dev",
+  "origin": "http://127.0.0.1:5365",
+  "dedicatedFixtureCookiesOnly": true,
+  "oneTimeSecretsExcludedFromArtifacts": true,
+  "results": [
+    {
+      "name": "Connected developer settings use the existing green management layout with key and webhook panels",
+      "pass": true
+    },
+    {
+      "name": "Development verification runs the actual Vite StrictMode app at the identical configured Origin",
+      "pass": true
+    },
+    {
+      "name": "Development StrictMode loading performs no key or webhook writes",
+      "pass": true
+    },
+    {
+      "name": "An empty issue request focuses its labelled key-name field",
+      "pass": true
+    },
+    {
+      "name": "A real browser issuance displays the one-time server secret in its dedicated dialog",
+      "pass": true
+    },
+    {
+      "name": "The actual browser-issued key immediately authenticates the owning integration endpoint",
+      "pass": true
+    },
+    {
+      "name": "A denied clipboard in development StrictMode selects the secret for manual copying",
+      "pass": true
+    },
+    {
+      "name": "The copy action receives the exact one-time secret without exposing it in artifacts",
+      "pass": true
+    },
+    {
+      "name": "Dismissing the secret dialog removes its plaintext from the rendered document",
+      "pass": true
+    },
+    {
+      "name": "The browser revoke confirmation persists an actual server revocation",
+      "pass": true
+    },
+    {
+      "name": "Actual webhook registration displays the one-time 256-bit signing secret",
+      "pass": true
+    },
+    {
+      "name": "An actual test submission shows a pending state while its owned request is delayed",
+      "pass": true
+    },
+    {
+      "name": "The browser polls and renders the actual persisted delivery result and HTTP status",
+      "pass": true
+    },
+    {
+      "name": "Offline mode retains the last confirmed webhook and disables new outgoing mutations",
+      "pass": true
+    },
+    {
+      "name": "No one-time secret or copied secret is present when a screenshot is captured",
+      "pass": true
+    },
+    {
+      "name": "Real developer cards and controls fit the emulated 390px viewport",
+      "pass": true
+    },
+    {
+      "name": "No one-time secret or copied secret is present when a screenshot is captured",
+      "pass": true
+    },
+    {
+      "name": "Real developer cards and controls fit the emulated 320px viewport",
+      "pass": true
+    },
+    {
+      "name": "No one-time secret or copied secret is present when a screenshot is captured",
+      "pass": true
+    },
+    {
+      "name": "A shared-cookie account change removes the previous owner’s private key and webhook metadata",
+      "pass": true
+    },
+    {
+      "name": "Developer requests include the expected owner and finish without runtime or interception errors",
+      "pass": true
+    }
+  ],
+  "browserRuntimeOrInterceptionErrorCount": 0,
+  "browserDeveloperWriteCount": 4,
+  "browserKeyIssueRequestCount": 1,
+  "privateReadCount": 10,
+  "missingExpectedOwnerHeaderCount": 0,
+  "limits": [
+    "Headless Microsoft Edge on one Windows PC",
+    "Mobile viewports are emulated",
+    "Clipboard uses a browser-local spy; no external messages sent",
+    "Only the explicitly trusted loopback webhook receiver is used"
+  ]
+}

@@ -142,6 +142,10 @@ java -jar build/libs/frame-api.jar
 
 외부 도구 연결에서 채팅봇 전체 사용 여부, 최대 20개의 `!명령어`와 자동 응답·개별 사용 여부·응답 간격을 실제로 저장합니다. 승인된 회원 채팅의 전체 명령어가 일치하면 서버가 `FRAME 봇` 메시지를 전송하며 일반 채팅과 공개 오버레이에 봇 배지가 표시됩니다. V18에 설정을 보관하고 봇 DB 오류·중복 전송·응답 간격·방송 교체가 일반 채팅을 방해하지 않도록 처리합니다. [정확한 계약](PRODUCT_API.md#명령어-채팅봇)을 따릅니다.
 
+## 개발자 설정
+
+개발자 설정에서 실제 API 키를 발급·폐기하고 서명 웹훅을 등록·편집·중지·테스트할 수 있습니다. 키는 방송 읽기·분석 읽기·채팅 설정 관리 권한을 선택하며 별도 Bearer API에서 사용합니다. 원문 키와 웹훅 서명 키는 최초 한 번만 표시합니다. 테스트는202 접수 후 실제 HTTP 결과를 조회하며 공개 HTTPS443, 내부 주소/DNS/리디렉션 제한을 적용합니다. [정확한 API·서명·실행 범위](PRODUCT_API.md#개발자-api-키와-웹훅)를 따릅니다.
+
 ## 검증
 
 ```bash
@@ -154,6 +158,7 @@ node server/verify/clips-e2e.mjs                # 검증 DB·실제 FFmpeg 구�
 node server/verify/archive-history-e2e.mjs       # 실제 VOD·클립 시청 위치·이어보기·삭제 경합·계정 전환(빌드 후, 단독 실행)
 node server/verify/chat-overlay-e2e.mjs          # 실제 공개 채팅·투명 오버레이·방송 교체·OBS 관리 UI(빌드 후, 단독 실행)
 node server/verify/chatbot-e2e.mjs               # 실제 명령어 응답·간격·중복·권한·설정 UI와 방송/API 재시작(빌드 후, 단독 실행)
+node server/verify/developer-e2e.mjs             # 실제 키 인증·폐기·웹훅/HMAC·HTTP 장애·방송 이벤트·개발자 UI(빌드 후, 단독 실행)
 node server/verify/deploy-check.mjs               # deploy/의 단위 파일·환경 예시·설치 절차와 jar의 정합(Linux 없이), 포트 28080
 node server/verify/https-session.mjs --host <test-host> --tls internal --bind <주소> --backend spring   # Caddy 경유 시험 세션
 node server/verify/https-check.mjs                # 그 세션에서 HTTPS/WSS, 재생, 채팅, 서비스 재시작(H10)
