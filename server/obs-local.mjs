@@ -58,13 +58,20 @@ function listenersMatch(state,mediaOnly=false){
 async function free(port){return new Promise(resolve=>{const s=net.createServer();s.once('error',()=>resolve(false));s.listen(port,'127.0.0.1',()=>s.close(()=>resolve(true)));});}
 async function healthy(){try{const r=await fetch(URL+'/healthz',{signal:AbortSignal.timeout(2500)});return r.ok&&(await r.json()).mediamtx===true;}catch{return false;}}
 async function wait(fn,ms){const end=Date.now()+ms;while(Date.now()<end){if(await fn())return true;await sleep(250);}return false;}
-function env(values){const merged={...process.env};for(const key of Object.keys(merged))if(/^(RELAY_|MTX_|TOSS_TEST_|FRAME_PRODUCT_)/i.test(key))delete merged[key];for(const[k,v]of Object.entries(values)){for(const key of Object.keys(merged))if(key.toLowerCase()===k.toLowerCase())delete merged[key];merged[k]=v;}return merged;}
+function env(values){const merged={...process.env};for(const key of Object.keys(merged))if(/^(RELAY_|MTX_|TOSS_TEST_|FRAME_PRODUCT_|FRAME_MEMBERSHIP_)/i.test(key))delete merged[key];for(const[k,v]of Object.entries(values)){for(const key of Object.keys(merged))if(key.toLowerCase()===k.toLowerCase())delete merged[key];merged[k]=v;}return merged;}
 function paymentEnv(){
  const payment=read(join(DIR,'toss-test.json'));
  if(!payment)return{TOSS_TEST_ENABLED:'false',TOSS_TEST_CLIENT_KEY:'',TOSS_TEST_SECRET_KEY:'',TOSS_TEST_SECURITY_KEY:'',TOSS_TEST_STORE_DIR:''};
  const clientKey=payment.clientKey||'',secretKey=payment.secretKey||'',securityKey=payment.securityKey||'';
  if(!/^test_(sk|gsk)_[A-Za-z0-9_-]{8,400}$/.test(secretKey)||clientKey&&(!/^test_(ck|gck)_[A-Za-z0-9_-]{8,400}$/.test(clientKey)||(clientKey.startsWith('test_ck_')!==secretKey.startsWith('test_sk_'))))throw Error('Toss local configuration requires a matching TEST-only key pair; no credentials were printed.');
  return{TOSS_TEST_ENABLED:'true',TOSS_TEST_CLIENT_KEY:clientKey,TOSS_TEST_SECRET_KEY:secretKey,TOSS_TEST_SECURITY_KEY:securityKey,TOSS_TEST_STORE_DIR:join(DIR,'payments')};
+}
+function membershipEnv(){
+ const billing=read(join(DIR,'toss-billing-test.json'));
+ if(!billing)return{FRAME_MEMBERSHIP_TEST_ENABLED:'false',FRAME_MEMBERSHIP_TEST_CLIENT_KEY:'',FRAME_MEMBERSHIP_TEST_SECRET_KEY:''};
+ const {clientKey,secretKey}=billing;
+ if(typeof clientKey!=='string'||typeof secretKey!=='string'||!/^test_ck_[A-Za-z0-9_-]{8,400}$/.test(clientKey)||!/^test_sk_[A-Za-z0-9_-]{8,400}$/.test(secretKey))throw Error('Membership billing requires a matching API-individual TEST key pair; no credentials were printed.');
+ return{FRAME_MEMBERSHIP_TEST_ENABLED:'true',FRAME_MEMBERSHIP_TEST_CLIENT_KEY:clientKey,FRAME_MEMBERSHIP_TEST_SECRET_KEY:secretKey};
 }
 function productEnv(){
  const file=process.env.FRAME_PRODUCT_CONFIG||join(localAppDataRoot,'Frame','product','config.json');
@@ -109,7 +116,7 @@ function startApi(java,config){
   RELAY_LISTEN_HOST:'127.0.0.1',RELAY_PORT:String(PORT.spring),RELAY_PUBLIC_BASE_URL:URL,RELAY_PUBLISHER_TOKENS:`${config.token} ${PATH}`,RELAY_PUBLISHER_TOKENS_FILE:'',
   RELAY_OBS_ENABLED:'true',RELAY_OBS_SERVER_URL:`rtmp://127.0.0.1:${PORT.rtmp}`,RELAY_HLS:'true',RELAY_DVR:'true',RELAY_HLS_AAC:'false',
   RELAY_MEDIAMTX_API:`http://127.0.0.1:${PORT.api}`,RELAY_MEDIAMTX_HLS:`http://127.0.0.1:${PORT.hls}`,RELAY_MEDIAMTX_WEBRTC:'http://127.0.0.1:18889',RELAY_MEDIAMTX_PLAYBACK:`http://127.0.0.1:${PORT.playback}`,RELAY_MEDIAMTX_RTSP:`rtsp://127.0.0.1:${PORT.rtsp}`,
-  RELAY_RECORD_DIR:join(DIR,'recordings'),RELAY_FFMPEG:FFMPEG,RELAY_RENDITIONS:'',RELAY_UI_FILE:'',RELAY_STATS_DIR:'',...paymentEnv(),...productEnv(),PATH:BIN+';'+process.env.PATH});
+  RELAY_RECORD_DIR:join(DIR,'recordings'),RELAY_FFMPEG:FFMPEG,RELAY_RENDITIONS:'',RELAY_UI_FILE:'',RELAY_STATS_DIR:'',...paymentEnv(),...membershipEnv(),...productEnv(),PATH:BIN+';'+process.env.PATH});
 }
 function launch(name,file,args,values){
  const log=openSync(join(DIR,name+'.log'),'a');
@@ -161,7 +168,7 @@ if(command==='stop'){
   throw Error('Cannot verify the API process owner or free port; no process was changed.');
  const config=read(CONFIG);
  if(config?.backendUrl!==URL||config?.path!==PATH||typeof config?.token!=='string'||!/^[a-f0-9]{64}$/.test(config.token)||!existsSync(JAR))throw Error('API restart configuration is incomplete.');
- productEnv();paymentEnv();ensureProduct();
+ productEnv();paymentEnv();membershipEnv();ensureProduct();
  const java=javaExecutable();
  // Only the API is replaced. OBS input and the recording process owned by MediaMTX keep running.
  if(apiOwned)execFileSync('taskkill.exe',['/PID',String(state.spring),'/T','/F'],{windowsHide:true,stdio:'ignore'});
@@ -182,7 +189,7 @@ if(command==='stop'){
   if(config.backendUrl!==URL||config.path!==PATH||typeof config.token!=='string'||!/^[a-f0-9]{64}$/.test(config.token))throw Error('Local studio config is invalid; it was not overwritten.');
   const java=javaExecutable();
   const mtxConfig=join(DIR,'mediamtx.yml');writeFileSync(mtxConfig,mediaConfig(config.token),{mode:0o600});
-  paymentEnv();productEnv();ensureProduct();
+  paymentEnv();membershipEnv();productEnv();ensureProduct();
   state={root:ROOT,marker:DIR,phase:'starting',startedAt:new Date().toISOString()};
   try{
    operation.assert();

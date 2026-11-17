@@ -1,0 +1,30 @@
+{
+  "checkedAt": "2026-11-17T04:28:48.950Z",
+  "commands": {
+    "typecheck": true,
+    "build": true,
+    "buildDesign": true
+  },
+  "packageManager": "yarn@4.18.1",
+  "node": "v24.22.1",
+  "productionHtmlSha256": "224d6f12e5c74c51dd0c405e4ba602de41a0d4d83b94d1f0ff5afb7bdb1b8db0",
+  "designHtmlSha256": "21b6d857320eb76d5c15bc31878f5364bda6072a9ba0087d991fdf94358466b0",
+  "productionHasMembershipApi": true,
+  "designHasMembershipApi": false,
+  "designHasHlsChunk": false,
+  "sourceSha256": {
+    "apps/web/src/features/members/ConnectedMembersPage.tsx": "329c07144efa329b6667cfe3bd9007c9eed78fc8900aa56b531720c82584f7a6",
+    "apps/web/src/features/members/membership-callback.ts": "99a43e9b4d5cec40e543349ed732c780be9360dbf9745194e18f8d70c4103c5d",
+    "apps/web/src/features/members/membership-client.ts": "829265dc4ba5d9d77740640d22502d81a0339cfddf3a0d400ff2478afe215919",
+    "apps/web/src/features/members/membership-sdk.ts": "d0889fb7da7e4fc74647a618b37ff4cc7bdbfae024d36338cc70a79d4abef05f",
+    "apps/web/src/features/members/Membership.module.css": "552b35eacbeb828469b1cda6ff32728c51b60266361f9a81f35a55901bfe3e12",
+    "apps/web/src/features/members/MembershipCancelDialog.tsx": "4012a190d71280e88a2b0233da44a6a4761c0644130687f8912913712ce7c05e",
+    "apps/web/src/features/members/MembershipResultPage.tsx": "565570a24135f87ea39eee1aa0254f71c22654de9fa9383241bdf68af9f2f8b6",
+    "apps/web/src/features/members/MembershipUI.tsx": "e33be1653984c5f4bb1e2ed5196287cc40bbde08f6f901ae66003a7bc1910d57",
+    "apps/web/src/features/members/MyMembershipsPage.tsx": "fa398de4e8e6c02e381907cdcb98bd93b2bc3df229cb568fff31bfc8f6e4e373",
+    "apps/web/src/features/members/useMembershipMutation.ts": "dc0c6608833e4644ba13d98d4afb6d3e67e09b1cb447c28d254921e3d2d66589",
+    "apps/web/src/features/members/ViewerMembershipButton.tsx": "ccfff060401cd887de533255afeb91a6766303cf7984bbefc3488de27503ed6d",
+    "apps/web/src/features/account/ConnectedCommunity.tsx": "e54342a390d0e7fbe37073a4046720818d6a8d909766c75cd68f75dd78f6fe5b"
+  },
+  "complete": true
+}

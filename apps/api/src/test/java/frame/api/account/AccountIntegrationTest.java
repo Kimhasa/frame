@@ -48,6 +48,7 @@ class AccountIntegrationTest {
         var mediaState = new java.util.concurrent.atomic.AtomicReference<>("{\"items\":[]}");
         var webhookRequests = new java.util.concurrent.LinkedBlockingQueue<Map<String,Object>>();
         var mediaStub = com.sun.net.httpserver.HttpServer.create(new java.net.InetSocketAddress("127.0.0.1", 0), 0);
+        var membershipStub=new MembershipStub();membershipStub.install(mediaStub);
         mediaStub.createContext("/v3/paths/list", exchange -> {
             byte[] body = mediaState.get().getBytes(java.nio.charset.StandardCharsets.UTF_8);
             exchange.getResponseHeaders().set("Content-Type", "application/json"); exchange.sendResponseHeaders(200, body.length); exchange.getResponseBody().write(body); exchange.close();
@@ -67,6 +68,7 @@ class AccountIntegrationTest {
         properties.put("spring.data.redis.password", privateConfig.path("redisPassword").asString()); properties.put("spring.session.redis.namespace", namespace);
         properties.put("frame.mediamtx.api", "http://127.0.0.1:" + mediaStub.getAddress().getPort()); properties.put("frame.obs.enabled", "true");
         properties.put("frame.product.webhook-local-test-url", "http://127.0.0.1:"+mediaStub.getAddress().getPort()+"/frame-test-hook");
+        properties.put("frame.membership.enabled","true");properties.put("frame.membership.client-key","test_ck_membership_integration_public");properties.put("frame.membership.secret-key","test_sk_membership_integration_private");properties.put("frame.membership.test-api-base","http://127.0.0.1:"+mediaStub.getAddress().getPort());
         properties.put("frame.publisher-tokens", TOKEN + " obs-verify history-unlinked"); properties.put("frame.publisher-tokens-file", "");
         properties.put("frame.payments.enabled", "false");
         properties.put("frame.quality.renditions", "");
@@ -222,6 +224,7 @@ class AccountIntegrationTest {
             RewardState savedReward=rewards(a,b,anonymous,sql,app,UUID.fromString(ownerId),UUID.fromString(channelId));
             MissionState savedMission=missions(a,anonymous,sql,app,UUID.fromString(ownerId),UUID.fromString(channelId));
             DeveloperState savedDeveloper=developer(a,b,anonymous,sql,UUID.fromString(ownerId),properties.get("frame.product.webhook-local-test-url").toString(),webhookRequests);
+            MembershipState savedMembership=memberships(a,b,anonymous,sql,UUID.fromString(ownerId),UUID.fromString(channelId),membershipStub);
             // The same browser cookie authenticates after a fresh application instance; no fake in-memory account cache.
             app.close(); app = null; app = start(properties); a.base = base(app); b.base = base(app); savedMission.author().base=base(app);
             assertEquals("바뀐 이름", b.get("/api/v1/session").json().path("user").path("displayName").asString()); assertEquals(1, b.get("/api/v1/me/follows").json().path("items").size());
@@ -229,6 +232,8 @@ class AccountIntegrationTest {
             assertEquals(200,integration(a.base,savedDeveloper.token(),"GET","/api/v1/integrations/broadcast",null).status());
             assertTrue(a.get("/api/v1/me/developer/keys").json().path("items").valueStream().anyMatch(item->item.path("id").asString().equals(savedDeveloper.key())));
             assertTrue(a.get("/api/v1/me/developer/webhooks").json().path("items").valueStream().anyMatch(item->item.path("id").asString().equals(savedDeveloper.webhook())));
+            var restoredMembership=b.get("/api/v1/me/memberships/"+savedMembership.id());assertEquals(200,restoredMembership.status());assertTrue(restoredMembership.json().path("item").path("entitled").booleanValue());assertFalse(restoredMembership.json().path("item").path("cancelRequestedAtMs").isNull());assertTrue(restoredMembership.json().path("item").path("nextChargeAtMs").isNull());
+            assertEquals(2,b.get("/api/v1/me/memberships/"+savedMembership.id()+"/payments").json().path("items").size());
             long analyticsUntil=System.nanoTime()+java.time.Duration.ofSeconds(8).toNanos();
             while(System.nanoTime()<analyticsUntil&&a.get("/api/v1/me/analytics?q=analytics-preserved").json().path("items").get(0).path("status").asString().equals("live"))Thread.sleep(50);
             var restoredAnalytics=a.get("/api/v1/me/analytics?q=analytics-preserved").json().path("items").get(0);
@@ -1421,6 +1426,68 @@ class AccountIntegrationTest {
         assertEquals(2, ordered.size()); assertTrue(ordered.get(0).path("at").longValue() < ordered.get(1).path("at").longValue());
         return id;
     }
+    private record MembershipState(String id){}
+    private static final class MembershipStub {
+        final java.util.concurrent.atomic.AtomicReference<String> mode=new java.util.concurrent.atomic.AtomicReference<>("success");
+        final java.util.concurrent.atomic.AtomicInteger issues=new java.util.concurrent.atomic.AtomicInteger(),charges=new java.util.concurrent.atomic.AtomicInteger(),lookups=new java.util.concurrent.atomic.AtomicInteger(),deletes=new java.util.concurrent.atomic.AtomicInteger();
+        final java.util.concurrent.ConcurrentHashMap<String,Map<String,Object>> payments=new java.util.concurrent.ConcurrentHashMap<>();
+        volatile String primaryBillingKey,primaryPaymentKey;
+        void install(com.sun.net.httpserver.HttpServer server){
+            server.createContext("/v1/billing/authorizations/issue",exchange->{
+                issues.incrementAndGet();JsonNode input=JSON.readTree(exchange.getRequestBody().readAllBytes());
+                if(mode.get().equals("issue-uncertain")){reply(exchange,502,Map.of("code","PROVIDER_TEMPORARY_FAILURE"));return;}
+                String key=mode.get().equals("reused-billing")?primaryBillingKey:"membership-billing-"+UUID.randomUUID();if(primaryBillingKey==null)primaryBillingKey=key;
+                reply(exchange,200,Map.of("billingKey",key,"customerKey",input.path("customerKey").asString(),"method","카드","card",Map.of("number","1111-2222-3333-4444")));
+            });
+            server.createContext("/v1/billing/",exchange->{
+                if(exchange.getRequestMethod().equals("DELETE")){deletes.incrementAndGet();reply(exchange,200,Map.of());return;}
+                charges.incrementAndGet();JsonNode input=JSON.readTree(exchange.getRequestBody().readAllBytes());String key=mode.get().equals("reused-payment")?primaryPaymentKey:"membership-payment-"+UUID.randomUUID();if(primaryPaymentKey==null)primaryPaymentKey=key;
+                Map<String,Object> payment=new HashMap<>(Map.of("orderId",input.path("orderId").asString(),"paymentKey",key,"totalAmount",input.path("amount").longValue(),"currency","KRW","type","BILLING","status","DONE","approvedAt",java.time.Instant.now().toString(),"method","카드","card",Map.of("number","4444"),"receipt",Map.of("url","https://dashboard.tosspayments.com/receipt/test")));
+                payments.put(input.path("orderId").asString(),payment);reply(exchange,mode.get().equals("charge-uncertain")?502:200,mode.get().equals("charge-uncertain")?Map.of("code","PROVIDER_TEMPORARY_FAILURE"):payment);
+            });
+            server.createContext("/v1/payments/orders/",exchange->{lookups.incrementAndGet();String id=exchange.getRequestURI().getPath().substring("/v1/payments/orders/".length());var payment=payments.get(id);reply(exchange,payment==null?404:200,payment==null?Map.of("code","NOT_FOUND_PAYMENT"):payment);});
+        }
+        private static void reply(com.sun.net.httpserver.HttpExchange exchange,int status,Object value)throws java.io.IOException{byte[] body=JSON.writeValueAsBytes(value);exchange.getResponseHeaders().set("Content-Type","application/json");exchange.sendResponseHeaders(status,body.length);exchange.getResponseBody().write(body);exchange.close();}
+    }
+    private static MembershipState memberships(Browser owner,Browser subscriber,Browser anonymous,JdbcClient sql,UUID ownerId,UUID channel,MembershipStub provider)throws Exception{
+        final String plan="/api/v1/me/membership/plan",mine="/api/v1/me/memberships",publicPlan="/api/v1/channels/"+channel+"/membership";
+        assertEquals(401,anonymous.get(plan).status());assertEquals(401,anonymous.get(mine).status());var publicInitial=anonymous.get(publicPlan);assertEquals(200,publicInitial.status());assertEquals(0,publicInitial.json().path("plan").path("version").intValue());assertTrue(publicInitial.json().path("membership").isNull());
+        UUID planRequest=UUID.randomUUID();var draft=Map.of("version",0,"enabled",true,"amount",4900,"benefits","월간 멤버십 테스트 혜택","clientRequestId",planRequest);
+        assertEquals(403,owner.send("PATCH",plan,draft,false,ORIGIN).status());assertEquals(403,owner.send("PATCH",plan,draft,true,"https://outside.invalid").status());
+        var saved=owner.write("PATCH",plan,draft);assertEquals(200,saved.status(),saved.raw().body());assertTrue(saved.json().path("item").path("paymentsReady").booleanValue());assertEquals(1,owner.write("PATCH",plan,draft).json().path("item").path("version").intValue());assertEquals(200,owner.get(plan+"/requests/"+planRequest).status());
+        var differentPlan=new HashMap<String,Object>(draft);differentPlan.put("amount",5900);assertEquals("MEMBERSHIP_REQUEST_CONFLICT",owner.write("PATCH",plan,differentPlan).code());
+        assertEquals("MEMBERSHIP_SELF_JOIN",owner.write("POST",mine,Map.of("channelId",channel,"planVersion",1,"clientRequestId",UUID.randomUUID(),"consentVersion",Memberships.CONSENT_VERSION)).code());
+        UUID signup=UUID.randomUUID();var signupBody=Map.of("channelId",channel,"planVersion",1,"clientRequestId",signup,"consentVersion",Memberships.CONSENT_VERSION);var created=subscriber.write("POST",mine,signupBody);assertEquals(201,created.status(),created.raw().body());String id=created.json().path("item").path("id").asString(),customer=created.json().path("checkout").path("customerKey").asString();
+        assertEquals(200,subscriber.write("POST",mine,signupBody).status());assertEquals(id,subscriber.get(mine+"/requests/"+signup).json().path("item").path("id").asString());assertEquals("MEMBERSHIP_ALREADY_EXISTS",subscriber.write("POST",mine,Map.of("channelId",channel,"planVersion",1,"clientRequestId",UUID.randomUUID(),"consentVersion",Memberships.CONSENT_VERSION)).code());
+        assertEquals(404,owner.get(mine+"/"+id).status());assertEquals(404,owner.write("POST",mine+"/"+id+"/authorize",Map.of("authKey","foreign-auth-key","customerKey",customer,"clientRequestId",signup)).status());
+        subscriber.expectedUserId=ownerId.toString();assertEquals("SESSION_CHANGED",subscriber.get(mine).code());subscriber.expectedUserId=null;
+        var auth=Map.of("authKey","membership-integration-initial-auth","customerKey",customer,"clientRequestId",signup);assertEquals(403,subscriber.send("POST",mine+"/"+id+"/authorize",auth,false,ORIGIN).status());
+        assertEquals(202,subscriber.write("POST",mine+"/"+id+"/authorize",auth).status());assertEquals(202,subscriber.write("POST",mine+"/"+id+"/authorize",auth).status());JsonNode active=awaitMember(subscriber,id,item->item.path("entitled").booleanValue());assertEquals(1,provider.issues.get());assertEquals(1,provider.charges.get());
+        assertEquals(DeveloperSettings.hash("membership-integration-initial-auth"),sql.sql("SELECT auth_hash FROM product_memberships WHERE id=:id").param("id",UUID.fromString(id)).query(String.class).single());
+        var history=subscriber.get(mine+"/"+id+"/payments");assertEquals(1,history.json().path("items").size());assertEquals("paid",history.json().path("items").get(0).path("status").asString());assertFalse(history.raw().body().contains(provider.primaryPaymentKey));assertFalse(subscriber.get(mine+"/"+id).raw().body().contains(provider.primaryBillingKey));assertFalse(history.raw().body().contains("membership-integration-initial-auth"));
+        var members=owner.get("/api/v1/me/membership/members");assertEquals(200,members.status());assertEquals("바뀐 이름",members.json().path("items").get(0).path("subscriber").path("displayName").asString());assertFalse(members.raw().body().contains("viewer@example.test"));assertEquals(200,owner.get("/api/v1/me/membership/members/"+id).status());
+        assertEquals(200,owner.write("PATCH",plan,Map.of("version",1,"enabled",true,"amount",5900,"benefits","새 가입자 혜택","clientRequestId",UUID.randomUUID())).status());assertEquals(4900,subscriber.get(mine+"/"+id).json().path("item").path("amount").longValue());
+        long due=System.currentTimeMillis()-1000,shift=active.path("periodEndsAtMs").longValue()-due;
+        sql.sql("""
+                WITH moved AS (UPDATE product_memberships SET period_started_at_ms=period_started_at_ms-:shift,period_ends_at_ms=period_ends_at_ms-:shift,next_charge_at_ms=:due WHERE id=:id RETURNING id)
+                UPDATE product_membership_payments p SET period_started_at_ms=p.period_started_at_ms-:shift,period_ends_at_ms=p.period_ends_at_ms-:shift FROM moved WHERE p.membership_id=moved.id AND p.cycle=0
+                """).param("shift",shift).param("due",due).param("id",UUID.fromString(id)).update();
+        active=awaitMember(subscriber,id,item->item.path("entitled").booleanValue()&&item.path("periodStartedAtMs").longValue()>due);assertEquals(2,provider.charges.get());assertEquals(2,subscriber.get(mine+"/"+id+"/payments").json().path("items").size());assertEquals(4900,subscriber.get(mine+"/"+id+"/payments").json().path("items").get(0).path("amount").longValue());
+        Browser another=new Browser(owner.base);another.clientIp="198.51.100.241";another.get("/api/v1/session");assertEquals(201,another.write("POST","/api/v1/auth/register",signup("membership-extra@example.test","membership-extra","추가 회원","membership-test-password")).status());
+        // A provider billing key belonging to another subscription must not hold the global worker in a failed DB completion.
+        provider.mode.set("reused-billing");String duplicateBilling=signupAndAuthorize(another,channel,2,"membership-duplicate-billing");JsonNode duplicate=awaitMember(another,duplicateBilling,item->item.path("status").asString().equals("issue_unknown"));assertEquals("MEMBERSHIP_BILLING_KEY_REUSED",duplicate.path("lastErrorCode").asString());assertEquals(2,provider.charges.get());cancelMember(another,duplicateBilling,duplicate);
+        // Unknown issuance is not repeated, even for an identical browser callback; cancel permits a fresh registration.
+        provider.mode.set("issue-uncertain");String uncertainIssue=signupAndAuthorize(another,channel,2,"membership-uncertain-issue");JsonNode uncertain=awaitMember(another,uncertainIssue,item->item.path("status").asString().equals("issue_unknown"));int issueCount=provider.issues.get();assertEquals(2,provider.charges.get());cancelMember(another,uncertainIssue,uncertain);
+        // A reused payment key becomes unknown rather than a constraint failure/repeated charge. A later lookup can resolve it.
+        provider.mode.set("reused-payment");String duplicatePayment=signupAndAuthorize(another,channel,2,"membership-duplicate-payment");JsonNode duplicateCharge=awaitMember(another,duplicatePayment,item->item.path("lastErrorCode").asString().equals("MEMBERSHIP_PAYMENT_KEY_REUSED"));assertFalse(duplicateCharge.path("entitled").booleanValue());assertTrue(duplicateCharge.path("paymentPending").booleanValue());assertEquals(issueCount+1,provider.issues.get());
+        String duplicatedOrder=another.get(mine+"/"+duplicatePayment+"/payments").json().path("items").get(0).path("orderId").asString();provider.payments.compute(duplicatedOrder,(key,value)->{var changed=new HashMap<>(value);changed.put("paymentKey","resolved-membership-payment-"+UUID.randomUUID());return changed;});provider.mode.set("success");int beforeLookup=provider.charges.get();assertEquals(200,another.write("POST",mine+"/"+duplicatePayment+"/reconcile",Map.of()).status());JsonNode resolved=awaitMember(another,duplicatePayment,item->item.path("entitled").booleanValue());assertEquals(beforeLookup,provider.charges.get());assertTrue(provider.lookups.get()>0);cancelMember(another,duplicatePayment,resolved);
+        long end=active.path("periodEndsAtMs").longValue();UUID cancelRequest=UUID.randomUUID();var cancel=Map.of("version",active.path("version").intValue(),"clientRequestId",cancelRequest);var canceled=subscriber.write("POST",mine+"/"+id+"/cancel",cancel);assertEquals(200,canceled.status(),canceled.raw().body());assertEquals(200,subscriber.write("POST",mine+"/"+id+"/cancel",cancel).status());assertEquals(200,subscriber.get(mine+"/"+id+"/requests/"+cancelRequest).status());assertTrue(canceled.json().path("item").path("entitled").booleanValue());assertEquals(end,canceled.json().path("item").path("periodEndsAtMs").longValue());assertTrue(canceled.json().path("item").path("nextChargeAtMs").isNull());
+        assertEquals("MEMBERSHIP_CONFLICT",subscriber.write("POST",mine+"/"+id+"/cancel",Map.of("version",1,"clientRequestId",UUID.randomUUID())).code());JsonNode keyDeleted=awaitMember(subscriber,id,item->item.path("billingKeyDeletion").asString().equals("done"));assertTrue(keyDeleted.path("entitled").booleanValue());assertTrue(provider.deletes.get()>0);
+        assertEquals(200,owner.write("PATCH",plan,Map.of("version",2,"enabled",false,"amount",5900,"benefits","신규 가입 중지","clientRequestId",UUID.randomUUID())).status());assertFalse(anonymous.get(publicPlan).json().path("plan").path("enabled").booleanValue());assertTrue(subscriber.get(mine+"/"+id).json().path("item").path("nextChargeAtMs").isNull());return new MembershipState(id);
+    }
+    private static String signupAndAuthorize(Browser browser,UUID channel,int planVersion,String auth)throws Exception{UUID request=UUID.randomUUID();var signup=browser.write("POST","/api/v1/me/memberships",Map.of("channelId",channel,"planVersion",planVersion,"clientRequestId",request,"consentVersion",Memberships.CONSENT_VERSION));assertEquals(201,signup.status(),signup.raw().body());String id=signup.json().path("item").path("id").asString();assertEquals(202,browser.write("POST","/api/v1/me/memberships/"+id+"/authorize",Map.of("authKey",auth,"customerKey",signup.json().path("checkout").path("customerKey").asString(),"clientRequestId",request)).status());return id;}
+    private static JsonNode awaitMember(Browser browser,String id,java.util.function.Predicate<JsonNode> ready)throws Exception{long until=System.nanoTime()+java.time.Duration.ofSeconds(12).toNanos();JsonNode item;do{var response=browser.get("/api/v1/me/memberships/"+id);assertEquals(200,response.status(),response.raw().body());item=response.json().path("item");if(ready.test(item))return item;Thread.sleep(50);}while(System.nanoTime()<until);fail("Membership did not reach the expected safe state: "+item.path("status").asString()+" / "+item.path("lastErrorCode").asString());return item;}
+    private static void cancelMember(Browser browser,String id,JsonNode item)throws Exception{var canceled=browser.write("POST","/api/v1/me/memberships/"+id+"/cancel",Map.of("version",item.path("version").intValue(),"clientRequestId",UUID.randomUUID()));assertEquals(200,canceled.status(),canceled.raw().body());}
     private record DeveloperState(String key,String token,String webhook){}
     private static DeveloperState developer(Browser owner,Browser other,Browser anonymous,JdbcClient sql,UUID ownerId,String hookUrl,java.util.concurrent.BlockingQueue<Map<String,Object>> requests)throws Exception{
         String keys="/api/v1/me/developer/keys",hooks="/api/v1/me/developer/webhooks";

@@ -1,0 +1,97 @@
+{
+  "complete": true,
+  "providerStubComplete": true,
+  "actualTossTestPgCompleted": false,
+  "actualTossTestPgCancellationCompleted": false,
+  "sdkBillingAuthStub": true,
+  "mode": "production",
+  "origin": "http://127.0.0.1:5365",
+  "dedicatedFixtureCookiesOnly": true,
+  "callbackSecretsExcludedFromArtifacts": true,
+  "results": [
+    {
+      "name": "The real owner membership page keeps the existing green management layout",
+      "pass": true
+    },
+    {
+      "name": "The owning broadcaster saves actual monthly membership benefits through its confirmation dialog",
+      "pass": true
+    },
+    {
+      "name": "Callback authorization and billing secrets are absent before a screenshot is captured",
+      "pass": true
+    },
+    {
+      "name": "The subscriber explicitly checks recurring billing consent after seeing the price, monthly cycle and retained paid period",
+      "pass": true
+    },
+    {
+      "name": "One explicit signup calls the local SDK billing-auth spy once and submits one real account authorization before its response is lost",
+      "pass": true
+    },
+    {
+      "name": "The recovered callback stores no billing authorization or provider key in browser web storage",
+      "pass": true
+    },
+    {
+      "name": "Reloading persisted account membership state recovers a lost authorization response without another SDK request or charge submission",
+      "pass": true
+    },
+    {
+      "name": "A lost real cancellation response reconciles one receipt while explaining retained paid access and no refund",
+      "pass": true
+    },
+    {
+      "name": "The browser cancellation really stops the next charge and keeps the subscriber’s paid entitlement",
+      "pass": true
+    },
+    {
+      "name": "The payment tab renders the actual account-scoped confirmed billing history",
+      "pass": true
+    },
+    {
+      "name": "Offline mode retains the last confirmed account membership view",
+      "pass": true
+    },
+    {
+      "name": "Callback authorization and billing secrets are absent before a screenshot is captured",
+      "pass": true
+    },
+    {
+      "name": "Membership controls and actual payment records fit the emulated 390px viewport",
+      "pass": true
+    },
+    {
+      "name": "Callback authorization and billing secrets are absent before a screenshot is captured",
+      "pass": true
+    },
+    {
+      "name": "Membership controls and actual payment records fit the emulated 320px viewport",
+      "pass": true
+    },
+    {
+      "name": "Callback authorization and billing secrets are absent before a screenshot is captured",
+      "pass": true
+    },
+    {
+      "name": "Switching the browser account clears the prior subscriber’s private membership and payment state",
+      "pass": true
+    },
+    {
+      "name": "Membership interactions finish with expected-owner headers and no runtime, interception or invalid SDK-spy calls",
+      "pass": true
+    }
+  ],
+  "browserRuntimeOrInterceptionErrorCount": 0,
+  "browserMembershipWriteCount": 4,
+  "browserAuthorizePostCount": 1,
+  "browserCancelPostCount": 1,
+  "sdkBillingAuthSpyCallCount": 1,
+  "invalidSdkSpyCallCount": 0,
+  "missingExpectedOwnerHeaderCount": 0,
+  "limits": [
+    "Billing auth is a browser-local spy; all provider HTTP uses an owned loopback stub",
+    "No actual Toss authentication, test-PG charge or refund is asserted",
+    "Mobile viewports are emulated on one Windows PC"
+  ]
+}

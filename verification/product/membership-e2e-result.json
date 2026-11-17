@@ -1,0 +1,173 @@
+{
+  "complete": true,
+  "providerStubComplete": true,
+  "actualTossTestPgCompleted": false,
+  "actualTossTestPgCancellationCompleted": false,
+  "verificationDatabaseOnly": true,
+  "productionUserDataUntouched": true,
+  "currentMediaReceiverUntouched": true,
+  "singleImmutableJar": true,
+  "provider": "Owned loopback HTTP billing provider stub, not Toss",
+  "sdk": "Browser-local billing-auth spy, not Toss authentication",
+  "results": [
+    {
+      "name": "A new owner has private disabled membership settings and an explicitly configured stub gateway",
+      "pass": true
+    },
+    {
+      "name": "Membership management rejects anonymous reads, missing CSRF, foreign Origin and changed accounts",
+      "pass": true
+    },
+    {
+      "name": "The owning broadcaster publishes its real monthly plan through a versioned server update",
+      "pass": true
+    },
+    {
+      "name": "Plan update receipts reconcile committed writes and stale versions cannot overwrite them",
+      "pass": true
+    },
+    {
+      "name": "The public membership offer exposes the server price without billing credentials",
+      "pass": true
+    },
+    {
+      "name": "Missing or unsupported recurring-payment consent is rejected before any provider request",
+      "pass": true
+    },
+    {
+      "name": "Self-subscription and client-supplied payment amounts are rejected before provider contact",
+      "pass": true
+    },
+    {
+      "name": "A stale or invented offer version cannot prepare a checkout with a different price",
+      "pass": true
+    },
+    {
+      "name": "Rejected membership preparation does not contact the provider",
+      "pass": true
+    },
+    {
+      "name": "Preparing a real account membership returns a pending authorization and server-bound checkout identity without entitlement",
+      "pass": true
+    },
+    {
+      "name": "Repeated signup and its receipt resolve one durable subscription without a second order",
+      "pass": true
+    },
+    {
+      "name": "A different account cannot read, authorize or cancel the subscriber’s private membership",
+      "pass": true
+    },
+    {
+      "name": "A tampered checkout customer identity is refused before billing-key issuance",
+      "pass": true
+    },
+    {
+      "name": "The authentic account callback is accepted for asynchronous billing-key issuance and first charging",
+      "pass": true
+    },
+    {
+      "name": "A provider-accepted charge with a lost response remains unconfirmed and grants no fabricated membership",
+      "pass": true
+    },
+    {
+      "name": "Repeating the same authorization cannot issue or charge again while confirmation is unknown",
+      "pass": true
+    },
+    {
+      "name": "The subscriber can explicitly request lookup-only reconciliation",
+      "pass": true
+    },
+    {
+      "name": "Lookup of the same persisted order confirms one paid month without a second provider charge",
+      "pass": true
+    },
+    {
+      "name": "The account payment history contains the confirmed monthly amount and excludes authorization secrets",
+      "pass": true
+    },
+    {
+      "name": "Only the owning broadcaster sees its actual active subscriber and private detail",
+      "pass": true
+    },
+    {
+      "name": "Changing the offer price affects future signups while the existing subscriber keeps the paid price snapshot",
+      "pass": true
+    },
+    {
+      "name": "A provider HTTP400 ALREADY_PROCESSING_REQUEST remains unconfirmed without another charge or fabricated renewed access",
+      "pass": true
+    },
+    {
+      "name": "A processing-error renewal can request lookup of its existing order",
+      "pass": true
+    },
+    {
+      "name": "Lookup resolves the HTTP400 processing response into one new monthly cycle with a distinct stable order/idempotency tuple and the original price",
+      "pass": true
+    },
+    {
+      "name": "A stale membership version cannot cancel a newer paid cycle",
+      "pass": true
+    },
+    {
+      "name": "Cancellation stops the next monthly charge while preserving the already paid membership period",
+      "pass": true
+    },
+    {
+      "name": "Cancellation has a durable receipt and actually deletes its billing key through the authenticated provider route",
+      "pass": true
+    },
+    {
+      "name": "Repeating cancellation neither refunds the paid month nor creates another charge",
+      "pass": true
+    },
+    {
+      "name": "Subsequent scheduler polls create no renewal charge after cancellation removes the next-charge deadline",
+      "pass": true
+    },
+    {
+      "name": "production membership browser verification passes with an explicitly stubbed billing SDK and provider",
+      "pass": true
+    },
+    {
+      "name": "dev membership browser verification passes with an explicitly stubbed billing SDK and provider",
+      "pass": true
+    },
+    {
+      "name": "The complete API and browser workflows issue two billing keys, make exactly three effective charges and delete both keys without hidden renewal or authorization retries",
+      "pass": true
+    },
+    {
+      "name": "The same account session, paid period, cancellation and confirmed payment history survive an identical-JAR API restart",
+      "pass": true
+    },
+    {
+      "name": "Every actual loopback provider request uses the expected Basic secret and every mutation has a stable idempotency key",
+      "pass": true
+    },
+    {
+      "name": "All membership API lifecycles use the same immutable copied JAR",
+      "pass": true
+    }
+  ],
+  "providerRequestCounts": {
+    "issue": 2,
+    "charge": 3,
+    "lookup": 2,
+    "delete": 2,
+    "acceptedCharges": 3,
+    "invalidAuth": 0,
+    "invalidIdempotency": 0
+  },
+  "limits": [
+    "No actual Toss test-PG authorization or charge was completed by this suite",
+    "No refund is requested; cancellation stops future charges and retains the paid period",
+    "A controlled database clock fixture represents renewal scheduling, not a real elapsed month",
+    "Single Windows PC; mobile viewports are emulated; provider secrets and callback keys remain private"
+  ],
+  "jarSha256": "023af93cf905ba84f0512a24b04ad2568c706f09a427e0c4b2a2f51721cf02e6",
+  "verificationNotes": [
+    "The first UI assertion was corrected to wait for the actual payment table; product code and JAR were unchanged for the successful run."
+  ]
+}

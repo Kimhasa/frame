@@ -1,0 +1,86 @@
+{
+  "complete": true,
+  "readOnly": true,
+  "billingConfigured": false,
+  "billingUnavailableWarningVisible": true,
+  "actualTossTestPgCompleted": false,
+  "providerStarted": false,
+  "apiWriteAttempts": 0,
+  "sdkCalls": 0,
+  "browserRuntimeErrors": 0,
+  "jarSha256": "023af93cf905ba84f0512a24b04ad2568c706f09a427e0c4b2a2f51721cf02e6",
+  "command": "FRAME_MEMBERSHIP_TEST_DIR=<successful-private-run> node server/verify/membership-e2e.mjs --capture-owner",
+  "functionalVerification": "Existing 35/18/14 functional JSON results remain from before the narrow checkbox CSS fix; this separate run only verifies final owner layout and replaces its two desktop PNGs.",
+  "results": [
+    {
+      "name": "production capture honestly shows billing disabled with no payment credentials",
+      "pass": true
+    },
+    {
+      "name": "production custom checkbox box and operating label share the same horizontal row",
+      "pass": true
+    },
+    {
+      "name": "production owner capture has no horizontal overflow, payment callback secrets or dialog",
+      "pass": true
+    },
+    {
+      "name": "dev capture honestly shows billing disabled with no payment credentials",
+      "pass": true
+    },
+    {
+      "name": "dev custom checkbox box and operating label share the same horizontal row",
+      "pass": true
+    },
+    {
+      "name": "dev owner capture has no horizontal overflow, payment callback secrets or dialog",
+      "pass": true
+    },
+    {
+      "name": "Read-only owner recapture makes no API write attempts, billing SDK calls or browser runtime errors",
+      "pass": true
+    },
+    {
+      "name": "Owner recapture reuses the identical immutable functionally tested JAR",
+      "pass": true
+    }
+  ],
+  "geometry": [
+    {
+      "mode": "production",
+      "box": {
+        "x": 287,
+        "y": 322.09375,
+        "width": 22,
+        "height": 22
+      },
+      "text": {
+        "x": 319,
+        "y": 322.59375,
+        "width": 64.015625,
+        "height": 21
+      },
+      "centreDelta": 0,
+      "gap": 10,
+      "display": "flex"
+    },
+    {
+      "mode": "dev",
+      "box": {
+        "x": 287,
+        "y": 322.09375,
+        "width": 22,
+        "height": 22
+      },
+      "text": {
+        "x": 319,
+        "y": 322.59375,
+        "width": 64.015625,
+        "height": 21
+      },
+      "centreDelta": 0,
+      "gap": 10,
+      "display": "flex"
+    }
+  ]
+}

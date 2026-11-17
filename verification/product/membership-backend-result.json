@@ -1,0 +1,343 @@
+{
+  "checkedAt": "2026-11-17T04:22:54.8339393Z",
+  "command": "gradlew.bat test bootJar --rerun-tasks",
+  "databaseRuntime": "docker",
+  "verificationDatabaseOnly": true,
+  "tests": 188,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "classes": 45,
+  "jarSha256": "023af93cf905ba84f0512a24b04ad2568c706f09a427e0c4b2a2f51721cf02e6",
+  "complete": true,
+  "suites": [
+    {
+      "name": "frame.api.account.AccountIntegrationTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.account.AccountSessionRecoveryTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.account.ChannelAnalyticsTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.account.ChannelMissionsTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.account.ChannelPollsTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.account.ChannelProfileTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.account.ChannelQuestionsTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.account.ChannelRecordingsTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.account.ChannelRewardsTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.account.ChatBotTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.account.ChatModerationTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.account.ChatTicketsTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.account.ClipFilesTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.account.DeveloperSettingsTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.account.MembershipGatewayTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.account.MembershipsTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.account.ProductClipsTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.account.ProductMigrationIntegrationTest",
+      "tests": 20,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.account.ProductNotificationsTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.account.ProductStorageDisabledTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.account.ProductVodsTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.account.RecordingControllerTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.account.ReportManagementTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.account.ScheduledBroadcastsTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.account.VodFilesTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.account.WatchHistoryTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.account.WebhookSenderTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.BlankRelayVariablesTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.broadcast.BroadcastRegistryTest",
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.chat.ChatBotHubTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.chat.ChatHandshakeFilterTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.chat.ChatRulesTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.chat.ManagedChatHubTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.dvr.DvrRulesTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.dvr.RecordedAssetProbeTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.mediamtx.MediaMtxPathsTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.obs.ObsBroadcastsTest",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.payments.PaymentsTest",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.playback.PlaybackRulesTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.playback.ViewerSessionsTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.ShutdownTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.StartupGraceTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.stats.StatsRowTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.UpstreamBreakTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "frame.api.web.JsCompatTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "sourceSha256": {
+    "apps/api/src/main/java/frame/api/account/MembershipController.java": "defc0fecf0ebc05441620353949e2a392ff16427893c6408c84c616a22d5f85f",
+    "apps/api/src/main/java/frame/api/account/MembershipGateway.java": "26311e0c51aa8f6a288a184dd6ec610637d7d156bc1aa073f8d127851f1102f7",
+    "apps/api/src/main/java/frame/api/account/MembershipWorker.java": "c24c779a8ce37e0bf5a513a99eb8f0375b13b73a31c0cc684e9a0b18563faba5",
+    "apps/api/src/main/java/frame/api/account/Memberships.java": "48681945ba81ddb767846c05c5d50eccfac5a6c275c05d8e7aae6f85229dfe08",
+    "apps/api/src/main/resources/db/migration/V20__membership_billing.sql": "c716882801cb8f7d389ff7a4b9e9bcdf740550b026c20f6924f2451c3558ea28",
+    "apps/api/src/test/java/frame/api/account/MembershipGatewayTest.java": "cdb5c5c830c2c5cc7374a9cedabbfbebb821c4e33cc664289193ad148ae6173e",
+    "apps/api/src/test/java/frame/api/account/MembershipsTest.java": "0658422d434b256f5be90850d4aab4bf0325133f95cc10c97489565c40d5d0ab",
+    "apps/api/src/main/java/frame/api/account/AccountSecurity.java": "ded5a5d724b905f16e3d793cc543aaa34ea565e52a10a841c541ac0f18d5fb44",
+    "apps/api/src/main/resources/application.yml": "c61bccff1b5907706a027f1dae2a783fd8aec73ee7ee39424b59380c2888d42f",
+    "apps/api/src/test/java/frame/api/account/AccountIntegrationTest.java": "90daf02e18b7a886e41e41c0ce4ed8c3031eeedafb5a7abed77fc385cedc849b",
+    "apps/api/src/test/java/frame/api/account/ProductMigrationIntegrationTest.java": "d6a7e4f6a16c063ac9d9fb5f36710e6763e16fa43d16a0a5324e299e71a220c8"
+  }
+}

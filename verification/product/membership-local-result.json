@@ -1,0 +1,43 @@
+{
+  "checkedAt": "2026-11-17T04:26:18.123Z",
+  "counts": {
+    "accounts": 0,
+    "channels": 0,
+    "operators": 0,
+    "recordingFiles": 0,
+    "vods": 0,
+    "clips": 0,
+    "history": 0,
+    "botSettings": 0,
+    "migrations": 20
+  },
+  "botSettings": 0,
+  "developerRows": {
+    "keys": 0,
+    "webhooks": 0,
+    "mutations": 0,
+    "deliveries": 0
+  },
+  "membershipRows": {
+    "plans": 0,
+    "memberships": 0,
+    "payments": 0,
+    "requests": 0
+  },
+  "billingConfigurationPresent": false,
+  "actualTossTestPgCompleted": false,
+  "statuses": {
+    "health": 200,
+    "membershipPage": 200,
+    "anonymousMembershipPlan": 401,
+    "anonymousHistory": 401
+  },
+  "productionCountsUnchanged": true,
+  "mediaReceiverPid": 34664,
+  "mediaReceiverPreserved": true,
+  "apiRestarted": true,
+  "runtimeJarSha256": "023af93cf905ba84f0512a24b04ad2568c706f09a427e0c4b2a2f51721cf02e6",
+  "testedJarApplied": true,
+  "previousMigrationsUnchanged": true,
+  "complete": true
+}

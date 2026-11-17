@@ -92,7 +92,7 @@ java -jar build/libs/frame-api.jar
 
 ### 로컬 토스 테스트 결제
 
-`payments/`는 테스트 키만 사용하는 주문 생성·승인·내역 조회를 제공한다. 로컬 운영자 인증, 서버 저장 금액 검증, 승인 전 멱등키 저장, 중복 승인 방지를 적용했다. 시크릿·보안 키는 서버 전용 설정에서만 읽는다. 사용 방법과 현재 지원 범위는 [deploy/TOSS_TEST.md](../../deploy/TOSS_TEST.md)를 따른다. 인터넷 서비스의 고객 계정 인증·환불·정산·웹훅 API는 별도 단계다.
+`payments/`는 테스트 키만 사용하는 주문 생성·승인·내역 조회를 제공한다. 로컬 운영자 인증, 서버 저장 금액 검증, 승인 전 멱등키 저장, 중복 승인 방지를 적용했다. 시크릿·보안 키는 서버 전용 설정에서만 읽는다. 사용 방법과 현재 지원 범위는 [deploy/TOSS_TEST.md](../../deploy/TOSS_TEST.md)를 따른다. 이 구형 후원 원장에는 제품 고객 계정·멤버십을 연결하지 않는다. 계정 멤버십 자동결제는 아래 별도 계약을 사용하며 환불·정산은 제공하지 않는다.
 
 - SIGTERM(`systemctl restart`)을 받으면 먼저 채팅 참가자에게 1001(서버가 떠남)로 닫는다고 알리고(`ChatSocket`이 가장 먼저 멈춤), 진행 중인 요청을 최대 2초 기다린 뒤(`spring.lifecycle.timeout-per-shutdown-phase`) 끝냅니다. 화질 래더 FFmpeg는 함께 끝납니다. 종료 코드는 143입니다(Linux의 SIGTERM 기준이고 이 PC에서는 실행하지 못했습니다. `ShutdownTest`가 잰 것은 2초 대기와 채팅 1001입니다).
   - 시청자의 블로킹 재생 목록 요청 하나가 MediaMTX에 15초까지 잡혀 있을 수 있어서, 이 상한이 없으면 재시작이 그만큼 늦어집니다. 측정: 요청 하나를 잡아 둔 상태에서 종료 4.3 s(`ShutdownTest`). 상한을 넣기 전에는 15.1 s였습니다(기록 파일 없음, 당시 실행 출력).
@@ -146,6 +146,10 @@ java -jar build/libs/frame-api.jar
 
 개발자 설정에서 실제 API 키를 발급·폐기하고 서명 웹훅을 등록·편집·중지·테스트할 수 있습니다. 키는 방송 읽기·분석 읽기·채팅 설정 관리 권한을 선택하며 별도 Bearer API에서 사용합니다. 원문 키와 웹훅 서명 키는 최초 한 번만 표시합니다. 테스트는202 접수 후 실제 HTTP 결과를 조회하며 공개 HTTPS443, 내부 주소/DNS/리디렉션 제한을 적용합니다. [정확한 API·서명·실행 범위](PRODUCT_API.md#개발자-api-키와-웹훅)를 따릅니다.
 
+## 계정 멤버십
+
+방송자가 월 가격·혜택·가입 허용 여부를 저장하고 실제 가입자를 조회합니다. 시청자는 본인 계정으로 토스 카드 등록 후 월 멤버십에 가입하고 해지할 수 있습니다. 해지는 다음 청구를 중단하며 결제한 기간은 유지합니다. V20의 별도 원장과 단일 worker가 첫 결제·갱신·불확실한 청구 조회·빌링 키 삭제를 처리합니다. 자동결제용 test_ck/test_sk 키 쌍이 없으면 가입 결제는 준비되지 않은 상태입니다. [로컬 설정](../../deploy/TOSS_TEST.md#계정-멤버십-자동결제), [API 계약](PRODUCT_API.md#채널-멤버십-자동결제)을 따릅니다.
+
 ## 검증
 
 ```bash
@@ -158,6 +162,7 @@ node server/verify/clips-e2e.mjs                # 검증 DB·실제 FFmpeg 구�
 node server/verify/archive-history-e2e.mjs       # 실제 VOD·클립 시청 위치·이어보기·삭제 경합·계정 전환(빌드 후, 단독 실행)
 node server/verify/chat-overlay-e2e.mjs          # 실제 공개 채팅·투명 오버레이·방송 교체·OBS 관리 UI(빌드 후, 단독 실행)
 node server/verify/chatbot-e2e.mjs               # 실제 명령어 응답·간격·중복·권한·설정 UI와 방송/API 재시작(빌드 후, 단독 실행)
+node server/verify/membership-e2e.mjs            # 계정 가입·월 갱신·해지·응답 유실·UI(소유 모의 PG, 실제 토스 완료와 구분)
 node server/verify/developer-e2e.mjs             # 실제 키 인증·폐기·웹훅/HMAC·HTTP 장애·방송 이벤트·개발자 UI(빌드 후, 단독 실행)
 node server/verify/deploy-check.mjs               # deploy/의 단위 파일·환경 예시·설치 절차와 jar의 정합(Linux 없이), 포트 28080
 node server/verify/https-session.mjs --host <test-host> --tls internal --bind <주소> --backend spring   # Caddy 경유 시험 세션

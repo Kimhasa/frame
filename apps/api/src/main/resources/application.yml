@@ -96,6 +96,11 @@ frame:
     secret-key: ${TOSS_TEST_SECRET_KEY:}
     security-key: ${TOSS_TEST_SECURITY_KEY:}
     store-dir: ${TOSS_TEST_STORE_DIR:}
+  # Account memberships use API-individual billing keys, separate from the legacy donation widget.
+  membership:
+    enabled: ${FRAME_MEMBERSHIP_TEST_ENABLED:false}
+    client-key: ${FRAME_MEMBERSHIP_TEST_CLIENT_KEY:}
+    secret-key: ${FRAME_MEMBERSHIP_TEST_SECRET_KEY:}
   hls: ${RELAY_HLS:true}
   # HLS audio for senders without an AAC track (older apps): the relay's Opus -> AAC transcode path <path>/aac.
   hls-aac: ${RELAY_HLS_AAC:false}

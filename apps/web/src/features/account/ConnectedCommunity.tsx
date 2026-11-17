@@ -33,6 +33,11 @@ import { ConnectedVodList, ConnectedVodWatch } from '../vod/ConnectedVodPages';
 import { ConnectedClipList, ConnectedClipWatch } from '../clips/ConnectedClipPages';
 import { ConnectedIntegrationsPage } from '../integrations/ConnectedIntegrationsPage';
 import { ConnectedDeveloperPage } from '../developer/ConnectedDeveloperPage';
+import { ConnectedMembersPage } from '../members/ConnectedMembersPage';
+import { ViewerMembershipButton } from '../members/ViewerMembershipButton';
+import { MyMembershipsPage } from '../members/MyMembershipsPage';
+import { MembershipResultPage } from '../members/MembershipResultPage';
+import { captureMembershipCallback } from '../members/membership-callback';
 import { channelSchedule } from '../schedule/SchedulePage';
 import { AccountError, accountApi, safeReturnPath } from './account-client';
 import type { AccountSession, ProductChannel } from './account-client';
@@ -48,7 +53,7 @@ function StatePage({ title, description, loading = false, retry }: { title: stri
   return <ManagementPage title={title}>{loading ? <p role="status">불러오는 중이에요.</p> : <EmptyState title={description ?? '아직 등록된 내용이 없어요'} action={retry && <button type="button" className={ui.button} onClick={retry}>다시 시도</button>} />}</ManagementPage>;
 }
 
-function ConnectedChannel({ session, sessionReady, requestLogin, onChannelChange }: { session: AccountSession | null; sessionReady: boolean; requestLogin: (handle?: string) => void; onChannelChange: (channel: ProductChannel) => void }) {
+function ConnectedChannel({ session, sessionReady, requestLogin, onChannelChange, onSessionChanged }: { session: AccountSession | null; sessionReady: boolean; requestLogin: (handle?: string) => void; onChannelChange: (channel: ProductChannel) => void; onSessionChanged: () => void }) {
   const { handle = '', id } = useParams();
   const location = useLocation();
   const [channel, setChannel] = useState<ProductChannel | null>(null);
@@ -103,7 +108,7 @@ function ConnectedChannel({ session, sessionReady, requestLogin, onChannelChange
   return <ChannelPage channel={channel ? { ...pageChannel(channel), schedule: channelSchedule(schedule) } : null} scheduleFeedback={scheduleFeedback} clipsContent={channel ? <ConnectedClipList key={channel.id} channelHandle={channel.handle} /> : undefined} videosContent={channel ? <ConnectedVodList key={channel.id} channelHandle={channel.handle} /> : undefined} recentVideosContent={channel ? <ConnectedVodList key={channel.id} channelHandle={channel.handle} recent /> : undefined} state="ready" followed={channel?.following ?? false} notificationsOn={channel?.notificationsOn ?? false}
     pending={pending || !sessionReady} actionError={error} ownChannel={own} notice={channel?.notice} onToggleFollow={() => void toggle()} onToggleNotifications={() => void toggle(true)}
     signedIn={Boolean(session?.user)} onRequireLogin={() => requestLogin()} onReport={report}
-    actions={own && <Link className={ui.button} to="/studio/channel">채널 관리</Link>} />;
+    actions={own ? <Link className={ui.button} to="/studio/channel">채널 관리</Link> : channel && <ViewerMembershipButton key={`${channel.id}:${session?.user?.id ?? 'anonymous'}`} channelId={channel.id} channelName={channel.displayName} session={session} sessionReady={sessionReady} onRequireLogin={() => requestLogin()} onSessionChanged={onSessionChanged} />} />;
 }
 
 function ChannelSearch() {
@@ -127,6 +132,7 @@ function ChannelSearch() {
 
 export default function ConnectedCommunity({ viewer, render }: { viewer: ViewerAdapter; render: (routes: CommunityPreviewRoutes) => ReactNode }) {
   const location = useLocation();
+  const membershipCallback = captureMembershipCallback();
   const navigate = useNavigate();
   const [session, setSession] = useState<AccountSession | null>(null);
   const [phase, setPhase] = useState<'loading' | 'ready' | 'error'>('loading');
@@ -147,7 +153,7 @@ export default function ConnectedCommunity({ viewer, render }: { viewer: ViewerA
   const followsVersion = useRef(0);
   const isStudio = Boolean(useMatch('/studio/*'));
   const isAdmin = Boolean(useMatch('/admin/*'));
-  const currentUrl = location.pathname + location.search + location.hash;
+  const currentUrl = /\/payments\/(?:success|fail)\/?$/.test(location.pathname) ? location.pathname + window.location.search : location.pathname + location.search + location.hash;
   useEffect(() => {
     const abort = new AbortController(); setPhase('loading'); setSessionError('');
     void accountApi.session(abort.signal).then(value => { if (!abort.signal.aborted) { setSession(value); setPhase('ready'); } }).catch(failure => {
@@ -282,7 +288,7 @@ export default function ConnectedCommunity({ viewer, render }: { viewer: ViewerA
     ? <Fragment key={`${broadcast.path}/${broadcast.id}/${user?.id ?? 'anonymous'}`}><ViewerPollPanel broadcast={broadcast} session={session} accountActions={chatAccount} /><ViewerQuestionsPanel broadcast={broadcast} session={session} accountActions={chatAccount} /><ViewerRewardsPanel broadcast={broadcast} session={session} accountActions={chatAccount} watchMessage={watchPointFeedback?.key === `${user?.id}/${broadcast.path}/${broadcast.id}` ? watchPointFeedback.message : undefined} /><ViewerMissionsPanel broadcast={broadcast} session={session} accountActions={chatAccount} /></Fragment> : null;
   return render({
     login: phase === 'ready' && session ? <AuthPage session={session} onAuthenticated={authenticated} /> : sessionState,
-    channel: <ConnectedChannel key={`${location.pathname}:${user?.id ?? ''}`} session={session} sessionReady={phase === 'ready'} requestLogin={requestLogin} onChannelChange={updateChannel} />,
+    channel: <ConnectedChannel key={`${location.pathname}:${user?.id ?? ''}`} session={session} sessionReady={phase === 'ready'} requestLogin={requestLogin} onChannelChange={updateChannel} onSessionChanged={notificationSessionChanged} />,
     following: phase !== 'ready' ? sessionState : followsError ? <StatePage title="팔로잉" description={followsError} retry={() => setAttempt(value => value + 1)} />
       : <FollowingPage channels={viewFollows} state={!user ? 'login' : followsLoading ? 'loading' : 'ready'} onRetry={() => setAttempt(value => value + 1)} onPreviewSignIn={() => requestLogin()} />,
     settings: requireAccount(session && user ? <AccountSettingsPage key={user.id} session={session} onSave={async name => { const updated = await authorized(() => accountApi.profile(name, session.csrfToken)); setSession(updated); return updated; }} /> : null),
@@ -294,9 +300,9 @@ export default function ConnectedCommunity({ viewer, render }: { viewer: ViewerA
     history: requireAccount(session && user ? <ConnectedHistoryPage key={user.id} session={session} onRequireLogin={() => requestLogin()} onSessionChanged={notificationSessionChanged} /> : null),
     notifications: requireAccount(session && user ? <ConnectedNotificationsPage key={user.id} session={session} onRequireLogin={() => requestLogin()} onSessionChanged={notificationSessionChanged} onUnreadCountChange={changeNotificationUnreadCount} unreadCount={notificationUnreadCount} /> : null),
     notificationUnreadCount,
-    moderation: requireAccount(session && user ? <ConnectedModerationPage key={user.id} session={session} onRequireLogin={() => requestLogin()} onSessionChanged={notificationSessionChanged} /> : null), reports: legacyReports, operatorReports, schedule: requireAccount(session && user ? <ConnectedSchedulePage key={user.id} session={session} onRequireLogin={() => requestLogin()} /> : null), recordings: requireAccount(session && user ? <ConnectedRecordingsPage key={user.id} session={session} onRequireLogin={() => requestLogin()} onSessionChanged={notificationSessionChanged} /> : null), analytics: requireAccount(session && user ? <ConnectedAnalyticsPage key={user.id} session={session} onRequireLogin={() => requestLogin()} onSessionChanged={notificationSessionChanged} /> : null), integrations: requireAccount(session && user ? <ConnectedIntegrationsPage key={user.id} session={session} onRequireLogin={() => requestLogin()} onSessionChanged={notificationSessionChanged} /> : null), revenue: waiting('수익·정산'), members: waiting('멤버십 관리'), missions: requireAccount(session && user ? <ConnectedMissionsPage key={user.id} session={session} onRequireLogin={() => requestLogin()} onSessionChanged={notificationSessionChanged} /> : null), polls: requireAccount(session && user ? <ConnectedParticipationPage key={user.id} session={session} onRequireLogin={() => requestLogin()} onSessionChanged={notificationSessionChanged} /> : null), rewards: requireAccount(session && user ? <ConnectedRewardsPage key={user.id} session={session} onRequireLogin={() => requestLogin()} onSessionChanged={notificationSessionChanged} /> : null), developer: requireAccount(session && user ? <ConnectedDeveloperPage key={user.id} session={session} onRequireLogin={() => requestLogin()} onSessionChanged={notificationSessionChanged} /> : null), scenes: waiting('장면 관리'),
-    transactions: requireAccount(<StatePage title="결제 내역" description="계정별 결제 서비스 연결을 준비하고 있어요." />),
-    paymentSuccess: <StatePage title="결제 결과" description="이 계정의 결제 결과를 확인할 수 없어요." />, paymentFail: <StatePage title="결제 결과" description="결제가 완료되지 않았어요." />,
+    moderation: requireAccount(session && user ? <ConnectedModerationPage key={user.id} session={session} onRequireLogin={() => requestLogin()} onSessionChanged={notificationSessionChanged} /> : null), reports: legacyReports, operatorReports, schedule: requireAccount(session && user ? <ConnectedSchedulePage key={user.id} session={session} onRequireLogin={() => requestLogin()} /> : null), recordings: requireAccount(session && user ? <ConnectedRecordingsPage key={user.id} session={session} onRequireLogin={() => requestLogin()} onSessionChanged={notificationSessionChanged} /> : null), analytics: requireAccount(session && user ? <ConnectedAnalyticsPage key={user.id} session={session} onRequireLogin={() => requestLogin()} onSessionChanged={notificationSessionChanged} /> : null), integrations: requireAccount(session && user ? <ConnectedIntegrationsPage key={user.id} session={session} onRequireLogin={() => requestLogin()} onSessionChanged={notificationSessionChanged} /> : null), revenue: waiting('수익·정산'), members: requireAccount(session && user ? <ConnectedMembersPage key={user.id} session={session} onRequireLogin={() => requestLogin()} onSessionChanged={notificationSessionChanged} /> : null), missions: requireAccount(session && user ? <ConnectedMissionsPage key={user.id} session={session} onRequireLogin={() => requestLogin()} onSessionChanged={notificationSessionChanged} /> : null), polls: requireAccount(session && user ? <ConnectedParticipationPage key={user.id} session={session} onRequireLogin={() => requestLogin()} onSessionChanged={notificationSessionChanged} /> : null), rewards: requireAccount(session && user ? <ConnectedRewardsPage key={user.id} session={session} onRequireLogin={() => requestLogin()} onSessionChanged={notificationSessionChanged} /> : null), developer: requireAccount(session && user ? <ConnectedDeveloperPage key={user.id} session={session} onRequireLogin={() => requestLogin()} onSessionChanged={notificationSessionChanged} /> : null), scenes: waiting('장면 관리'),
+    transactions: requireAccount(session && user ? <MyMembershipsPage key={user.id} session={session} onRequireLogin={() => requestLogin()} onSessionChanged={notificationSessionChanged} /> : null),
+    paymentSuccess: <MembershipResultPage session={session} sessionReady={phase === 'ready'} callback={membershipCallback} onRequireLogin={() => requestLogin()} onSessionChanged={notificationSessionChanged} />, paymentFail: <MembershipResultPage failed session={session} sessionReady={phase === 'ready'} callback={membershipCallback} onRequireLogin={() => requestLogin()} onSessionChanged={notificationSessionChanged} />,
     profileMenu: phase !== 'ready' ? () => <button type="button" className="login-button" disabled>{phase === 'loading' ? '연결 중' : '연결 오류'}</button>
       : user && owned ? onNavigate => <ProfileMenu key={location.key} profile={{ name: user.displayName, handle: owned.handle, avatarUrl: owned.avatarUrl }} channelName={owned.displayName} channelHref={channelPath(owned.handle)} onNavigate={onNavigate} onSignOut={() => void signOut()} isOperator={isOperator} /> : undefined,
     creatorSidebar: user && owned && (isStudio || isAdmin) ? onNavigate => <CreatorSidebar channelName={owned.displayName} channelHandle={owned.handle} initial={Array.from(user.displayName)[0]} onNavigate={onNavigate} isOperator={isOperator} showLegacyReports={false} /> : undefined,

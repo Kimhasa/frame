@@ -229,6 +229,38 @@ Spring Session 필터 자체도 `/api/v1/*`에만 등록한다. 로그인 쿠키
 
 화면은 현재 저장 상태와 편집 중 값을 구분하고 저장 실패·409·오프라인·계정 오류에서 초안을 유지한다. 결과가 불확실한 저장은 GET으로 서버 상태부터 확인하며 PATCH를 자동 재전송하지 않는다. 최신 값을 확인한 뒤에만 사용자가 초안을 다시 저장한다. 계정·채널 변경 시 이전 요청과 늦은 응답을 정리한다.
 
+## 채널 멤버십 자동결제
+
+계정 쿠키 기반 월 멤버십이다. 구형 운영자 Bearer 후원 결제와 다른 PostgreSQL V20 원장을 사용한다. 모든 개인 응답은 `userId`와 `private, no-store`를 포함하며 기존 CSRF·Origin·기대 계정 검증을 유지한다. 공개 플랜 조회만 익명 GET을 허용하고 본인 멤버십은 로그인 계정에만 반환한다. 개발자 Bearer 키로 가입/청구/해지를 할 수 없다.
+
+| 경로(`/api/v1` 아래) | 계약 |
+| --- | --- |
+| GET/PATCH `/me/membership/plan` | 본인 플랜. PATCH `{version,enabled,amount,benefits,clientRequestId}`; 최초 version0→1, 이후 CAS |
+| GET `/me/membership/plan/requests/{requestId}` | 설정 변경의 공개 metadata receipt |
+| GET `/me/membership/members` | 본인 채널 가입자, status=all/active/ended·q·from/to(KST 날짜)·cursor·limit1~100 |
+| GET `/me/membership/members/{id}` | 본인 채널 가입자 상세. 이메일/결제 자격 증명 미반환 |
+| GET `/channels/{channelId}/membership` | 공개 plan와 로그인한 본인의 membership 또는 null |
+| GET/POST `/me/memberships` | 본인 가입 목록 최대100개(진행 중 우선), POST `{channelId,planVersion,clientRequestId,consentVersion:"2026-11-17"}` →201 가입 준비 |
+| GET `/me/memberships/requests/{requestId}` | 가입 요청 receipt. pending_auth일 때만 본인 SDK용 checkout 반환 |
+| GET `/me/memberships/{id}` | 본인 가입 상태·가격 snapshot·이용 기간·해지·청구 미확정 여부 |
+| POST `/me/memberships/{id}/authorize` | `{authKey,customerKey,clientRequestId}`, 원래 가입 UUID와 customerKey 검증 후202. worker가 카드 등록·첫 청구 수행 |
+| POST `/me/memberships/{id}/cancel` | `{version,clientRequestId}` CAS·receipt. 다음 청구 중단을 먼저 커밋 |
+| GET `/me/memberships/{id}/requests/{requestId}` | 해지 receipt. 응답 유실 시 확인 후 최신 detail 재조회 |
+| GET `/me/memberships/{id}/payments` | 본인 청구 내역 최대100개. paymentKey/빌링 키/멱등키 미반환 |
+| POST `/me/memberships/{id}/reconcile` | 빈 객체. 미확정 주문 조회를 예약하며 청구를 반복하지 않음 |
+
+플랜은 기본 비활성·4,900원, 1,000~1,000,000원 정수·혜택 최대500 codepoint다. 가입 시 월 자동청구 동의 버전과 시각을 저장하고 플랜 버전·가격·혜택·주문명을 고정해 기존 가입자에게 가격 인상을 자동 적용하지 않는다. 본인 채널 가입과 같은 계정/채널의 열려 있는 중복 가입을 막는다. 가입 중지는 기존 구독도 해지하며 다시 활성화해도 복구하지 않는다.
+
+공개 상태는 pending_auth/issuing/issue_unknown/pending_charge/active/ended/failed다. `entitled`는 실제 결제 이용 기간, `paymentPending`은 미해결 청구 여부다. 해지해도 이미 결제한 기간은 남고 다음 청구 시각은 null이다. 해지 요청과 진행 중 청구가 겹치면 이미 시작한 요청을 회수할 수 없으며, 최종 승인된 기간까지 이용한다. 해지는 환불이 아니고 환불·재개·카드 변경은 이번 범위가 아니다.
+
+단일 worker가 모든 provider 작업을 DB 트랜잭션 밖에서 처리한다. 원문 authKey는 제한32개의 메모리 큐에서만 처리하고 DB에는 SHA-256만 저장한다. 발급 중 재시작은 issue_unknown으로 남겨 인증을 자동 반복하지 않는다. 빌링 키는 서버 갱신에 필요한 비공개 DB 값이며 암호화 저장을 주장하지 않는다. HTTP 성공 뒤 DB 저장 실패는 결과 한 건만 메모리에 유지해 저장만 반복한다. 재시작한 sending은 unknown으로 바꾸고 동일 orderId를 조회한다.
+
+청구 원장은 ready/sending/unknown/paid/failed이며 주문·금액·멱등키를 호출 전에 커밋한다. 첫 결제와 후속 갱신은 저장된 동일 가입 가격으로 진행한다. 기간은 KST 승인 시각과 이전 종료 시각 중 늦은 시각부터 달력 한 달(말일 조정)이며, 중단 기간의 과거 청구를 몰아서 만들지 않는다. HTTP200만으로 성공 처리하지 않고 BILLING/KRW/DONE·주문번호·금액·결제 키·승인 시각·카드 객체를 검증한다. unknown의404도 원 요청이 실패했다는 보장이 없어 미확정으로 유지하고 자동 재청구하지 않는다. 미확정 행이 있으면 다음 청구를 만들지 않는다. HTTP400에도 처리 중·중복 주문·일시 오류가 있으므로 HTTP 상태만으로 실패를 확정하지 않고, 문서로 확인한 카드 거절 코드만 확정 실패로 취급한다. 인증/설정 오류도 미확정으로 유지한다.
+
+키 설정이 없으면 청구·조회·삭제 claim 자체를 보류해 기존 구독을 자동 해지하지 않는다. 결제 결과가 계속 미확정이거나 key 발급 응답을 잃은 경우 운영 확인이 필요할 수 있다. 해지는 DB에 먼저 기록해 새 청구를 차단하고, 청구 미확정 해소 뒤 빌링 키 삭제를 요청한다. 삭제 실패는 최대5회 안전하게 같은 키로 재시도하며 상태를 구분한다. 카드 등록 응답을 잃어 발급 키를 알 수 없는 경우 삭제 완료로 표시하지 않는다. 계정/채널 삭제는 로컬 원장 FK 연쇄만 수행하며 외부 빌링 키 삭제를 보장하지 않는다. 외부 상점에서 별도 취소된 과거 결제의 자동 대사는 제공하지 않는다.
+
+실제 provider는 고정 토스 HTTPS API·API 개별 연동 테스트 키만 허용한다. 리디렉션을 따르지 않고 응답 본문을 읽는 중64KiB로 제한하며 전체65초 기한을 적용한다. 로컬 소유 모의 서버 예외는 명시적인 `frame.membership.test-api-base=http://127.0.0.1:<높은 포트>`만 허용한다. SDK는 `payment({customerKey}).requestBillingAuth`로 카드 정보를 직접 수집하지 않는다. 키 설정·실제 PG와 모의 검증의 구분은 [토스 테스트 실행 안내](../../deploy/TOSS_TEST.md#계정-멤버십-자동결제)를 따른다. 참고: [자동결제 연동](https://docs.tosspayments.com/guides/v2/billing/integration), [코어 API](https://docs.tosspayments.com/reference), [오류 코드](https://docs.tosspayments.com/reference/error-codes), [정기 청구와 해지](https://docs.tosspayments.com/guides/v2/billing).
+
 ## 개발자 API 키와 웹훅
 
 개발자 설정은 기존 로그인 계정의 `GET /api/v1/me/developer/{keys,webhooks}`로 각각 목록을 읽고 쿠키·CSRF·정확한 Origin·기대 계정 헤더를 사용하는 본인 전용 관리 기능이다. 응답은 `{userId,items}` 또는 `{userId,item}`이고 `Cache-Control: private, no-store`다. 키/웹훅은 각각 폐기되지 않은 항목 최대5개이며, 목록은 활성 항목을 우선하고 최근 이력과 함께 최대100개, 전송 기록은 웹훅별 최근50개다. 중지한 웹훅도 등록 한도에 포함한다. V19의 API 키·웹훅·변경 receipt·전송 기록 네 테이블을 사용한다.
@@ -556,9 +588,9 @@ cd apps/api
 
 실제 PostgreSQL·Redis 통합 검사는 저장소 밖 검증 설정 파일의 경로를 지정한다. 테스트는 루프백 `127.0.0.1`의 FRAME 전용 포트 `15432`(네이티브) 또는 `25432`(Docker), DB 이름 `frame_product_verify` 또는 고유 접미사가 붙은 검증 DB인지 먼저 검사한다. 쿼리 매개변수·URL 안의 자격증명·외부 호스트·사용자 DB `frame_product`는 허용하지 않는다. 해당 DB의 임의 생성 스키마와 임의 Redis namespace만 사용하며, 종료 시 생성한 스키마·namespace 키만 정리한다. 실제 DB의 사용자·스키마·운영자 키를 읽거나 변경하지 않는다. 설정에는 `verifyDbUrl`, `dbUsername`, `dbPassword`, `redisHost`, `redisPort`, `redisPassword`가 필요하다.
 
-Flyway는 제품 기능을 활성화한 Spring Boot의 시작 과정에서 `db/migration`을 적용한다. 현재 V1(회원·채널·팔로우), V2(가입 동의), V3(방송 예약), V4(시청 기록), V5(채널 프로필·주소 예약·신고 접수), V6(운영자 플래그·신고 관리), V7(개인 알림·전송 표식·시작 기준 시각), V8(채팅 정책·계정 차단), V9(방송 투표·선택지·계정별 표), V10(비공개 질문·답변·명시적 공개 고정), V11(채널 포인트·원장·보상·교환 요청), V12(비공개 무료 미션·상태 이력), V13(방송별·일별 실제 관찰 집계), V14(비공개 녹화 관찰 창·파일 카탈로그), V15(명시적 공개 다시보기·별도 보관본 메타데이터), V16(원본 공개에 연동한 클립·생성 요청 snapshot·구간·인코딩 상태), V17(다시보기·클립의 시청 위치·완료·행 버전·삭제 epoch), V18(명령어 채팅봇 설정·응답·버전), V19(API 키·웹훅・변경 receipt·전송 기록)을 사용한다. `validate-on-migrate: true`, `clean-disabled: true`, `baseline-on-migrate: false`를 명시한다. 적용한 SQL은 수정하지 않고 새 `V20__설명.sql` 같은 다음 버전을 추가한다. Redis는 Flyway 관리 대상이 아니다. 기존 Flyway 기록이 없는 비어 있지 않은 스키마를 자동으로 기존 운영 DB라고 간주하거나, checksum 오류를 자동으로 `repair`해서 넘기지 않는다.
+Flyway는 제품 기능을 활성화한 Spring Boot의 시작 과정에서 `db/migration`을 적용한다. 현재 V1(회원·채널·팔로우), V2(가입 동의), V3(방송 예약), V4(시청 기록), V5(채널 프로필·주소 예약·신고 접수), V6(운영자 플래그·신고 관리), V7(개인 알림·전송 표식·시작 기준 시각), V8(채팅 정책·계정 차단), V9(방송 투표·선택지·계정별 표), V10(비공개 질문·답변·명시적 공개 고정), V11(채널 포인트·원장·보상·교환 요청), V12(비공개 무료 미션·상태 이력), V13(방송별·일별 실제 관찰 집계), V14(비공개 녹화 관찰 창·파일 카탈로그), V15(명시적 공개 다시보기·별도 보관본 메타데이터), V16(원본 공개에 연동한 클립·생성 요청 snapshot·구간·인코딩 상태), V17(다시보기·클립의 시청 위치·완료·행 버전·삭제 epoch), V18(명령어 채팅봇 설정·응답·버전), V19(API 키·웹훅・변경 receipt·전송 기록), V20(멤버십 플랜·가입·청구 원장·변경 receipt)을 사용한다. `validate-on-migrate: true`, `clean-disabled: true`, `baseline-on-migrate: false`를 명시한다. 적용한 SQL은 수정하지 않고 새 `V21__설명.sql` 같은 다음 버전을 추가한다. Redis는 Flyway 관리 대상이 아니다. 기존 Flyway 기록이 없는 비어 있지 않은 스키마를 자동으로 기존 운영 DB라고 간주하거나, checksum 오류를 자동으로 `repair`해서 넘기지 않는다.
 
-`ProductMigrationIntegrationTest`는 별도 PostgreSQL DB의 임의 생성 스키마에서 빈 DB의 V19까지 적용·재시작 시 미적용, V1 데이터의 최신 업그레이드 보존·기존 동의 NULL 유지, V3·V4에서 최신으로 업그레이드한 뒤 기존 방송 예약·시청 기록·채널 생성일 보존과 주소 백필·삭제 후 예약 동작, V5 신고의 원문·시각 보존과 운영자 자동 승격 없음, V6 알림 설정 보존·시작 기준 생성·과거 알림 미생성, V7 프로필·팔로우·알림 확인 상태 보존과 기본 채팅 정책 추가, V8 기존 정책 보존과 투표 단일 슬롯·계정별 한 표·선택지 복합 FK, V9 투표·선택지·표 보존과 질문 요청 멱등 키·단일 고정·답변 시각 제약, V10 기존 비공개 답변 보존과 빈 포인트 저장소·음수 잔액·1회 신청·중복 환불 제약, V11 잔액·부분 시청·원장·보상 신청 보존과 미션 요청/기한/이력 고유 제약, V12 미션·이력 보존과 빈 방송 분석 저장소·관찰 제약·FK 및 채널 삭제 연쇄, V14 녹화 관찰 창·파일 보존과 V15 빈 다시보기 저장소·원본당 고유 제약·ready의 검증 해시 필수 조건, V15 VOD 보존과 빈 클립 저장소·요청 UUID 고유 제약·채널/원본 복합 FK·구간/완료 해시 제약·원본 삭제 연쇄, V16 라이브 시청 기록 보존·기본 epoch와 종류별 형태·위치/완료/버전 제약·채널 삭제 후 snapshot 보존·계정 삭제 연쇄, V17 기존 채팅 정책·이어보기 보존과 V18 봇 자동 생성 없음·JSON 배열/개수·버전/시각·PK/FK·채널 삭제 연쇄, V18 봇 설정 보존과 V19 빈 자격 증명 저장소·digest/secret 제약·이벤트/요청 고유성·전송 상태/시각·교차 소유자 거절·계정 삭제 연쇄, 임시 복사 SQL 변조 시 checksum 검증으로 후속 V20 DDL 차단을 검사한다. 이 검사는 비밀 설정의 `verifyDbUrl` 중 루프백 주소와 `frame_product_verify` 또는 고유 접미사를 붙인 이름만 허용하며, 실행 시 생성한 `migration_verify_*` 스키마만 정리한다. 실제 DB와 저장소의 V1~V18 SQL은 변경하지 않는다. `ProductStorageDisabledTest`는 DB·Redis가 연결되지 않아도 제품 기능 비활성 상태의 미디어 서버가 해당 구성 요소 없이 시작되는지 검사한다.
+`ProductMigrationIntegrationTest`는 별도 PostgreSQL DB의 임의 생성 스키마에서 빈 DB의 V20까지 적용·재시작 시 미적용, V1 데이터의 최신 업그레이드 보존·기존 동의 NULL 유지, V3·V4에서 최신으로 업그레이드한 뒤 기존 방송 예약·시청 기록·채널 생성일 보존과 주소 백필·삭제 후 예약 동작, V5 신고의 원문·시각 보존과 운영자 자동 승격 없음, V6 알림 설정 보존·시작 기준 생성·과거 알림 미생성, V7 프로필·팔로우·알림 확인 상태 보존과 기본 채팅 정책 추가, V8 기존 정책 보존과 투표 단일 슬롯·계정별 한 표·선택지 복합 FK, V9 투표·선택지·표 보존과 질문 요청 멱등 키·단일 고정·답변 시각 제약, V10 기존 비공개 답변 보존과 빈 포인트 저장소·음수 잔액·1회 신청·중복 환불 제약, V11 잔액·부분 시청·원장·보상 신청 보존과 미션 요청/기한/이력 고유 제약, V12 미션·이력 보존과 빈 방송 분석 저장소·관찰 제약·FK 및 채널 삭제 연쇄, V14 녹화 관찰 창·파일 보존과 V15 빈 다시보기 저장소·원본당 고유 제약·ready의 검증 해시 필수 조건, V15 VOD 보존과 빈 클립 저장소·요청 UUID 고유 제약·채널/원본 복합 FK·구간/완료 해시 제약·원본 삭제 연쇄, V16 라이브 시청 기록 보존·기본 epoch와 종류별 형태·위치/완료/버전 제약·채널 삭제 후 snapshot 보존·계정 삭제 연쇄, V17 기존 채팅 정책·이어보기 보존과 V18 봇 자동 생성 없음·JSON 배열/개수·버전/시각·PK/FK·채널 삭제 연쇄, V18 봇 설정 보존과 V19 빈 자격 증명 저장소·digest/secret 제약·이벤트/요청 고유성·전송 상태/시각·교차 소유자 거절·계정 삭제 연쇄, V19 개발자 키 보존과 V20 빈 멤버십 저장소·가격/기간 제약·미해결 청구와 가입 고유성·교차 소유자 FK·계정 삭제 연쇄, 임시 복사 SQL 변조 시 checksum 검증으로 후속 V21 DDL 차단을 검사한다. 이 검사는 비밀 설정의 `verifyDbUrl` 중 루프백 주소와 `frame_product_verify` 또는 고유 접미사를 붙인 이름만 허용하며, 실행 시 생성한 `migration_verify_*` 스키마만 정리한다. 실제 DB와 저장소의 V1~V19 SQL은 변경하지 않는다. `ProductStorageDisabledTest`는 DB·Redis가 연결되지 않아도 제품 기능 비활성 상태의 미디어 서버가 해당 구성 요소 없이 시작되는지 검사한다.
 
 ```powershell
 $env:FRAME_PRODUCT_TEST_CONFIG = '<저장소 밖 검증 설정 JSON 경로>'

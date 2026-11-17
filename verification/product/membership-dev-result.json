@@ -1,0 +1,81 @@
+{
+  "complete": true,
+  "providerStubComplete": true,
+  "actualTossTestPgCompleted": false,
+  "actualTossTestPgCancellationCompleted": false,
+  "sdkBillingAuthStub": true,
+  "mode": "dev",
+  "origin": "http://127.0.0.1:5365",
+  "dedicatedFixtureCookiesOnly": true,
+  "callbackSecretsExcludedFromArtifacts": true,
+  "results": [
+    {
+      "name": "The real owner membership page keeps the existing green management layout",
+      "pass": true
+    },
+    {
+      "name": "Development verification uses the actual Vite StrictMode app at the same configured Origin",
+      "pass": true
+    },
+    {
+      "name": "StrictMode owner loading performs no plan, billing or authorization writes",
+      "pass": true
+    },
+    {
+      "name": "Callback authorization and billing secrets are absent before a screenshot is captured",
+      "pass": true
+    },
+    {
+      "name": "Development StrictMode reads a real cancelled paid membership without reauthorizing or charging it",
+      "pass": true
+    },
+    {
+      "name": "The payment tab renders the actual account-scoped confirmed billing history",
+      "pass": true
+    },
+    {
+      "name": "Offline mode retains the last confirmed account membership view",
+      "pass": true
+    },
+    {
+      "name": "Callback authorization and billing secrets are absent before a screenshot is captured",
+      "pass": true
+    },
+    {
+      "name": "Membership controls and actual payment records fit the emulated 390px viewport",
+      "pass": true
+    },
+    {
+      "name": "Callback authorization and billing secrets are absent before a screenshot is captured",
+      "pass": true
+    },
+    {
+      "name": "Membership controls and actual payment records fit the emulated 320px viewport",
+      "pass": true
+    },
+    {
+      "name": "Callback authorization and billing secrets are absent before a screenshot is captured",
+      "pass": true
+    },
+    {
+      "name": "Switching the browser account clears the prior subscriber’s private membership and payment state",
+      "pass": true
+    },
+    {
+      "name": "Membership interactions finish with expected-owner headers and no runtime, interception or invalid SDK-spy calls",
+      "pass": true
+    }
+  ],
+  "browserRuntimeOrInterceptionErrorCount": 0,
+  "browserMembershipWriteCount": 0,
+  "browserAuthorizePostCount": 0,
+  "browserCancelPostCount": 0,
+  "sdkBillingAuthSpyCallCount": 0,
+  "invalidSdkSpyCallCount": 0,
+  "missingExpectedOwnerHeaderCount": 0,
+  "limits": [
+    "Billing auth is a browser-local spy; all provider HTTP uses an owned loopback stub",
+    "No actual Toss authentication, test-PG charge or refund is asserted",
+    "Mobile viewports are emulated on one Windows PC"
+  ]
+}

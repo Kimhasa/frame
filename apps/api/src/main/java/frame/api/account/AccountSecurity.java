@@ -101,6 +101,7 @@ public class AccountSecurity {
         http.securityMatcher("/api/v1/**")
                 .authorizeHttpRequests(auth -> auth.requestMatchers("/api/v1/integrations", "/api/v1/integrations/**").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/session", "/api/v1/policies", "/api/v1/channels", "/api/v1/channels/*", "/api/v1/channels/*/schedule", "/api/v1/channel-ids/*", "/api/v1/polls/current", "/api/v1/questions/current", "/api/v1/rewards/current", "/api/v1/missions/current").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/channels/*/membership").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/vods", "/api/v1/vods/*", "/api/v1/vods/*/media").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.HEAD, "/api/v1/vods", "/api/v1/vods/*", "/api/v1/vods/*/media").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/clips", "/api/v1/clips/*", "/api/v1/clips/*/media").permitAll()

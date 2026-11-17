@@ -1,0 +1,46 @@
+.stack { display: grid; gap: 24px; max-width: 1160px; min-width: 0; }
+.panel { min-width: 0; padding: 22px; border: 1px solid #e2e8e4; border-radius: 11px; background: #fff; }
+.panel h2 { margin: 0 0 16px; font-size: 17px; font-weight: 700; }
+.panelHeader { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 18px; }
+.panelHeader h2 { margin: 0; }
+.fields { display: grid; gap: 16px; max-width: 680px; }
+.field { display: grid; gap: 7px; min-width: 0; color: #53675d; font-size: 13px; font-weight: 650; }
+.fields textarea { min-height: 130px; }
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 18px; }
+.filters { display: grid; grid-template-columns: minmax(0, 430px) repeat(2, minmax(132px, 156px)) auto; align-items: end; justify-content: start; gap: 8px; }
+.dateField { display: grid; gap: 5px; min-width: 0; color: #53675d; font-size: 12px; }
+.choices, .filterActions { display: flex; flex-wrap: wrap; gap: 8px; }
+.choices { margin: 12px 0 19px; }
+.hint, .subtext { color: #697c70; font-size: 13px; line-height: 1.7; overflow-wrap: anywhere; }
+.hint { margin: 8px 0 0; }
+.subtext { display: block; margin-top: 5px; font-size: 12px; }
+.error { margin: 12px 0; color: #a22d3f; font-size: 13px; line-height: 1.7; overflow-wrap: anywhere; }
+.notice { margin: 12px 0; color: var(--frame-green-ink); font-size: 13px; line-height: 1.7; }
+.warning { margin: 12px 0; padding: 12px 14px; border: 1px solid #e8d8af; border-radius: 8px; background: #fffbef; color: #776026; font-size: 13px; line-height: 1.7; overflow-wrap: anywhere; }
+.info { display: grid; gap: 12px; margin: 0; padding: 14px; border-radius: 8px; background: #f3f6f4; }
+.info > div { display: grid; grid-template-columns: 90px minmax(0, 1fr); align-items: baseline; gap: 10px; font-size: 13px; line-height: 1.65; }
+.info dt { color: #697c70; }
+.info dd { min-width: 0; margin: 0; overflow-wrap: anywhere; }
+.benefits { margin: 14px 0; color: #40584b; font-size: 14px; line-height: 1.75; white-space: pre-wrap; overflow-wrap: anywhere; }
+.count { margin: 14px 0 0; color: #52675c; font-size: 13px; }
+.empty { margin: 0; padding: 20px 0; color: #697c70; font-size: 13px; line-height: 1.7; }
+.dialog { overflow-x: hidden; }
+.dialog p { font-size: 13px; line-height: 1.7; }
+.modalHost { display: contents; }
+.joinButton { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 44px; padding: 8px 14px; border: 1px solid var(--frame-green-line); border-radius: 24px; background: var(--frame-green-soft); color: var(--frame-green-ink); font-size: 13px; font-weight: 650; white-space: nowrap; }
+.joinButton:hover:not(:disabled) { background: var(--frame-green-selected); }
+.joinButton:focus-visible { outline: 2px solid #7ac6a0; outline-offset: 2px; }
+.joinButton:disabled { color: #98a39c; cursor: not-allowed; background: #f3f5f4; border-color: #e4e9e6; }
+.cards { display: grid; gap: 12px; padding: 0; margin: 0; list-style: none; }
+.card { display: grid; gap: 12px; padding: 18px; border: 1px solid #e2e8e4; border-radius: 10px; background: #fff; }
+.cardHeader { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+.cardHeader strong { overflow-wrap: anywhere; }
+.card .info { padding: 0; background: none; }
+.result { display: grid; gap: 18px; max-width: 640px; margin: 24px auto; padding: 30px 24px; border: 1px solid #e2e8e4; border-radius: 12px; background: #fff; }
+.result h2 { margin: 0; color: #2d4435; font-size: 21px; font-weight: 700; line-height: 1.5; }
+.result p { margin: 0; line-height: 1.8; }
+.tabs { display: flex; gap: 20px; margin: 0 0 22px; border-bottom: 1px solid #e2e8e4; }
+.tabs button { min-height: 44px; padding: 9px 0; border: 0; border-bottom: 2px solid transparent; background: transparent; color: #697c70; font-size: 14px; }
+.tabs button[aria-selected='true'] { border-bottom-color: var(--frame-green); color: var(--frame-green-ink); font-weight: 700; }
+@container (max-width: 690px) { .filters { grid-template-columns: repeat(2, minmax(0, 1fr)); } .filters > input, .filterActions { grid-column: 1 / -1; } .panel { padding: 18px 16px; } }
+@media (max-width: 600px) { .result { margin-block: 12px; padding: 24px 18px; } .info > div { grid-template-columns: 80px minmax(0, 1fr); } }
