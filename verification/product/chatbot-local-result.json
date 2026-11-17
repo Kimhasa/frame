@@ -1,0 +1,28 @@
+{
+  "checkedAt": "2026-11-17T01:47:26.734Z",
+  "counts": {
+    "accounts": 0,
+    "channels": 0,
+    "operators": 0,
+    "recordingFiles": 0,
+    "vods": 0,
+    "clips": 0,
+    "history": 0,
+    "migrations": 18
+  },
+  "botSettings": 0,
+  "statuses": {
+    "health": 200,
+    "integrationsPage": 200,
+    "anonymousBotSettings": 401,
+    "anonymousHistory": 401
+  },
+  "productionCountsUnchanged": true,
+  "mediaReceiverPid": 34664,
+  "mediaReceiverPreserved": true,
+  "apiRestarted": true,
+  "runtimeJarSha256": "c4b71d2761965c7890f50c07fae8ced8f74b1d1981e76162a1200e13ff9ba01c",
+  "testedJarApplied": true,
+  "previousMigrationsUnchanged": true,
+  "complete": true
+}

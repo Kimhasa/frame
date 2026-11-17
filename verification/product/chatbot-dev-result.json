@@ -1,0 +1,73 @@
+{
+  "complete": true,
+  "mode": "dev",
+  "origin": "http://127.0.0.1:5365",
+  "dedicatedFixtureCookiesOnly": true,
+  "browser": "Headless Microsoft Edge (Chromium); OBS CEF not exercised",
+  "results": [
+    {
+      "name": "The actual saved channel rules and global state load into the management form",
+      "pass": true
+    },
+    {
+      "name": "Existing overlay tools and the remaining integration rows are preserved",
+      "pass": true
+    },
+    {
+      "name": "Development StrictMode mounts exactly one real chatbot form",
+      "pass": true
+    },
+    {
+      "name": "Read-only development loading does not save or mutate chatbot configuration",
+      "pass": true
+    },
+    {
+      "name": "The real viewer receives a successful human-message acknowledgement",
+      "pass": true
+    },
+    {
+      "name": "The accepted fixture command produces a newly observed authoritative bot event",
+      "pass": true
+    },
+    {
+      "name": "The anonymous read-only overlay renders the authoritative bot badge and literal server text",
+      "pass": true
+    },
+    {
+      "name": "Normal live chat preserves the authoritative bot badge in its real message history",
+      "pass": true
+    },
+    {
+      "name": "The actual browser composer command triggers a new server bot event and normal-chat badge",
+      "pass": true
+    },
+    {
+      "name": "The normal browser composer still sends an acknowledged owner message with its human identity",
+      "pass": true
+    },
+    {
+      "name": "Anonymous normal chat remains read-only while retaining public bot history",
+      "pass": true
+    },
+    {
+      "name": "Chatbot management and chat interactions finish without browser runtime exceptions",
+      "pass": true
+    }
+  ],
+  "runtimeExceptionCount": 0,
+  "browserConfigurationWriteCount": 0,
+  "browserProductWriteCount": 3,
+  "browserChatSendFrameCount": 2,
+  "browserLiveBotEventCount": 2,
+  "directFixtureApiWrites": [
+    {
+      "method": "POST",
+      "route": "/chat/tickets"
+    }
+  ],
+  "directFixtureRawChatSendCount": 1,
+  "limits": [
+    "Emulated mobile viewport only; no physical phone",
+    "Single PC and loopback only"
+  ]
+}

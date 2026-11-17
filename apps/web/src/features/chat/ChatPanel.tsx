@@ -213,9 +213,9 @@ export function ChatPanel({ chat, onClose, accountActions, participation }: Chat
             <ol className={styles.messages}>
               {messages.map((message) => (
                 <li key={`${message.id}:${message.sentAtMs}`} className={styles.message}>
-                  <strong>{message.authorChannelId ? <Link to={`/channel/id/${encodeURIComponent(message.authorChannelId)}`}>{message.author}</Link> : message.author}</strong>
-                  {message.authorHandle && <Link className={styles.authorHandle} title={`@${message.authorHandle}`} to={message.authorChannelId ? `/channel/id/${encodeURIComponent(message.authorChannelId)}` : `/channel/${encodeURIComponent(message.authorHandle)}`}>@{message.authorHandle}</Link>}
-                  {message.isOwner && <span className={styles.ownerBadge}>방송자</span>}{' '}
+                  <strong>{!message.isBot && message.authorChannelId ? <Link to={`/channel/id/${encodeURIComponent(message.authorChannelId)}`}>{message.author}</Link> : message.author}</strong>
+                  {!message.isBot && message.authorHandle && <Link className={styles.authorHandle} title={`@${message.authorHandle}`} to={message.authorChannelId ? `/channel/id/${encodeURIComponent(message.authorChannelId)}` : `/channel/${encodeURIComponent(message.authorHandle)}`}>@{message.authorHandle}</Link>}
+                  {message.isBot ? <span className={styles.botBadge} data-chat-bot-badge>봇</span> : message.isOwner && <span className={styles.ownerBadge}>방송자</span>}{' '}
                   <span>{message.text}</span>
                 </li>
               ))}

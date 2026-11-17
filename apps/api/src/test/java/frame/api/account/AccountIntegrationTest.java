@@ -210,6 +210,7 @@ class AccountIntegrationTest {
             String managedReport = reportManagement(a, b, anonymous, sql, UUID.fromString(ownerId), UUID.fromString(channelId));
             String savedNotification = notifications(a, b, anonymous, sql, app, mediaState, UUID.fromString(channelId), UUID.fromString(ownerId));
             chatModeration(a,b,anonymous,sql,app,UUID.fromString(ownerId),UUID.fromString(channelId),UUID.fromString(secondChannel));
+            JsonNode savedBot=chatBot(a,b,anonymous,sql,app,UUID.fromString(ownerId),UUID.fromString(channelId),UUID.fromString(secondChannel));
             String savedPoll=polls(a,b,anonymous,sql,app,UUID.fromString(ownerId),UUID.fromString(channelId));
             String savedQuestion=questions(a,b,anonymous,sql,app,UUID.fromString(ownerId),UUID.fromString(channelId));
             RewardState savedReward=rewards(a,b,anonymous,sql,app,UUID.fromString(ownerId),UUID.fromString(channelId));
@@ -249,6 +250,7 @@ class AccountIntegrationTest {
             var restoredNotifications = b.get("/api/v1/me/notifications").json().path("items"); assertEquals(1, restoredNotifications.size());
             assertEquals(savedNotification, restoredNotifications.get(0).path("id").asString()); assertFalse(restoredNotifications.get(0).path("target").path("available").booleanValue());
             assertTrue(a.get("/api/v1/me/chat/settings").json().path("blockLinks").booleanValue());
+            assertEquals(savedBot,a.get("/api/v1/me/chat/bot").json());
             assertTrue(a.get("/api/v1/me/chat/blocks?status=all").json().path("items").size()>0);
             var restoredPoll=a.get("/api/v1/me/polls/"+savedPoll).json().path("poll");assertEquals("closed",restoredPoll.path("status").asString());assertEquals("broadcast_ended",restoredPoll.path("closeReason").asString());assertEquals(1,restoredPoll.path("totalVotes").longValue());assertFalse(restoredPoll.path("myOptionId").isNull());
             var restoredQuestion=a.get("/api/v1/me/questions/"+savedQuestion).json().path("item");assertEquals("재시작 뒤에도 보존할 답변",restoredQuestion.path("answer").asString());assertFalse(restoredQuestion.path("pinned").booleanValue());assertFalse(restoredQuestion.path("broadcastActive").booleanValue());assertFalse(restoredQuestion.has("clientRequestId"));
@@ -772,6 +774,53 @@ class AccountIntegrationTest {
         var wrong=java.net.http.HttpClient.newHttpClient().newWebSocketBuilder().header("Origin","https://outside.invalid").buildAsync(URI.create(owner.base.replace("http:","ws:")+"/obs-verify/chat"),new java.net.http.WebSocket.Listener(){});
         assertThrows(java.util.concurrent.CompletionException.class,wrong::join);
     }
+    private static JsonNode chatBot(Browser owner,Browser sender,Browser guest,JdbcClient sql,ConfigurableApplicationContext app,UUID ownerId,UUID channel,UUID senderChannel)throws Exception{
+        String endpoint="/api/v1/me/chat/bot";UUID rule=UUID.randomUUID();
+        var command=botCommand(rule," !HeLLo "," 공식\n 응답 https://example.test ",true,15);
+        var initial=owner.get(endpoint);assertEquals(200,initial.status());assertEquals(ownerId.toString(),initial.json().path("userId").asString());assertEquals(channel.toString(),initial.json().path("channelId").asString());
+        assertEquals(0,initial.json().path("version").intValue());assertEquals(0,initial.json().path("updatedAtMs").longValue());assertFalse(initial.json().path("enabled").asBoolean());assertEquals(0,initial.json().path("commands").size());
+        assertTrue(initial.raw().headers().firstValue("cache-control").orElse("").contains("no-store"));assertTrue(initial.raw().headers().firstValue("cache-control").orElse("").contains("private"));
+        assertEquals(401,guest.get(endpoint).status());
+        var draft=botSettings(0,true,java.util.List.of(command));
+        assertEquals(403,owner.send("PATCH",endpoint,draft,false,ORIGIN).status());assertEquals(403,owner.send("PATCH",endpoint,draft,true,"https://outside.invalid").status());
+        sender.expectedUserId=ownerId.toString();assertEquals("SESSION_CHANGED",sender.get(endpoint).code());assertEquals("SESSION_CHANGED",sender.write("PATCH",endpoint,draft).code());sender.expectedUserId=null;
+        var created=owner.write("PATCH",endpoint,draft);assertEquals(200,created.status());assertEquals(1,created.json().path("version").intValue());assertTrue(created.json().path("updatedAtMs").longValue()>0);
+        assertEquals(rule.toString(),created.json().path("commands").get(0).path("id").asString());assertEquals("!hello",created.json().path("commands").get(0).path("command").asString());assertEquals("공식 응답 https://example.test",created.json().path("commands").get(0).path("response").asString());
+        assertEquals("CHAT_BOT_SETTINGS_CONFLICT",owner.write("PATCH",endpoint,draft).code());assertEquals(0,sender.get(endpoint).json().path("version").intValue());
+        for(Object invalid:java.util.List.of(botSettings(1,true,java.util.List.of(command,botCommand(UUID.randomUUID(),"!HELLO","중복",true,15))),botSettings(1,true,java.util.List.of(botCommand(rule,"!bad name","응답",true,15))),botSettings(1,true,java.util.List.of(botCommand(rule,"!hello","a".repeat(501),true,15))),botSettings(1,true,java.util.List.of(botCommand(rule,"!hello","응답",false,4))),Map.of("version",1,"enabled",true,"commands",java.util.List.of(command),"channelId",senderChannel)))assertEquals(400,owner.write("PATCH",endpoint,invalid).status());
+        assertEquals(1,owner.get(endpoint).json().path("version").intValue());
+        // Every supported rule can carry its maximum ordinary UTF-8 response; only this endpoint accepts 64KB.
+        var maximum=new java.util.ArrayList<Map<String,Object>>();for(int i=0;i<20;i++)maximum.add(botCommand(UUID.randomUUID(),"!max"+i,"🌱".repeat(500),false,3600));
+        assertEquals(200,owner.write("PATCH",endpoint,botSettings(1,false,maximum)).status());
+        try(var workers=java.util.concurrent.Executors.newVirtualThreadPerTaskExecutor()){
+            var first=workers.submit(()->owner.write("PATCH",endpoint,botSettings(2,true,java.util.List.of(command))));
+            var second=workers.submit(()->owner.write("PATCH",endpoint,botSettings(2,false,java.util.List.of(command))));
+            var a=first.get();var b=second.get();assertEquals(java.util.Set.of(200,409),java.util.Set.of(a.status(),b.status()));assertEquals("CHAT_BOT_SETTINGS_CONFLICT",a.status()==409?a.code():b.code());
+        }
+        assertEquals(200,owner.write("PATCH",endpoint,botSettings(3,true,java.util.List.of(command))).status());
+        String broadcast="b".repeat(32);var registry=app.getBean(frame.api.broadcast.BroadcastRegistry.class);announceHistory(registry,broadcast,"obs-verify","챗봇 검증","server");
+        String ticket=sender.write("POST","/api/v1/chat/tickets",Map.of("path","obs-verify","broadcastId",broadcast)).json().path("ticket").asString();
+        try(ChatWire member=new ChatWire(owner.base,"obs-verify",ORIGIN);ChatWire observer=new ChatWire(owner.base,"obs-verify",ORIGIN)){
+            observer.send(Map.of("type","join","broadcastId",broadcast));observer.type("state");
+            member.send(Map.of("type","join","broadcastId",broadcast,"ticket",ticket));assertTrue(member.type("state").path("canSend").asBoolean());
+            member.send(Map.of("type","send","text","!HELLO","clientId","bot-first","isBot",true,"author","FRAME 봇"));var accepted=member.ack("bot-first");assertTrue(accepted.path("ok").asBoolean());
+            var bot=member.type("message");assertTrue(bot.path("isBot").asBoolean());assertEquals("FRAME 봇",bot.path("author").asString());assertEquals("공식 응답 https://example.test",bot.path("text").asString());
+            for(String field:java.util.List.of("userId","authorChannelId","authorHandle","isOwner"))assertFalse(bot.has(field));
+            var human=observer.type("message");assertFalse(human.path("isBot").asBoolean());assertEquals(senderChannel.toString(),human.path("authorChannelId").asString());assertEquals(bot.path("id").asString(),observer.type("message").path("id").asString());
+            member.send(Map.of("type","send","text","!HELLO","clientId","bot-first"));assertEquals(accepted.path("id").asString(),member.ack("bot-first").path("id").asString());
+            member.send(Map.of("type","send","text","!different","clientId","bot-first"));assertEquals("CHAT_CLIENT_ID_REUSED",member.ack("bot-first").path("code").asString());
+            assertEquals(200,owner.write("PATCH",endpoint,botSettings(4,false,java.util.List.of(command))).status());
+            member.send(Map.of("type","send","text","!HELLO","clientId","bot-off"));assertTrue(member.ack("bot-off").path("ok").asBoolean());
+            try(ChatWire late=new ChatWire(owner.base,"obs-verify",ORIGIN)){
+                late.send(Map.of("type","join","broadcastId",broadcast));late.type("state");var history=late.type("history").path("messages");assertEquals(3,history.size());assertEquals(1,history.valueStream().filter(item->item.path("isBot").asBoolean()).count());
+            }
+        }
+        var saved=owner.write("PATCH",endpoint,botSettings(5,true,java.util.List.of(botCommand(rule,"!persist","재시작 뒤에도 보존할 응답",true,15))));assertEquals(200,saved.status());
+        assertEquals(1,sql.sql("SELECT count(*) FROM product_chat_bot_settings WHERE channel_id=:channel").param("channel",channel).query(Integer.class).single());
+        return saved.json();
+    }
+    private static Map<String,Object> botSettings(int version,boolean enabled,java.util.List<Map<String,Object>> commands){return Map.of("version",version,"enabled",enabled,"commands",commands);}
+    private static Map<String,Object> botCommand(UUID id,String command,String response,boolean enabled,int cooldown){return Map.of("id",id.toString(),"command",command,"response",response,"enabled",enabled,"cooldownSeconds",cooldown);}
     private static Map<String,Object> chatSettings(int version,boolean slow,int seconds,boolean followers,boolean links,java.util.List<String> words){return Map.of("version",version,"slowMode",slow,"slowSeconds",seconds,"followersOnly",followers,"blockLinks",links,"bannedWords",words);}
     private static Map<String,Object> chatBlock(UUID target,Long duration,String reason){Map<String,Object> value=new HashMap<>();value.put("targetChannelId",target);value.put("durationSeconds",duration);value.put("reason",reason);return value;}
     private static final class ChatWire implements AutoCloseable,java.net.http.WebSocket.Listener{

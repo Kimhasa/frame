@@ -1,0 +1,27 @@
+{
+  "checkedAt": "2026-11-17T01:42:19.994Z",
+  "commands": {
+    "typecheck": true,
+    "build": true,
+    "buildDesign": true
+  },
+  "packageManager": "yarn@4.18.1",
+  "node": "v24.22.1",
+  "productionHtmlSha256": "077440da1d7187e284f1b0f9cf0df46ab0ace9edf757621d5c11b273d392f9f4",
+  "designHtmlSha256": "21b6d857320eb76d5c15bc31878f5364bda6072a9ba0087d991fdf94358466b0",
+  "productionHasChatbotApi": true,
+  "designHasChatbotApi": false,
+  "designHasHlsChunk": false,
+  "sourceSha256": {
+    "apps/web/src/features/integrations/ChatBotSettings.module.css": "3f57701ecbfd1b68a59c5cf35a28b630d37d627ee598203931fea964742d46ce",
+    "apps/web/src/features/integrations/ChatBotSettings.tsx": "e1aa1a74400e16149efe96209fe88ec515b139593e2b42a57096ca9394e5ffe7",
+    "apps/web/src/features/integrations/chatbot-client.ts": "b3c0f4f9cd1447fa96c00cc21aded147ae3f45215d4cc37f6395bf7162500bf5",
+    "apps/web/src/features/chat/ChatPanel.module.css": "e988003f82a86fef2ed5e92cf39b2a67fadb7d7f8420e9e51ae47c8cbf93d498",
+    "apps/web/src/features/chat/ChatPanel.tsx": "41426240c7c0b198237a55c9f7cdae9ea06446992e44dc5c16d104712d1331ca",
+    "apps/web/src/features/integrations/ChatOverlayPage.tsx": "c5844e09a126d5c1a386903791aa44bbbca84a9e46edf3497087cec5c028e3b3",
+    "apps/web/src/features/integrations/ConnectedIntegrationsPage.tsx": "fdbf2f4bf7b117c33eb3b0aa20c0439506652dd6cedb745d12bca1f3a07e9604",
+    "apps/web/src/relay/chat.ts": "1db9e89ccd848428fc391bb72fdbee91025c01c727f28fcc3fdd9f9f27099909",
+    "apps/web/src/viewer-contract.ts": "ac4e0952824ba18820743dc04c8184a1fe06dfcc227c303221dd2942d1bddbb4"
+  },
+  "complete": true
+}

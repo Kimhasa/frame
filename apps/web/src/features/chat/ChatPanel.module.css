@@ -105,6 +105,7 @@
 }
 .message .authorHandle { display: inline-block; max-width: 112px; margin-inline: 3px 5px; overflow: hidden; color: #7b8b81; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; vertical-align: baseline; }
 .message .ownerBadge { margin-inline-end: 5px; padding: 1px 5px; border-radius: 4px; background: var(--frame-green-soft); color: var(--frame-green-ink); font-size: 10px; font-weight: 700; white-space: nowrap; }
+.message .botBadge { margin-inline-end: 5px; padding: 1px 5px; border: 1px solid #bfd8c9; border-radius: 4px; background: #f1f8f4; color: #47735a; font-size: 10px; font-weight: 700; white-space: nowrap; }
 .identity { display: inline-flex; align-items: center; gap: 6px; min-width: 0; color: #465c50; font-size: 13px; }
 .identity svg { flex: none; }
 .identity strong { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

@@ -5,6 +5,7 @@ import { EmptyState, ManagementPage, StatusBadge } from '../../components/manage
 import ui from '../../components/management/ManagementUI.module.css';
 import { broadcastPath } from '../../preview/community-types';
 import type { AccountSession } from '../account/account-client';
+import { ChatBotSettings } from './ChatBotSettings';
 import { fetchOverlayChannel } from './overlay-client';
 import { overlayUrl, parseOverlayOptions } from './overlay-options';
 import type { OverlayOptions } from './overlay-options';
@@ -18,7 +19,8 @@ type PageProps = {
 type BroadcastStatus = 'loading' | 'live' | 'waiting' | 'error';
 type CopyStatus = 'idle' | 'busy' | 'copied' | 'failed';
 
-function ChannelIntegrations({ channelId, displayName }: { channelId: string; displayName: string }) {
+function ChannelIntegrations({ session, onRequireLogin, onSessionChanged }: PageProps) {
+  const channelId = session.channel!.id, displayName = session.channel!.displayName;
   const [params, setParams] = useSearchParams();
   const options = parseOverlayOptions(params);
   const sourceUrl = overlayUrl(channelId, options);
@@ -183,10 +185,7 @@ function ChannelIntegrations({ channelId, displayName }: { channelId: string; di
           </div>
         </div>
       </li>
-      <li className={styles.row}>
-        <span className={styles.icon} aria-hidden="true"><MessagesSquare size={21} /></span>
-        <div className={styles.summary}><div className={styles.heading}><h2>채팅봇</h2><StatusBadge>준비 중</StatusBadge></div><p>명령어와 자동 응답 연결은 아직 지원하지 않아요.</p></div>
-      </li>
+      <ChatBotSettings session={session} onRequireLogin={onRequireLogin} onSessionChanged={onSessionChanged} />
       <li className={styles.row}>
         <span className={styles.icon} aria-hidden="true"><CodeXml size={21} /></span>
         <div className={styles.summary}><div className={styles.heading}><h2>API 및 웹훅</h2><StatusBadge>준비 중</StatusBadge></div><p>외부 앱용 API 키와 웹훅 연결은 아직 지원하지 않아요.</p></div>
@@ -201,5 +200,5 @@ export function ConnectedIntegrationsPage({ session, onRequireLogin, onSessionCh
       ? onSessionChanged && <button type="button" className={ui.button} onClick={onSessionChanged}>채널 정보 새로고침</button>
       : <button type="button" className={ui.button} onClick={onRequireLogin}>로그인</button>} />
   </ManagementPage>;
-  return <ChannelIntegrations key={`${session.user.id}:${session.channel.id}`} channelId={session.channel.id} displayName={session.channel.displayName} />;
+  return <ChannelIntegrations key={`${session.user.id}:${session.channel.id}`} session={session} onRequireLogin={onRequireLogin} onSessionChanged={onSessionChanged} />;
 }

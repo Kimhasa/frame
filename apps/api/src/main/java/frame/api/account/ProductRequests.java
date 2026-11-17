@@ -12,7 +12,7 @@ final class ProductRequests {
         return body(request,json,8192);
     }
     static JsonNode body(HttpServletRequest request,JsonMapper json,int limit){
-        if(limit!=8192&&limit!=16384)throw new IllegalArgumentException("Unsupported product body limit");
+        if(limit!=8192&&limit!=16384&&limit!=65536)throw new IllegalArgumentException("Unsupported product body limit");
         if (request.getContentType() == null || !request.getContentType().toLowerCase(java.util.Locale.ROOT).matches("application/json(?:\\s*;.*)?")) throw new ProductProblem(415, "JSON_REQUIRED", "JSON 형식으로 요청해 주세요.");
         if (request.getContentLengthLong() > limit) throw new ProductProblem(413, "BODY_TOO_LARGE", "요청 내용이 너무 길어요.");
         try {

@@ -107,7 +107,7 @@ export default function ChatOverlayPage({ channelId }: { channelId: string }) {
     </aside>}
     <ol className={styles.messages} data-overlay-messages aria-label="채팅 메시지" aria-live="polite" aria-relevant="additions">
       {visible.map(message => <li key={message.id} className={styles.message} data-overlay-message data-message-id={message.id}>
-        <strong className={styles.author}>{message.author}{message.isOwner && <span className={styles.owner}>방송자</span>}</strong>
+        <strong className={styles.author}>{message.author}{message.isBot ? <span className={styles.owner} data-chat-bot-badge>봇</span> : message.isOwner && <span className={styles.owner}>방송자</span>}</strong>
         <span className={styles.text}>{message.text}</span>
       </li>)}
     </ol>

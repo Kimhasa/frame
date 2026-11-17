@@ -47,7 +47,7 @@ export type PlaybackView = {
   setQuality: (id: string) => void;
 };
 
-export type ChatMessage = { id: string; author: string; text: string; sentAtMs: number; authorChannelId?: string; authorHandle?: string; isOwner?: boolean };
+export type ChatMessage = { id: string; author: string; text: string; sentAtMs: number; authorChannelId?: string; authorHandle?: string; isOwner?: boolean; isBot?: boolean };
 export type ChatAccountActions = { currentUserId?: string | null; onRequireLogin: () => void; onSessionChanged: (expectedUserId?: string) => void };
 
 export type ChatView = {

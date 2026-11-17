@@ -36,7 +36,7 @@ const serverText: Record<string, string> = {
   '메시지는 1000자까지 보낼 수 있습니다.': '메시지는 1,000자까지 보낼 수 있어요.',
 };
 const friendly = (value: unknown, fallback: string) => typeof value === 'string' && value ? serverText[value] ?? value : fallback;
-type ServerMessage = { id?: unknown; broadcastId?: unknown; author?: unknown; text?: unknown; ts?: unknown; authorChannelId?: unknown; authorHandle?: unknown; isOwner?: unknown };
+type ServerMessage = { id?: unknown; broadcastId?: unknown; author?: unknown; text?: unknown; ts?: unknown; authorChannelId?: unknown; authorHandle?: unknown; isOwner?: unknown; isBot?: unknown };
 
 export class ChatClient {
   status: ChatView['status'] = 'connecting';
@@ -205,9 +205,10 @@ export class ChatClient {
       || typeof item.ts !== 'number' || !Number.isSafeInteger(item.ts) || item.ts < 0)) return null;
     return { id: item.id, author: typeof item.author === 'string' ? item.author : '', text: item.text,
       sentAtMs: typeof item.ts === 'number' && Number.isFinite(item.ts) && item.ts >= 0 ? item.ts : Date.now(),
-      ...(typeof item.authorChannelId === 'string' && uuid.test(item.authorChannelId) ? { authorChannelId: item.authorChannelId } : {}),
-      ...(typeof item.authorHandle === 'string' && /^[a-z][a-z0-9_-]{2,23}$/.test(item.authorHandle) ? { authorHandle: item.authorHandle } : {}),
-      ...(typeof item.isOwner === 'boolean' ? { isOwner: item.isOwner } : {}) };
+      ...(item.isBot !== true && typeof item.authorChannelId === 'string' && uuid.test(item.authorChannelId) ? { authorChannelId: item.authorChannelId } : {}),
+      ...(item.isBot !== true && typeof item.authorHandle === 'string' && /^[a-z][a-z0-9_-]{2,23}$/.test(item.authorHandle) ? { authorHandle: item.authorHandle } : {}),
+      ...(item.isBot !== true && typeof item.isOwner === 'boolean' ? { isOwner: item.isOwner } : {}),
+      ...(item.isBot === true ? { isBot: true } : {}) };
   }
   private onMessage(ws: WebSocket, data: string) {
     let event: Record<string, unknown>;

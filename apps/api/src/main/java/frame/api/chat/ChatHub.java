@@ -4,6 +4,7 @@ import frame.api.FrameProperties;
 import frame.api.broadcast.BroadcastEvents;
 import frame.api.account.ChatTickets;
 import frame.api.account.ChatModeration;
+import frame.api.account.ChatBot;
 import frame.api.web.RateLimit;
 import frame.api.web.Unicode;
 import java.text.Normalizer;
@@ -54,6 +55,7 @@ public class ChatHub {
         ChatTickets.Access access;
         long lastJoinAt, blockedUntil;
         final ArrayDeque<Long> recent = new ArrayDeque<>();
+        final Map<String, AcceptedMessage> accepted = new LinkedHashMap<>();
 
         Client(Peer peer, String path, String ip) {
             this.peer = peer;
@@ -68,27 +70,36 @@ public class ChatHub {
         ChatModeration.Policy policy;
         final Set<Client> clients = new LinkedHashSet<>();
         final ArrayDeque<Map<String, Object>> history = new ArrayDeque<>();
+        final Map<UUID, Long> botLastSent = new HashMap<>();
+        UUID botChannelId;
+        int botVersion = -1;
+        long botLastAt;
         long next;
         Room(String broadcastId, UUID instance) { this.broadcastId = broadcastId; this.instance=instance; }
     }
 
     /** A normalised name or text, or why it was refused. */
     record Checked(String value, String error) {}
+    private record AcceptedMessage(String text, String id) {}
+    private record Accepted(Room room, String path, String text) {}
 
     private final Map<String, Room> rooms = new HashMap<>();
     private final Set<Client> clients = new LinkedHashSet<>();
     private final RateLimit sendLimit;
     private final JsonMapper json;
     private final ChatTickets authentication;
+    private final ChatBot bot;
 
     public ChatHub(FrameProperties props, JsonMapper json) {
-        this(props,json,(ChatTickets)null);
+        this(props,json,(ChatTickets)null,(ChatBot)null);
     }
-    @Autowired public ChatHub(FrameProperties props,JsonMapper json,ObjectProvider<ChatTickets> authentication){this(props,json,authentication.getIfAvailable());}
-    private ChatHub(FrameProperties props, JsonMapper json,ChatTickets authentication) {
+    public ChatHub(FrameProperties props,JsonMapper json,ObjectProvider<ChatTickets> authentication){this(props,json,authentication.getIfAvailable(),null);}
+    @Autowired public ChatHub(FrameProperties props,JsonMapper json,ObjectProvider<ChatTickets> authentication,ObjectProvider<ChatBot> bot){this(props,json,authentication.getIfAvailable(),bot.getIfAvailable());}
+    private ChatHub(FrameProperties props, JsonMapper json,ChatTickets authentication,ChatBot bot) {
         this.sendLimit = RateLimit.parse(props.rates().chatSend());
         this.json = json;
         this.authentication=authentication;
+        this.bot=bot;
     }
 
     public synchronized int count() { return clients.size(); }
@@ -153,14 +164,22 @@ public class ChatHub {
                 synchronized(this){send(client,map("type","name","ok",false,"displayName",client.name,"code","CHAT_IDENTITY_FIXED","error","계정 이름을 사용해요. 이름은 내 설정에서 변경해 주세요."));}return;
             }else if(type.equals("send")){
                 Checked checked=normaliseText(msg.path("text"));String id=msg.path("clientId").asString("");
-                synchronized(this){if(!client.joined||!rooms.containsKey(client.path))return;if(checked.value()==null){nack(client,id,checked.error());return;}if(!takeRate(client,id))return;}
+                synchronized(this){Room joined=rooms.get(client.path);if(!client.joined||joined==null||!joined.clients.contains(client))return;if(checked.value()==null){nack(client,id,checked.error());return;}if(duplicate(client,id,checked.value()))return;if(!takeRate(client,id))return;}
                 access=authentication.send(client.identity,checked.value());
             }
         }
         // Session/Redis/DB checks above never hold the room's global fan-out lock.
-        synchronized(this){handleChecked(client,msg,access);}
+        Accepted accepted;
+        synchronized(this){accepted=handleChecked(client,msg,access);}
+        // The human message and acknowledgement are already delivered. A bot/DB failure cannot undo them.
+        if(accepted!=null&&authentication!=null&&bot!=null&&ChatBot.matchingCommand(accepted.text())!=null){
+            try {
+                ChatBot.Configuration configuration=bot.configuration(accepted.path());
+                synchronized(this){reply(accepted,configuration);}
+            } catch(RuntimeException unavailable) { /* Optional automatic replies fail independently of human chat. */ }
+        }
     }
-    private void handleChecked(Client client,JsonNode msg,ChatTickets.Access access){
+    private Accepted handleChecked(Client client,JsonNode msg,ChatTickets.Access access){
         String type=msg.path("type").asString();
         Room room = rooms.get(client.path);
         if(authentication!=null&&access!=null&&access.identity()!=null&&room!=null&&(!room.broadcastId.equals(access.identity().broadcastId())||!room.instance.equals(access.identity().instance())))access=new ChatTickets.Access(null,null,"CHAT_AUTH_INVALID","방송이 종료되었거나 다른 방송으로 바뀌었어요.");
@@ -169,15 +188,16 @@ public class ChatHub {
             if (room == null || !room.broadcastId.equals(wanted)) {
                 send(client, map("type", "state", "connected", false, "canSend", false, "broadcastId", wanted, "error", "방송이 종료되었거나 다른 방송으로 바뀌었습니다."));
                 client.peer.close(1000);
-                return;
+                return null;
             }
+            if(!room.clients.contains(client))client.accepted.clear();
             client.joined = true;
             room.clients.add(client);
             if(authentication!=null){
                 apply(client,access,room);
-                if("CHAT_AUTH_INVALID".equals(access.refusal())){state(client,room,"CHAT_AUTH_INVALID",access.message(),null,false);client.peer.close(1008);return;}
+                if("CHAT_AUTH_INVALID".equals(access.refusal())){state(client,room,"CHAT_AUTH_INVALID",access.message(),null,false);client.peer.close(1008);return null;}
                 state(client,room,access.refusal(),access.message(),access.decision()==null?null:access.decision().retryAfterMs(),true);
-                List<Map<String,Object>> history=new ArrayList<>(room.history);send(client,map("type","history","messages",history.subList(Math.max(0,history.size()-HISTORY_ON_JOIN),history.size())));return;
+                List<Map<String,Object>> history=new ArrayList<>(room.history);send(client,map("type","history","messages",history.subList(Math.max(0,history.size()-HISTORY_ON_JOIN),history.size())));return null;
             }
             String nameError = "";
             if (msg.path("name").isString() && !msg.path("name").asString().isEmpty()) {
@@ -189,20 +209,22 @@ public class ChatHub {
             send(client, map("type", "state", "connected", true, "canSend", true, "broadcastId", room.broadcastId, "displayName", client.name, "error", nameError));
             List<Map<String, Object>> history = new ArrayList<>(room.history);
             send(client, map("type", "history", "messages", history.subList(Math.max(0, history.size() - HISTORY_ON_JOIN), history.size())));
-            return;
+            return null;
         }
-        if (!client.joined || room == null || !room.clients.contains(client)) return;
+        if (!client.joined || room == null || !room.clients.contains(client)) return null;
         if (type.equals("name")) {
             Checked n = normaliseName(msg.path("name"));
-            if (n.value() == null) { send(client, map("type", "name", "ok", false, "displayName", client.name, "error", n.error())); return; }
-            if (nameTaken(room, n.value(), client)) { send(client, map("type", "name", "ok", false, "displayName", client.name, "error", NAME_TAKEN)); return; }
+            if (n.value() == null) { send(client, map("type", "name", "ok", false, "displayName", client.name, "error", n.error())); return null; }
+            if (nameTaken(room, n.value(), client)) { send(client, map("type", "name", "ok", false, "displayName", client.name, "error", NAME_TAKEN)); return null; }
             client.name = n.value();
             send(client, map("type", "name", "ok", true, "displayName", client.name));
-            return;
+            return null;
         }
         if (type.equals("send")) {
             String clientId = msg.path("clientId").isString() ? msg.path("clientId").asString() : "";
             if (clientId.length() > 64) clientId = clientId.substring(0, 64);
+            Checked t = normaliseText(msg.path("text"));
+            if(authentication!=null&&t.value()!=null&&duplicate(client,clientId,t.value()))return null;
             if(authentication!=null){
                 apply(client,access,room);
                 if(access.refusal()!=null){
@@ -210,14 +232,13 @@ public class ChatHub {
                     Long retry=access.decision()==null?null:access.decision().retryAfterMs();if(retry!=null)refused.put("retryAfterMs",retry);send(client,refused);
                     if(Set.of("CHAT_BLOCKED","CHAT_LOGIN_REQUIRED","CHAT_SESSION_EXPIRED","CHAT_AUTH_INVALID","CHAT_UNAVAILABLE","CHAT_CHANNEL_UNAVAILABLE").contains(access.refusal()))state(client,room,access.refusal(),access.message(),retry,true);
                     if("CHAT_AUTH_INVALID".equals(access.refusal()))client.peer.close(1008);
-                    return;
+                    return null;
                 }
             }
-            if (client.name.isEmpty()) { nack(client, clientId, "이름을 먼저 설정하십시오."); return; }
-            Checked t = normaliseText(msg.path("text"));
-            if (t.value() == null) { nack(client, clientId, t.error()); return; }
+            if (client.name.isEmpty()) { nack(client, clientId, "이름을 먼저 설정하십시오."); return null; }
+            if (t.value() == null) { nack(client, clientId, t.error()); return null; }
             long now = System.currentTimeMillis();
-            if(authentication==null&&!takeRate(client,clientId))return;
+            if(authentication==null&&!takeRate(client,clientId))return null;
             Map<String, Object> m = map("id", room.broadcastId.substring(0, 8) + "-" + ++room.next, "broadcastId", room.broadcastId, "author", client.name, "text", t.value(), "ts", now);
             if(authentication!=null&&access.decision()!=null){m.put("authorChannelId",access.decision().authorChannelId().toString());m.put("authorHandle",access.decision().authorHandle());m.put("isOwner",access.decision().isOwner());}
             room.history.addLast(m);
@@ -228,8 +249,44 @@ public class ChatHub {
             out.putAll(m);
             String shared = write(out);
             for (Client c : room.clients) if (c.joined) c.peer.send(shared);
+            if(authentication!=null&&!clientId.isEmpty()){
+                client.accepted.put(clientId,new AcceptedMessage(t.value(),m.get("id").toString()));
+                if(client.accepted.size()>HISTORY)client.accepted.remove(client.accepted.keySet().iterator().next());
+            }
             send(client, map("type", "ack", "clientId", clientId, "ok", true, "id", m.get("id")));
+            return new Accepted(room,client.path,t.value());
         }
+        return null;
+    }
+    private boolean duplicate(Client client,String clientId,String text){
+        if(clientId.length()>64)clientId=clientId.substring(0,64);
+        AcceptedMessage previous=clientId.isEmpty()?null:client.accepted.get(clientId);
+        if(previous==null)return false;
+        if(previous.text().equals(text))send(client,map("type","ack","clientId",clientId,"ok",true,"id",previous.id()));
+        else send(client,map("type","ack","clientId",clientId,"ok",false,"code","CHAT_CLIENT_ID_REUSED","error","메시지 식별자가 이미 사용됐어요. 다시 보내 주세요."));
+        return true;
+    }
+    private void reply(Accepted accepted,ChatBot.Configuration configuration){
+        Room room=rooms.get(accepted.path());
+        if(room!=accepted.room()||configuration==null)return;
+        if(!configuration.channelId().equals(room.botChannelId)){
+            room.botChannelId=configuration.channelId();room.botVersion=-1;room.botLastSent.clear();
+        }
+        if(configuration.version()<room.botVersion)return;
+        room.botVersion=configuration.version();
+        Set<UUID> rules=new LinkedHashSet<>();for(ChatBot.Command rule:configuration.commands())rules.add(rule.id());
+        room.botLastSent.keySet().retainAll(rules);
+        if(!configuration.enabled())return;
+        String command=ChatBot.matchingCommand(accepted.text());
+        ChatBot.Command rule=configuration.commands().stream().filter(item->item.enabled()&&item.command().equals(command)).findFirst().orElse(null);
+        if(rule==null)return;
+        long now=System.nanoTime();Long last=room.botLastSent.get(rule.id());
+        if((room.botLastAt!=0&&now-room.botLastAt<1_000_000_000L)||(last!=null&&now-last<rule.cooldownSeconds()*1_000_000_000L))return;
+        room.botLastAt=now;room.botLastSent.put(rule.id(),now);
+        Map<String,Object> message=map("id",room.broadcastId.substring(0,8)+"-"+ ++room.next,"broadcastId",room.broadcastId,"author","FRAME 봇","text",rule.response(),"ts",System.currentTimeMillis(),"isBot",true);
+        room.history.addLast(message);if(room.history.size()>HISTORY)room.history.pollFirst();
+        Map<String,Object> out=new LinkedHashMap<>();out.put("type","message");out.putAll(message);String shared=write(out);
+        for(Client client:room.clients)if(client.joined)client.peer.send(shared);
     }
     private boolean takeRate(Client client,String id){long now=System.currentTimeMillis();while(!client.recent.isEmpty()&&now-client.recent.peekFirst()>10000)client.recent.pollFirst();if(client.recent.size()>=8||sendLimit.take(client.ip)>0){nack(client,id,"메시지를 너무 빠르게 보내고 있습니다. 잠시 후 다시 보내십시오.");return false;}client.recent.addLast(now);return true;}
     private void apply(Client client,ChatTickets.Access access,Room room){

@@ -1,0 +1,28 @@
+{
+  "complete": true,
+  "mode": "capture",
+  "origin": "http://127.0.0.1:5365",
+  "dedicatedFixtureCookiesOnly": true,
+  "browser": "Headless Microsoft Edge (Chromium); OBS CEF not exercised",
+  "results": [
+    {
+      "name": "Real chatbot form fits the 390px capture viewport",
+      "pass": true
+    },
+    {
+      "name": "Real chatbot form fits the 320px capture viewport",
+      "pass": true
+    }
+  ],
+  "runtimeExceptionCount": 0,
+  "browserConfigurationWriteCount": 0,
+  "browserProductWriteCount": 0,
+  "browserChatSendFrameCount": 0,
+  "browserLiveBotEventCount": 0,
+  "directFixtureApiWrites": [],
+  "directFixtureRawChatSendCount": 0,
+  "limits": [
+    "Emulated mobile viewport only; no physical phone",
+    "Single PC and loopback only"
+  ]
+}

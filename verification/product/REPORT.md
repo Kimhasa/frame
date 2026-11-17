@@ -444,3 +444,25 @@ Yarn Berry 4.18.1의 typecheck·build·build:design을 통과했다. 배포 번�
 개발 검증은 기존 Java의 정확한 Origin 정책을 바꾸거나 헤더를 속이지 않고, 배포 preview를 종료한 뒤 같은 5365 포트에서 Vite 개발 서버를 실행했다. 한 PC loopback·headless Edge와 모바일 너비 에뮬레이션의 기능 검사다. OBS는 설치돼 있으나 실제 OBS CEF의 장면 합성은 실행하지 않았고, 휴대폰 실기기·Caddy HTTPS/WSS·외부 회선·장시간·부하/수용량은 검증하지 않았다. WS 연결·브라우저 렌더만 확인했으며 영상 디코딩이나 오디오 청취 결과로 표현하지 않는다.
 
 재현: 웹·API 빌드 후 Java 21의 JAVA_HOME과 별도 Docker 검증 설정 FRAME_PRODUCT_TEST_CONFIG를 지정하고 node server/verify/chat-overlay-e2e.mjs를 단독 실행한다. 결과: [웹 빌드](chat-overlay-web-result.json), [통합](chat-overlay-e2e-result.json), [배포 UI](chat-overlay-production-result.json), [개발 UI](chat-overlay-dev-result.json), [현재 PC](chat-overlay-local-result.json). 화면: [실제 채팅 미리보기](chat-overlay-production-preview.png), [390px](chat-overlay-production-management-390.png), [320px](chat-overlay-production-management-320.png), [개발 390px](chat-overlay-dev-management-390.png), [개발 320px](chat-overlay-dev-management-320.png). [외부 도구 연결](http://127.0.0.1:5360/_frame/studio/integrations)에서 로그인한 본인 채널의 주소를 복사한다.
+
+## 명령어 채팅봇과 실제 자동 응답
+
+2026-11-17. 외부 도구 연결의 채팅봇을 실제 소유자 API와 공개 채팅에 연결했다. 기존 녹색·Pretendard·콘텐츠 여백·ManagementUI와 사용자 정의 체크박스를 유지하며 전체 사용 여부, 최대 20개 명령어·응답·개별 사용 여부·응답 간격을 편집·저장한다. 저장된 사용 상태와 편집 중 값을 구분하고 항목 추가·삭제·중복/문자/개수 검증·오류 위치 포커스·저장 취소를 제공한다. 오프라인·401/403·계정 변경·409에서 초안을 유지하고 최신 설정을 확인한 뒤 명시적으로 다시 저장한다. 응답을 잃은 PATCH는 GET으로 확인하며 불확실한 쓰기를 자동 반복하지 않는다.
+
+V18은 채널별 JSONB 명령어 설정 한 테이블만 추가한다. 조회로 행을 만들거나 봇을 자동 활성화하지 않으며 최초 version0에서 저장1, 이후 채널 행 잠금과 CAS로 증가한다. 명령어는 NFC·소문자로 정규화한 ! 뒤 영문/숫자/밑줄/한글 1~20자, 정확한 전체 일치만 처리한다. 응답은 공백을 한 칸으로 정규화한 단일 텍스트 1~500 codepoint, 간격은 5~3600초다. 비활성 명령어도 20개 한도에 포함한다. 이 API의 본문만 64 KiB로 늘려 20개의 500자 다중 바이트 응답을 지원하며 기존 기본 본문 한도는 유지한다. 로그인·예상 계정·CSRF·Origin·private no-store를 적용한다. 기존 V1~V17 SQL·미디어 설정·C++ 앱과 외부 API 키·웹훅은 수정하지 않았다.
+
+기존 회원 채팅의 인증·금칙어·차단 등 전송 규칙을 통과한 사람 메시지만 봇을 실행한다. 사람 채팅·ack 이후 DB 설정을 전역 fan-out 잠금 밖에서 조회하며 실패는 봇 응답만 생략한다. 같은 방 객체를 다시 확인해 종료·교체된 방송에 늦은 답변을 보내지 않는다. 규칙별 공통 간격과 방 전체 1초 간격을 적용하고 제거한 규칙의 런타임 상태를 정리한다. 제품 회원 연결별 성공한 clientId 최근200개를 기억해 동시·반복 전송은 같은 ack만 반환하고 다른 본문 재사용은 거절한다. 봇 메시지는 기존 순서·최근 이력에 포함하되 isBot:true와 FRAME 봇 author, 봇 배지로 구분하고 회원/방송자 신원을 붙이지 않는다. 봇 출력을 재실행하지 않고 시청자·시청 기록·포인트·별도 봇 계정/세션을 만들지 않는다.
+
+Docker PostgreSQL·Redis의 전체 test bootJar --rerun-tasks는 **169/169**(41개 클래스, 실패·오류·스킵0), Yarn Berry 4.18.1 typecheck·build·build:design을 통과했다. V17→V18에서 기존 채팅 정책·개인 이어보기·삭제 epoch를 보존하고 봇 자동 생성 없음·JSON 배열/개수·버전/시각·PK/FK·채널 삭제 연쇄를 확인했다. 적용 SQL 변조는 후속 V19 전에 실패한다. 단위 검사는 동시 중복·응답 간격·DB 조회 지연/실패 중 ack와 다른 채팅 진행·방 교체를 포함한다. 배포 번들에는 실제 채팅봇 API가 있고 디자인 번들에는 해당 API나 HLS chunk가 없다. 현재 제품 chunk 약514 kB에 대한 Vite 경고는 있으나 빌드는 성공했다.
+
+별도 verify DB·Redis namespace·두 계정·전용 MediaMTX와 단일 320×180/15fps H.264/AAC 소스의 실제 통합은 **54/54**, 배포 React **24/24**, 개발 StrictMode **12/12**를 통과했다. 통합에는 브라우저 결과 집계가 포함되므로 세 숫자를 독립 총수로 더하지 않는다. API 기본값·권한·CSRF/Origin·CAS·중복/정규화·잘못된 JSON/Content-Type/초과 본문·미지원 POST의 비변경과 실제 WS 응답·익명 수신·위조 bot 메타 무시·정확한 전체 일치·루프 없음·규칙/전체 간격·중복 clientId·사용 중단/규칙 삭제·금칙어/차단 거절·현재 이력을 확인했다. 실제 소스를 종료하고 같은 경로에 새 방송을 만들어 빈 방과 새 응답, API 재시작 뒤 설정·Redis 로그인 보존도 확인했다.
+
+브라우저는 실제 서버에 저장한 설정, 제어한503·실제 다른 창의409·접수된 응답만 잃은 경우와 확인 GET 실패·오프라인·계정 변경·320px/390px을 확인했다. 공개 오버레이는 새로 발생한 봇 메시지 id와 배지를, 일반 브라우저 작성기는 실제 !CHAIN 명령의 ack·초안 비움·새 봇 응답과 일반 회원 메시지의 신원을 확인했다. 배포/개발 각각 브라우저 채팅 send2회·새 봇 이벤트2개·런타임 예외0이다. 브라우저 PATCH 시도/티켓과 Node fixture 변경·raw WS 전송은 JSON에서 별도로 기록했다. 첫 실행의 익명 이력 수신 대기 조건을 고친 뒤 최종 기능 실행 전체를 다시 통과했다.
+
+초기 모바일 캡처는 스크롤 뒤 문서 원점 clip을 사용한 검증 도구 때문에 비어 있었다. 화면 너비 검사 자체는 통과했고 제품 소스는 바꾸지 않았다. 같은 JAR·verify DB에서 소유 API·preview·Edge만 짧게 띄워 clip 없는 캡처로 다시 생성했으며 기능54/24/12 JSON은 유지하고 별도 capture4/4·화면2/2 기록을 남겼다. 320/390px의 명령어·응답 간격·응답·추가/삭제와 실제 봇 배지를 직접 확인했다. 캡처 전용 실행에서는 FFmpeg를 시작하지 않았다.
+
+검증한 JAR c4b71d2761965c7890f50c07fae8ced8f74b1d1981e76162a1200e13ff9ba01c를 로컬 API에 적용했다. Flyway18개 성공·V1~V17 원본 SQL 불변·실행 JAR 일치를 확인했고 API만 교체해 MediaMTX PID34664를 유지했다. 실제 제품 DB의 계정·채널·운영자·녹화·VOD·클립·시청 기록은 작업 전후0, 새 봇 설정도0개다. /healthz·외부 도구 HTML200, 비로그인 봇 설정/시청 기록401을 확인했다. 시험9포트와 소유 프로세스를 정리했고 자격 증명·쿠키·설정·로그·checkpoint는 저장소 밖에 보관한다. 재부팅·외부 배포는 하지 않았다.
+
+한 PC loopback·headless Edge와 모바일 너비 에뮬레이션의 기능 검사다. OBS CEF·휴대폰 실기기·Caddy HTTPS/WSS·다른 회선·장시간·부하/수용량은 검증하지 않았다. 설정은 DB에 남지만 채팅 이력·clientId 기억·응답 간격은 연결/방의 메모리 상태이며 재접속·재시작을 아우르는 영구 중복 방지나 봇 전달 보장은 제공하지 않는다. 방송자가 지정한 공식 응답에는 시청자용 금칙어/링크 필터를 다시 적용하지 않는다. 일반 키워드·예약 반복·외부 AI 응답은 이번 범위가 아니다.
+
+실행: Java21 JAVA_HOME과 저장소 밖 Docker 검증 설정 FRAME_PRODUCT_TEST_CONFIG를 지정하고 웹/API 빌드 후 node server/verify/chatbot-e2e.mjs를 단독 실행한다. 결과: [백엔드](chatbot-backend-result.json), [웹 빌드](chatbot-web-result.json), [실제 통합](chatbot-e2e-result.json), [배포 UI](chatbot-production-result.json), [개발 UI](chatbot-dev-result.json), [캡처 실행](chatbot-capture-e2e-result.json), [캡처 검사](chatbot-capture-result.json), [현재 PC](chatbot-local-result.json). 화면: [390px](chatbot-production-management-390.png), [320px](chatbot-production-management-320.png), [실제 봇 오버레이](chatbot-production-overlay.png), [개발 봇 오버레이](chatbot-dev-overlay.png). [외부 도구 연결](http://127.0.0.1:5360/_frame/studio/integrations)의 채팅봇에서 본인 설정을 저장한다.

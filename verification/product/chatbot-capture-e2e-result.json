@@ -1,0 +1,70 @@
+{
+  "complete": true,
+  "verificationDatabaseOnly": true,
+  "productionUserDataUntouched": true,
+  "nativeObsReceiverUntouched": true,
+  "testedJarSha256": "c4b71d2761965c7890f50c07fae8ced8f74b1d1981e76162a1200e13ff9ba01c",
+  "results": [
+    {
+      "name": "Only the isolated owner channel is connected to the dedicated source",
+      "pass": true
+    },
+    {
+      "name": "The real isolated channel can configure a broadcast before going live",
+      "pass": true
+    },
+    {
+      "name": "A new channel has persisted-scope chatbot defaults while offline",
+      "pass": true
+    },
+    {
+      "name": "capture chatbot management and chat browser verification passes",
+      "pass": true
+    }
+  ],
+  "ports": [
+    {
+      "port": 18083,
+      "free": true
+    },
+    {
+      "port": 5365,
+      "free": true
+    },
+    {
+      "port": 2935,
+      "free": true
+    },
+    {
+      "port": 29554,
+      "free": true
+    },
+    {
+      "port": 29997,
+      "free": true
+    },
+    {
+      "port": 29888,
+      "free": true
+    },
+    {
+      "port": 29996,
+      "free": true
+    },
+    {
+      "port": 9550,
+      "free": true
+    },
+    {
+      "port": 9551,
+      "free": true
+    }
+  ],
+  "sourceStarts": 0,
+  "fixture": "Dedicated isolated Spring API + production React preview + headless Edge; no media publisher",
+  "limits": [
+    "OBS CEF rendering was not exercised",
+    "Single PC and loopback only",
+    "No physical mobile device or load/capacity coverage"
+  ]
+}

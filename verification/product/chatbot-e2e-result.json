@@ -1,0 +1,270 @@
+{
+  "complete": true,
+  "verificationDatabaseOnly": true,
+  "productionUserDataUntouched": true,
+  "nativeObsReceiverUntouched": true,
+  "testedJarSha256": "c4b71d2761965c7890f50c07fae8ced8f74b1d1981e76162a1200e13ff9ba01c",
+  "results": [
+    {
+      "name": "Only the isolated owner channel is connected to the dedicated source",
+      "pass": true
+    },
+    {
+      "name": "The real isolated channel can configure a broadcast before going live",
+      "pass": true
+    },
+    {
+      "name": "A new channel has persisted-scope chatbot defaults while offline",
+      "pass": true
+    },
+    {
+      "name": "Private no-store configuration is scoped to each real account",
+      "pass": true
+    },
+    {
+      "name": "Anonymous, missing CSRF, foreign Origin and changed-account operations are rejected",
+      "pass": true
+    },
+    {
+      "name": "Malformed chatbot input is rejected without a version write (case 1)",
+      "pass": true
+    },
+    {
+      "name": "Malformed chatbot input is rejected without a version write (case 2)",
+      "pass": true
+    },
+    {
+      "name": "Malformed chatbot input is rejected without a version write (case 3)",
+      "pass": true
+    },
+    {
+      "name": "Malformed chatbot input is rejected without a version write (case 4)",
+      "pass": true
+    },
+    {
+      "name": "Malformed chatbot input is rejected without a version write (case 5)",
+      "pass": true
+    },
+    {
+      "name": "Malformed chatbot input is rejected without a version write (case 6)",
+      "pass": true
+    },
+    {
+      "name": "Malformed chatbot input is rejected without a version write (case 7)",
+      "pass": true
+    },
+    {
+      "name": "Malformed chatbot input is rejected without a version write (case 8)",
+      "pass": true
+    },
+    {
+      "name": "Malformed chatbot input is rejected without a version write (case 9)",
+      "pass": true
+    },
+    {
+      "name": "Malformed chatbot input is rejected without a version write (case 10)",
+      "pass": true
+    },
+    {
+      "name": "Malformed chatbot input is rejected without a version write (case 11)",
+      "pass": true
+    },
+    {
+      "name": "Malformed chatbot input is rejected without a version write (case 12)",
+      "pass": true
+    },
+    {
+      "name": "Malformed chatbot input is rejected without a version write (case 13)",
+      "pass": true
+    },
+    {
+      "name": "Malformed JSON is refused by the real bounded HTTP parser",
+      "pass": true
+    },
+    {
+      "name": "A non-JSON body is refused by the real bounded HTTP parser",
+      "pass": true
+    },
+    {
+      "name": "An oversized configuration body is refused by the real bounded HTTP parser",
+      "pass": true
+    },
+    {
+      "name": "POST cannot create or mutate chatbot configuration outside the GET/PATCH contract",
+      "pass": true
+    },
+    {
+      "name": "Rejected configuration writes leave the original row and version intact",
+      "pass": true
+    },
+    {
+      "name": "Offline saving normalizes command and response while preserving stable UUIDs and allowed cooldown",
+      "pass": true
+    },
+    {
+      "name": "Whole-configuration CAS refuses a stale version without overwriting a saved rule",
+      "pass": true
+    },
+    {
+      "name": "The public read socket joins anonymously and has no send authority",
+      "pass": true
+    },
+    {
+      "name": "Accepted authenticated human chat gets its own ack and a distinct server-only bot identity",
+      "pass": true
+    },
+    {
+      "name": "The real anonymous WebSocket receives the same authoritative bot event",
+      "pass": true
+    },
+    {
+      "name": "A command with extra text is accepted as human chat without matching the exact command",
+      "pass": true
+    },
+    {
+      "name": "An anonymous rejected send never triggers a bot response",
+      "pass": true
+    },
+    {
+      "name": "Case-insensitive exact matching returns command-like text once without a recursive bot loop",
+      "pass": true
+    },
+    {
+      "name": "Per-rule cooldown suppresses another accepted trigger",
+      "pass": true
+    },
+    {
+      "name": "A fresh command emits one real response after cooldown",
+      "pass": true
+    },
+    {
+      "name": "An accepted clientId replay returns the original ack without another bot after cooldown",
+      "pass": true
+    },
+    {
+      "name": "Reusing an accepted clientId with different text is rejected without bot output",
+      "pass": true
+    },
+    {
+      "name": "The room-wide spam guard suppresses a different rule sent within one second",
+      "pass": true
+    },
+    {
+      "name": "Disabling the global setting immediately stops live responses",
+      "pass": true
+    },
+    {
+      "name": "Removing a saved rule immediately stops that command",
+      "pass": true
+    },
+    {
+      "name": "A disabled individual rule never responds",
+      "pass": true
+    },
+    {
+      "name": "The real moderation policy is applied to the isolated channel",
+      "pass": true
+    },
+    {
+      "name": "Rejected banned-word commands never reach bot dispatch",
+      "pass": true
+    },
+    {
+      "name": "A stored account block prevents human acceptance and bot dispatch",
+      "pass": true
+    },
+    {
+      "name": "The exact isolated account block is removed",
+      "pass": true
+    },
+    {
+      "name": "A new authenticated reader receives authoritative human and bot history together",
+      "pass": true
+    },
+    {
+      "name": "production chatbot management and chat browser verification passes",
+      "pass": true
+    },
+    {
+      "name": "dev chatbot management and chat browser verification passes",
+      "pass": true
+    },
+    {
+      "name": "Ending the actual source closes the old room and its bot lifecycle",
+      "pass": true
+    },
+    {
+      "name": "The dedicated broadcast registry completes its stopped-source grace period",
+      "pass": true
+    },
+    {
+      "name": "Replacing the tiny source on the same path creates a distinct broadcast",
+      "pass": true
+    },
+    {
+      "name": "The replacement room starts without prior human or bot history",
+      "pass": true
+    },
+    {
+      "name": "Saved rules respond in the replacement room with a fresh room cooldown",
+      "pass": true
+    },
+    {
+      "name": "Only one tiny FFmpeg source runs at a time across lifecycle replacement",
+      "pass": true
+    },
+    {
+      "name": "Saved configuration, stable UUIDs and CAS version survive an actual API restart",
+      "pass": true
+    },
+    {
+      "name": "The tested backend JAR remains immutable throughout verification",
+      "pass": true
+    }
+  ],
+  "ports": [
+    {
+      "port": 18083,
+      "free": true
+    },
+    {
+      "port": 5365,
+      "free": true
+    },
+    {
+      "port": 2935,
+      "free": true
+    },
+    {
+      "port": 29554,
+      "free": true
+    },
+    {
+      "port": 29997,
+      "free": true
+    },
+    {
+      "port": 29888,
+      "free": true
+    },
+    {
+      "port": 29996,
+      "free": true
+    },
+    {
+      "port": 9550,
+      "free": true
+    },
+    {
+      "port": 9551,
+      "free": true
+    }
+  ],
+  "sourceStarts": 2,
+  "fixture": "Dedicated MediaMTX + one 320x180 15fps H.264/AAC FFmpeg source + immutable Spring JAR + production and StrictMode React + headless Edge",
+  "limits": [
+    "OBS CEF rendering was not exercised",
+    "Single PC and loopback only",
+    "No physical mobile device or load/capacity coverage"
+  ]
+}

@@ -1,0 +1,125 @@
+{
+  "complete": true,
+  "mode": "production",
+  "origin": "http://127.0.0.1:5365",
+  "dedicatedFixtureCookiesOnly": true,
+  "browser": "Headless Microsoft Edge (Chromium); OBS CEF not exercised",
+  "results": [
+    {
+      "name": "A failed chatbot load offers retry and preserves existing overlay management",
+      "pass": true
+    },
+    {
+      "name": "The actual saved channel rules and global state load into the management form",
+      "pass": true
+    },
+    {
+      "name": "Existing overlay tools and the remaining integration rows are preserved",
+      "pass": true
+    },
+    {
+      "name": "Adding a rule allocates a stable UUID and the documented fifteen-second default",
+      "pass": true
+    },
+    {
+      "name": "A failed save preserves the draft and leaves persisted configuration unchanged",
+      "pass": true
+    },
+    {
+      "name": "Saving the management form performs a real versioned configuration write",
+      "pass": true
+    },
+    {
+      "name": "Chatbot controls fit the 390px emulated viewport",
+      "pass": true
+    },
+    {
+      "name": "Chatbot controls fit the 320px emulated viewport",
+      "pass": true
+    },
+    {
+      "name": "A real concurrent update advances the shared configuration version",
+      "pass": true
+    },
+    {
+      "name": "A real HTTP 409 preserves the local draft and the newer server configuration",
+      "pass": true
+    },
+    {
+      "name": "Checking the newer version preserves the draft for deliberate review",
+      "pass": true
+    },
+    {
+      "name": "An interrupted HTTP response is tested after the server actually commits the write",
+      "pass": true
+    },
+    {
+      "name": "Explicit verification resolves an uncertain save from the real server state",
+      "pass": true
+    },
+    {
+      "name": "Discarding a draft restores saved values without writing the server",
+      "pass": true
+    },
+    {
+      "name": "An actual offline browser preserves the draft and blocks an unsendable save",
+      "pass": true
+    },
+    {
+      "name": "Changing accounts clears the previous owner rules and loads the second account defaults",
+      "pass": true
+    },
+    {
+      "name": "The real viewer receives a successful human-message acknowledgement",
+      "pass": true
+    },
+    {
+      "name": "The accepted fixture command produces a newly observed authoritative bot event",
+      "pass": true
+    },
+    {
+      "name": "The anonymous read-only overlay renders the authoritative bot badge and literal server text",
+      "pass": true
+    },
+    {
+      "name": "Normal live chat preserves the authoritative bot badge in its real message history",
+      "pass": true
+    },
+    {
+      "name": "The actual browser composer command triggers a new server bot event and normal-chat badge",
+      "pass": true
+    },
+    {
+      "name": "The normal browser composer still sends an acknowledged owner message with its human identity",
+      "pass": true
+    },
+    {
+      "name": "Anonymous normal chat remains read-only while retaining public bot history",
+      "pass": true
+    },
+    {
+      "name": "Chatbot management and chat interactions finish without browser runtime exceptions",
+      "pass": true
+    }
+  ],
+  "runtimeExceptionCount": 0,
+  "browserConfigurationWriteCount": 4,
+  "browserProductWriteCount": 5,
+  "browserChatSendFrameCount": 2,
+  "browserLiveBotEventCount": 2,
+  "directFixtureApiWrites": [
+    {
+      "method": "PATCH",
+      "route": "/me/chat/bot"
+    },
+    {
+      "method": "POST",
+      "route": "/chat/tickets"
+    }
+  ],
+  "directFixtureRawChatSendCount": 1,
+  "limits": [
+    "Emulated mobile viewport only; no physical phone",
+    "Single PC and loopback only"
+  ]
+}

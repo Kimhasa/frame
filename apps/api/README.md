@@ -138,6 +138,10 @@ java -jar build/libs/frame-api.jar
 
 외부 도구 연결 화면에서 본인 채널의 공개 채팅 오버레이 주소를 복사하고 OBS 브라우저 소스에 넣을 수 있습니다. 투명 배경·표시 테마·글자 크기·최대 개수·표시 시간을 지원하며 설정은 URL에 반영합니다. 기존 공개 채널 조회와 익명 읽기 채팅을 재사용하고 새 API·DB·비밀 토큰은 추가하지 않습니다. 정확한 범위와 입력은 [OBS 공개 채팅 오버레이](PRODUCT_API.md#obs-공개-채팅-오버레이)를 따릅니다.
 
+## 명령어 채팅봇
+
+외부 도구 연결에서 채팅봇 전체 사용 여부, 최대 20개의 `!명령어`와 자동 응답·개별 사용 여부·응답 간격을 실제로 저장합니다. 승인된 회원 채팅의 전체 명령어가 일치하면 서버가 `FRAME 봇` 메시지를 전송하며 일반 채팅과 공개 오버레이에 봇 배지가 표시됩니다. V18에 설정을 보관하고 봇 DB 오류·중복 전송·응답 간격·방송 교체가 일반 채팅을 방해하지 않도록 처리합니다. [정확한 계약](PRODUCT_API.md#명령어-채팅봇)을 따릅니다.
+
 ## 검증
 
 ```bash
@@ -149,6 +153,7 @@ node server/verify/vod-e2e.mjs                  # 검증 DB·실제 녹화·공�
 node server/verify/clips-e2e.mjs                # 검증 DB·실제 FFmpeg 구간·부모 공개 연동·익명 재생·React/개발 모드(빌드 후, 단독 실행)
 node server/verify/archive-history-e2e.mjs       # 실제 VOD·클립 시청 위치·이어보기·삭제 경합·계정 전환(빌드 후, 단독 실행)
 node server/verify/chat-overlay-e2e.mjs          # 실제 공개 채팅·투명 오버레이·방송 교체·OBS 관리 UI(빌드 후, 단독 실행)
+node server/verify/chatbot-e2e.mjs               # 실제 명령어 응답·간격·중복·권한·설정 UI와 방송/API 재시작(빌드 후, 단독 실행)
 node server/verify/deploy-check.mjs               # deploy/의 단위 파일·환경 예시·설치 절차와 jar의 정합(Linux 없이), 포트 28080
 node server/verify/https-session.mjs --host <test-host> --tls internal --bind <주소> --backend spring   # Caddy 경유 시험 세션
 node server/verify/https-check.mjs                # 그 세션에서 HTTPS/WSS, 재생, 채팅, 서비스 재시작(H10)
